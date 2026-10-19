@@ -1,40 +1,29 @@
 #!/usr/bin/env python3
-"""gate_pemicu_ci.py - tolak penyaring pemicu CI yang mematikan pemeriksa.
+"""gate_pemicu_ci.py - jaga pemicu workflow factory-gate tetap tidak bisa dilewati.
 
-Kenapa ada: `.github/workflows/uji-windows.yml` menyaring `pull_request` berdasarkan path supaya
-PR yang cuma menyentuh dokumen dan alat factory tidak menyalakan 4 job Linux di runner tunggal.
-Penyaring itu punya satu cara gagal yang SENYAP: kalau pohon yang dibaca sebuah job ikut
-dikecualikan, job-nya tidak pernah jalan dan tidak ada yang merah. Gejalanya cuma "CI hijau" pada
-berkas yang justru diubah. Kelas ini sudah nyaris kejadian di repo ini: `tools/cek_desain.py`
-membaca `docs/DESIGN.md`, jadi mengecualikan seluruh `docs/**` tanpa memasukkan berkas itu kembali
-mematikan pemeriksa bagi berkas yang diubah.
+Kenapa ada: `.github/workflows/factory-gate.yml` adalah satu-satunya tempat gate hukum proses
+dijalankan di CI. Empat kelas kesalahan membuat gate itu tidak jalan padahal berkasnya terlihat
+benar:
 
-Yang ditegakkan, semuanya mekanis:
-  1. Trigger `pull_request` WAJIB punya penyaring path. Penyaring yang hilang sama saja dengan
-     menghapus niatnya, dan itu perubahan yang mudah lolos tanpa dibaca.
-  2. `paths` dan `paths-ignore` tidak boleh dipakai bersama untuk satu event, dan `paths-ignore`
-     TIDAK menerima negasi. Pola `!` di dalam `paths-ignore` ditolak, bukan diabaikan diam-diam.
-  3. Setiap pola negatif WAJIB ada di `BOLEH_TOLAK`. Menambahkan `src/**` ke situ akan mematikan
-     seluruh uji dotnet, dan itu ditolak di sini, bukan ditangkap enam bulan kemudian.
-  4. Setiap path di `WAJIB_MEMICU` WAJIB masih memicu. Ini yang menangkap "docs/** dikecualikan
-     tapi docs/DESIGN.md tidak dimasukkan ulang".
-  5. Pola yang bentuknya tidak dikenali pencocok ditolak, bukan dilewati. Gate yang tidak paham
-     apa yang dibacanya tidak boleh keluar hijau.
-  6. `factory-gate.yml` WAJIB mendengar event `labeled`. Tanpa itu memasang label `lane:<id>`
-     sesudah PR terbuka tidak menjalankan ulang pemeriksa cakupan: run lama tetap hijau dengan
-     cakupan tidak diperiksa (#225).
-  7. Job TIDAK BOLEH menyaring event berdasarkan `github.event.action`. Gate membaca DUA label
-     (`lane:` dan `eskalasi`), jadi filter yang cuma menyebut satu label melewati yang lain: run
-     untuk label itu lahir, di-SKIP, dan run itulah yang tersisa (terukur 2026-10-11 di PR #227:
-     tiga run lahir bersamaan, dua cancelled, satu skipped, dan gate yang seharusnya memeriksa
-     justru tidak jalan). Label dibaca live dari PR, jadi tidak ada yang perlu disaring di sini.
-  8. Grup `concurrency` WAJIB memuat `github.event.action`. Tanpa itu event `opened` dan `labeled`
-     untuk PR yang sama berbagi satu grup dan saling membatalkan; yang bertahan belum tentu yang
-     benar. Dengan action di grup, push (`synchronize`) tetap saling membatalkan.
+1. **Penyaring path.** `paths:`/`paths-ignore:` di blok `pull_request` membuat GitHub melewati
+   seluruh workflow untuk PR yang tidak menyentuh path itu. Gate cakupan lane justru harus
+   memeriksa SETIAP PR: PR yang cuma menyentuh `README.md` pun tetap perlu diperiksa, karena
+   label `lane:` bisa dipasang di PR mana pun. Jadi penyaring path di berkas ini DITOLAK, bukan
+   diatur isinya.
+2. **Event `labeled` tidak terpasang.** Default `types:` GitHub cuma opened/synchronize/reopened.
+   Label `lane:<id>` dan `eskalasi` dipasang SESUDAH PR terbuka, jadi tanpa `labeled` di `types:`
+   memasang label tidak memeriksa ulang cakupan.
+3. **Job menyaring `github.event.action`.** Gate membaca DUA label (`lane:` dan `eskalasi`).
+   Filter yang cuma menyebut satu label membuat run untuk label lain lahir lalu di-SKIP, dan gate
+   yang seharusnya memeriksa tidak pernah jalan. Kelas ini benar-benar kejadian di PR #227.
+4. **Grup `concurrency` tanpa `github.event.action`.** Event `opened` dan `labeled` untuk PR yang
+   sama berbagi satu grup dan saling membatalkan; yang bertahan belum tentu yang benar. Dengan
+   action di grup, push (`synchronize`) tetap saling membatalkan.
 
-Pencocoknya sengaja bodoh: cuma paham `**`, `DIR/**`, dan path persis, karena itu saja bentuk yang
-dipakai berkas ini. Urutan pola dihormati seperti dokumentasi GitHub: pola negatif sesudah positif
-mengecualikan, pola positif sesudah negatif memasukkan lagi.
+Berkas yang diperiksa satu: `factory-gate.yml`. Versi sebelumnya berkas ini juga memeriksa
+`uji-windows.yml`, workflow produk yang tidak ada di pohon ini; pemeriksaan itu dibuang bersama
+seluruh mesin pencocok path-nya, karena gate yang menunjuk berkas tidak ada cuma mencetak LEWAT
+selamanya dan tidak pernah menolak apa pun.
 
 Cara pakai:
   python3 tools/factory/gate_pemicu_ci.py
@@ -50,42 +39,16 @@ import sys
 DIR_INI = os.path.dirname(os.path.abspath(__file__))
 AKAR_BAWAAN = os.path.dirname(os.path.dirname(DIR_INI))
 
-BERKAS_WORKFLOW = os.path.join(".github", "workflows", "uji-windows.yml")
 BERKAS_GATE = os.path.join(".github", "workflows", "factory-gate.yml")
 
-# Pohon yang BOLEH dikecualikan dari trigger pull_request uji-windows.yml, dengan alasannya.
-BOLEH_TOLAK = {
-    "factory/**": "gate factory hidup di factory-gate.yml, yang tidak punya penyaring path",
-    "tools/factory/**": "idem: gate factory diperiksa factory-gate.yml",
-    "docs/**": "prosa; berkas yang dibaca workflow ini (docs/DESIGN.md) dimasukkan ulang",
-}
-
-# Path yang WAJIB tetap memicu workflow ini, karena ada job/langkah yang membacanya.
-WAJIB_MEMICU = [
-    ("src/PMS.App/PMS.App.csproj", "cek_versi membaca sumber kebenaran versi"),
-    ("src/PMS.App/Program.cs", "uji-dotnet membangun dan menguji seluruh solusi"),
-    ("tests/PMS.Tests/PMS.Tests.csproj", "uji-dotnet menjalankan suite ini"),
-    ("installer.iss", "cek_versi dan job MSI membacanya"),
-    ("build_msi.py", "cek_versi membacanya"),
-    ("tools/build_rilis.sh", "cek_versi membacanya"),
-    ("tools/cek_desain.py", "langkah cek-versi menjalankannya"),
-    ("docs/DESIGN.md", "tools/cek_desain.py membaca berkas ini; menutupnya mematikan pemeriksanya"),
-    ("cloudflare/uji-integrasi-worker.sh", "uji-worker menjalankannya"),
-    ("package.json", "uji-ui memasang dan menjalankan uji lewat npm"),
-    (".github/workflows/uji-windows.yml", "suntingan workflow ini harus mengujinya sendiri"),
-]
-
 RE_ITEM = re.compile(r"^\s*-\s*'([^']*)'\s*$")
-RE_JOB = re.compile(r"^  ([A-Za-z0-9_-]+):\s*$")
 RE_ITEM_POLOS = re.compile(r"^\s*-\s*([A-Za-z0-9_-]+)\s*$")
+RE_JOB = re.compile(r"^  ([A-Za-z0-9_-]+):\s*$")
 RE_ACTION = re.compile(r"github\.event\.action")
-RE_GRUP_ACTION = re.compile(r"github\.event\.action")
-
 
 def baca(path):
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
-
 
 def blok_pull_request(teks):
     """Kembalikan baris-baris di dalam `pull_request:` pada blok `on:`, atau None."""
@@ -120,104 +83,14 @@ def blok_pull_request(teks):
         hasil.append(b)
     return hasil
 
-
 def penyaring(blok):
-    """Kembalikan (jenis, daftar_pola). jenis: 'paths', 'paths-ignore', 'GANDA', atau None."""
-    jenis = None
-    daftar = []
-    for n, b in enumerate(blok):
-        m = re.match(r"^    (paths|paths-ignore):\s*$", b)
-        if not m:
-            continue
-        if jenis is not None:
-            return "GANDA", []
-        jenis = m.group(1)
-        for c in blok[n + 1:]:
-            mi = RE_ITEM.match(c)
-            if mi:
-                daftar.append(mi.group(1))
-                continue
-            if c.strip() == "" or c.lstrip().startswith("#"):
-                continue
-            break
-    return jenis, daftar
-
-
-def bentuk_dikenali(pola):
-    if pola == "**":
-        return True
-    if pola.endswith("/**"):
-        return "*" not in pola[:-3] and "?" not in pola[:-3]
-    return "*" not in pola and "?" not in pola
-
-
-def cocok(pola, path):
-    if pola == "**":
-        return True
-    if pola.endswith("/**"):
-        prefiks = pola[:-3]
-        return path == prefiks or path.startswith(prefiks + "/")
-    return path == pola
-
-
-def memicu(jenis, urut, path):
-    if jenis == "paths-ignore":
-        return not any(cocok(p, path) for p in urut)
-    aktif = False
-    for p in urut:
-        negatif = p.startswith("!")
-        inti = p[1:] if negatif else p
-        if cocok(inti, path):
-            aktif = not negatif
-    return aktif
-
-
-def periksa_teks(teks):
-    """Kembalikan (lulus, daftar_alasan). Ini satu-satunya keputusan, dipakai main() dan uji."""
-    blok = blok_pull_request(teks)
-    if blok is None:
-        return False, ["trigger `pull_request` tidak ada di blok `on:`"]
-
-    jenis, daftar = penyaring(blok)
-    if jenis == "GANDA":
-        return False, ["`paths` dan `paths-ignore` dipakai bersama untuk event yang sama"]
-    if jenis is None:
-        return False, ["trigger `pull_request` tidak punya penyaring path (`paths`/`paths-ignore`)"]
-    if not daftar:
-        return False, ["`%s` ada tapi daftarnya kosong" % jenis]
-
-    alasan = []
-    for p in daftar:
-        if not bentuk_dikenali(p.lstrip("!")):
-            alasan.append(
-                "pola tidak dikenali pencocok: %r (pencocok cuma paham `**`, `DIR/**`, dan path persis)" % p
-            )
-
-    if jenis == "paths-ignore":
-        for p in daftar:
-            if p.startswith("!"):
-                alasan.append(
-                    "`paths-ignore` tidak menerima negasi (pola %r); pakai `paths` + `!`" % p
-                )
-        urut = list(daftar)
-    else:
-        urut = list(daftar)
-        if all(p.startswith("!") for p in urut):
-            alasan.append("semua pola `paths` negatif; GitHub menuntut minimal satu pola positif")
-
-    for p in urut:
-        if p.startswith("!") and p[1:] not in BOLEH_TOLAK:
-            alasan.append(
-                "`%s` dikecualikan tapi tidak ada di daftar pohon yang boleh dikecualikan (%s)"
-                % (p[1:], ", ".join(sorted(BOLEH_TOLAK)))
-            )
-
-    for path, kenapa in WAJIB_MEMICU:
-        if not memicu(jenis, urut, path):
-            alasan.append("`%s` tidak lagi memicu workflow ini (%s)" % (path, kenapa))
-
-    return (len(alasan) == 0), alasan
-
+    """Kembalikan daftar nama penyaring path yang dipakai (`paths`, `paths-ignore`)."""
+    hasil = []
+    for b in blok:
+        m = re.match(r"^    (paths|paths-ignore):", b)
+        if m:
+            hasil.append(m.group(1))
+    return hasil
 
 def grup_concurrency(teks):
     """Kembalikan (ada, baris_grup) untuk blok `concurrency:` tingkat atas."""
@@ -285,13 +158,20 @@ def _types_pull_request(blok):
         return True, [], False
     return False, [], True
 
-def periksa_label(teks):
-    """Kembalikan (lulus, daftar_alasan) untuk trigger `labeled` di factory-gate.yml."""
+def periksa(teks):
+    """Kembalikan (lulus, daftar_alasan). Ini satu-satunya keputusan, dipakai main() dan uji."""
     blok = blok_pull_request(teks)
     if blok is None:
         return False, ["trigger `pull_request` tidak ada di blok `on:`"]
 
     alasan = []
+
+    for nama in penyaring(blok):
+        alasan.append(
+            "`%s` ada di blok `pull_request`: penyaring path membuat PR yang tidak menyentuh path "
+            "itu melewati SELURUH gate, padahal gate cakupan lane harus memeriksa tiap PR" % nama
+        )
+
     ada, daftar, dikenal = _types_pull_request(blok)
     if not ada:
         alasan.append(
@@ -320,21 +200,13 @@ def periksa_label(teks):
     ada, grup = grup_concurrency(teks)
     if not ada:
         alasan.append("blok `concurrency:` tidak ada, jadi event `labeled` dan `opened` saling membatalkan")
-    elif not RE_GRUP_ACTION.search(grup):
+    elif not RE_ACTION.search(grup):
         alasan.append(
             "grup `concurrency` (%r) tidak memuat `github.event.action`: event `opened` dan "
             "`labeled` untuk PR yang sama berbagi satu grup dan saling membatalkan" % grup
         )
 
     return (len(alasan) == 0), alasan
-
-def _wf(isi_pull_request):
-    return (
-        "name: Uji Windows\non:\n  workflow_dispatch:\n  pull_request:\n"
-        + isi_pull_request
-        + "  push:\n    branches: [main]\njobs:\n  a:\n    runs-on: ubuntu-latest\n"
-    )
-
 
 IF_BENAR = (
     "    if: github.event_name != 'pull_request' || "
@@ -343,11 +215,14 @@ IF_BENAR = (
 TYPES_BENAR = "    types: [opened, synchronize, reopened, labeled]\n"
 GRUP_BENAR = "concurrency:\n  group: factory-gate-${{ github.ref }}-${{ github.event.action }}\n"
 
-def _gate_wf(types_baris, daftar_if, grup=GRUP_BENAR):
-    """Workflow mirip factory-gate.yml: blok `on:`, blok `concurrency:`, plus sejumlah job."""
+def _gate_wf(types_baris=TYPES_BENAR, daftar_if=None, grup=GRUP_BENAR, penyaring_baris=""):
+    """Workflow mirip factory-gate.yml: blok `on:`, `concurrency:`, dan sejumlah job."""
+    if daftar_if is None:
+        daftar_if = [IF_BENAR, IF_BENAR]
     isi = (
         "name: factory-gate\non:\n  pull_request:\n    branches: [main]\n"
         + types_baris
+        + penyaring_baris
         + "  push:\n    branches: [main]\n"
         + grup
         + "jobs:\n"
@@ -360,119 +235,73 @@ def uji_mandiri(akar):
     """Gate yang belum pernah menolak apa pun belum membuktikan apa pun."""
     kasus = []
 
-    # Dua kasus pertama menguji pohon yang sedang dipijak. Di repo mesin berkas workflow-nya
-    # memang tidak ikut, jadi keduanya DILEWATI dengan disebut, bukan menggagalkan seluruh uji:
-    # sisa kasusnya memakai pohon tiruan dan tetap berjalan di mana pun.
-    ada_wf = os.path.exists(os.path.join(akar, BERKAS_WORKFLOW))
-    ada_gate = os.path.exists(os.path.join(akar, BERKAS_GATE))
-    if ada_wf:
-        kasus.append(("pohon ini apa adanya (penyaring path)", periksa_teks,
-                      baca(os.path.join(akar, BERKAS_WORKFLOW)), 0))
-    else:
-        print("LEWAT  kasus pohon ini dilewati: %s tidak ada di %s" % (BERKAS_WORKFLOW, akar))
-    if ada_gate:
-        kasus.append(("pohon ini apa adanya (trigger labeled)", periksa_label,
-                      baca(os.path.join(akar, BERKAS_GATE)), 0))
+    # Kasus pertama menguji pohon yang sedang dipijak. Kalau berkasnya tidak ikut (pohon mesin
+    # tanpa workflow), kasus itu DILEWATI dengan disebut, bukan menggagalkan seluruh uji: sisa
+    # kasusnya memakai pohon tiruan dan tetap berjalan di mana pun.
+    if os.path.exists(os.path.join(akar, BERKAS_GATE)):
+        kasus.append(("pohon ini apa adanya", baca(os.path.join(akar, BERKAS_GATE)), 0))
     else:
         print("LEWAT  kasus pohon ini dilewati: %s tidak ada di %s" % (BERKAS_GATE, akar))
 
+    kasus.append(("bentuk sehat", _gate_wf(), 0))
     kasus.append(
-        (
-            "pohon di luar daftar izin (src/**)",
-            _wf("    branches: [main]\n    paths:\n      - '**'\n      - '!src/**'\n"),
-            1,
-        )
+        ("bentuk `types:` daftar blok dikenali",
+         _gate_wf(types_baris="    types:\n      - opened\n      - labeled\n"), 0)
     )
 
+    # Negatif: penyaring path, dan kedua bentuknya sekaligus.
     kasus.append(
-        (
-            "docs/** dikecualikan tanpa docs/DESIGN.md dimasukkan ulang",
-            _wf("    branches: [main]\n    paths:\n      - '**'\n      - '!docs/**'\n"),
-            1,
-        )
+        ("`paths:` memasang penyaring",
+         _gate_wf(penyaring_baris="    paths:\n      - 'factory/**'\n"), 1)
+    )
+    kasus.append(
+        ("`paths-ignore:` memasang penyaring",
+         _gate_wf(penyaring_baris="    paths-ignore:\n      - 'docs/**'\n"), 1)
+    )
+    kasus.append(
+        ("`paths` dan `paths-ignore` sekaligus",
+         _gate_wf(penyaring_baris="    paths:\n      - '**'\n    paths-ignore:\n      - 'docs/**'\n"), 1)
     )
 
+    # Negatif: trigger labeled tidak terpasang.
+    kasus.append(("`types:` hilang (default GitHub)", _gate_wf(types_baris=""), 1))
     kasus.append(
-        (
-            "paths-ignore dipakai dengan negasi",
-            _wf("    branches: [main]\n    paths-ignore:\n      - 'docs/**'\n      - '!docs/DESIGN.md'\n"),
-            1,
-        )
+        ("`labeled` dicabut dari `types:`",
+         _gate_wf(types_baris="    types: [opened, synchronize, reopened]\n"), 1)
+    )
+    kasus.append(("bentuk `types:` tidak dikenali", _gate_wf(types_baris="    types: nope\n"), 1))
+    kasus.append(
+        ("`pull_request` tidak ada di blok `on:`",
+         "name: x\non:\n  push:\n    branches: [main]\njobs:\n  a:\n    runs-on: ubuntu-latest\n", 1)
     )
 
-    kasus.append(("penyaring path hilang", _wf("    branches: [main]\n"), 1))
-
+    # Negatif: job menyaring action. Kelas ini benar-benar kejadian di PR #227.
     kasus.append(
-        (
-            "paths dan paths-ignore dipakai bersama",
-            _wf(
-                "    branches: [main]\n    paths:\n      - '**'\n"
-                "    paths-ignore:\n      - 'factory/**'\n"
-            ),
-            1,
-        )
+        ("job menyaring action ke satu label saja",
+         _gate_wf(daftar_if=[
+             IF_BENAR,
+             "    if: >-\n"
+             "      (github.event_name != 'pull_request')\n"
+             "      && (github.event.action != 'labeled' || startsWith(github.event.label.name, 'lane:'))\n",
+         ]), 1)
     )
 
+    # Negatif: concurrency.
     kasus.append(
-        (
-            "pola yang bentuknya tidak dikenali",
-            _wf("    branches: [main]\n    paths:\n      - '**'\n      - '!docs/*.md'\n"),
-            1,
-        )
+        ("grup concurrency tanpa action",
+         _gate_wf(grup="concurrency:\n  group: factory-gate-${{ github.ref }}\n"), 1)
     )
+    kasus.append(("blok concurrency hilang", _gate_wf(grup=""), 1))
 
+    # Negatif: jobs.
     kasus.append(
-        (
-            "semua pola negatif",
-            _wf("    branches: [main]\n    paths:\n      - '!factory/**'\n"),
-            1,
-        )
-    )
-
-    kasus.append(("trigger labeled sehat", periksa_label, _gate_wf(TYPES_BENAR, [IF_BENAR, IF_BENAR]), 0))
-    kasus.append(
-        ("bentuk `types:` daftar blok dikenali", periksa_label,
-         _gate_wf("    types:\n      - opened\n      - labeled\n", [IF_BENAR, IF_BENAR]), 0)
-    )
-    kasus.append(("`types:` hilang (default GitHub)", periksa_label, _gate_wf("", [IF_BENAR, IF_BENAR]), 1))
-    kasus.append(
-        ("`labeled` dicabut dari `types:`", periksa_label,
-         _gate_wf("    types: [opened, synchronize, reopened]\n", [IF_BENAR, IF_BENAR]), 1)
-    )
-    kasus.append(
-        ("bentuk `types:` tidak dikenali", periksa_label, _gate_wf("    types: nope\n", [IF_BENAR, IF_BENAR]), 1)
-    )
-    # Kelas gagal yang BENAR-BENAR kejadian di PR #227: job menyaring `github.event.action` ke satu
-    # label, sehingga run untuk label lain lahir lalu di-SKIP dan gate yang memeriksa tidak jalan.
-    kasus.append(
-        ("job menyaring action ke satu label saja", periksa_label,
-         _gate_wf(TYPES_BENAR, [IF_BENAR,
-                  "    if: >-\n"
-                  "      (github.event_name != 'pull_request')\n"
-                  "      && (github.event.action != 'labeled' || startsWith(github.event.label.name, 'lane:'))\n"]), 1)
-    )
-    kasus.append(
-        ("grup concurrency tanpa action", periksa_label,
-         _gate_wf(TYPES_BENAR, [IF_BENAR, IF_BENAR], grup="concurrency:\n  group: factory-gate-${{ github.ref }}\n"), 1)
-    )
-    kasus.append(
-        ("blok concurrency hilang", periksa_label, _gate_wf(TYPES_BENAR, [IF_BENAR, IF_BENAR], grup=""), 1)
-    )
-    kasus.append(
-        ("blok `jobs:` hilang", periksa_label,
+        ("blok `jobs:` hilang",
          "name: x\non:\n  pull_request:\n    branches: [main]\n" + TYPES_BENAR, 1)
     )
 
     gagal = 0
-    for baris in kasus:
-        # Kasus lama cuma membawa teks (diperiksa periksa_teks); kasus trigger `labeled` membawa
-        # fungsi pemeriksanya sendiri supaya dua berkas berbeda bisa diuji dalam satu loop.
-        if len(baris) == 3:
-            nama, teks, harus = baris
-            fungsi = periksa_teks
-        else:
-            nama, fungsi, teks, harus = baris
-        lulus, alasan = fungsi(teks)
+    for nama, teks, harus in kasus:
+        lulus, alasan = periksa(teks)
         keluar = 0 if lulus else 1
         tanda = "LULUS" if keluar == harus else "GAGAL"
         if keluar != harus:
@@ -484,7 +313,6 @@ def uji_mandiri(akar):
     print("UJI MANDIRI: %d kasus, %d gagal" % (len(kasus), gagal))
     return 1 if gagal else 0
 
-
 def main():
     p = argparse.ArgumentParser(add_help=True)
     p.add_argument("--akar", default=AKAR_BAWAAN)
@@ -495,48 +323,23 @@ def main():
     if a.uji_mandiri:
         return uji_mandiri(akar)
 
-    # Gate ini menjaga penyaring pemicu di workflow PRODUK, dan workflow itu tidak ikut repo
-    # mesin: `ci/` cuma memuat salinan referensinya. Jadi berkasnya memang tidak ada di sini, dan
-    # itu BUKAN kegagalan. Yang penting: yang dilewati disebut satu per satu, tidak diam-diam
-    # hijau. Dijalankan di pohon produk, seluruh pemeriksaannya tetap penuh.
-    hilang = [rel for rel, _, _ in (
-        (BERKAS_WORKFLOW, periksa_teks, ""),
-        (BERKAS_GATE, periksa_label, ""),
-    ) if not os.path.exists(os.path.join(akar, rel))]
-    if len(hilang) == 2:
-        print("LEWAT  pemeriksaan pemicu CI tidak dijalankan: %s tidak ada di %s."
-              % (" dan ".join(hilang), akar))
-        print("       Gate ini menjaga workflow produk, dan workflow itu tidak ikut repo mesin.")
+    path = os.path.join(akar, BERKAS_GATE)
+    if not os.path.exists(path):
+        # Pohon tanpa workflow bukan kegagalan, tapi juga bukan hijau diam-diam: yang dilewati
+        # disebut, dan runner CI tetap menjalankan uji mandiri di atas pohon tiruan.
+        print("LEWAT  pemicu CI tidak diperiksa: %s tidak ada di %s." % (BERKAS_GATE, akar))
+        print("       Uji mandiri gate ini tetap berjalan di pohon tiruan.")
         return 0
 
-    gagal = 0
-    for rel, fungsi, pesan_lulus in (
-        (
-            BERKAS_WORKFLOW,
-            periksa_teks,
-            "penyaring path pull_request uji-windows.yml sehat (%d path wajib memicu)" % len(WAJIB_MEMICU),
-        ),
-        (
-            BERKAS_GATE,
-            periksa_label,
-            "trigger labeled factory-gate.yml ada di `types:`, job tidak menyaring action, dan concurrency per action",
-        ),
-    ):
-        path = os.path.join(akar, rel)
-        if not os.path.exists(path):
-            print("GAGAL  berkas tidak ada: %s" % path)
-            gagal += 1
-            continue
-        lulus, alasan = fungsi(baca(path))
-        if lulus:
-            print("LULUS  %s" % pesan_lulus)
-            continue
-        print("GAGAL  penyaring pemicu CI mematikan pemeriksa (%s):" % rel)
-        for s in alasan:
-            print("       - %s" % s)
-        gagal += 1
-    return 1 if gagal else 0
-
+    lulus, alasan = periksa(baca(path))
+    if lulus:
+        print("LULUS  %s: tanpa penyaring path, `labeled` ada di `types:`, job tidak menyaring "
+              "action, dan concurrency per action" % BERKAS_GATE)
+        return 0
+    print("GAGAL  %s" % BERKAS_GATE)
+    for x in alasan:
+        print("       - %s" % x)
+    return 1
 
 if __name__ == "__main__":
     sys.exit(main())

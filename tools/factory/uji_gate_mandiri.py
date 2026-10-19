@@ -65,7 +65,7 @@ def salin_lanes(tmp):
     shutil.copyfile(asal, os.path.join(tmp, "factory", "lanes.json"))
     # Entri tanpa wildcard harus ADA di akar uji: `gate_commit_paths.py` menolak entri yang
     # menunjuk path mati (jaring eskalasi), jadi fixture wajib menyerupai pohon nyata. Tanpa ini
-    # tiap kasus di bawah merah karena `README.md`, `installer.iss`, dst. tidak ada di tmp.
+    # tiap kasus di bawah merah karena `README.md`, `packaging/paket.conf`, dst. tidak ada di tmp.
     with open(asal, encoding="utf-8") as f:
         lanes = json.load(f)
     kandidat = list(lanes.get("eskalasi", {}).get("glob", []))
@@ -143,31 +143,31 @@ def law_tanpa_baseline(tmp):
 
 def paths_ok(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["src/PMS.Core/PayrollEngine.cs", "tests/PMS.Tests/PayrollTests.cs"])
-    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll", "--paths", p])
+    p = tulis_paths(tmp, ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt", "apps/geolibre-desktop/src-tauri/android/uji/IntiUji.kt"])
+    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android", "--paths", p])
 
 
 def paths_luar_cakupan(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["src/PMS.Core/PayrollEngine.cs", "src/PMS.Core/UtangPiutang.cs"])
-    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll", "--paths", p])
+    p = tulis_paths(tmp, ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt", "packages/plugins/src/plugins/geopdf/berkas-lain.ts"])
+    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android", "--paths", p])
 
 
 def paths_hq_menyentuh_kode(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["src/PMS.Core/PayrollEngine.cs"])
+    p = tulis_paths(tmp, ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt"])
     return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "HQ", "--paths", p])
 
 
 def paths_eskalasi_tanpa_izin(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["installer.iss"])
+    p = tulis_paths(tmp, ["packaging/paket.conf"])
     return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "HQ", "--paths", p])
 
 
 def paths_eskalasi_dengan_izin(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["installer.iss"])
+    p = tulis_paths(tmp, ["packaging/paket.conf"])
     return jln(
         [
             "tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "HQ",
@@ -178,7 +178,7 @@ def paths_eskalasi_dengan_izin(tmp):
 
 def paths_hanya_eskalasi_menolak(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["cloudflare/worker.js"])
+    p = tulis_paths(tmp, ["packaging/berkas.js"])
     return jln(
         ["tools/factory/gate_commit_paths.py", "--akar", tmp, "--hanya-eskalasi", "--paths", p]
     )
@@ -186,7 +186,7 @@ def paths_hanya_eskalasi_menolak(tmp):
 
 def paths_hanya_eskalasi_lolos(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["src/PMS.Core/UtangPiutang.cs"])
+    p = tulis_paths(tmp, ["packages/plugins/src/plugins/geopdf/berkas-lain.ts"])
     return jln(
         ["tools/factory/gate_commit_paths.py", "--akar", tmp, "--hanya-eskalasi", "--paths", p]
     )
@@ -204,7 +204,7 @@ def paths_tanpa_label_jejak(tmp):
 
 def paths_tanpa_label_lolos(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["src/PMS.Core/UtangPiutang.cs"])
+    p = tulis_paths(tmp, ["packages/plugins/src/plugins/geopdf/berkas-lain.ts"])
     return jln(
         ["tools/factory/gate_commit_paths.py", "--akar", tmp, "--tanpa-label", "--paths", p]
     )
@@ -223,9 +223,9 @@ def paths_entri_mati_menolak(tmp):
     Nyata 2026-10-13 (#324): `scripts/build_rilis.sh` ada di `eskalasi.glob` padahal path itu
     tidak eksis, sementara skrip rilis aslinya `tools/build_rilis.sh` nol ada di glob mana pun.
     """
-    _lanes_tambah_glob(tmp, "scripts/tidak-ada.sh")
-    p = tulis_paths(tmp, ["src/PMS.Core/PayrollEngine.cs"])
-    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll", "--paths", p])
+    _lanes_tambah_glob(tmp, "packaging/tidak-ada.conf")
+    p = tulis_paths(tmp, ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt"])
+    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android", "--paths", p])
 
 def paths_glob_wildcard_tanpa_match_lolos(tmp):
     """Kontrol negatif balik: entri BER-wildcard yang belum match tetap lolos.
@@ -234,8 +234,8 @@ def paths_glob_wildcard_tanpa_match_lolos(tmp):
     `lanes.json` memang menunggu berkasnya dibuat (keputusan u-HQ-a6a807 opsi 2).
     """
     _lanes_tambah_glob(tmp, "src/**/*BelumAda*")
-    p = tulis_paths(tmp, ["src/PMS.Core/PayrollEngine.cs"])
-    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll", "--paths", p])
+    p = tulis_paths(tmp, ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt"])
+    return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android", "--paths", p])
 
 # Base yang sudah maju: main bergerak setelah branch dibuat, dan kerja lane lain masuk ke main.
 # `git diff base head` dua-pohon menghitung kerja lane lain itu sebagai kerja branch ini (nyata:
@@ -251,15 +251,15 @@ def repo_base_maju(tmp):
     _git(tmp, "init", "-q", "-b", "main")
     _git(tmp, "config", "user.email", "uji@contoh.id")
     _git(tmp, "config", "user.name", "Uji")
-    tulis(os.path.join(tmp, "src/PMS.Core/PayrollEngine.cs"), "// awal\n")
+    tulis(os.path.join(tmp, "apps/geolibre-desktop/src-tauri/android/uji/Inti.kt"), "// awal\n")
     _git(tmp, "add", "-A")
     _git(tmp, "commit", "-q", "-m", "awal")
     _git(tmp, "checkout", "-q", "-b", "kerja")
-    tulis(os.path.join(tmp, "tests/PMS.Tests/PayrollTests.cs"), "// uji payroll\n")
+    tulis(os.path.join(tmp, "apps/geolibre-desktop/src-tauri/android/uji/IntiUji.kt"), "// uji payroll\n")
     _git(tmp, "add", "-A")
     _git(tmp, "commit", "-q", "-m", "uji payroll")
     _git(tmp, "checkout", "-q", "main")
-    tulis(os.path.join(tmp, "src/PMS.Sync/SyncConfig.cs"), "// kerja lane lain\n")
+    tulis(os.path.join(tmp, "apps/geolibre-desktop/src/components/layout/HomeScreen.tsx"), "// kerja lane lain\n")
     _git(tmp, "add", "-A")
     _git(tmp, "commit", "-q", "-m", "sync lane lain")
     _git(tmp, "checkout", "-q", "kerja")
@@ -269,19 +269,19 @@ def paths_base_maju_ok(tmp):
     repo_base_maju(tmp)
     return jln(
         [
-            "tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll",
+            "tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android",
             "--base", "main", "--head", "HEAD",
         ]
     )
 
 def paths_base_maju_tetap_menolak(tmp):
     repo_base_maju(tmp)
-    tulis(os.path.join(tmp, "src/PMS.Core/UtangPiutang.cs"), "// di luar cakupan payroll\n")
+    tulis(os.path.join(tmp, "packages/plugins/src/plugins/geopdf/berkas-lain.ts"), "// di luar cakupan payroll\n")
     _git(tmp, "add", "-A")
     _git(tmp, "commit", "-q", "-m", "luar cakupan")
     return jln(
         [
-            "tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "payroll",
+            "tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "android",
             "--base", "main", "--head", "HEAD",
         ]
     )
@@ -429,13 +429,13 @@ def pr_pesan_backtick_menjelaskan(tmp):
 def bukti_dasar():
     return {
         "issue": 42,
-        "lane": "payroll",
+        "lane": "android",
         "branch": "perbaikan/slip-pajak",
-        "worktree": "~/pms-tsj-payroll",
+        "worktree": "~/GeoApps-android",
         "commit": SHA,
         "status_short": [],
-        "kriteria": [{"perintah": "python3 tools/cek_versi.py", "exit": 0}],
-        "checker": [{"perintah": "python3 tools/audit_consistency.py", "exit": 0, "keluaran": "BERSIH"}],
+        "kriteria": [{"perintah": "python3 tools/factory/sync_law.py --check", "exit": 0}],
+        "checker": [{"perintah": "python3 tools/factory/gate_law_fresh.py", "exit": 0, "keluaran": "LULUS"}],
         "komentar_issue": "https://github.com/contoh/repo/issues/42#issuecomment-123456",
     }
 
@@ -460,7 +460,7 @@ def bukti_checker_gagal(tmp):
 
 def bukti_worktree_kotor(tmp):
     def ubah(b):
-        b["status_short"] = ["src/PMS.Core/PayrollEngine.cs"]
+        b["status_short"] = ["apps/geolibre-desktop/src-tauri/android/uji/Inti.kt"]
     return bukti_jalan(tmp, ubah)
 
 
@@ -490,7 +490,7 @@ def bukti_lane_ngarang(tmp):
 
 # ---------- gate_ledger ----------
 
-def entri(ts, penulis="HQ", lane="payroll", issue=42, event="dispatch", **sisa):
+def entri(ts, penulis="HQ", lane="android", issue=42, event="dispatch", **sisa):
     e = {"ts": ts, "penulis": penulis, "lane": lane, "issue": issue, "event": event,
          "catatan": "catatan uji"}
     e.update(sisa)
@@ -508,13 +508,13 @@ def ledger_ok(tmp):
         tmp,
         [
             json.dumps(entri("2026-10-09T19:00:00+07:00", event="buka", commit=SHA)),
-            json.dumps(entri("2026-10-09T19:05:00+07:00", lane="gudang", event="dispatch")),
+            json.dumps(entri("2026-10-09T19:05:00+07:00", lane="geo-pdf", event="dispatch")),
         ],
     )
 
 
 def ledger_dua_penulis(tmp):
-    return ledger_jalan(tmp, [json.dumps(entri("2026-10-09T19:00:00+07:00", penulis="payroll"))])
+    return ledger_jalan(tmp, [json.dumps(entri("2026-10-09T19:00:00+07:00", penulis="geo-pdf"))])
 
 
 def ledger_ts_mundur(tmp):
@@ -709,6 +709,10 @@ def kanal_wajib_db_tanpa_db(tmp):
 
 # ---------- gate_pemicu_ci ----------
 
+# Gate ini memeriksa SATU berkas, `.github/workflows/factory-gate.yml`. Versi sebelumnya juga
+# memeriksa `uji-windows.yml` (workflow produk yang tidak ada di pohon ini) beserta mesin pencocok
+# path-nya; bagian itu dibuang. Yang diuji di sini: penyaring path ditolak, `labeled` wajib ada di
+# `types:`, job tidak boleh menyaring `github.event.action`, dan grup concurrency memuat action.
 _IF_GATE = (
     "    if: github.event_name != 'pull_request' || "
     "github.event.pull_request.head.repo.full_name == github.repository\n"
@@ -716,16 +720,17 @@ _IF_GATE = (
 _TYPES_GATE = "    types: [opened, synchronize, reopened, labeled]\n"
 _GRUP_GATE = "concurrency:\n  group: factory-gate-${{ github.ref }}-${{ github.event.action }}\n"
 
-def _tulis_gate_wf(tmp, types_baris=_TYPES_GATE, daftar_if=None, grup=_GRUP_GATE):
+def _tulis_gate_wf(tmp, types_baris=_TYPES_GATE, daftar_if=None, grup=_GRUP_GATE,
+                   penyaring_baris=""):
     # Bentuk minimum factory-gate.yml yang SEHAT: `labeled` ada di types:, tiap job TIDAK menyaring
     # `github.event.action` (gate membaca dua label, `lane:` dan `eskalasi`, jadi filter satu label
     # melewati yang lain), dan grup concurrency memuat action supaya event tidak saling membatalkan.
-    # Gate membaca dua berkas, jadi fixture path pun harus menulis berkas ini.
     if daftar_if is None:
         daftar_if = [_IF_GATE, _IF_GATE]
     isi = (
         "name: factory-gate\non:\n  pull_request:\n    branches: [main]\n"
         + types_baris
+        + penyaring_baris
         + "  push:\n    branches: [main]\n"
         + grup
         + "jobs:\n"
@@ -735,52 +740,29 @@ def _tulis_gate_wf(tmp, types_baris=_TYPES_GATE, daftar_if=None, grup=_GRUP_GATE
     tulis(os.path.join(tmp, ".github", "workflows", "factory-gate.yml"), isi)
     return tmp
 
-def _tulis_wf_pemicu(tmp, isi_pull_request):
-    # Bentuk minimum yang cukup buat parser gate: blok `on:` dengan `pull_request:` di dalamnya,
-    # lalu blok `jobs:` supaya berkasnya menyerupai workflow sungguhan.
-    isi = (
-        "name: Uji Windows\non:\n  workflow_dispatch:\n  pull_request:\n"
-        + isi_pull_request
-        + "  push:\n    branches: [main]\njobs:\n  a:\n    runs-on: ubuntu-latest\n"
-    )
-    tulis(os.path.join(tmp, ".github", "workflows", "uji-windows.yml"), isi)
-    _tulis_gate_wf(tmp)
-    return tmp
-
 def pemicu_ok(tmp):
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n      - '!factory/**'\n")
+    _tulis_gate_wf(tmp)
     return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
 
-def pemicu_pohon_luar_izin(tmp):
-    # `!src/**` mematikan seluruh uji dotnet, dan itu justru kelas kesalahan yang gate ini jaga.
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n      - '!src/**'\n")
+def pemicu_penyaring_path(tmp):
+    # `paths:` membuat PR yang tidak menyentuh path itu melewati SELURUH gate. Itu justru kelas
+    # kesalahan yang gate ini jaga: gate cakupan lane harus memeriksa tiap PR.
+    _tulis_gate_wf(tmp, penyaring_baris="    paths:\n      - 'factory/**'\n")
     return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
 
-def pemicu_docs_tanpa_reinclude(tmp):
-    # tools/cek_desain.py membaca docs/DESIGN.md: menutup docs/** tanpa memasukkan berkas itu
-    # kembali mematikan pemeriksa bagi berkas yang justru diubah.
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n      - '!docs/**'\n")
-    return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
-
-def pemicu_tanpa_penyaring(tmp):
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n")
-    return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
-
-def pemicu_label_ok(tmp):
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n")
+def pemicu_paths_ignore(tmp):
+    _tulis_gate_wf(tmp, penyaring_baris="    paths-ignore:\n      - 'docs/**'\n")
     return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
 
 def pemicu_label_tanpa_types(tmp):
     # Tanpa `types:` GitHub cuma menjalankan opened/synchronize/reopened, jadi memasang label
     # `lane:` sesudah PR terbuka tidak memeriksa ulang cakupan (#225).
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n")
     _tulis_gate_wf(tmp, types_baris="")
     return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
 
 def pemicu_label_filter_action(tmp):
     # Kelas gagal nyata PR #227: job menyaring `github.event.action` ke SATU label, sehingga run
     # untuk label lain (di sini `eskalasi`) lahir lalu di-SKIP, dan gate yang memeriksa tidak jalan.
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n")
     _tulis_gate_wf(tmp, daftar_if=[
         _IF_GATE,
         "    if: >-\n"
@@ -791,9 +773,9 @@ def pemicu_label_filter_action(tmp):
 
 def pemicu_label_grup_tanpa_action(tmp):
     # Tanpa action di grup, event `opened` dan `labeled` untuk PR yang sama saling membatalkan.
-    _tulis_wf_pemicu(tmp, "    branches: [main]\n    paths:\n      - '**'\n")
     _tulis_gate_wf(tmp, grup="concurrency:\n  group: factory-gate-${{ github.ref }}\n")
     return jln(["tools/factory/gate_pemicu_ci.py", "--akar", tmp])
+
 def paths_agen_dengan_izin(tmp):
     salin_lanes(tmp)
     p = tulis_paths(tmp, [".github/workflows/factory-gate.yml"])
@@ -824,7 +806,7 @@ def paths_agen_tanpa_izin(tmp):
 
 def paths_owner_pesan(tmp):
     salin_lanes(tmp)
-    p = tulis_paths(tmp, ["installer.iss"])
+    p = tulis_paths(tmp, ["packaging/paket.conf"])
     kode, teks = jln_teks(
         ["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "HQ", "--paths", p]
     )
@@ -902,11 +884,9 @@ KASUS = [
     ("gate_kanal", "negatif: kanal sesi terarsip", False, kanal_sesi_arsip),
     ("gate_kanal", "positif: tanpa db, lewat dan jumlahnya disebut", True, kanal_tanpa_db),
     ("gate_kanal", "negatif: --wajib-db tanpa db", False, kanal_wajib_db_tanpa_db),
-    ("gate_pemicu_ci", "positif: penyaring sehat", True, pemicu_ok),
-    ("gate_pemicu_ci", "negatif: pohon di luar daftar izin", False, pemicu_pohon_luar_izin),
-    ("gate_pemicu_ci", "negatif: docs/** tanpa docs/DESIGN.md", False, pemicu_docs_tanpa_reinclude),
-    ("gate_pemicu_ci", "negatif: penyaring path hilang", False, pemicu_tanpa_penyaring),
-    ("gate_pemicu_ci", "positif: trigger labeled disaring ke lane:", True, pemicu_label_ok),
+    ("gate_pemicu_ci", "positif: pemicu gate sehat", True, pemicu_ok),
+    ("gate_pemicu_ci", "negatif: penyaring `paths:` memasang filter", False, pemicu_penyaring_path),
+    ("gate_pemicu_ci", "negatif: penyaring `paths-ignore:`", False, pemicu_paths_ignore),
     ("gate_pemicu_ci", "negatif: `labeled` tidak ada di types:", False, pemicu_label_tanpa_types),
     ("gate_pemicu_ci", "negatif: job menyaring action ke satu label", False, pemicu_label_filter_action),
     ("gate_pemicu_ci", "negatif: grup concurrency tanpa action", False, pemicu_label_grup_tanpa_action),
