@@ -1,0 +1,120 @@
+name: factory-gate
+
+# Gate hukum proses factory (lihat factory/LAW.md bagian 8).
+# Dua pekerjaan, dan pembagiannya disengaja:
+#   gate-diri  : membuktikan tiap gate BISA MENOLAK. Gate yang belum pernah menolak apa pun belum
+#                membuktikan apa pun, jadi setiap gate dijalankan dengan fixture negatif.
+#   gate-hidup : menjalankan gate yang memang bisa diperiksa di runner CI. Yang tidak bisa
+#                (sinkronisasi SKILL.md, berkasnya hidup di luar repo) disebutkan terus terang,
+#                bukan dilewati diam-diam.
+
+on:
+  pull_request:
+    branches: [main]
+    # `labeled` dipasang supaya memasang label `lane:<id>` SETELAH PR terbuka menjalankan ulang
+    # pemeriksa cakupan. Label-nya dibaca LIVE dari PR di dalam run (`gh pr view --json labels`),
+    # bukan dari payload event.
+    types: [opened, synchronize, reopened, labeled]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+# Tanpa blok ini setiap `git push` ke satu PR melahirkan run baru dan tidak ada yang membatalkan
+# yang lama. `github.event.action` ikut masuk grup supaya event `opened` dan `labeled` untuk PR
+# yang sama tidak saling membatalkan.
+concurrency:
+  group: factory-gate-${{ github.ref }}-${{ github.event.action }}
+  cancel-in-progress: true
+
+jobs:
+  gate-diri:
+    name: Gate bisa menolak (uji mandiri)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versi Python
+        run: python3 --version
+      - name: Uji mandiri gate factory
+        run: python3 tools/factory/uji_gate_mandiri.py
+
+  gate-hidup:
+    name: Gate pada pohon ini
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Hukum proses tidak basi
+        run: python3 tools/factory/gate_law_fresh.py --sync-mode lewati
+
+      # Blok hasil generate di LAW.md harus sama dengan lanes.json.
+      - name: Tabel lane LAW.md sinkron dengan lanes.json
+        run: python3 tools/factory/sync_law.py --check
+
+      - name: Lint skill plugin upstream
+        run: python3 tools/factory/gate_plugin_lint.py
+
+      - name: Kosakata terkendali
+        run: |
+          python3 tools/factory/gate_ontology.py
+          python3 tools/factory/gate_ontology.py --uji-mandiri
+
+      - name: Baca label PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr view "$PR" --json labels --jq '.labels[].name' > /tmp/labels.txt
+          echo "label: $(tr '\n' ' ' < /tmp/labels.txt)"
+
+      - name: PR tertaut ke issue
+        if: github.event_name == 'pull_request'
+        env:
+          JUDUL: ${{ github.event.pull_request.title }}
+          BADAN: ${{ github.event.pull_request.body }}
+        run: |
+          printf '%s\n' "$JUDUL" > /tmp/judul.txt
+          printf '%s\n' "$BADAN" > /tmp/badan.md
+          git log --format=%s --no-merges "origin/${{ github.base_ref }}..HEAD" > /tmp/commits.txt
+          python3 tools/factory/gate_pr_link.py \
+            --judul /tmp/judul.txt --body /tmp/badan.md --commits /tmp/commits.txt
+
+      - name: Cakupan lane dan eskalasi
+        if: github.event_name == 'pull_request'
+        run: |
+          BASE="origin/${{ github.base_ref }}"
+          LANE=$(sed -n 's/^lane://p' /tmp/labels.txt | head -1)
+          ESK=""
+          grep -qx 'eskalasi' /tmp/labels.txt && ESK="--izin-eskalasi"
+          if [ -n "$LANE" ]; then
+            python3 tools/factory/gate_commit_paths.py --lane "$LANE" --base "$BASE" --head HEAD $ESK
+          else
+            python3 tools/factory/gate_commit_paths.py --tanpa-label --base "$BASE" --head HEAD $ESK
+          fi
+
+      - name: Ledger satu penulis
+        run: python3 tools/factory/gate_ledger.py
+
+      - name: Alamat laporan agent
+        run: python3 tools/factory/gate_kanal.py
+
+      - name: Uji mandiri lane, pacemaker, skor, usulan, sinkron, kanal, dan lapor
+        run: |
+          python3 tools/factory/cek_lane.py --uji-mandiri
+          python3 tools/factory/pacemaker.py --uji-mandiri
+          python3 tools/factory/skor.py --uji-mandiri
+          python3 tools/factory/usulan.py --uji-mandiri
+          python3 tools/factory/lapor.py --uji-mandiri
+          python3 tools/factory/pintu.py --uji-mandiri
+          python3 tools/factory/sinkron_pohon.py --uji-mandiri
+          python3 tools/factory/gate_kanal.py --uji-mandiri
+          python3 tools/factory/gate_pemicu_ci.py --uji-mandiri
+          python3 tools/factory/sync_skill.py --uji-mandiri
+          python3 tools/factory/sync_plugins.py --uji-mandiri
+          python3 tools/factory/sync_law.py --uji-mandiri
