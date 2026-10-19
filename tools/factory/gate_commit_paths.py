@@ -3,11 +3,11 @@
 
 Kenapa ada: di factory ini beberapa lane bekerja di pohon yang sama-sama hidup, dan cakupan lane
 sebelumnya cuma kesepakatan lisan. Akibatnya dua lane bisa menyentuh berkas yang sama, atau lane
-modul menyentuh `installer.iss` dan mengubah rilis tanpa ada yang memutuskan. Gate ini membaca
-`factory/lanes.json` dan menolak:
+modul menyentuh berkas konfigurasi rilis dan mengubahnya tanpa ada yang memutuskan. Gate ini
+membaca `factory/lanes.json` dan menolak:
 
-  1. path yang tidak cocok dengan glob lane-nya (termasuk lane `vps-verify` dan `gh-ops`, yang
-     daftar glob-nya kosong karena kerja mereka tidak menulis berkas di repo),
+  1. path yang tidak cocok dengan glob lane-nya (termasuk lane yang daftar glob-nya kosong karena
+     kerja mereka tidak menulis berkas di repo),
   2. path yang masuk daftar eskalasi, kecuali `--izin-eskalasi` diberikan. Daftar itu dua tingkat:
      `eskalasi.glob` milik owner (rilis dan produksi), `eskalasi.glob_agen` keputusan agent (CI),
      dan pesan penolakannya menyebut tingkatnya. Di CI izin itu datang dari label PR `eskalasi`,

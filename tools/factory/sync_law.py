@@ -119,7 +119,7 @@ def uji_mandiri():
         d = lanes if lanes is not None else {
             "versi": 1,
             "lane": [{"id": "HQ", "topic": 23, "cakupan": "hukum"}],
-            "eskalasi": {"glob": ["installer.iss"], "glob_agen": [".github/workflows/**"],
+            "eskalasi": {"glob": ["packaging/**"], "glob_agen": [".github/workflows/**"],
                          "alasan": "naik ke owner", "alasan_agen": "keputusan agent"},
         }
         with open(os.path.join(tmp, BERKAS_LANES), "w", encoding="utf-8") as f:

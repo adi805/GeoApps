@@ -3,7 +3,7 @@
 
 Kenapa ada: `ONTOLOGY.md` menyebut, untuk tiap konsep, satu istilah baku dan nama-nama lain yang
 ditolak. Daftar itu tidak berarti apa-apa sampai ada yang menolak pemakaiannya, dan tidak ada
-compiler, linter, atau `dotnet test` yang peduli soal pilihan kata. Gate ini yang peduli.
+compiler, linter, atau test suite yang peduli soal pilihan kata. Gate ini yang peduli.
 
 Tiga keputusan yang disengaja, dan alasannya:
 
