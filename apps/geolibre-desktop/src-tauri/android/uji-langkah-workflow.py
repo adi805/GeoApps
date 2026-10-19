@@ -17,7 +17,11 @@ Yang diperiksa:
   2. salinan berhasil saat paket sumber cocok,
   3. ditolak saat paket sumber tidak cocok, dan berkas tujuan tidak tersentuh,
   4. ditolak saat berkas hasil generate tidak ada, dengan daftar .kt yang ada,
-  5. ditolak saat `identifier` bukan nama paket yang sah.
+  5. ditolak saat `identifier` bukan nama paket yang sah,
+  6. langkah emulator memakai `script:` SATU perintah, karena action-nya
+     memecah input per baris (lihat `parse_script`),
+  7. pembungkus `jalankan-ukur.sh` meneruskan exit code pengukuran dan tetap
+     meninggalkan bukti saat pengukurannya gagal.
 
 Cara pakai:
   python3 apps/geolibre-desktop/src-tauri/android/uji-langkah-workflow.py
@@ -37,6 +41,8 @@ LANGKAH_IDENTITAS = "Read Android package identity"
 LANGKAH_MAIN = "Apply GeoLibre MainActivity"
 CONF = "apps/geolibre-desktop/src-tauri/tauri.android.conf.json"
 SUMBER = "apps/geolibre-desktop/src-tauri/android/MainActivity.kt"
+LANGKAH_UKUR = "Measure cold start on the emulator"
+PEMBUNGKUS = "apps/geolibre-desktop/src-tauri/android/jalankan-ukur.sh"
 
 
 def skrip_langkah(workflow, nama):
@@ -52,6 +58,23 @@ def skrip_langkah(workflow, nama):
         if langkah.get("name") == nama:
             return langkah["run"], langkah.get("working-directory") or "."
     raise SystemExit("langkah %r tidak ditemukan di %s" % (nama, workflow))
+
+
+def parse_script(raw):
+    """Cermin `src/script-parser.ts` dari android-emulator-runner v2.38.0.
+
+    Action itu tidak menjalankan `script:` sebagai satu blok: input di-trim,
+    dipecah per baris, baris kosong dan baris berawalan `#` dibuang, lalu tiap
+    baris sisanya dieksekusi sebagai `sh -c` tersendiri. Model ini dipakai untuk
+    memastikan langkah emulator cuma menyebut SATU perintah. Run 39340791618
+    membuktikannya: continuation `\\` tidak menyambung, baris redirection jalan
+    sendirian, dan step mati dengan "Syntax error: end of file unexpected".
+    """
+    return [
+        baris.strip()
+        for baris in raw.strip().splitlines()
+        if baris.strip() and not baris.strip().startswith("#")
+    ]
 
 
 def tulis(path, isi):
@@ -110,6 +133,60 @@ def siapkan_pohon(akar, identifier, paket_sumber, ada_berkas_generate=True):
     os.makedirs(
         os.path.join(akar, "apps/geolibre-desktop/src-tauri/gen/android/app/src/main/java"),
         exist_ok=True,
+    )
+
+
+STUB_ADB = r"""#!/usr/bin/env bash
+# adb tiruan: cukup untuk ukur-waktu-mulai.sh, tidak menyentuh perangkat.
+case "$*" in
+  *getprop\ ro.product.model*) echo sdk_gphone64_x86_64 ;;
+  *getprop\ ro.build.version.release*) echo 16 ;;
+  *getprop\ ro.build.version.sdk*) echo 36 ;;
+  *getprop\ ro.product.cpu.abi*) echo x86_64 ;;
+  *install*) echo Success ;;
+  *am\ start*)
+    printf 'Status: ok\nActivity: com.geokebun.app/.MainActivity\n'
+    if [ "${ADB_TANPA_TOTALTIME:-0}" != "1" ]; then
+      printf 'TotalTime: 2416\n'
+    fi
+    ;;
+  *logcat\ -d*)
+    echo 'I/ActivityTaskManager(  622): Displayed com.geokebun.app/.MainActivity: +2s416ms'
+    ;;
+  *) exit 0 ;;
+esac
+"""
+
+STUB_AAPT2 = r"""#!/usr/bin/env bash
+echo com.geokebun.app
+"""
+
+
+def siapkan_pembungkus(akar):
+    """Pohon tiruan untuk menguji jalankan-ukur.sh tanpa emulator.
+
+    `adb` dan `aapt2` diganti stub: yang diuji di sini kontrak pembungkusnya
+    (exit code diteruskan, bukti tetap ditulis), bukan perilaku emulator.
+    """
+    bin = os.path.join(akar, "bin")
+    for nama, isi in (("adb", STUB_ADB), ("aapt2", STUB_AAPT2)):
+        tulis(os.path.join(bin, nama), isi)
+        os.chmod(os.path.join(bin, nama), 0o755)
+    tulis(os.path.join(akar, "apks", "geolibre-android-x86_64.apk"), "bukan apk asli\n")
+    return bin
+
+
+def jalankan_pembungkus(akar, bin, ringkasan, ulangan, env_tambahan=None):
+    env = dict(os.environ)
+    env["PATH"] = bin + os.pathsep + env["PATH"]
+    env["GITHUB_STEP_SUMMARY"] = ringkasan
+    env.update(env_tambahan or {})
+    return subprocess.run(
+        ["bash", os.path.abspath(PEMBUNGKUS), "apks", ulangan],
+        cwd=akar,
+        env=env,
+        capture_output=True,
+        text=True,
     )
 
 
@@ -202,17 +279,64 @@ def main():
         assert r.returncode != 0, "identifier cacat diterima"
         assert "not a valid Android package id" in (r.stdout + r.stderr), r.stdout + r.stderr
 
-    for nama, fn in [
+    def skrip_emulator_satu_perintah(akar):
+        # Action memecah `script:` per baris, jadi multi-baris berarti beberapa
+        # perintah terpisah. Run 39340791618 mengukur dengan benar lalu mati di
+        # baris redirection: continuation `\` tidak menyambung apa pun.
+        with open(args.workflow, encoding="utf-8") as fh:
+            dok = yaml.safe_load(fh)
+        langkah = [
+            s for s in dok["jobs"]["ukur-waktu-mulai"]["steps"] if s.get("name") == LANGKAH_UKUR
+        ]
+        assert langkah, "langkah %r tidak ada di %s" % (LANGKAH_UKUR, args.workflow)
+        perintah = parse_script(langkah[0]["with"]["script"])
+        assert len(perintah) == 1, "%d perintah akan dijalankan terpisah: %r" % (
+            len(perintah),
+            perintah,
+        )
+        assert not perintah[0].endswith("\\"), "continuation `\\` tidak didukung: %r" % perintah[0]
+
+    def pembungkus_meneruskan_hasil(akar):
+        # Pembungkus diuji dengan adb/aapt2 tiruan: yang diperiksa kontraknya
+        # (exit code, berkas bukti, ringkasan), bukan perilaku emulator.
+        bin = siapkan_pembungkus(akar)
+        ringkasan = os.path.join(akar, "ringkasan.md")
+        r = jalankan_pembungkus(akar, bin, ringkasan, "3")
+        assert r.returncode == 0, "pembungkus exit %d: %s" % (r.returncode, r.stderr)
+        with open(os.path.join(akar, "startup.txt"), encoding="utf-8") as fh:
+            isi = fh.read()
+        assert "RINGKAS: n=3" in isi, isi
+        assert "sdk_gphone64_x86_64" in isi, isi
+        with open(ringkasan, encoding="utf-8") as fh:
+            assert "Waktu mulai Android" in fh.read(), "ringkasan langkah tidak ditulis"
+
+    def pembungkus_gagal_tetap_meninggalkan_bukti(akar):
+        # Pengukuran yang gagal harus memerahkan langkah CI, tapi keluarannya
+        # tetap harus ada: tanpa itu kegagalannya tidak bisa didiagnosis.
+        bin = siapkan_pembungkus(akar)
+        ringkasan = os.path.join(akar, "ringkasan.md")
+        r = jalankan_pembungkus(akar, bin, ringkasan, "1", {"ADB_TANPA_TOTALTIME": "1"})
+        assert r.returncode != 0, "pengukuran tanpa TotalTime dianggap lulus"
+        with open(os.path.join(akar, "startup.txt"), encoding="utf-8") as fh:
+            assert "tidak melaporkan TotalTime" in fh.read(), "bukti tidak ditinggalkan"
+        with open(ringkasan, encoding="utf-8") as fh:
+            assert "Waktu mulai Android" in fh.read(), "ringkasan hilang saat gagal"
+
+    daftar = [
         ("jalur diturunkan dari identifier, salinan berhasil", positif),
         ("identifier lain -> jalur lain", jalur_ikut_identifier),
         ("paket sumber tidak cocok -> ditolak, tujuan utuh", paket_tidak_cocok),
         ("berkas generate hilang -> ditolak + daftar .kt", berkas_generate_hilang),
         ("identifier cacat -> ditolak", identifier_tidak_sah),
-    ]:
+        ("langkah emulator: `script:` satu perintah", skrip_emulator_satu_perintah),
+        ("pembungkus meneruskan hasil pengukuran", pembungkus_meneruskan_hasil),
+        ("pembungkus gagal tetap meninggalkan bukti", pembungkus_gagal_tetap_meninggalkan_bukti),
+    ]
+    for nama, fn in daftar:
         if not kasus(nama, fn):
             gagal += 1
 
-    print("\n%d lulus, %d gagal" % (5 - gagal, gagal))
+    print("\n%d lulus, %d gagal" % (len(daftar) - gagal, gagal))
     return 1 if gagal else 0
 
 

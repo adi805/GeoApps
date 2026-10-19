@@ -753,28 +753,15 @@ jobs:
           emulator-options: >-
             -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
             -no-snapshot -memory 2048
-          script: |
-            # The emulator runner executes this block with /usr/bin/sh (dash on
-            # the runner), not bash: `set -o pipefail` aborts the step with
-            # "Illegal option -o pipefail" before the measurement starts (run
-            # 39339095629 died that way). Keep this block POSIX and capture the
-            # output to a file instead of piping through tee, so a failing
-            # measurement still fails the step and still leaves its output
-            # behind for the log.
-            set -eu
-            bash apps/geolibre-desktop/src-tauri/android/ukur-waktu-mulai.sh apks 3 \
-              > startup.txt 2>&1 || {
-                cat startup.txt
-                exit 1
-              }
-            cat startup.txt
-            {
-              echo "### Waktu mulai Android"
-              echo
-              echo '```'
-              cat startup.txt
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
+          # `script:` MUST be a single line. This action does not run the input
+          # as one shell block: src/script-parser.ts splits it on newlines,
+          # drops blank and `#` lines, and executes each remaining line as its
+          # own `sh -c`. So a `\` continuation continues nothing and a
+          # `{ ... }` block cannot span lines. Run 39340791618 measured
+          # correctly (n=3, median 2416 ms) and then died on the redirect line
+          # with "Syntax error: end of file unexpected (expecting \"}\")".
+          # Everything the step needs lives in the wrapper script instead.
+          script: bash apps/geolibre-desktop/src-tauri/android/jalankan-ukur.sh apks 3
 
       - name: Upload measurement
         uses: actions/upload-artifact@v7
