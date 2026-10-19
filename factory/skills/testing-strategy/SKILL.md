@@ -21,7 +21,7 @@ Rancang strategi test yang seimbang antara cakupan, kecepatan, dan beban perawat
 
 - **Endpoint API / Worker**: unit test untuk logika bisnis, test integrasi untuk lapisan HTTP, test kontrak untuk konsumen
 - **Alur sinkron**: validasi masukan, kebenaran transformasi, test idempotensi (jalankan dua kali, hasil harus sama)
-- **Desktop (WPF)**: test komponen, test interaksi, regresi visual
+- **Desktop (Tauri + React)**: test komponen, test interaksi, regresi visual
 - **Skema D1 / migrasi**: test maju, test mundur, dan test bahwa data lama tetap terbaca
 - **Laporan dan ekspor**: test paritas angka, bukan cuma "tidak error"
 
@@ -40,10 +40,11 @@ cakupan yang ada, jangan cuma daftar yang sudah hijau.
 
 | Perintah | Untuk apa |
 |---|---|
-| `dotnet test PMS.sln -c Release` | seluruh test, jalur utama |
-| `python3 tools/verifikasi_dokumen.py` | angka di dokumen cocok dengan kode |
-| `python3 tools/audit_consistency.py` | konsistensi antar lapisan |
-| `python3 tools/cek_versi.py` | nomor versi satu tempat |
+| `npm test` | uji frontend (`tests/*.test.ts`) |
+| `npm run test:backend` | uji backend Python (`pytest`) |
+| `npm run check:rust` | `cargo check` untuk `apps/geolibre-desktop/src-tauri` |
+| `npm run typecheck` | TypeScript seluruh workspace |
+| `npm run ci` | rantai penuh: lint, build, uji frontend, backend, Rust |
 
 Satu rantai test berat per pohon, dan di joyboy selalu dibungkus `nice -n 19 ionice -c3`, lihat
 `factory/LAW.md` bagian 9. Test yang tidak membuktikan apa pun (selalu hijau apa pun inputnya) itu

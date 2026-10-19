@@ -52,7 +52,7 @@ Selalu sebutkan apa yang akan ditinjau ulang saat sistem tumbuh.
 
 ## Batasan nyata di proyek ini
 
-{{proyek}} bukan layanan yang mendengarkan port. Bentuknya aplikasi desktop (WPF, dipak jadi MSI) plus
-Worker/D1 dan dashboard. Jadi "desain sistem" di sini biasanya soal alur sinkron, skema D1, bentuk
-berkas ekspor, dan batas modul (payroll, kas-bank, gudang), bukan penempatan pod. Sebut batas itu
+{{proyek}} aplikasi desktop Tauri dan aplikasi Android, dengan backend Python dan worker
+Cloudflare/D1. Jadi "desain sistem" di sini biasanya soal alur impor GeoPDF, tile offline, skema
+D1, bentuk berkas ekspor, dan batas modul (geo-pdf, geofence, offline, ui), bukan penempatan pod. Sebut batas itu
 di dokumennya, karena desain yang mengasumsikan server sendiri akan salah di sini.

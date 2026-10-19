@@ -46,7 +46,7 @@ Fase 4: POSTMORTEM
 |---|---|---|
 | SEV1 | Worker/D1 mati atau data pelanggan tidak bisa diakses | segera, semua tangan |
 | SEV2 | Alur sinkron berhenti untuk banyak pengguna, atau dashboard mati | dalam 15 menit |
-| SEV3 | Satu modul terganggu (mis. ekspor gudang), sebagian pengguna | dalam 1 jam |
+| SEV3 | Satu modul terganggu (mis. impor GeoPDF), sebagian pengguna | dalam 1 jam |
 | SEV4 | Kosmetik atau dampak rendah | hari kerja berikutnya |
 
 ## Keluaran — pembaruan status

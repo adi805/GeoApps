@@ -69,7 +69,7 @@ Sajikan profilnya sebagai tabel ringkas, dikelompokkan menurut jenis kolom.
 ## 5. Temukan hubungan dan pola
 
 - **Kandidat kunci asing**: kolom ID yang mungkin menunjuk ke tabel lain
-- **Hierarki**: kolom yang membentuk jalur drill-down (mis. perusahaan > gudang > barang)
+- **Hierarki**: kolom yang membentuk jalur drill-down (mis. provinsi > kabupaten > desa)
 - **Korelasi**: kolom numerik yang bergerak bersama
 - **Kolom turunan**: kolom yang tampak dihitung dari kolom lain
 

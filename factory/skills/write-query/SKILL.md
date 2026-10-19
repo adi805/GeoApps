@@ -45,7 +45,7 @@ grep -rn "CREATE TABLE" src/ --include=*.sql
 
 **Struktur**
 - Pakai CTE (`WITH`) kalau ada beberapa langkah logis, satu CTE per transformasi
-- Beri nama CTE yang menjelaskan isinya (`slip_periode`, `stok_per_gudang`)
+- Beri nama CTE yang menjelaskan isinya (`titik_per_kecamatan`, `tile_per_zoom`)
 
 **Performa**
 - Jangan pakai `SELECT *` di kueri produksi, sebut kolom yang dibutuhkan saja

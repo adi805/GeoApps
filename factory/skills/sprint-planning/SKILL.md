@@ -23,7 +23,7 @@ Kapasitas di sini bukan hari-orang, tapi **rantai kerja per pohon**. Batasnya ke
 
 | Batas | Alasan |
 |---|---|
-| Satu rantai `dotnet test`/build per pohon | dua rantai di satu pohon saling menghapus artefak, hasilnya merah palsu |
+| Satu rantai `npm run ci`/build per pohon | dua rantai di satu pohon saling menghapus artefak, hasilnya merah palsu |
 | joyboy: satu rantai berat, dibungkus `nice -n 19 ionice -c3` | RAM 4 GB, host menjalankan produksi |
 | tencent: runner CI jalur utama untuk uji Windows dan uji berat | joyboy jalur cadangan |
 

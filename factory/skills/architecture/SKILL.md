@@ -75,6 +75,7 @@ benang obrolan. ADR dari skill ini mengalir ke sana sesudah disetujui.
    alternatifnya eksplisit.
 3. **Sertakan kebutuhan non-fungsional** — latensi, biaya, keahlian tim, dan beban perawatan sama
    pentingnya dengan fitur.
-4. **Periksa tingkatnya sebelum mengerjakan** — perubahan yang menyentuh `installer.iss`,
-   `build_msi.py`, `scripts/build_rilis.sh`, `cloudflare/`, atau `certs/` naik ke owner, sedangkan
-   `.github/workflows/` dan `.gitlab-ci.yml` diputuskan agent. Lihat `factory/LAW.md` bagian 7.
+4. **Periksa tingkatnya sebelum mengerjakan** — perubahan yang menyentuh
+   `apps/geolibre-desktop/src-tauri/tauri.*.conf.json` atau `packaging/**` naik ke owner,
+   sedangkan `.github/workflows/**` diputuskan agent dengan label `eskalasi`.
+   Lihat `factory/LAW.md` bagian 7.

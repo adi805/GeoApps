@@ -22,9 +22,9 @@ Susun daftar periksa sebelum sebuah rilis {{proyek}} dipublikasikan.
 - [ ] Migrasi basis data diuji (kalau ada)
 - [ ] Perubahan skema D1 punya jalur mundur
 - [ ] Rencana rollback tercatat
-- [ ] Perubahan yang menyentuh `installer.iss`, `build_msi.py`, `scripts/build_rilis.sh`,
-      `cloudflare/`, atau `certs/` sudah naik ke owner
-- [ ] Perubahan yang menyentuh `.github/workflows/` atau `.gitlab-ci.yml` sudah dilabeli
+- [ ] Perubahan yang menyentuh `apps/geolibre-desktop/src-tauri/tauri.*.conf.json` atau
+      `packaging/**` sudah naik ke owner
+- [ ] Perubahan yang menyentuh `.github/workflows/**` sudah dilabeli
       `eskalasi` di PR dan dicatat sebagai entri ledger `ruling` oleh agent
 
 ### Saat rilis

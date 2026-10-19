@@ -72,8 +72,7 @@ dulu), dan berurutan (A harus jalan sebelum B). Tiap ketergantungan: sebut pemil
 
 ## Kapasitas
 
-Kapasitas di sini dibatasi **rantai kerja per pohon**, bukan jumlah orang. Satu rantai `dotnet
-test`/build per pohon; joyboy cuma satu rantai berat pada satu waktu (lihat `factory/LAW.md` bagian
+Kapasitas di sini dibatasi **rantai kerja per pohon**, bukan jumlah orang. Satu rantai `npm run ci`/build per pohon; joyboy cuma satu rantai berat pada satu waktu (lihat `factory/LAW.md` bagian
 9). Kalau peta jalan lebih banyak daripada kapasitas, yang dikurangi adalah lingkupnya, bukan
 asumsinya bahwa mesinnya bisa lebih cepat.
 

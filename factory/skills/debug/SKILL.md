@@ -72,8 +72,8 @@ Langkah 4: PERBAIKAN
    diketahui: satu positif, satu negatif, satu nyaris.
 3. **Berkas yang terlihat rusak.** Jangan simpulkan berkas korup cuma dari keluaran alat baca yang
    berformat. Konfirmasi dengan `od -c`, `cmp`, atau `grep -c` dulu.
-4. **Dua rantai di satu pohon.** `dotnet test` atau build yang jalan bersamaan saling menghapus
-   artefak dan menghasilkan merah palsu. Cek dulu: `pgrep -f "[d]otnet test"`.
+4. **Dua rantai di satu pohon.** `npm test`/`cargo test` atau build yang jalan bersamaan saling
+   menghapus artefak dan menghasilkan merah palsu. Cek dulu: `pgrep -f "[c]argo test"`.
 
 ## Tips
 

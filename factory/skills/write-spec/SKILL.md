@@ -16,7 +16,7 @@ Terima salah satu: nama fitur, rumusan masalah, permintaan pengguna, atau ide ka
 ### 2. Kumpulkan konteks
 
 - **Masalah pengguna**: masalah apa ini, siapa yang mengalaminya
-- **Pengguna sasaran**: segmen mana (admin perusahaan, staf payroll, operator gudang, kasir)
+- **Pengguna sasaran**: segmen mana (surveyor lapangan, operator GIS, admin proyek, pengguna Android)
 - **Metrik keberhasilan**: bagaimana kita tahu ini berhasil
 - **Batasan**: teknis, tenggat, aturan (mis. aturan pajak dan ketenagakerjaan), ketergantungan
 - **Preseden**: pernah dicoba sebelumnya, ada solusi lain?
@@ -30,7 +30,7 @@ Tanya yang paling penting dulu, jangan melontarkan semua pertanyaan sekaligus.
 | Papan tugas | `gh issue list --repo {{repo}}` |
 | Keputusan yang sudah disetujui | `docs/prd/DECISIONS.md (dokumen produk)` |
 | Arsitektur dan peta kode | `docs/ARCHITECTURE.md (dokumen produk)`, `docs/CODE-MAP.md (dokumen produk)` |
-| Modul yang terdampak | `src/` (payroll, kas-bank, gudang) |
+| Modul yang terdampak | `packages/plugins/src/plugins/` (geo-pdf, geofence, offline) |
 
 ### 4. Susun PRD
 
@@ -77,7 +77,7 @@ kabur seperti "cepat", "mudah", "intuitif" tanpa angka.
 ## Aturan alur di proyek ini
 
 1. PRD yang disetujui mengalir ke `docs/prd/DECISIONS.md (dokumen produk)`.
-2. Fitur yang menyentuh `installer.iss`, `build_msi.py`, `scripts/build_rilis.sh`, `cloudflare/`,
-   atau `certs/` wajib naik ke owner dulu, lihat `factory/LAW.md` bagian 7. `.github/workflows/`
-   dan `.gitlab-ci.yml` diputuskan agent.
+2. Fitur yang menyentuh `apps/geolibre-desktop/src-tauri/tauri.*.conf.json` atau `packaging/**`
+   wajib naik ke owner dulu, lihat `factory/LAW.md` bagian 7. `.github/workflows/**` diputuskan
+   agent.
 3. Unit kerja hasil pemecahan PRD naik dulu ke papan tugas (issue), baru jadi kerjaan.

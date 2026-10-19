@@ -60,7 +60,7 @@ awal yang mendahului metrik akhir? Apakah agregatnya digerakkan oleh satu segmen
 | Kelompok | Metrik |
 |---|---|
 | Adopsi | jumlah perusahaan aktif, jumlah pengguna aktif per modul |
-| Aktivasi | perusahaan yang menyelesaikan satu siklus penuh (mis. satu periode payroll atau satu tutup buku) |
+| Aktivasi | pengguna yang menyelesaikan satu siklus penuh (mis. satu impor GeoPDF atau satu survei lapangan) |
 | Keterlibatan | transaksi per perusahaan per periode, jumlah modul yang dipakai bersamaan |
 | Retensi | perusahaan yang masih aktif setelah 3, 6, 12 bulan; churn per periode |
 | Kepuasan | jumlah keluhan, waktu penyelesaian keluhan, hasil wawancara pengguna |

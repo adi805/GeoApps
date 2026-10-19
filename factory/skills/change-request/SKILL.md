@@ -81,11 +81,11 @@ Susun permintaan perubahan yang terstruktur: analisis dampak, penilaian risiko, 
 
 ## Aturan di proyek ini
 
-1. **Perubahan yang menyentuh `installer.iss`, `build_msi.py`, `scripts/build_rilis.sh`,
-   `cloudflare/`, atau `certs/` selalu naik ke owner** sebelum dikerjakan. `.github/workflows/` dan
-   `.gitlab-ci.yml` diputuskan agent, dengan label `eskalasi` di PR plus entri ledger `ruling`
-   `oleh=agent`. Lihat `factory/LAW.md` bagian 7.
+1. **Perubahan yang menyentuh `apps/geolibre-desktop/src-tauri/tauri.*.conf.json` atau
+   `packaging/**` selalu naik ke owner** sebelum dikerjakan. `.github/workflows/**` diputuskan
+   agent, dengan label `eskalasi` di PR plus entri ledger `ruling` `oleh=agent`.
+   Lihat `factory/LAW.md` bagian 7.
 2. **Selalu punya rencana rollback** — walau yakin. Perubahan yang tidak bisa dibalik diperlakukan
    sebagai blast radius besar, bukan sebagai perubahan biasa.
-3. **Spesifik soal dampak** — "semua orang" bukan analisis dampak. "12 pengguna modul payroll di
-   dua perusahaan" itu analisis dampak.
+3. **Spesifik soal dampak** — "semua orang" bukan analisis dampak. "12 pengguna Android di
+   dua perangkat lapangan" itu analisis dampak.
