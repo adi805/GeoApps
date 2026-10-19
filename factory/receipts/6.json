@@ -1,0 +1,38 @@
+{
+  "issue": 6,
+  "lane": "uji",
+  "branch": "uji/fixture-geopdf",
+  "worktree": "~/GeoApps-uji-fixture-geopdf",
+  "commit": "c549c805",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "node --import tsx --test tests/geopdf-fixtures.test.ts",
+      "exit": 0,
+      "keluaran": "tests 14, pass 14, fail 0"
+    },
+    {
+      "perintah": "cd tests/fixtures/geopdf && sha256sum -c SHA256SUMS",
+      "exit": 0,
+      "keluaran": "4 berkas OK"
+    },
+    {
+      "perintah": "ls tests/fixtures/geopdf/*.pdf | wc -l",
+      "exit": 0,
+      "keluaran": "4"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS lane uji: 8 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body <badan PR #19> --issue 6",
+      "exit": 0,
+      "keluaran": "LULUS menutup issue #6"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/6#issuecomment-6278915710"
+}
