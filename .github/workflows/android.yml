@@ -164,6 +164,23 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Uji langkah jalur paket
+        # Regression guard for the defect this workflow shipped: the MainActivity
+        # step wrote to a literal java/ path that stopped existing the moment the
+        # identifier changed, and the failure surfaced as `test -f` rather than as
+        # a package mismatch. The harness extracts the real `run:` scripts of the
+        # two package-path steps from this file and executes them against a
+        # throwaway gen/android tree, so a future edit that reintroduces a
+        # hardcoded path (or drops the package check) fails here in seconds
+        # instead of after the cross-compile.
+        #
+        # PyYAML is the only non-stdlib import; the runner image usually has it,
+        # and the fallback keeps this step working on an image that does not.
+        run: |
+          set -euo pipefail
+          python3 -c 'import yaml' 2>/dev/null || python3 -m pip install --quiet --user pyyaml
+          python3 apps/geolibre-desktop/src-tauri/android/uji-langkah-workflow.py
+
       - name: Generate Android project
         # gen/android is not committed; regenerate it on the clean runner. The
         # Tauri CLI is resolved through the geolibre-desktop workspace.
