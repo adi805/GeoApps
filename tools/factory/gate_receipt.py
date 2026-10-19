@@ -16,8 +16,8 @@ Hijau di CI bukan pengganti daftar ini, jadi gate ini tidak membaca hasil CI sam
 
 Bentuk berkas bukti:
   {
-    "issue": 42, "lane": "payroll", "branch": "perbaikan/slip-pajak",
-    "worktree": "~/pms-tsj-payroll", "commit": "abc1234", "status_short": [],
+    "issue": 42, "lane": "android", "branch": "perbaikan/izin-lokasi",
+    "worktree": "~/GeoApps-android", "commit": "abc1234", "status_short": [],
     "kriteria": [{"perintah": "...", "exit": 0}],
     "checker":  [{"perintah": "...", "exit": 0, "keluaran": "BERSIH"}],
     "komentar_issue": "https://github.com/contoh/repo/issues/42#issuecomment-1"

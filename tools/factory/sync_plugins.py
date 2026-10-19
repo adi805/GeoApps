@@ -7,13 +7,13 @@ dan salinan yang melenceng lebih berbahaya daripada tidak ada salinan: agent mem
 dan percaya itu yang berlaku. Berkas ini membuat salinan kedua bisa diperiksa mesin.
 
 Arah sinkronisasi satu arah dan tidak bisa dibalik: `factory/skills/` adalah sumbernya,
-`~/.opencrabs/skills/pms-tsj-<nama>/` adalah hasilnya. Mengedit salinannya langsung akan hilang
+`~/.opencrabs/skills/geoapps-<nama>/` adalah hasilnya. Mengedit salinannya langsung akan hilang
 pada sinkronisasi berikutnya, dan `--check` melaporkannya sebagai berbeda sebelum itu terjadi.
 
 Nama direktori tujuan = `name:` di frontmatter berkasnya, jadi keduanya tidak bisa melenceng
 tanpa ketahuan; `gate_plugin_lint.py` yang menegakkan aturan itu.
 
-Satu direktori sengaja TIDAK dikelola berkas ini: `pms-tsj-factory`. Itu hasil
+Satu direktori sengaja TIDAK dikelola berkas ini: `geoapps-factory`. Itu hasil
 `tools/factory/sync_skill.py` dari `factory/LAW.md`, dan dua penulis untuk satu direktori adalah
 cara salinan itu melenceng.
 

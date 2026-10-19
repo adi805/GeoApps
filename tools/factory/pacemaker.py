@@ -300,6 +300,15 @@ def uji_mandiri():
     kasus = []
     akar = u.akar_factory()
     grup = u.grup(akar)
+    # Lane dan topic dibaca dari lanes.json proyek ini, bukan ditulis harfiah: uji yang
+    # memakai topic proyek lain akan merah karena alasan yang salah, dan merah palsu
+    # membuat gate-nya berhenti dipercaya.
+    lanes = u.baca_json(os.path.join(akar, "factory", "lanes.json"))
+    lane_hq = next(l for l in lanes["lane"] if l["id"] == "HQ")
+    topic_hq = lane_hq["topic"]
+    lane_lain = next(l for l in lanes["lane"] if l["id"] != "HQ")
+    lane_id = lane_lain["id"]
+    topic_lane = lane_lain["topic"]
 
     def siapkan_gh(tmp, issues, prs, rusak=False):
         path = os.path.join(tmp, "gh-palsu")
@@ -326,9 +335,9 @@ def uji_mandiri():
                   "chat_id TEXT, thread_id INTEGER, updated_at INTEGER)")
         if terikat:
             sid = "33333333-3333-3333-3333-333333333333"
-            key = cek_lane.kunci_chat(grup, 23)
+            key = cek_lane.kunci_chat(grup, topic_hq)
             c.execute("INSERT INTO sessions VALUES (?,?,NULL)", (sid, key))
-            c.execute("INSERT INTO session_bindings VALUES (?,?,?,?,0)", (sid, "telegram", str(grup), 23))
+            c.execute("INSERT INTO session_bindings VALUES (?,?,?,?,0)", (sid, "telegram", str(grup), topic_hq))
         c.commit()
         c.close()
         return path
@@ -375,19 +384,19 @@ def uji_mandiri():
             return 0 if benar else 1
 
     isu_tanpa_lane = [{"number": 55, "title": "x", "labels": []}]
-    isu_berlabel = [{"number": 55, "title": "x", "labels": [{"name": "lane:payroll"}]}]
+    isu_berlabel = [{"number": 55, "title": "x", "labels": [{"name": "lane:" + lane_id}]}]
     # Issue yang menyentuh path eskalasi tidak bisa dikerjakan lane mana pun sebelum owner
     # memutuskan: menghitungnya "belum berlabel lane" membuat pacemaker membangunkan lane selamanya
     # untuk sinyal yang tidak bisa dikerjakan siapa pun (#97). Aturan yang sama berlaku di sinyal
     # keempat (#142), jadi label eskalasi diperlakukan terminal di sana juga.
     isu_eskalasi = [{"number": 63, "title": "z", "labels": [{"name": "eskalasi"}]}]
     isu_lane_eskalasi = [{"number": 63, "title": "z",
-                          "labels": [{"name": "lane:payroll"}, {"name": "eskalasi"}]}]
+                          "labels": [{"name": "lane:" + lane_id}, {"name": "eskalasi"}]}]
     # `ai-blocked` kelasnya sama (#142, keputusan agent u-HQ-8fd82e): usulannya sudah diputuskan
     # atau sudah dilaporkan, jadi tidak ada langkah lane yang bisa diambil. Dua bentuknya diuji:
     # bersama label lane (sinyal 3 harus diam) dan tanpa label lane (sinyal 2 harus diam).
     isu_lane_blocked = [{"number": 64, "title": "z",
-                         "labels": [{"name": "lane:payroll"}, {"name": "ai-blocked"}]}]
+                         "labels": [{"name": "lane:" + lane_id}, {"name": "ai-blocked"}]}]
     isu_blocked = [{"number": 64, "title": "z", "labels": [{"name": "ai-blocked"}]}]
     # Issue induk/epic (keputusan agent u-HQ-52b3f1 opsi 1): #253 memecah kerjanya ke turunan
     # #255-258, jadi ia tidak punya PR sendiri. Dua bentuknya diuji seperti ai-blocked, plus satu
@@ -470,12 +479,15 @@ def uji_mandiri():
     # sendiri, dan TIDAK oleh sinyal yang cakupannya tidak bisa dibaca dari sinyalnya (PR merah,
     # issue belum berlabel). Dua arah wajib diuji: penyaring yang cuma pernah bilang "diam" tidak
     # membuktikan ia masih bisa membangunkan lane untuk kerjaan yang memang miliknya.
-    isu_kasbank = [{"number": 173, "title": "x", "labels": [{"name": "lane:kas-bank"}]}]
+    lane_asing = next(l for l in lanes["lane"] if l["id"] not in ("HQ", lane_id))
+    isu_kasbank = [{"number": 173, "title": "x", "labels": [{"name": "lane:" + lane_id}]}]
+    isu_lane_asing = [{"number": 174, "title": "x",
+                       "labels": [{"name": "lane:" + lane_asing["id"]}]}]
     for nama, issues, prs, harap in (
-            ("lane kas-bank: issue lane lain", isu_berlabel, [], "diam"),
-            ("lane kas-bank: issue sendiri", isu_kasbank, [], "bangunkan"),
-            ("lane kas-bank: issue tanpa label lane", isu_tanpa_lane, [], "diam"),
-            ("lane kas-bank: PR merah bukan miliknya", isu_berlabel, pr_merah, "diam")):
+            ("lane lain: issue lane lain", isu_lane_asing, [], "diam"),
+            ("lane sendiri: issue sendiri", isu_kasbank, [], "bangunkan"),
+            ("lane lain: issue tanpa label lane", isu_tanpa_lane, [], "diam"),
+            ("lane lain: PR merah bukan miliknya", isu_berlabel, pr_merah, "diam")):
         with tempfile.TemporaryDirectory() as tmp:
             import sqlite3
             gh = siapkan_gh(tmp, issues, prs, False)
@@ -485,9 +497,9 @@ def uji_mandiri():
             c.execute("CREATE TABLE session_bindings (session_id TEXT PRIMARY KEY, channel TEXT, "
                       "chat_id TEXT, thread_id INTEGER, updated_at INTEGER)")
             sid = "44444444-4444-4444-4444-444444444444"
-            key = cek_lane.kunci_chat(grup, 21)
+            key = cek_lane.kunci_chat(grup, topic_lane)
             c.execute("INSERT INTO sessions VALUES (?,?,NULL)", (sid, key))
-            c.execute("INSERT INTO session_bindings VALUES (?,?,?,?,0)", (sid, "telegram", str(grup), 21))
+            c.execute("INSERT INTO session_bindings VALUES (?,?,?,?,0)", (sid, "telegram", str(grup), topic_lane))
             c.commit()
             c.close()
             log = os.path.join(tmp, "notify.log")
@@ -495,7 +507,7 @@ def uji_mandiri():
             with open(oc, "w", encoding="utf-8") as f:
                 f.write("#!/bin/sh\necho \"$@\" >> %s\n" % log)
             os.chmod(oc, 0o755)
-            aksi, pesan = putuskan(akar, gh, db, os.path.join(tmp, "state.json"), "kas-bank", False, oc,
+            aksi, pesan = putuskan(akar, gh, db, os.path.join(tmp, "state.json"), lane_id, False, oc,
                                    path_usulan=os.path.join(tmp, "usulan.jsonl"))
             dipanggil = os.path.isfile(log)
             benar = aksi == harap and dipanggil == (harap == "bangunkan")
@@ -516,8 +528,8 @@ def uji_mandiri():
         c.execute("CREATE TABLE sessions (id TEXT PRIMARY KEY, channel_chat_key TEXT, archived_at INTEGER)")
         c.execute("CREATE TABLE session_bindings (session_id TEXT PRIMARY KEY, channel TEXT, "
                   "chat_id TEXT, thread_id INTEGER, updated_at INTEGER)")
-        for sid, topic in (("55555555-5555-5555-5555-555555555555", 21),
-                           ("66666666-6666-6666-6666-666666666666", 23)):
+        for sid, topic in (("55555555-5555-5555-5555-555555555555", topic_lane),
+                           ("66666666-6666-6666-6666-666666666666", topic_hq)):
             c.execute("INSERT INTO sessions VALUES (?,?,NULL)", (sid, cek_lane.kunci_chat(grup, topic)))
             c.execute("INSERT INTO session_bindings VALUES (?,?,?,?,0)",
                       (sid, "telegram", str(grup), topic))
@@ -529,14 +541,14 @@ def uji_mandiri():
             f.write("#!/bin/sh\necho \"$@\" >> %s\n" % log)
         os.chmod(oc, 0o755)
         state = os.path.join(tmp, "state.json")
-        satu, _ = putuskan(akar, gh, db, state, "kas-bank", False, oc,
+        satu, _ = putuskan(akar, gh, db, state, lane_id, False, oc,
                            path_usulan=os.path.join(tmp, "usulan.jsonl"))
         dua, _ = putuskan(akar, gh, db, state, "HQ", False, oc,
                           path_usulan=os.path.join(tmp, "usulan.jsonl"))
-        tiga, _ = putuskan(akar, gh, db, state, "kas-bank", False, oc,
+        tiga, _ = putuskan(akar, gh, db, state, lane_id, False, oc,
                            path_usulan=os.path.join(tmp, "usulan.jsonl"))
         benar = satu == "bangunkan" and dua == "bangunkan" and tiga == "diam"
-        print("  %s %-44s kas-bank=%s HQ=%s ulang=%s" % (
+        print("  %s %-44s lane=%s HQ=%s ulang=%s" % (
             "LULUS " if benar else "GAGAL ", "state terpisah per lane", satu, dua, tiga))
         gagal += 0 if benar else 1
         kasus.append("state-per-lane")
@@ -552,7 +564,7 @@ def uji_mandiri():
         u.tulis_identitas(tmp, **ubah_identitas)
         os.makedirs(os.path.join(tmp, "factory"), exist_ok=True)
         with open(os.path.join(tmp, "factory", "lanes.json"), "w", encoding="utf-8") as f:
-            json.dump({"lane": [{"id": "HQ", "topic": 23}]}, f)
+            json.dump({"lane": [{"id": "HQ", "topic": topic_hq}]}, f)
         return tmp
 
     with tempfile.TemporaryDirectory() as tmp:

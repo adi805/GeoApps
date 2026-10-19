@@ -29,12 +29,12 @@ nomor terbesar di salinan berkas yang sedang dibuka. Itu benar untuk satu salina
 bekerja di worktree sendiri dengan salinan sendiri, jadi flock-nya tidak mengunci apa pun lintas
 lane: dua lane yang mencatat di hari yang sama sama-sama dapat `u-0021`, dan setelah branch-nya
 di-merge, status usulan yang satu menimpa yang lain tanpa error apa pun. Kejadian nyata 2026-10-10:
-`u-0002` punya tiga arti sekaligus (gh-ops, vps-verify, gudang), dan di hari yang sama `u-0021`
-dipakai gh-ops sekaligus payroll. Sekarang id dibentuk dari lane + akar acak, jadi dua salinan
+`u-0002` punya tiga arti sekaligus (android, geofence, ui), dan di hari yang sama `u-0021`
+dipakai gh-ops sekaligus android. Sekarang id dibentuk dari lane + akar acak, jadi dua salinan
 terpisah tidak bisa menghasilkan id yang sama walau keduanya mencatat di detik yang sama.
 
 **Tulis hanya ke salinan pemanggil (#121).** Akar repo diturunkan dari lokasi skrip, bukan dari
-branch pemanggil, jadi lane yang memanggil `~/pms-tsj/tools/factory/usulan.py` dari worktree-nya
+branch pemanggil, jadi lane yang memanggil `<pohon>/tools/factory/usulan.py` dari worktree-nya
 sendiri menulis ke worktree `main` yang dipakai bersama, dalam keadaan tidak ter-commit, dan
 `git checkout .` menghapusnya tanpa jejak. Sekarang penulisan DITOLAK kalau branch worktree tujuan
 bukan branch pemanggil, dengan pesan yang menyebut kedua branch-nya. `--paksa` ada untuk kasus yang

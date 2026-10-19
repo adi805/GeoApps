@@ -24,7 +24,7 @@ Pemakaian:
   python3 tools/factory/jaga_lane.py --uji-mandiri
 
 Sinyal yang sama tidak dikirim dua kali (#228): state dedup hidup di
-`~/.opencrabs/state/pms-tsj-jaga-lane.json`, sama seperti `pacemaker.py`. Tanpa itu alarm ini
+`~/.opencrabs/state/geoapps-jaga-lane.json`, sama seperti `pacemaker.py`. Tanpa itu alarm ini
 membangunkan sesi agent tiap jam selama lane masih dorman, dan kondisi dorman cuma bisa
 dibereskan owner, jadi pengulangannya murni kebisingan.
 """

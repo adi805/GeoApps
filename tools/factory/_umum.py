@@ -149,7 +149,7 @@ def penjaga_pohon(akar=None):
 
     Kenapa ada: jalur berkas di luar repo dinamespace dengan slug (`~/.opencrabs/skills/<slug>-*`,
     `~/.opencrabs/state/<slug>-*.json`, `~/.opencrabs/logs/<slug>-*.log`). Dua pohon dengan slug
-    yang sama, misalnya repo mesin dan repo produk yang sama-sama bernama `pms-tsj`, menulis ke
+    yang sama, misalnya dua salinan repo ini yang sama-sama bernama `geoapps`, menulis ke
     jalur yang SAMA. Sesi yang menjalankan alat dari pohon yang salah lalu menimpa skill hidup
     milik proyek yang benar, dan yang kelihatan cuma "skill-nya berubah sendiri".
 
@@ -302,7 +302,7 @@ def akar_factory():
 # --- Penjaga branch pohon (#160) ------------------------------------------------------------
 #
 # Skrip factory dijalankan crontab dari pohon kanonik, dan crontab tidak tahu pohon itu sedang
-# checkout apa. Terukur 2026-10-10: `~/pms-tsj` terparkir di branch kerjaan yang sudah selesai,
+# checkout apa. Terukur 2026-10-10 di proyek sebelumnya: pohon kanonik terparkir di branch kerjaan yang selesai,
 # 7 commit di BELAKANG `main`, jadi pacemaker yang bangun tiap 20 menit menjalankan kode basi dan
 # perbaikan yang baru di-merge tidak pernah dieksekusi. Nol gate menolak, karena tiap gate hanya
 # membaca pohon tempat ia dijalankan.
@@ -347,7 +347,7 @@ def ketinggalan_main(akar):
 def penjaga_branch(akar=None, paksa=None):
     """(kode, pesan): 0 boleh jalan, 1 tolak. Alasannya DIKEMBALIKAN, bukan didiamkan.
 
-    `paksa` bawaannya dibaca dari env `PMS_TSJ_PAKSA_BRANCH`, supaya uji mandiri bisa lewat tanpa
+    `paksa` bawaannya dibaca dari env `FACTORY_PAKSA_BRANCH`, supaya uji mandiri bisa lewat tanpa
     menambah flag baru: `--paksa` di skrip-skrip ini sudah berarti hal lain (abaikan state dedup),
     dan arti kedua tidak ditumpangkan ke sana.
     """
