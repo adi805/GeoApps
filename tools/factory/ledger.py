@@ -7,7 +7,7 @@ sendiri, yang tersisa adalah beberapa catatan yang saling menimpa dan tidak ada 
 bisa dipercaya. Berkas ini membuat jalur tulisnya satu:
 
   - penulisnya dikunci: `penulis` wajib sama dengan `penulis_ledger` di `factory/lanes.json`, dan
-    lane-nya dibaca dari `$PMS_TSJ_LANE` kalau `--penulis` tidak diberikan. Lane lain ditolak.
+    lane-nya dibaca dari `$FACTORY_LANE` kalau `--penulis` tidak diberikan. Lane lain ditolak.
   - tulisannya serial: berkas dikunci `flock(LOCK_EX)` selama baca-validasi-tulis, jadi dua lane
     yang menulis bersamaan tidak bisa saling menimpa.
   - append-only: entri baru divalidasi bersama seluruh isi lama SEBELUM ditulis. Kalau entri baru
@@ -16,7 +16,7 @@ bisa dipercaya. Berkas ini membuat jalur tulisnya satu:
   - skemanya satu: `periksa()` di berkas ini dipakai `gate_ledger.py` lewat `verify`, bukan disalin.
 
 Perintah:
-  python3 tools/factory/ledger.py append --lane payroll --issue 42 --event dispatch --catatan "..."
+  python3 tools/factory/ledger.py append --lane android --issue 42 --event dispatch --catatan "..."
   python3 tools/factory/ledger.py verify
   python3 tools/factory/ledger.py tail --n 5
   python3 tools/factory/ledger.py reanchor --peta peta.json [--kering]
@@ -57,7 +57,7 @@ import _umum as u  # noqa: E402
 EVENT = ["buka", "dispatch", "buka-pr", "tutup", "naik", "ruling", "catatan"]
 PERLU_ISSUE = {"buka", "dispatch", "buka-pr", "tutup", "naik"}
 WAJIB = ["ts", "penulis", "lane", "event", "catatan"]
-ENV_LANE = "PMS_TSJ_LANE"
+ENV_LANE = "FACTORY_LANE"
 
 
 def path_bawaan(akar):
@@ -349,6 +349,11 @@ def uji_mandiri():
     import tempfile
 
     akar_asli = u.akar_factory()
+    # Lane uji DIBACA dari lanes.json, tidak ditulis di sini. Nama lane itu milik proyek: uji yang
+    # menyebut lane yang sudah tidak ada akan merah karena identitas, bukan karena perilakunya, dan
+    # kegagalan semacam itu membuat gate ini diabaikan orang.
+    lanes_uji = u.baca_json(os.path.join(akar_asli, "factory", "lanes.json"))
+    lane_uji = next((l["id"] for l in lanes_uji.get("lane", []) if l.get("id") != "HQ"), "HQ")
     gagal = 0
     kasus = []
 
@@ -365,8 +370,8 @@ def uji_mandiri():
             % ("LULUS " if benar else "GAGAL ", nama, "harus exit 0" if harap else "harus ditolak")
         )
 
-    def dasar(lane="payroll", event="dispatch", issue=42, **sisa):
-        e = {"ts": sekarang(), "penulis": "HQ", "lane": lane, "issue": issue,
+    def dasar(lane=None, event="dispatch", issue=42, **sisa):
+        e = {"ts": sekarang(), "penulis": "HQ", "lane": lane or lane_uji, "issue": issue,
              "event": event, "catatan": "uji", "commit": None}
         e.update(sisa)
         return e
@@ -377,7 +382,7 @@ def uji_mandiri():
 
     def tolak_penulis_lain(berkas, tmp):
         lanes = u.baca_json(os.path.join(akar_asli, "factory", "lanes.json"))
-        return 0 if not append(akar_asli, berkas, lanes, dasar(penulis="payroll")) else 1
+        return 0 if not append(akar_asli, berkas, lanes, dasar(penulis=lane_uji)) else 1
 
     def ditolak(alasan):
         """1 = ditolak (ada alasan), 0 = diterima. Sejajar dengan exit code CLI."""
@@ -407,7 +412,7 @@ def uji_mandiri():
         return ditolak(append(akar_asli, berkas, lanes, dasar(ulang="   ")))
 
     def _ns(berkas, **sisa):
-        d = {"ts": sekarang(), "penulis": "HQ", "lane": "payroll", "issue": 42,
+        d = {"ts": sekarang(), "penulis": "HQ", "lane": lane_uji, "issue": 42,
              "event": "ruling", "catatan": "uji", "commit": None, "ulang": None, "berkas": berkas}
         d.update(sisa)
         return argparse.Namespace(**d)
