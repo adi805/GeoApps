@@ -25,7 +25,6 @@
         "factory/**",
         "factory/docs/**",
         "tools/factory/**",
-        "ci/**",
         "README.md",
         "ONTOLOGY.md",
         ".gitignore"

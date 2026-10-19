@@ -1,6 +1,6 @@
 # Hukum Proses, Factory {{proyek}}
 
-**Versi:** 0.59.0
+**Versi:** 0.60.1
 **Punya:** bagaimana factory ini berjalan: briefing, dispatch, closing, escalation.
 **Identitas proyek:** `factory/identitas.json` — nama, slug, grup, kanal owner, repo, pohon kanonik.
 **Daftar lane, topic, cakupan, dan path eskalasi:** `factory/lanes.json`.
@@ -271,7 +271,7 @@ Gate di bawah ini yang mekanis. Selebihnya `[prosa]`, dan yang `[prosa]` akan di
 | Lint skill plugin | `python3 tools/factory/gate_plugin_lint.py` | ada skill tanpa frontmatter yang benar, masih memuat konvensi Cowork, tanpa header sumber, SHA sumbernya beda dari pin, atau berkasnya ada di disk tapi tidak ter-track git |
 | Kosakata terkendali | `python3 tools/factory/gate_ontology.py` | sinonim terlarang dari `ONTOLOGY.md` muncul di prosa `factory/**` atau `factory/docs/**`, daftar terlarangnya kosong, atau nol berkas diperiksa |
 | Salinan skill tersinkron | `python3 tools/factory/sync_plugins.py --check` | `~/.opencrabs/skills/geoapps-<nama>/SKILL.md` berbeda dari `factory/skills/`, atau ada salinan `geoapps-*` tanpa sumbernya di repo |
-| Pemicu CI tidak mematikan pemeriksa | `python3 tools/factory/gate_pemicu_ci.py` | penyaring path `uji-windows.yml` menutup pohon di luar daftar izin, atau `factory-gate.yml` tidak mendengar event `labeled`, job menyaring `github.event.action`, atau grup `concurrency` tidak memuat action |
+| Pemicu CI tidak mematikan pemeriksa | `python3 tools/factory/gate_pemicu_ci.py` | `factory-gate.yml` memasang penyaring path (`paths`/`paths-ignore`), tidak mendengar event `labeled`, ada job yang menyaring `github.event.action`, atau grup `concurrency` tidak memuat action |
 | Lane terikat topic | `python3 tools/factory/cek_lane.py --wajib-lengkap` | ada lane yang topic-nya belum punya sesi, atau `session_bindings` dan `sessions.channel_chat_key` menunjuk hal yang berbeda |
 | Lane dorman bersinyal | `python3 tools/factory/jaga_lane.py` | ada lane bukan `terikat` dan alarmnya tidak dikirim: `cek_lane.py --wajib-lengkap` keluar 1 tapi sesi agent tidak dibangunkan, atau alarm menyala saat semua lane sudah terikat |
 | Alamat laporan agent | `python3 tools/factory/gate_kanal.py` | `owner.kanal` kosong, bentuk kuncinya bukan `[chat:<grup>]` atau `[chat:<grup>:topic:<N>]`, grupnya bukan grup papan ini, menunjuk topic lane, atau tidak punya tepat satu sesi hidup |
@@ -297,13 +297,13 @@ butuh joyboy). Tiap gate punya dua jalur: menerima dan menolak.
 ```
 python3 tools/factory/uji_gate_mandiri.py     # 78 kasus, tiap gate wajib punya kasus negatif
 python3 tools/factory/gate_plugin_lint.py --uji-mandiri   # 10 kasus, 8 negatif
-python3 tools/factory/sync_plugins.py --uji-mandiri       # 6 kasus
-python3 tools/factory/sync_skill.py --uji-mandiri         # 13 kasus
+python3 tools/factory/sync_plugins.py --uji-mandiri       # 9 kasus
+python3 tools/factory/sync_skill.py --uji-mandiri         # 14 kasus
 python3 tools/factory/sync_law.py --uji-mandiri           # 6 kasus
 python3 tools/factory/ledger.py --uji-mandiri # 19 kasus untuk jalur tulis dan anchor ledger
 python3 tools/factory/cek_lane.py --uji-mandiri    # 7 kasus, 6 negatif
-python3 tools/factory/jaga_lane.py --uji-mandiri    # 7 kasus, 5 negatif, termasuk yang harus DIAM
-python3 tools/factory/pacemaker.py --uji-mandiri   # 29 kasus
+python3 tools/factory/jaga_lane.py --uji-mandiri    # 14 kasus, termasuk yang harus DIAM
+python3 tools/factory/pacemaker.py --uji-mandiri   # 33 kasus
 python3 tools/factory/skor.py --uji-mandiri        # 13 kasus, 9 negatif
 python3 tools/factory/usulan.py --uji-mandiri      # 80 kasus
 python3 tools/factory/lapor.py --uji-mandiri       # 14 kasus
@@ -311,7 +311,7 @@ python3 tools/factory/pintu.py --uji-mandiri       # 15 kasus
 python3 tools/factory/sinkron_pohon.py --uji-mandiri       # 25 kasus, termasuk yang harus BERHENTI
 python3 tools/factory/gate_ontology.py --uji-mandiri       # 11 kasus, 6 negatif
 python3 tools/factory/gate_kanal.py --uji-mandiri          # 10 kasus, 8 negatif
-python3 tools/factory/gate_pemicu_ci.py --uji-mandiri      # 18 kasus, 14 negatif (path + trigger labeled)
+python3 tools/factory/gate_pemicu_ci.py --uji-mandiri      # 14 kasus, 11 negatif (penyaring path + trigger labeled)
 ```
 
 Uji itu dijalankan di direktori sementara dan tidak pernah menulis ke repo. Ia dihitung gagal kalau
@@ -405,7 +405,7 @@ terbuka menjalankan ulang pemeriksa cakupan. Sebelum itu run lama tetap hijau de
 diperiksa: PR #225 lahir tanpa label lane dan `Gate pada pohon ini` tetap `pass`, jadi cakupan
 barunya cuma bisa dicek manual.
 
-Dua hal yang tidak boleh dilakukan pada trigger ini, dan dua-duanya sudah kejadian di repo ini:
+Tiga hal yang tidak boleh dilakukan pada trigger ini, dan ketiganya sudah kejadian di repo ini:
 
 1. **Job tidak boleh menyaring `github.event.action`.** Gate membaca DUA label, `lane:` dan
    `eskalasi`. Filter yang cuma menyebut satu label melewati yang lain, dan bentuk gagalnya
@@ -417,8 +417,14 @@ Dua hal yang tidak boleh dilakukan pada trigger ini, dan dua-duanya sudah kejadi
 2. **Grup `concurrency` wajib memuat `github.event.action`.** Tanpa itu event `opened` dan
    `labeled` untuk PR yang sama berbagi satu grup dan saling membatalkan. Dengan action di grup,
    push (`synchronize`) tetap saling membatalkan seperti sebelumnya, karena action-nya sama.
+3. **Blok `pull_request` tidak boleh punya penyaring path.** `paths:` atau `paths-ignore:` membuat
+   GitHub melewati SELURUH workflow untuk PR yang tidak menyentuh path itu, termasuk pemeriksa
+   cakupan lane. Gate ini memeriksa tiap PR, jadi penyaring path di berkasnya DITOLAK, bukan
+   diatur isinya. Kalau suatu saat pemeriksaan memang perlu dipersempit, persempit di dalam job
+   (langkah yang membaca `git diff`), jangan di trigger: di trigger, yang tidak diperiksa tidak
+   meninggalkan jejak apa pun.
 
-Penjaganya `gate_pemicu_ci.py`, dan dua aturan itu punya kasus negatifnya sendiri.
+Penjaganya `gate_pemicu_ci.py`, dan ketiga aturan itu punya kasus negatifnya sendiri.
 
 **Cakupan lane dihitung sejak titik pisah branch, bukan sejak tip base.** `git diff base head` itu
 perbandingan dua pohon: kalau `origin/main` sudah maju sesudah branch dibuat, kerja lane lain yang
@@ -693,8 +699,8 @@ di meja owner.
   1. **Id tidak diurutkan dari isi berkas (#121).** Tiap lane bekerja di worktree dengan salinan
      berkasnya sendiri, jadi `flock` tidak mengunci apa pun lintas lane. Bentuk lama `u-<nomor urut>`
      membuat dua lane mendapat id yang sama (`u-0002` sempat punya tiga arti; `u-0021` dipakai gh-ops
-     sekaligus payroll), dan setelah digabung yang satu menimpa yang lain tanpa error. Id sekarang
-     berbentuk `u-<lane>-<6 heksadesimal>`, mis. `u-payroll-a3f1c9`: prefiks lane menutup kasus
+     sekaligus android), dan setelah digabung yang satu menimpa yang lain tanpa error. Id sekarang
+     berbentuk `u-<lane>-<6 heksadesimal>`, mis. `u-android-a3f1c9`: prefiks lane menutup kasus
      antar-lane, akar acaknya menutup kasus dua salinan dari lane yang sama.
   2. **Id kembar dengan isi berbeda DITOLAK, bukan ditimpa diam-diam (#144).** Poin 1 mencegah
      tabrakan baru, bukan menangkap yang sudah masuk lewat penggabungan. `catat` dan `putuskan`
