@@ -754,11 +754,20 @@ jobs:
             -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
             -no-snapshot -memory 2048
           script: |
-            # pipefail: without it a failed measurement would be hidden behind
-            # tee's exit code and the step would pass with a truncated file.
-            set -euo pipefail
+            # The emulator runner executes this block with /usr/bin/sh (dash on
+            # the runner), not bash: `set -o pipefail` aborts the step with
+            # "Illegal option -o pipefail" before the measurement starts (run
+            # 39339095629 died that way). Keep this block POSIX and capture the
+            # output to a file instead of piping through tee, so a failing
+            # measurement still fails the step and still leaves its output
+            # behind for the log.
+            set -eu
             bash apps/geolibre-desktop/src-tauri/android/ukur-waktu-mulai.sh apks 3 \
-              | tee startup.txt
+              > startup.txt 2>&1 || {
+                cat startup.txt
+                exit 1
+              }
+            cat startup.txt
             {
               echo "### Waktu mulai Android"
               echo
