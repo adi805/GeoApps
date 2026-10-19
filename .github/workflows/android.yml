@@ -685,4 +685,94 @@ jobs:
         if: github.event_name == 'release' && steps.sign.outputs.signed != 'release'
         run: |
           echo "::warning::APKs were debug-signed (no ANDROID_KEYSTORE_BASE64 secret) and were NOT attached to the release; no AAB was built at all. The APKs are available as the CI artifact for testing only."
+  ukur-waktu-mulai:
+    # Startup time is measured on an emulator, on demand only. It is not a
+    # release gate: a release run is already the only producer of that tag's
+    # assets, and a slow first frame on a software-GL emulator must not block
+    # shipping. Manual runs are where a number is wanted, and that is where it
+    # is produced.
+    name: Measure app startup (emulator)
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # aapt2 reads the package id off the built APK; it ships in build-tools.
+      ANDROID_BUILD_TOOLS: "build-tools;36.0.0"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download signed APKs
+        uses: actions/download-artifact@v6
+        with:
+          name: geolibre-android-release-apks
+          path: apks
+
+      - name: Set up JDK
+        # sdkmanager (and the emulator runner) need a JDK on PATH; same
+        # distribution and version as the build job.
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        # Pinned to the same commit as the build job. Only build-tools is
+        # installed here: the emulator runner provisions its own system image
+        # and platform.
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+
+      - name: Install build-tools
+        run: sdkmanager --install "$ANDROID_BUILD_TOOLS"
+
+      - name: Enable KVM
+        # GitHub's ubuntu runners expose /dev/kvm only after this udev rule, and
+        # the x86_64 emulator is unusable without it (falls back to full
+        # emulation, which takes tens of minutes to boot).
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Measure cold start on the emulator
+        # The emulator has no GPU passthrough, so WebGL goes through SwiftShader
+        # (software). The number is therefore an upper bound, not a device
+        # figure, and the receipt says so. It is still the honest way to get a
+        # repeatable number from CI: same AVD, same APK, same script.
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: >-
+            -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+            -no-snapshot -memory 2048
+          script: |
+            # pipefail: without it a failed measurement would be hidden behind
+            # tee's exit code and the step would pass with a truncated file.
+            set -euo pipefail
+            bash apps/geolibre-desktop/src-tauri/android/ukur-waktu-mulai.sh apks 3 \
+              | tee startup.txt
+            {
+              echo "### Waktu mulai Android"
+              echo
+              echo '```'
+              cat startup.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload measurement
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-startup-measurement
+          path: startup.txt
+          if-no-files-found: error
+          retention-days: 30
+
 # workflow re-index trigger
