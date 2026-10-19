@@ -9,8 +9,9 @@ Untuk aturan prosesnya (peran, lane, briefing, closing, eskalasi), baca
 [`factory/LAW.md`](../factory/LAW.md). Untuk mencari medan identitas, baca bagian 10 di
 berkas itu. Panduan ini tidak mengulang keduanya.
 
-> Repo ini **mesinnya**, bukan produknya. Perintah membangun produk (`dotnet build`,
-> `dotnet test`, `npm`) hidup di repo produk masing-masing, bukan di sini.
+> Repo ini memuat **mesin pabrik dan produknya sekaligus**: `factory/` dan `tools/factory/`
+> adalah mesinnya, `apps/` dan `packages/` adalah produknya. Perintah membangun produk ada di
+> `package.json` akar: `npm run build`, `npm test`, `npm run ci`.
 
 ---
 
@@ -123,7 +124,7 @@ cuma jalan kalau ada orang yang ingat menjalankannya.
 
 ### 2.5 Daftarkan ke CI
 
-Tambahkan langkahnya di `ci/factory-gate.yml`. Satu langkah untuk pemanggilan hidup
+Tambahkan langkahnya di `.github/workflows/factory-gate.yml`. Satu langkah untuk pemanggilan hidup
 (`--akar .`) dan, kalau ada, satu langkah untuk `--uji-mandiri`.
 
 Gate yang memeriksa berkas di luar repo (mis. salinan skill terpasang) **tidak** boleh
@@ -255,5 +256,5 @@ Urutannya begini, dan jangan dibalik:
 4. **Kalau pemeriksaannya memang tidak berlaku di sini**, jadikan itu **LEWAT yang berisik**:
    cetak apa yang dilewati dan kenapa, lalu keluar 0. Jangan diam-diam hijau.
 
-Contoh yang sudah dipakai: `gate_pemicu_ci` melewati pemeriksaannya di repo mesin karena
-workflow produknya tidak ikut ekspor, dan ia menyebut kedua berkas yang tidak ada itu.
+Contoh yang sudah dipakai: `gate_kanal` melewati pemeriksaan sesinya di runner CI karena
+runner tidak punya basis data OpenCrabs, dan ia menyebut berapa pemeriksaan yang dilewati.

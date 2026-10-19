@@ -27,16 +27,16 @@ diperiksa mesin: menulis kode, menyusun brief, dan mengusulkan perubahan hukum p
 
 ## Keadaan yang diukur, bukan yang diharapkan
 
-Angka di bawah diambil dari pohon ini pada 2026-10-09, saat berkas ini ditulis:
+Angka di bawah diambil dari pohon ini pada 2026-10-18:
 
 | Yang dihitung | Angka | Cara menghitungnya |
 |---|---|---|
-| Gate mekanis di `tools/factory/` | 7 | `ls tools/factory/gate_*.py \| wc -l` |
-| Skill lane di repo | 38 | `ls factory/skills \| wc -l` |
-| Salinan skill yang dibaca agen | 39 | `ls -d ~/.opencrabs/skills/pms-tsj-* \| wc -l` |
+| Gate mekanis di `tools/factory/` | 9 | `ls tools/factory/gate_*.py \| wc -l` |
+| Skill lane di repo | 24 | `ls factory/skills \| wc -l` |
+| Salinan skill yang dibaca agen | 25 | `ls -d ~/.opencrabs/skills/geoapps-* \| wc -l` |
 | Receipt unit kerja | 0 | `ls factory/receipts \| wc -l` |
-| Baris ledger | 10 | `wc -l < factory/ledger.jsonl` |
+| Baris ledger | 0 | `wc -l < factory/ledger.jsonl` (berkasnya belum ada) |
 
-Dua baris terakhir sengaja ditulis apa adanya. Receipt masih nol dan ledger masih sepuluh baris:
+Dua baris terakhir sengaja ditulis apa adanya. Receipt masih nol dan ledger belum punya satu baris pun:
 itu bukan keberhasilan yang dibulatkan, itu keadaan yang belum bergerak. Angka yang jelek lebih
 berguna daripada angka yang hilang.

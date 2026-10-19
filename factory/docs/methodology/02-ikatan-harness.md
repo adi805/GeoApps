@@ -54,13 +54,13 @@ apa yang sudah dikerjakan.
 | `gate_plugin_lint.py` | skill tanpa frontmatter, masih memuat konvensi plugin upstream, SHA sumbernya beda dari pin, atau berkasnya ada di disk tapi tidak ter-track |
 | `sync_plugins.py --check` | salinan skill yang dibaca agen melenceng dari sumbernya |
 | `uji_gate_mandiri.py` | ada gate yang tidak punya kasus negatif |
-| `dotnet test PMS.sln -c Release` | ada test gagal |
+| `npm run ci` | ada test gagal |
 
 Dua belas penahan pertama dijalankan tanpa model. Yang ketiga belas menjalankan kode. Tidak ada satu
 pun di antaranya yang meminta pendapat model soal apakah pekerjaannya sudah benar.
 
 Satu hal yang wajib disebut terus terang: **hijau di CI bukan pengganti pemeriksa lokal.** CI cuma
-membuktikan apa yang dijalankannya, dan `dotnet test` yang lulus tidak membuktikan modul yang tidak
+membuktikan apa yang dijalankannya, dan `npm run ci` yang lulus tidak membuktikan modul yang tidak
 punya test itu benar. Karena itu definisi selesai di `factory/LAW.md` bagian 5 menuntut kriteria
 issue dijalankan dan keluarannya ditempel, bukan sekadar badge hijau.
 
