@@ -1,6 +1,6 @@
 # Hukum Proses, Factory {{proyek}}
 
-**Versi:** 0.61.0
+**Versi:** 0.61.1
 **Punya:** bagaimana factory ini berjalan: briefing, dispatch, closing, escalation.
 **Identitas proyek:** `factory/identitas.json` — nama, slug, grup, kanal owner, repo, pohon kanonik.
 **Daftar lane, topic, cakupan, dan path eskalasi:** `factory/lanes.json`.
@@ -50,7 +50,8 @@ melenceng dari yang dibaca gate. Jangan diedit tangan: jalankan
 | `offline` | 17 | peta offline: unduh region, MBTiles, basemap offline, cache tile, bundel proyek portabel dan koleksi lapangan |
 | `ui` | 19 | shell aplikasi: home My Maps, navigasi bawah, branding, tema |
 | `gh-ops` | 20 | issue, PR, label, dan rilis di GitHub |
-| `uji` | 21 | berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan; uji satuan yang tinggal di sebelah kodenya milik lane modulnya |
+| `uji` | 21 | berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan, baseline modul tanpa uji; uji satuan yang tinggal di sebelah kodenya milik lane modulnya |
+| `visual` | 157 | bahasa visual aplikasi yang digenerate lewat kode: token, primitif, satu komposisi per fungsi, galeri dan tangkapan layarnya. Tidak menyentuh App.tsx, komponen, atau hook yang sudah ada: lane ini menggambar ulang, bukan menambal shell |
 <!-- SELESAI: tabel lane -->
 
 `HQ` sengaja dijaga kosong dari implementasi. Setiap unit kerja dikirim ke lane lain. Factory yang

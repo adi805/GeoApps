@@ -1,7 +1,7 @@
 {
-  "versi": 2,
+  "versi": 3,
   "penulis_ledger": "HQ",
-  "catatan": "Cakupan lane: satu lane hanya boleh menyentuh path yang cocok dengan glob-nya. Pola peka huruf besar-kecil, lihat tools/factory/_umum.py. factory/bahan/** dan factory/receipts/** adalah direktori keluaran bersama: tiap lane menulis berkasnya sendiri di sana. Sisa factory/ tetap milik HQ. Lane gh-ops dan uji tidak menulis kode produk; globnya cuma untuk laporan, receipt, dan berkas uji. Versi 2 (2026-10-19): lane offline dan geofence diperluas ke bundel proyek portabel, pelacakan GPS, dan uji satuan yang tinggal di sebelah kodenya (#10). Versi 1 (2026-10-19): lane awal GeoApps, delapan lane, topic sudah dibuat di forum grup GeoApps.",
+  "catatan": "Cakupan lane: satu lane hanya boleh menyentuh path yang cocok dengan glob-nya. Pola peka huruf besar-kecil, lihat tools/factory/_umum.py. factory/bahan/** dan factory/receipts/** adalah direktori keluaran bersama: tiap lane menulis berkasnya sendiri di sana. Sisa factory/ tetap milik HQ. Lane gh-ops dan uji tidak menulis kode produk; globnya cuma untuk laporan, receipt, dan berkas uji. Versi 2 (2026-10-19): lane offline dan geofence diperluas ke bundel proyek portabel, pelacakan GPS, dan uji satuan yang tinggal di sebelah kodenya (#10). Versi 3 (2026-10-19): lane visual ditambahkan (topic 157) untuk bahasa visual aplikasi yang digenerate lewat kode: tiap fungsi digambar sebagai satu komposisi terpisah, dan glob baseline modul tanpa uji masuk ke lane uji supaya ratchet-nya bisa diperbaiki lane itu (#21). Versi 1 (2026-10-19): lane awal GeoApps, delapan lane, topic sudah dibuat di forum grup GeoApps.",
   "eskalasi": {
     "glob": [
       "apps/geolibre-desktop/src-tauri/tauri.conf.json",
@@ -121,10 +121,22 @@
     {
       "id": "uji",
       "topic": 21,
-      "cakupan": "berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan; uji satuan yang tinggal di sebelah kodenya milik lane modulnya",
+      "cakupan": "berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan, baseline modul tanpa uji; uji satuan yang tinggal di sebelah kodenya milik lane modulnya",
       "glob": [
         "tests/**",
         "e2e/**",
+        "scripts/untested-modules-baseline.json",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "visual",
+      "topic": 157,
+      "cakupan": "bahasa visual aplikasi yang digenerate lewat kode: token, primitif, satu komposisi per fungsi, galeri dan tangkapan layarnya. Tidak menyentuh App.tsx, komponen, atau hook yang sudah ada: lane ini menggambar ulang, bukan menambal shell",
+      "glob": [
+        "apps/geolibre-desktop/src/visual/**",
+        "apps/geolibre-desktop/visual.*",
         "factory/bahan/**",
         "factory/receipts/**"
       ]
