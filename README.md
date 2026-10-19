@@ -224,3 +224,17 @@ You can also use GitHub's **"Cite this repository"** button (which reads [`CITAT
 ## License
 
 [MIT](LICENSE)
+
+---
+
+## GeoKebun — Fork Credits
+
+**GeoKebun** is a fork of [**GeoLibre**](https://github.com/opengeos/GeoLibre) by [Qiusheng Wu](https://orcid.org/0000-0001-5437-4073) (opengeos), used under the [MIT License](LICENSE).
+
+If you use GeoKebun/GeoLibre in your work, please cite the upstream project:
+
+> Wu, Q. (2026). *GeoLibre: A lightweight, cloud-native GIS platform for visualizing, exploring, and analyzing geospatial data.* Zenodo. https://doi.org/10.5281/zenodo.20785400
+
+- **Upstream repo:** https://github.com/opengeos/GeoLibre
+- **License:** MIT © 2026 Qiusheng Wu (see [LICENSE](LICENSE))
+- **GeoKebun customizations:** GeoPDF import, geofence zones, GPS averaging, UTM coordinates, Kebun UI preset — built on top of the upstream project.

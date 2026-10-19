@@ -177,6 +177,8 @@ import { useViewerPluginGuard } from "../../hooks/desktop-shell/useViewerPluginG
 
 interface DesktopShellProps {
   layoutOptions: LayoutOptions;
+  /** Auto-open the raster layer panel (file picker) once the map is ready. */
+  autoOpenRaster?: boolean;
   projectUrlLoadState?: ProjectUrlLoadState;
   dataUrlLoadState?: DataUrlLoadState;
   mapAppAPI: ReturnType<typeof createAppAPI> | null;
@@ -187,6 +189,7 @@ interface DesktopShellProps {
 
 export function DesktopShell({
   layoutOptions,
+  autoOpenRaster,
   projectUrlLoadState,
   dataUrlLoadState,
   mapAppAPI,
@@ -328,6 +331,20 @@ export function DesktopShell({
   const credentialStorageRevision = useCredentialStorageStatus((s) => s.revision);
   // A new failure bumps the revision, which re-shows a dismissed warning.
   const [dismissedCredentialRevision, setDismissedCredentialRevision] = useState(0);
+  // Avenza-style "+ Tambah Peta": when the home screen asks for a new map,
+  // auto-open the raster layer panel (which wires the Browse file picker) as
+  // soon as the map controller is ready.
+  useEffect(() => {
+    if (!autoOpenRaster || mapReadyGeneration === 0) return;
+    const t = window.setTimeout(() => {
+      try {
+        openRasterLayerPanel(createAppAPI(mapControllerRef));
+      } catch (err) {
+        console.error("[GeoApps] Failed to auto-open raster panel", err);
+      }
+    }, 250);
+    return () => window.clearTimeout(t);
+  }, [autoOpenRaster, mapReadyGeneration, mapControllerRef]);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const diagnostics = useDiagnosticsSnapshot();
   const externalPluginsReady = useExternalPluginsReady(mapControllerRef);

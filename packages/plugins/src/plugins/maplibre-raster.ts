@@ -464,6 +464,31 @@ export async function addRasterToMap(
   if (options.defaults?.engine && control.getEngine() !== options.defaults.engine) {
     control.setEngine(options.defaults.engine);
   }
+  // GeoPDF import: a georeferenced PDF (Esri ArcMap / OGC) is rendered to a PNG
+  // blob and added as a raster. The bounds come from the PDF's own
+  // georeferencing, so no world file is needed.
+  if (typeof source !== "string" && source instanceof File && /\.pdf$/i.test(source.name)) {
+    const { renderGeoPdfToBlob } = await import("./geopdf/geopdf-render");
+    const rendered = await renderGeoPdfToBlob(await source.arrayBuffer());
+    if (!rendered) {
+      throw new Error(
+        "This PDF is not a GeoPDF or carries no georeferencing. Export it from Avenza, " +
+          "ArcMap or another GIS with georeferencing embedded, or convert it to GeoTIFF.",
+      );
+    }
+    const pdfFile = new File([rendered.blob], options.name ?? "geopdf.png", { type: "image/png" });
+    const pdfId = await control.addRaster(pdfFile, {
+      name: options.name,
+      zoomTo: options.zoomTo ?? shouldZoomToNewLayers(),
+      ...(options.beforeId ? { beforeId: options.beforeId } : {}),
+    });
+    applyRgbBandDefaults(control, pdfId, options.defaults?.rgbBands);
+    if (options.localPath) {
+      rememberLocalRasterPath(pdfId, options.localPath);
+      syncRasterLayersToStoreForRuntime(control);
+    }
+    return pdfId;
+  }
   // Named here rather than by the control, so a failure below removes exactly
   // this add's raster and never one a concurrent add created.
   const rasterId = `raster-${crypto.randomUUID().slice(0, 8)}`;

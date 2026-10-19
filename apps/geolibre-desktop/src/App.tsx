@@ -1,8 +1,10 @@
 import { DirectionProvider } from "@geolibre/ui";
+import type { RecentProjectEntry } from "@geolibre/core";
 import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useCallback, useState } from "react";
 import { DesktopShell } from "./components/layout/DesktopShell";
+import { HomeScreen } from "./components/layout/HomeScreen";
 import { NotificationRegion } from "./components/layout/NotificationRegion";
 import { OnboardingDialog } from "./components/layout/OnboardingDialog";
 import { UpdateNotificationModal } from "./components/layout/UpdateNotificationModal";
@@ -45,6 +47,10 @@ export default function App() {
   // `?data=` loader's effect deps, and a changing identity would re-run that
   // one-shot import and duplicate its layers.
   const [mapAppAPI, setMapAppAPI] = useState<ReturnType<typeof createAppAPI> | null>(null);
+  // Avenza-style screen routing: home (My Maps) ↔ viewer (full GIS shell).
+  const [screen, setScreen] = useState<{ kind: "home" } | { kind: "viewer"; project: RecentProjectEntry; autoOpenRaster?: boolean }>({
+    kind: "home",
+  });
   const handleMapReady = useCallback((api: ReturnType<typeof createAppAPI>) => {
     setMapAppAPI((current) => current ?? api);
   }, []);
@@ -81,15 +87,23 @@ export default function App() {
         </div>
       ) : (
         <>
-          <DesktopShell
-            layoutOptions={layoutOptions}
-            projectUrlLoadState={projectUrlLoadState}
-            dataUrlLoadState={dataUrlLoadState}
-            mapAppAPI={mapAppAPI}
-            themeMode={themeMode}
-            onToggleThemeMode={toggleThemeMode}
-            onMapReady={handleMapReady}
-          />
+          {screen.kind === "home" ? (
+            <HomeScreen
+              onOpenProject={(entry) => setScreen({ kind: "viewer", project: entry })}
+              onAddProject={() => setScreen({ kind: "viewer", project: { path: "add", name: "Tambah Peta", openedAt: new Date().toISOString() }, autoOpenRaster: true })}
+            />
+          ) : (
+            <DesktopShell
+              layoutOptions={layoutOptions}
+              autoOpenRaster={screen.kind === "viewer" ? screen.autoOpenRaster : undefined}
+              projectUrlLoadState={projectUrlLoadState}
+              dataUrlLoadState={dataUrlLoadState}
+              mapAppAPI={mapAppAPI}
+              themeMode={themeMode}
+              onToggleThemeMode={toggleThemeMode}
+              onMapReady={handleMapReady}
+            />
+          )}
           <OnboardingDialog open={showOnboarding} onClose={dismissOnboarding} />
         </>
       )}
