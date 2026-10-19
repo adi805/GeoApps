@@ -1,6 +1,6 @@
 # Hukum Proses, Factory {{proyek}}
 
-**Versi:** 0.60.1
+**Versi:** 0.61.0
 **Punya:** bagaimana factory ini berjalan: briefing, dispatch, closing, escalation.
 **Identitas proyek:** `factory/identitas.json` — nama, slug, grup, kanal owner, repo, pohon kanonik.
 **Daftar lane, topic, cakupan, dan path eskalasi:** `factory/lanes.json`.
@@ -46,15 +46,22 @@ melenceng dari yang dibaca gate. Jangan diedit tangan: jalankan
 | `HQ` | 12 | hukum, ruling, gate, percakapan dengan owner; tidak mengerjakan implementasi |
 | `android` | 13 | build dan paket Android: Tauri mobile, gradle, izin lokasi, workflow android dan ios, rilis ke Play Store |
 | `geo-pdf` | 15 | impor GeoPDF dan GeoTIFF: parser georeferensi, render PDF ke raster, bounds dan CRS, jalur raster source |
-| `geofence` | 16 | geofence, GPS averaging, track dan UTM, preset lokasi lapangan |
-| `offline` | 17 | peta offline: unduh region, MBTiles, basemap offline, cache tile |
+| `geofence` | 16 | geofence, GPS averaging, pelacakan GPS, track dan UTM, preset lokasi lapangan |
+| `offline` | 17 | peta offline: unduh region, MBTiles, basemap offline, cache tile, bundel proyek portabel dan koleksi lapangan |
 | `ui` | 19 | shell aplikasi: home My Maps, navigasi bawah, branding, tema |
 | `gh-ops` | 20 | issue, PR, label, dan rilis di GitHub |
-| `uji` | 21 | berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan |
+| `uji` | 21 | berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan; uji satuan yang tinggal di sebelah kodenya milik lane modulnya |
 <!-- SELESAI: tabel lane -->
 
 `HQ` sengaja dijaga kosong dari implementasi. Setiap unit kerja dikirim ke lane lain. Factory yang
 `HQ`-nya ikut mengerjakan kode akan menumpuk kerjaan manajerial di satu sesi, dan dispatch berhenti.
+
+**Uji satuan tinggal di sebelah kodenya, jadi ia milik lane modulnya.** Berkas `*.test.ts` di dalam
+`apps/geolibre-desktop/src/**` atau `packages/plugins/src/plugins/**` masuk cakupan lane pemilik
+kodenya, bukan lane `uji`: menambah satu kasus uji untuk fungsi yang baru diubah tidak boleh
+menuntut dua lane bekerja di satu PR. Lane `uji` tetap memegang `tests/**` dan `e2e/**`, yaitu uji
+yang berdiri sendiri di luar pohon sumber. Satu berkas uji boleh cocok dengan lebih dari satu glob;
+gate cakupan memeriksa "cocok salah satu", bukan kepemilikan eksklusif.
 
 **Lane tanpa sesi terikat topic belum bisa dibrief.** Brief dikirim ke sesi, bukan ke topic: topic
 cuma ruangannya. Sesi lahir dari pesan masuk di topic itu, jadi topic yang belum pernah menerima
