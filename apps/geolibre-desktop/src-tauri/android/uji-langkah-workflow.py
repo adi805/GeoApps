@@ -63,7 +63,11 @@ def tulis(path, isi):
 def jalankan(akar, langkah, env_tambahan=None):
     skrip, wd = langkah
     env = dict(os.environ)
-    env.setdefault("GITHUB_ENV", os.path.join(akar, ".github_env"))
+    # Selalu timpa: di runner GitHub, GITHUB_ENV sudah menunjuk berkas milik
+    # runner. Memakai setdefault membuat langkah uji menulis ke sana sementara
+    # harness membaca berkas sementaranya sendiri yang tetap kosong, sehingga
+    # kasus positif gagal di CI padahal lulus di mesin lokal.
+    env["GITHUB_ENV"] = os.path.join(akar, ".github_env")
     env.update(env_tambahan or {})
     return subprocess.run(
         ["bash", "-euo", "pipefail", "-c", skrip],
