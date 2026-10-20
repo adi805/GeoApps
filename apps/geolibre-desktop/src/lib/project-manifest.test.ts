@@ -7,6 +7,10 @@
  * trusted. Nothing here touches a filesystem.
  */
 
+/* `it()` dari node:test mengembalikan promise yang dilacak runner, bukan promise
+ * yang menunggu di-await di sini. Aturan no-floating-promises tidak bisa tahu itu. */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
