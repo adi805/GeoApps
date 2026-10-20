@@ -1,4 +1,16 @@
 @import "@geolibre/ui/globals.css";
+@import "./styles/tokens.css";
+
+/* Palette ownership: `styles/tokens.css` (generated from `src/visual/tokens.ts`
+   by `scripts/gen-tokens-css.mjs`) owns every semantic colour token —
+   background, foreground, card, popover, primary, secondary, muted, accent,
+   destructive, border, input, ring — plus `--radius`, for the light, dark and
+   high-contrast themes. This file only *consumes* them through
+   `hsl(var(--…))`. A literal palette value here would be a second source of
+   truth that no generator keeps in sync, so add the role to `tokens.ts` and
+   regenerate instead. The literals that remain below are per-widget colours for
+   vendored map controls (LiDAR, GeoAgent, print, splatting), which own their own
+   styling. */
 
 /* Supplies the custom-color/border-radius theme that @geolibre/ui's globals.css
    relies on via @apply (background, border, etc.). globals.css is intentionally
