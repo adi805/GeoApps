@@ -1,0 +1,77 @@
+{
+  "issue": 69,
+  "lane": "ui",
+  "branch": "ui/komposisi-layar",
+  "worktree": "~/GeoApps-ui-komposisi-layar",
+  "commit": "69fb1f00",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. Tujuh layar nyata diperiksa satu per satu dan tiap berkas yang berubah disebut di receipt dengan alasan singkat apa yang diambil dari komposisi mana",
+      "status": "selesai",
+      "perintah": "git diff --stat origin/main...HEAD",
+      "exit": 0,
+      "keluaran": "13 berkas, 802 baris ditambah, 143 dibuang. Pemetaan tujuh layar ke komposisi asalnya, semuanya dari apps/geolibre-desktop/src/visual/screens/ (lane visual, #24): (1) peta <- peta.tsx (7 komposisi): LayerPanelHeader.tsx (BilahAtas jadi dua baris lewat prop contextLabel, toolbar flex-wrap, delapan tombol ikon memakai ICON_BUTTON_CLASS h-7 w-7 min-h-12 min-w-12 md:min-h-0 md:min-w-0, data-testid layer-panel-toolbar), LayerPanel.tsx (nama proyek dari store dan headerContext '{{project}} · {{visible}} dari {{total}} lapisan terlihat', data-testid layer-panel), add-data/shared.tsx (AddDataFooter jadi flex-col di mobile, Batal min-h-12 sm:min-h-0, Tambah min-h-12 w-full sm:w-auto), add-data/ServiceLibrarySection.tsx (enam tombol min-h-12, tiga di antaranya ikon dengan min-w-12). (2) titik <- lapangan-titik.tsx (2): FieldCollectionDialog.tsx, chip posisi jadi MobileCard 'Posisi' berisi MobileFieldRow Lintang dan Bujur mono enam desimal plus baris Sumber yang jujur (gpsFix ? GPS perangkat : Peta), blok foto jadi MobileCard 'Foto terlampir', tujuh target min-h-12, helper formatLatLng yang tidak terpakai dihapus. (3) rekam <- lapangan-rekam.tsx (3): GpsTrackingDialog.tsx, strip statistik jadi MobileCard 'Ringkasan sementara' berisi MobileFieldRow Titik, Jarak, Durasi (mono), tombol rekam, jeda, lanjut, simpan, ekspor, buang jadi min-h-12, sepuluh target. (4) offline <- offline.tsx (5): BasemapExtractPanel.tsx, isi dipecah jadi lima MobileCard berjudul (URL sumber, Batas area, Tingkat zoom, Gaya peta, Basemap), sebelas target min-h-12. (5) sistem <- sistem.tsx (6): SettingsDialog.tsx (tombol navigasi min-h-12 justify-start, badan p-3 md:p-6, kaki Batal, Simpan, Tutup min-h-12), settings/AppearanceSection.tsx (tiga target), settings/LanguageSection.tsx (empat target). Kosakata bersama dari src/visual/primitives.tsx dipindah ke components/layout/mobile/mobilePrimitives.tsx: MobileScreenHeader, MobileScreenBody, MobileCard, MobileFieldRow, MobileChip, MobileAction, MobileListRow, MobileBadge, MobileNotice, semuanya tanpa nilai warna mentah. (6) ukur <- lapangan-ukur.tsx (4): sasarannya packages/plugins/src/plugins/components/measure.ts, di luar cakupan semua lane, dieskalasi sebagai u-ui-0c825d. (7) geofence <- geofence.tsx (4): sasarannya maplibre-geofence.ts dan gps-averaging.ts, milik lane geofence, dieskalasi sebagai u-ui-c84c87. Dua berkas diperiksa dan sengaja tidak diubah: layout/NoServiceWorkerBanner.tsx (53 baris, satu-satunya unsur interaktif adalah tautan teks bergaris bawah, bukan aksi utama, nol nilai warna mentah) dan layout/ManagePluginsDialog.tsx (1116 baris, nol min-h-12 dan 29 kelas ukuran ikon, butuh unit sendiri karena mengubahnya sekaligus dengan layar lain membuat satu PR tidak bisa ditinjau).",
+      "catatan": "Lima dari tujuh layar benar-benar dipindah. Dua layar lain hanya bisa diperiksa, bukan dikerjakan, karena sasarannya bukan milik lane ui. ManagePluginsDialog.tsx dan NoServiceWorkerBanner.tsx masuk kelompok sistem dan offline tetapi belum diubah, jadi layar sistem dan offline baru sebagian mengikuti komposisi."
+    },
+    {
+      "kriteria": "2. Tidak ada nilai warna mentah baru: grep -rn \"#[0-9a-fA-F]\\{6\\}\" apps/geolibre-desktop/src/components tidak bertambah dibanding origin/main",
+      "status": "selesai",
+      "perintah": "git archive origin/main apps/geolibre-desktop/src/components | tar -x -C /tmp/base69b && echo \"dasar=$(grep -rnE '#[0-9a-fA-F]{6}' /tmp/base69b/apps/geolibre-desktop/src/components | wc -l) kepala=$(grep -rnE '#[0-9a-fA-F]{6}' apps/geolibre-desktop/src/components | wc -l)\"",
+      "exit": 0,
+      "keluaran": "dasar=62 kepala=62. Nol nilai warna mentah baru. Berkas baru mobilePrimitives.tsx memakai peran token (border-border, bg-card, text-muted-foreground, dst) dan nol literal hex."
+    },
+    {
+      "kriteria": "3. Target sentuh aksi utama minimal 48 px di viewport 360 px, dibuktikan lewat E2E yang mengukur boundingBox()",
+      "status": "sebagian",
+      "perintah": "for f in layout/mobile/mobilePrimitives.tsx layout/FieldCollectionDialog.tsx layout/GpsTrackingDialog.tsx layout/SettingsDialog.tsx layout/settings/AppearanceSection.tsx layout/settings/LanguageSection.tsx layout/BasemapExtractPanel.tsx panels/layer-panel/LayerPanelHeader.tsx layout/add-data/shared.tsx layout/add-data/ServiceLibrarySection.tsx; do printf '%-42s min-h-12=%s min-w-12=%s\\n' \"$f\" \"$(grep -c 'min-h-12' apps/geolibre-desktop/src/components/$f)\" \"$(grep -c 'min-w-12' apps/geolibre-desktop/src/components/$f)\"; done",
+      "exit": 0,
+      "keluaran": "Target 48 px terpasang di kode: mobilePrimitives 5, FieldCollectionDialog 7, GpsTrackingDialog 10, SettingsDialog 4, AppearanceSection 3, LanguageSection 4, BasemapExtractPanel 11, LayerPanelHeader 1 (plus min-w-12 untuk tombol ikon), add-data/shared 2, ServiceLibrarySection 6 (plus min-w-12 tiga tombol ikon). Sumber pengukurannya sudah ditulis: factory/bahan/69-mobile-layar.spec.ts (6302 byte, 155 baris) memakai expectTarget yang membaca boundingBox() dan menegaskan expect(box.height).toBeGreaterThanOrEqual(48) serta expect(box.width).toBeGreaterThanOrEqual(48) untuk lima layar pada dua viewport, 360x800 dan 412x915. BELUM DIJALANKAN: berkas itu harus disalin ke e2e/ yang dimiliki lane uji, dan host ini tidak bisa menyalakan webServer Playwright (npm run build atau dev server) karena earlyoom membunuh proses node di sekitar 1.2 GB RSS. Jadi kriteria ini baru terpenuhi di tingkat deklarasi kelas, belum di tingkat pengukuran.",
+      "catatan": "Sisa pekerjaan untuk lane uji: cp factory/bahan/69-mobile-layar.spec.ts e2e/ lalu npx playwright test e2e/69-mobile-layar.spec.ts --project=features."
+    },
+    {
+      "kriteria": "4. npm run lint tidak menambah warning di atas batas ratchet; npm run typecheck:tests lolos; E2E core hijau",
+      "status": "sebagian",
+      "perintah": "git diff --stat origin/main...HEAD -- package.json",
+      "exit": 0,
+      "keluaran": "Nol keluaran, artinya package.json tidak disentuh dan ratchet --max-warnings 242 tidak dinaikkan. Lokal tidak bisa memverifikasi lint maupun typecheck:tests, dan ini bukan klaim hijau. Bukti percobaan: (a) NODE_OPTIONS=--max-old-space-size=900 npm run lint keluar 134 dengan 'FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory' setelah 22 baris log; (b) npm run typecheck:tests dengan batas heap bawaan mati di 'FATAL ERROR: Reached heap limit', (c) dengan --max-old-space-size=1400 mati di 'Ineffective mark-compacts near heap limit', (d) dengan --max-old-space-size=2400 proses tsc dibunuh earlyoom pada VmRSS 1576 MiB (journalctl: 'sending SIGTERM to process 449173 uid 1000 MainThread: badness 882, VmRSS 1576 MiB'), karena ambang host 15 persen dari 3915 MiB tercapai. Batas praktis satu proses node di host ini sekitar 1.5 GB RSS dan tsc untuk tests/tsconfig.json butuh lebih. Verdict sebenarnya diambil dari CI: .github/workflows/ci.yml baris 146 menjalankan npm run lint dan baris 167 menjalankan npm run typecheck:tests, jadi hasilnya menyusul di PR.",
+      "catatan": "Belum hijau, belum merah: belum diukur. Yang bisa dipastikan hanya ratchet tidak dinaikkan dan seluruh berkas berubah lolos parse lewat npx esbuild (exit 0 untuk setiap berkas)."
+    },
+    {
+      "kriteria": "5. Tangkapan layar tiap layar nyata (bukan galeri) di 360 px dan 412 px dilampirkan di receipt",
+      "status": "sebagian",
+      "perintah": "npx esbuild factory/bahan/69-mobile-layar.spec.ts --loader:.ts=ts --outfile=/tmp/spec69.js",
+      "exit": 0,
+      "keluaran": "Sumber yang akan menghasilkan tangkapan layar ada dan sah: factory/bahan/69-mobile-layar.spec.ts lolos parse esbuild (4.0 kb keluaran, 16 ms), menyebut lima describe (peta, titik, rekam, sistem dan unduh region) dan menulis ke factory/receipts/mobile/69-<layar>-<lebar>.png lewat page.screenshot pada setiap viewport. Nol berkas PNG dihasilkan, karena menjalankannya butuh e2e/ (lane uji) dan webServer Playwright yang tidak muat di host ini. Jadi kriteria 5 belum terpenuhi; yang ada baru resepnya, bukan tangkapannya.",
+      "catatan": "Tidak ada tangkapan layar di factory/receipts/mobile/. Jangan dibaca sebagai terpenuhi."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane ui: 13 path"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Bersih. Dua baris usulan (u-ui-0c825d dan u-ui-c84c87) yang ditulis lewat tools/factory/usulan.py catat tidak ditinggal sebagai perubahan pada factory/usulan-ui.jsonl karena berkas itu milik lane HQ dan membuat worktree kotor; isinya disalin apa adanya ke factory/bahan/69-usulan.md untuk diambil HQ."
+    }
+  ],
+  "cakupan": {
+    "berkas_usulan": "factory/usulan-ui.jsonl (milik lane HQ, tidak disentuh lane ui)",
+    "salinan": "factory/bahan/69-usulan.md",
+    "usulan": [
+      {
+        "id": "u-ui-0c825d",
+        "ringkas": "packages/plugins/src/plugins/components/measure.ts tidak dimiliki lane mana pun, jadi komposisi lapangan-ukur tidak bisa dipindah",
+        "rekomendasi": "perluas glob lane geo-pdf jadi packages/plugins/src/plugins/**"
+      },
+      {
+        "id": "u-ui-c84c87",
+        "ringkas": "komposisi geofence hanya bisa dipindah lewat lane geofence",
+        "rekomendasi": "buka unit geofence khusus untuk memindahkan empat komposisi geofence"
+      }
+    ]
+  }
+}
