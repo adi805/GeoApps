@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "./test";
 import { readFile } from "node:fs/promises";
-import { dropGeoJson, readFixture, waitForMap } from "./helpers";
+import { dropGeoJson, enterViewer, readFixture, waitForMap } from "./helpers";
 
 async function openStyleManager(page: Page) {
   await page.getByRole("button", { name: "Settings", exact: true }).click();
@@ -67,6 +67,12 @@ for (const theme of ["light", "dark"]) {
     expect(after.entries).toEqual([{ ...before.entries[0], name: "Final preset" }]);
     page.on("dialog", (dialog) => dialog.accept());
     await page.reload();
+    // A reload lands on HomeScreen: `App.tsx` keeps `screen` at `home` and
+    // `DesktopShell`, the only parent of the Settings button, mounts for
+    // `viewer` alone. Without this the click waits out the whole 120s timeout
+    // against a home screen that has no toolbar. Same shape as
+    // plugin-install.spec.ts:113-114 and pwa.spec.ts:117-120.
+    await enterViewer(page);
     await openStyleManager(page);
     await expect(panel.getByText("Final preset", { exact: true })).toBeVisible();
     await panel.getByRole("textbox", { name: "Search styles and tags…" }).fill("Final preset");
