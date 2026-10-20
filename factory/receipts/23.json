@@ -1,0 +1,18 @@
+{
+  "issue": 23,
+  "lane": "uji",
+  "branch": "uji/ci-c-e2e",
+  "worktree": "~/GeoApps-uji-ci-c-e2e",
+  "commit": "8efc44e4",
+  "status_short": [],
+  "kriteria": [
+    {"perintah": "npx tsc -p tsconfig.e2e-check.json", "exit": 0, "keluaran": "11 berkas e2e yang berubah, tanpa diagnostik"},
+    {"perintah": "npx playwright test --project=core", "exit": null, "keluaran": "TIDAK DIJALANKAN: tsc -b dan vite build di mesin ini di-SIGTERM earlyoom di ~1.6 GB RSS (disk 94%, RAM tersedia 1.9 GB), jadi tidak ada build untuk disajikan. Verifikasi 31 spec diserahkan ke CI pada PR #33."},
+    {"perintah": "git status --short", "exit": 0, "keluaran": "bersih setelah commit 0805d8a4"}
+  ],
+  "checker": [
+    {"perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD", "exit": 0, "keluaran": "LULUS  lane uji: 11 path, semuanya di cakupan"}
+  ],
+  "pr": "https://github.com/adi805/GeoApps/pull/33",
+  "komentar_issue": null
+}
