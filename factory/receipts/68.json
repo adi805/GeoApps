@@ -73,6 +73,12 @@
   "cakupan": {
     "usulan": "u-ui-6e0442",
     "berkas_usulan": "factory/usulan-ui.jsonl (untracked, milik lane HQ)",
-    "salinan": "factory/bahan/68-cakupan-lane.md"
+    "salinan": "factory/bahan/68-cakupan-lane.md",
+    "usulan_uji": {
+      "id": "u-ui-e53ff5",
+      "ringkas": "tokens.test.ts tidak dijalankan CI karena test:frontend hanya tests/*.test.ts",
+      "rekomendasi": "ubah test:frontend agar menyertakan apps/geolibre-desktop/src/**/*.test.ts (dikerjakan lane uji)",
+      "salinan": "komentar PR #73 (issuecomment-6290852901)"
+    }
   }
 }
