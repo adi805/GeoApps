@@ -68,7 +68,11 @@ jobs:
     # Only for builds that came from a pull request and actually succeeded. A
     # `workflow_dispatch` build of pr-preview.yml is a build smoke test and
     # publishes nothing, matching the behaviour before the split.
+    # Upstream only: on a fork PREVIEW_DEPLOY_TOKEN is absent and
+    # opengeos/pages-preview is not ours, so both deploy and remove can only
+    # fail (#64). Stage 1 is already guarded; this is the belt to that braces.
     if: >-
+      github.repository == 'opengeos/GeoLibre' &&
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     outputs:
