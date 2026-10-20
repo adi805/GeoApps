@@ -182,6 +182,15 @@ test("reopens a project with every non-local request aborted", async ({ page }) 
     }
     expect(sources.size).toBe(PHOTO_INDICES.length);
 
+    // Collapsing above left only the panel's thin rail, and the rail renders no
+    // layer rows (LayerPanel.tsx:488-500), so the row the menu hangs off is gone
+    // from the DOM. Expand it back before reaching for that row; mirror of the
+    // collapse, and conditional for the same reason. The assertion is what turns
+    // a missing row into a named failure instead of a 60s click timeout.
+    const expand = page.getByRole("button", { name: "Expand layers", exact: true });
+    if (await expand.isVisible({ timeout: 2_000 }).catch(() => false)) await expand.click();
+    await expect(layerRow(page, LAYER_NAME)).toBeVisible();
+
     // 20 points: the attribute table reports the project's own feature count.
     // The rows themselves are virtualized (only what fits the viewport is in
     // the DOM), so the status line is what carries the total.
