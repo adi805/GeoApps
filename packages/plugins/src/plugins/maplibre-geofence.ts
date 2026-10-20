@@ -167,6 +167,11 @@ export function zoneSignedDistance(
   return { inside, signedM: inside ? -distance : distance };
 }
 
+/** Objek biasa (bukan null, bukan array) yang boleh dibaca propertinya. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
 /** Titik dari dua nilai mentah; null kalau salah satunya bukan angka. */
 function toPosition(lng: unknown, lat: unknown): Position | null {
   const x = Number(lng);
@@ -195,12 +200,12 @@ function positiveMeters(value: unknown): number | null {
 export function zoneFromFeature(feature: Feature<Geometry>): GeofenceZone | null {
   const name = String(feature.properties?.name ?? feature.id ?? "zona");
   const id = String(feature.id ?? name);
-  const geometry = feature.geometry as unknown as {
-    type?: string;
-    coordinates?: unknown;
-  } | null;
-  if (!geometry || !Array.isArray(geometry.coordinates)) return null;
-  const coordinates: unknown[] = geometry.coordinates;
+  // `Circle` bukan tipe GeoJSON standar, jadi geometrinya dibaca sebagai nilai
+  // mentah lalu diperiksa bentuknya: tanpa cast apa pun ke tipe yang salah.
+  const geometry: unknown = feature.geometry;
+  if (!isRecord(geometry)) return null;
+  const coordinates = geometry.coordinates;
+  if (!Array.isArray(coordinates)) return null;
 
   if (geometry.type === "Polygon") {
     return { id, name, kind: "polygon", rings: coordinates as Position[][] };
