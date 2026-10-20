@@ -13,6 +13,15 @@ import {
 import type { Feature, FeatureCollection, LineString, MultiLineString } from "geojson";
 import type { LoadedVectorLayer } from "../apps/geolibre-desktop/src/lib/file-io/loaded-layer";
 
+/**
+ * RFC 7946 §3.2 allows a Feature whose geometry is null, and `decodePolylineTool`
+ * only ever reads `feature.properties` before writing the decoded geometry back.
+ * `@types/geojson` defaults `Feature.geometry` to `Geometry` (never null), so the
+ * fixtures declare the attribute-only shape explicitly instead of widening the
+ * whole fixture with `any`. The narrowing stays confined to this one slot.
+ */
+const NULL_GEOMETRY = null as unknown as Feature["geometry"];
+
 describe("polyline codec", () => {
   describe("decodePolyline", () => {
     it("decodes the canonical Google precision-5 example to [lon, lat] pairs", () => {
@@ -274,7 +283,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "R1", poly: "_p~iF~ps|U_ulLnnqC_mqNvxq`@" },
-              geometry: null,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -378,7 +387,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "Bad", poly: "_p~iF/invalid" },
-              geometry: null,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -511,7 +520,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "Oversized", poly: "_o`diA~gw}qC_pR_pR_pR_af@" },
-              geometry: null,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -558,7 +567,7 @@ describe("polyline codec", () => {
                 routeId: "Incomplete",
                 poly: "_p~iF~ps|U_ulLnnqC_mqNvxq`@_mqN",
               },
-              geometry: null,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -605,7 +614,7 @@ describe("polyline codec", () => {
                 routeId: "Overlong",
                 poly: "_______?",
               },
-              geometry: null,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },

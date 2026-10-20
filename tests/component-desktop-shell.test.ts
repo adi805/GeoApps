@@ -15,15 +15,17 @@ import { render, screen } from "./helpers/dom";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { createElement } from "react";
+import type { LayoutOptions } from "../apps/geolibre-desktop/src/hooks/useLayoutOptions";
 
 // Loaded after the harness so its CSS imports and Vite globals are handled.
 const { DesktopShell } =
   await import("../apps/geolibre-desktop/src/components/layout/DesktopShell");
 
 /** The layout App.tsx passes for a plain desktop window with every panel on. */
-const layoutOptions = {
+const layoutOptions: LayoutOptions = {
   attributePanelVisible: true,
   compact: false,
+  layerPanelVisible: true,
   panelsHidden: false,
   panelsCollapsed: false,
   showProjectInfo: true,
