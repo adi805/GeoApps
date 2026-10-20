@@ -1,9 +1,14 @@
 # Rancangan: bundel proyek portabel (`offline-bundle`)
 
-> Status: prototipe di `factory/bahan/` (issue #11, lane `offline`).
-> Kode uji: `factory/bahan/offline-bundle.test.ts` → `apps/geolibre-desktop/src/lib/offline-bundle.ts`.
-> Setelah #10 merge: modul pindah ke `apps/geolibre-desktop/src/lib/project-bundle.ts`
-> + `project-manifest.ts`, uji ke `apps/geolibre-desktop/src/lib/*.test.ts`.
+> Status: **implementasi** di `apps/geolibre-desktop/src/lib/` (issue #11, lane `offline`).
+> Kode: `project-manifest.ts` (skema, jalur, sha256, parse/serialize) ·
+> `project-bundle.ts` (impor/verifikasi/buka/hapus) ·
+> `offline-region-manifest.ts` (katalog region → manifes) ·
+> `project-bundle-tauri.ts` (store `$APPLOCALDATA/projects/<slug>/`) ·
+> `project-bundle-web.ts` (store IndexedDB).
+> Uji: `*.test.ts` di sebelah tiap modul (64 uji) + prototipe
+> `factory/bahan/offline-bundle.test.ts` (21 uji) = 85 uji, semuanya lulus.
+> Verifikasi: `node --import tsx --test <berkas>` dan `npx tsc --noEmit --strict` exit 0.
 
 ## 1. Masalah
 
@@ -125,6 +130,9 @@ ditimpa lewat jalur impor berkas.
 | `readManifest` / `writeManifest` | lewat `BundleStore` |
 | `importBundleFile` | tulis byte dulu → baru catat entri berisi hash byte yang benar-benar ditulis |
 | `withOfflineRegions` | ganti daftar region + segarkan `totals` |
+| `bundleRegionFromOfflineRegion` | satu `OfflineRegion` → `BundleOfflineRegion` (lihat §5a) |
+| `applyOfflineRegions` | seluruh katalog → manifes, ukuran byte opsional per id |
+| `missingOfflineRegions` | region yang diminta proyek tapi belum ada di perangkat ini |
 | `verifyBundle` | `missing[]` / `mismatched[]` / `ok` |
 | `openBundle` | baca manifes → verifikasi → `status: "ok" \| "incomplete"` |
 | `deleteBundle` | hapus semua yang di-`list` + manifes; kembalikan daftar yang terhapus |
@@ -147,6 +155,23 @@ Pengecualian: **manifes** yang gagal parse adalah error. Direktori tanpa
 `project.json` bukan bundel, dan "proyek kosong" yang terbuka diam-diam terlihat
 persis seperti kehilangan data.
 
+### 5a. Region: pemetaan yang sengaja lossy
+
+Katalog di `offline-regions.ts` itu **per perangkat**; `project.json` **berpindah
+perangkat**. Jadi adaptornya membuang, dan yang dibuang itu memang intinya:
+
+| Field `OfflineRegion` | Di manifes? | Alasan |
+|---|---|---|
+| `id`, `name`, `bbox`, `minZoom`, `maxZoom`, `tileCount`, `hosts` | ya | identitas area yang dibutuhkan proyek |
+| `tileUrls`, `assetUrls` | **tidak** | URL yang dihangatkan di sini tak berarti di cache perangkat lain, dan jumlahnya besar |
+| `createdAt`, `updatedAt` | **tidak** | per perangkat; manifes sudah punya `updatedAt` sendiri |
+| `bytes` | opsional | hanya diisi kalau pemanggil benar-benar mengukur region itu |
+
+`bbox` dan `hosts` **disalin**, bukan di-alias: memutasi manifes tidak boleh
+merusak katalog yang masih hidup di `localStorage`. `missingOfflineRegions()`
+menjawab kasus buka-di-instalasi-baru: daftar area yang harus diunduh lagi,
+dalam urutan manifes supaya prompt-nya stabil.
+
 ### Hapus proyek
 
 `BundleStore` sudah terikat ke satu direktori proyek, jadi `list()` secara
@@ -167,14 +192,27 @@ interface BundleStore {
 }
 ```
 
-Dua implementasi menyusul (bukan bagian prototipe ini):
+Dua implementasi, keduanya sudah ada:
 
-1. **Tauri** — `$APPLOCALDATA/projects/<slug>/` lewat `tauri-io.ts` /
-   `file-io/local-fs.ts`. **Butuh `fs:scope` `$APPLOCALDATA/projects/**` di
-   `src-tauri/capabilities/default.json`**; sekarang cuma `startup-projects`
-   yang di-scope. Path itu milik lane `android` → ajukan lewat komentar #11.
-2. **Web** — IndexedDB, object store `bundle-files`, key `"<slug>/<path>"`,
-   indeks `slug`. `list()` = semua key dengan prefix slug.
+1. **Tauri** — `project-bundle-tauri.ts`, `createTauriBundleStore(slug, io?)`
+   mengikat store ke `$APPLOCALDATA/projects/<slug>/`. `list()` menelusuri
+   subdirektori; `write()` membuat direktori induk (`mkdir recursive`).
+   `listBundleProjectSlugs()` memberi daftar bundel di perangkat.
+   **Masih butuh `fs:scope` `$APPLOCALDATA/projects/**` di
+   `src-tauri/capabilities/default.json`** — sekarang cuma `startup-projects`
+   yang di-scope, jadi setiap tulis gagal "forbidden path". Path itu milik lane
+   `android` → diajukan lewat komentar #11, bukan dikerjakan di sini.
+2. **Web** — `project-bundle-web.ts`, IndexedDB `geolibre-project-bundles` v1,
+   object store `bundle-files`, key `"<slug>/<path>"`. Satu record per **berkas**,
+   bukan per proyek: menulis ulang satu record proyek tiap impor foto berarti
+   menyalin ratusan MB. `list()` = prefix scan atas key saja (tanpa membaca
+   bytes), jadi dua proyek tak mungkin saling melihat berkas.
+
+Keduanya menerima I/O yang disuntik (`BundleDirIo`, `BundleFileTable`) dan
+memanggil `assertSafeBundlePath` **lagi** di lapisan store: manifes buatan tangan
+pun tidak bisa keluar dari direktorinya. Binding asli (`@tauri-apps/plugin-fs`,
+`appLocalDataDir`, `indexedDB`) diimpor lazy, jadi modul tetap bisa diuji di Node
+dan tidak membebani build web.
 
 ## 7. Yang belum diputuskan
 
@@ -195,14 +233,28 @@ Dua implementasi menyusul (bukan bagian prototipe ini):
 
 | Kriteria | Ditutup oleh |
 |---|---|
-| impor → tutup → buka lagi, sha256 cocok | `factory/bahan/offline-bundle.test.ts`: "impor, tutup, buka lagi" |
+| impor → tutup → buka lagi, sha256 cocok | `project-bundle.test.ts`: "impor, tutup, buka lagi"; juga lewat kedua store |
 | berkas hilang dilaporkan, bukan proyek setengah jadi | uji "berkas hilang → incomplete" + "manifes rusak → error" |
-| hapus hanya isi direktorinya | uji "hapus tidak menyentuh proyek lain" (store saudara tetap utuh) |
-| manifes mencatat region offline | uji `withOfflineRegions` + `totals.offlineRegionBytes` |
+| hapus hanya isi direktorinya | `project-bundle-tauri.test.ts`: hapus satu proyek, store saudara tetap utuh |
+| manifes mencatat region offline | `offline-region-manifest.test.ts` + `totals.offlineRegionBytes` |
 | `npm run lint` exit 0 | belum bisa dijalankan di host ini (lihat catatan di bawah) |
 
-Catatan lingkungan: `npx tsc --noEmit` pada modul ini **lolos (exit 0)**. ESLint
-type-aware (`eslint apps/... --max-warnings 242`) kehabisan heap di joyboy
-(RAM 3.9 GB, PSI memory `full` > 50%, satu percobaan OOM, satu lagi 9 menit
-tanpa hasil). Verifikasi lint harus dijalankan di mesin/CI yang punya RAM cukup;
-jangan menaikkan `--max-warnings` untuk melewatinya.
+Berkas uji: `project-manifest.test.ts` (manifes), `project-bundle.test.ts`
+(operasi), `offline-region-manifest.test.ts` (adaptor region),
+`project-bundle-tauri.test.ts` (store disk + round trip),
+`project-bundle-web.test.ts` (store IndexedDB + round trip), plus prototipe
+`factory/bahan/offline-bundle.test.ts`. Total 85 uji, 0 gagal.
+
+**Catatan cakupan CI:** `scripts/coverage-check.mjs` hanya menjalankan
+`tests/*.test.ts`, jadi uji in-tree `src/**/*.test.ts` **tidak** ikut CI. Itu
+usulan terpisah ke lane `uji` (lihat receipt #11), bukan sesuatu yang bisa
+diputuskan di lane ini.
+
+Catatan lingkungan: `npx tsc --noEmit --strict` pada seluruh modul dan ujinya
+**lolos (exit 0)**. `npx tsc -b apps/geolibre-desktop` dan ESLint type-aware
+(`eslint apps/... --max-warnings 242`) **kehabisan heap di joyboy** (RAM 3.9 GB,
+~1.4 GB tersedia, proses agen sendiri ~940 MB): `tsc -b` mati
+`FATAL ERROR: Reached heap limit` (exit 134), percobaan ESLint dengan
+`NODE_OPTIONS=--max-old-space-size=1536` dibunuh `timeout 300` (`Terminated`).
+Lint dan build type-aware harus dijalankan di mesin/CI yang punya RAM cukup;
+**jangan** menaikkan `--max-warnings` untuk melewatinya.
