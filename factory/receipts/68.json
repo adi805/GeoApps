@@ -1,0 +1,66 @@
+{
+  "issue": 68,
+  "lane": "ui",
+  "branch": "ui/token-visual",
+  "worktree": "~/GeoApps-ui-token-visual",
+  "commit": "07117990",
+  "status_short": [
+    "?? factory/bahan/68-mobile-token-shot.spec.ts",
+    "?? factory/usulan-ui.jsonl"
+  ],
+  "kriteria": [
+    {
+      "kriteria": "1. Skrip mengubah TEMA di tokens.ts menjadi src/styles/tokens.css berisi peran semantik untuk ketiga tema",
+      "status": "selesai",
+      "perintah": "node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check",
+      "exit": 0,
+      "keluaran": "OK      src/styles/tokens.css matches tokens.ts. Berkas 4283 byte, tiga blok: :root + html:not([data-theme]):not(.dark) (terang), .dark + .dark:not([data-theme]) (gelap), :root[data-contrast=\"high-dark\"] (kontras), ditambah --radius 0.625rem sekali di :root. Peran yang ditulis: background, foreground, card, popover, primary, secondary, muted, accent, destructive, border, input, ring, radius. Nilai tetap triple hsl() supaya konsumen hsl(var(--x)) di index.css tidak perlu diubah."
+    },
+    {
+      "kriteria": "2. index.css mengimpor hasil generator dan tidak lagi mendefinisikan palet sendiri",
+      "status": "selesai",
+      "perintah": "sed -n '1,3p' apps/geolibre-desktop/src/index.css; awk 'NR>=162 && NR<=180 || NR>=716 && NR<=820' apps/geolibre-desktop/src/index.css | grep -cE 'hsl\\([0-9]'",
+      "exit": 0,
+      "keluaran": "Baris 2 index.css: @import \"./styles/tokens.css\"; (setelah @import \"@geolibre/ui/globals.css\"). Hitungan literal hsl() bernilai angka di dalam blok :root index.css: 0. Yang tersisa hanya konsumen hsl(var(--token)) dan warna per-widget untuk kontrol peta vendored (LiDAR, GeoAgent, print, splatting)."
+    },
+    {
+      "kriteria": "3. Ada uji yang gagal kalau tokens.css tidak sinkron dengan tokens.ts",
+      "status": "selesai",
+      "perintah": "node --import tsx --test apps/geolibre-desktop/src/styles/tokens.test.ts",
+      "exit": 0,
+      "keluaran": "tests 5, pass 5, fail 0. Lima uji: (a) generator --check harus lolos, (b) peran wajib lengkap untuk tema terang, (c) untuk tema gelap, (d) untuk tema kontras, (e) tidak ada warna literal hex/rgb di tokens.css. Uji negatif: --background diubah 95.7% menjadi 95.6% di tokens.css, uji (a) merah ('matches tokens.ts (generator --check)'), lalu berkas dikembalikan dan generator --check hijau lagi. CATATAN: uji ini hidup di src/**, dan CI hanya menjalankan tests/*.test.ts, jadi uji ini BELUM tersambung ke CI. Penyambungannya butuh package.json akar atau .github/workflows/ci.yml, dua-duanya di luar cakupan lane ui; dicatat sebagai usulan."
+    },
+    {
+      "kriteria": "4. Tangkapan layar MobileShell dan DesktopShell sesudah perubahan, dari aplikasi nyata lewat E2E",
+      "status": "belum",
+      "perintah": "npx playwright test e2e/68-mobile-token-shot.spec.ts --project=features",
+      "exit": 137,
+      "keluaran": "TIDAK TERPENUHI, dua sebab terpisah. (a) Sumber spesifikasinya sudah ditulis di factory/bahan/68-mobile-token-shot.spec.ts (viewport 360x800 dan 412x915, tiga tema, asersi token hasil generator, asersi mobile-shell + mobile-tab-bar + field-status-strip terlihat, asersi tiap tab >= 48 px), tapi e2e/** milik lane uji, jadi berkas itu tidak bisa dipindahkan ke e2e/ oleh lane ui. (b) Playwright butuh webServer dari playwright.config.ts, yaitu `npm run build && npm run preview`; build di host ini dibunuh earlyoom. Bukti: journalctl -u earlyoom hari ini mencatat 'sending SIGTERM ... VmRSS 1419 MiB' untuk proses tsc dan 'VmRSS 1415 MiB' untuk vite, batas praktis tiap proses node di host ini ~1.2 GB, sedangkan build butuh lebih. Mencoba jalur dev server juga gagal: setelah halaman dimuat, [optimizer] bundling dependencies memuncak dan prosesnya dibunuh pada 1415 MiB. vited dev server + Playwright + WebGL SwiftShader tidak muat di 3.9 GB RAM yang 2.1 GB-nya sudah dipakai layanan lain."
+    },
+    {
+      "kriteria": "5. npm run lint tidak menambah warning di atas ratchet, npm run typecheck:tests lolos",
+      "status": "belum-diverifikasi-lokal",
+      "perintah": "npm run lint",
+      "exit": null,
+      "keluaran": "Tidak bisa dijalankan di host ini: eslint dengan projectService:true butuh lebih dari ~1.2 GB (batas earlyoom). Percobaan: heap default, 1800 MB, dan 1000 MB, tiga-tiganya berakhir 'Aborted' (V8 OOM) atau SIGTERM dari earlyoom pada ~1.27-1.41 GB RSS. Bukti akan datang dari job CI 'Lint and type check' pada PR, pola yang sama dengan receipt 55. --max-warnings TIDAK diubah (tetap 242)."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 1,
+      "keluaran": "GAGAL cakupan lane ui dilanggar: 3 path - apps/geolibre-desktop/scripts/gen-tokens-css.mjs, apps/geolibre-desktop/src/index.css, apps/geolibre-desktop/src/styles/tokens.css. Ketiganya diberikan brief issue #68 tetapi tidak ada satu pun lane di factory/lanes.json yang mencakupnya (diperiksa untuk kesembilan lane: nol kecocokan). Ini MERAH KARENA CAKUPAN, BUKAN KARENA KEBENARAN: kode sudah diverifikasi lokal lewat kriteria 1-3. Perbaikan glob adalah milik HQ (factory/**), dicatat di factory/usulan-ui.jsonl sebagai u-ui-6e0442 dengan rekomendasi opsi 2 (pola, bukan tiga entri literal). Berkas usulan sengaja TIDAK di-commit: berkas jejak dimiliki lane HQ, gate menolaknya untuk lane ui, dan HQ mengambilnya lewat 'selamatkan' seperti commit 21348416."
+    },
+    {
+      "perintah": "node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs && git diff --exit-code apps/geolibre-desktop/src/styles/tokens.css",
+      "exit": 0,
+      "keluaran": "Generator idempoten: menulis ulang 'tulis   src/styles/tokens.css (4283 bytes, 3 themes)', lalu git diff --exit-code keluar 0 (nol perubahan)."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Dua berkas untracked yang disengaja: factory/bahan/68-mobile-token-shot.spec.ts (sumber E2E, cakupan lane ui, menunggu lane uji untuk memindahkannya ke e2e/) dan factory/usulan-ui.jsonl (berkas jejak milik HQ). Selain itu bersih."
+    }
+  ],
+  "komentar_issue": "Kode selesai dan tiga kriteria pertama terverifikasi lokal; kriteria 4 dan 5 tertahan oleh batas host dan cakupan lane, bukan oleh kode."
+}
