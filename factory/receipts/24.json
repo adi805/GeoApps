@@ -1,0 +1,49 @@
+{
+  "issue": 24,
+  "lane": "visual",
+  "branch": "visual/lane-visual",
+  "worktree": "~/GeoApps-lane-visual",
+  "commit": "db7a39eb",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "cd apps/geolibre-desktop && npx tsc -p /tmp/tsconfig.visual.json",
+      "exit": 0,
+      "catatan": "tsc -b penuh tidak dipakai: earlyoom mematikan node di RAM 3,9 GB. Config ini menyertakan src/visual/** dengan basis tsconfig.base.json yang sama."
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && ./node_modules/.bin/eslint apps/geolibre-desktop/src/visual --max-warnings 0",
+      "exit": 0
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && node apps/geolibre-desktop/src/visual/cek-inventaris.mjs",
+      "exit": 0,
+      "keluaran": "komposisi: 31 / keadaan diperiksa: 155 / pasangan kontras diperiksa: 42 / pemeriksaan lulus: 353 / OK"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && node apps/geolibre-desktop/src/visual/tangkap-layar.mjs",
+      "exit": 0,
+      "keluaran": "tangkapan layar: 67/67 berkas di factory/bahan/visual"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && python3 tools/factory/gate_commit_paths.py --lane visual --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane visual: 88 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && python3 tools/factory/gate_pr_link.py --body /tmp/pr-body.md --judul /tmp/judul-pr.txt --commits /tmp/judul.txt --issue 24",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #24, 4 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/24#issuecomment-6280377506",
+  "pr": "https://github.com/adi805/GeoApps/pull/29",
+  "catatan": "PR #29 dibuka dengan merge commit (bukan squash, bukan rebase), badan PR memuat baris 'Closes #24'."
+}
