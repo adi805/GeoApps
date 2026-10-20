@@ -1,0 +1,47 @@
+{
+  "issue": 42,
+  "lane": "uji",
+  "branch": "uji/ratchet-visual",
+  "worktree": "~/GeoApps-uji-ratchet-visual",
+  "commit": "d4f02566",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && node --import tsx --test tests/visual-inventaris.test.ts tests/visual-primitives.test.ts tests/visual-screens-peta.test.ts",
+      "exit": 0,
+      "keluaran": "tests 34 / pass 34 / fail 0 / suites 8",
+      "catatan": "Tiga berkas baru di tests/** yang MENGIMPOR apps/geolibre-desktop/src/visual/{inventaris.ts,primitives.tsx,screens/peta.tsx}. apps/** tidak disentuh, dan scripts/untested-modules-baseline.json tidak ditambah satu entri pun."
+    },
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && npx eslint tests/visual-inventaris.test.ts tests/visual-primitives.test.ts tests/visual-screens-peta.test.ts",
+      "exit": 0,
+      "keluaran": "keluaran kosong (0 warning, 0 error)",
+      "catatan": "`npm run lint` penuh tidak bisa dijalankan lokal: node di host ini dibunuh OOM sebelum melaporkan angka (exit 134, Aborted; heavy-slice-evacuate.sh + MemoryMax=1800M). --max-warnings 242 tidak diubah. Hitungan ratchet yang mengikat tetap dari CI."
+    },
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && node scripts/check-untested-modules.mjs > /tmp/c42-cek.txt 2>&1; ! grep -q 'apps/geolibre-desktop/src/visual' /tmp/c42-cek.txt",
+      "exit": 0,
+      "keluaran": "nol baris menyebut apps/geolibre-desktop/src/visual; keluaran checker sendiri '46 source file(s) over 500 lines are loaded by no test (30 in the baseline)'",
+      "catatan": "Perintah ini menguji properti yang diklaim issue #42: ketiga berkas tidak lagi NEW. Checker-nya SENDIRI tetap exit 1 karena 16 NEW lain (packages/map/src/CesiumCanvas.tsx, MapCanvas.tsx, MapboxCanvas.tsx, packages/plugins/src/plugins/gods-eye-view-*, maplibre-*), dan itu artefak run: 99 test gagal membuat lcov parsial sehingga berkas yang dites test gagal tampak tanpa uji. Kegagalan itu pra-ada, dibuktikan dengan tests/arcgis-i3s-tiles.test.ts yang identik dengan origin/main (git diff kosong) dan tetap gagal saat dijalankan sendiri (actual undefined vs expected [-122.4, 37.8]). Bukan cakupan #42."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && python3 tools/factory/gate_pr_link.py --body /tmp/pr42.md --judul /tmp/judul42.txt",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #42",
+      "catatan": "PR #49, badan PR memuat baris penutup berbahasa Inggris Closes #42."
+    },
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 3 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "gh issue view 42 -R adi805/GeoApps --json comments --jq '.comments[-1].body' | grep -q 'd4f02566'",
+      "exit": 0,
+      "keluaran": "komentar bukti terpasang di issue #42 (issuecomment-6287771458), menyebut hash d4f02566 dan hasil ketiga pemeriksa"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/42#issuecomment-6287771458"
+}
