@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./test";
+import { enterViewer, openViewer } from "./helpers";
 import { strToU8, zipSync } from "fflate";
 import { createEmptyProject, DEFAULT_LAYER_STYLE } from "@geolibre/core";
 
@@ -77,8 +78,7 @@ async function openManagePluginsSettings(page: Page, locale: "en" | "zh" = "en")
 test("installs a plugin from an uploaded zip, persists it across reload, and uninstalls it", async ({
   page,
 }) => {
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page);
   // The Settings dropdown trigger is part of the toolbar; wait for it before
   // driving the menu.
   await expect(page.getByRole("button", { name: "Settings", exact: true })).toBeVisible();
@@ -111,7 +111,7 @@ test("installs a plugin from an uploaded zip, persists it across reload, and uni
   // 2. Persistence: reload the app. The startup loader replays the bundle from
   //    IndexedDB, so the plugin is registered again and still listed.
   await page.reload();
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await enterViewer(page);
   await openPluginsMenu(page, { installed: true });
   await expect(page.getByRole("menu").getByText(PLUGIN_NAME)).toBeVisible();
   await page.keyboard.press("Escape");
@@ -137,8 +137,7 @@ test("deployment defaultActive applies to fresh projects but respects explicit d
       json: { version: 1, plugins: { defaultActive: [PLUGIN_ID] } },
     }),
   );
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page);
   const dialog = await openManagePluginsSettings(page);
   const [chooser] = await Promise.all([
     page.waitForEvent("filechooser"),
@@ -190,8 +189,7 @@ test("blocked archive installs report denial without registering or persisting t
       json: { version: 1, plugins: { blocked: [PLUGIN_ID] } },
     }),
   );
-  await page.goto("/?locale=zh");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page, "/?locale=zh");
   const dialog = await openManagePluginsSettings(page, "zh");
   const [chooser] = await Promise.all([
     page.waitForEvent("filechooser"),
@@ -205,7 +203,7 @@ test("blocked archive installs report denial without registering or persisting t
   await expect(dialog.getByText(`插件“${PLUGIN_ID}”已被部署策略阻止。`)).toBeVisible();
   await expect(dialog.getByRole("button", { name: `卸载 ${PLUGIN_NAME}` })).toHaveCount(0);
   await page.reload();
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await enterViewer(page);
   await openPluginsMenu(page, { label: "插件", installedLabel: "已安装" });
   await expect(page.getByRole("menu").getByText(PLUGIN_NAME)).toHaveCount(0);
 });
@@ -222,8 +220,7 @@ test("sideload=false hides installation controls and ignores project manifest UR
     pluginRequests.push(route.request().url());
     return route.abort();
   });
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page);
 
   const dialog = await openManagePluginsSettings(page);
   await expect(dialog.getByRole("button", { name: /Choose \.zip/ })).toHaveCount(0);
@@ -312,8 +309,7 @@ test("deployment plugin rules filter registry installation entries", async ({ pa
       })),
     }),
   );
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page);
   const dialog = await openManagePluginsSettings(page);
   await dialog.getByRole("button", { name: /^All / }).click();
   await expect(dialog.getByRole("button", { name: "Install allowed-plugin" })).toBeVisible();
@@ -366,8 +362,7 @@ for (const registryResult of ["delisted", "unavailable", "blocked-id"] as const)
         }),
       );
     }, manifestUrl);
-    await page.goto("/");
-    await expect(page.getByTestId("map-canvas")).toBeVisible();
+    await openViewer(page);
     await openPluginsMenu(page, { installed: true });
     await page.getByRole("menuitem", { name: new RegExp(`^${PLUGIN_NAME}`) }).click();
     await expect(page.locator("#registry-plugin-active")).toBeAttached();
@@ -419,8 +414,7 @@ test("external plugins reproject coordinates with the host's shared proj4", asyn
     }),
   );
 
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
+  await openViewer(page);
   const dialog = await openManagePluginsSettings(page);
   const [fileChooser] = await Promise.all([
     page.waitForEvent("filechooser"),
