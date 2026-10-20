@@ -1,0 +1,66 @@
+{
+  "issue": 95,
+  "lane": "uji",
+  "branch": "uji/95-boot-home",
+  "worktree": "~/GeoApps-uji-95",
+  "commit": "4080c813",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. e2e/style-manager.spec.ts hijau di shard features 4/4, angka passed/failed dikutip dari log",
+      "status": "selesai",
+      "perintah": "gh api repos/adi805/GeoApps/actions/jobs/118932295328/logs (run 39511180662, commit 4080c813)",
+      "exit": 0,
+      "keluaran": "Job 118932295328, shard features 4/4, HIJAU: '25 passed (5.0m)' dan '0 failed'. Dua test yang sebelumnya merah sekarang lulus di percobaan pertama tanpa retry: '✓ 25 [features] > e2e/style-manager.spec.ts:12:7 > style preset rename preserves styles and persists in light mode (18.9s)' dan '✓ 26 ... dark mode (20.0s)'. Sebelumnya di PR #91 shard yang sama melaporkan 2 failed 23 passed.",
+      "catatan": "Perbaikan: await enterViewer(page) di antara page.reload() dan openStyleManager(page). Reload mengembalikan screen ke home dan DesktopShell hanya dipasang untuk viewer, jadi tombol Settings tidak pernah ada dan kliknya menunggu 120 detik penuh. Pola sama dengan plugin-install.spec.ts:113-114 dan pwa.spec.ts:117-120."
+    },
+    {
+      "kriteria": "2. e2e/open-recent.spec.ts hijau di shard features 2/4, angka passed/failed dikutip dari log",
+      "status": "selesai",
+      "perintah": "gh api repos/adi805/GeoApps/actions/jobs/118932295002/logs (run 39511180662, commit 4080c813)",
+      "exit": 0,
+      "keluaran": "Job 118932295002, shard features 2/4: '✓ 50 [features] > e2e/open-recent.spec.ts:7:5 > reopens a project saved on the web from Open Recent via the file picker (8.6s)', lulus percobaan pertama tanpa retry. Sebelumnya gagal 1,1 menit menunggu event filechooser. Shard itu sendiri tetap MERAH: '17 failed, 10 passed (11.0m)', dan ketujuh belas kegagalannya semuanya e2e/mapbox-* (deck-overlays 3, flight-simulator 2, geoagent 2, geo-editor 2, overture 2, streetview 2, swipe 3, zarr 1), nol kegagalan open-recent.",
+      "catatan": "Perbaikan di e2e/helpers.ts: seedViewerEntry menggabung entri seed ke daftar yang sudah ada, bukan menimpanya. addInitScript berjalan di setiap navigasi dan menulis kunci yang sama dengan useRecentProjectsPersistence.ts:43, jadi proyek yang baru disimpan spec terhapus pada navigasi berikutnya. Arah 2 dari issue dipilih karena 19 spec memanggil waitForMap lebih dari sekali. Kelas mapbox-* TIDAK disentuh: menunggu keputusan owner soal token Mapbox di CI (usulan u-uji-59c1ec)."
+    },
+    {
+      "kriteria": "3. Nol perubahan di apps/**, nol perubahan di e2e/mapbox-*, nol skip/fixme/fail baru",
+      "status": "selesai",
+      "perintah": "git diff --stat origin/main...HEAD && grep -c 'test.skip\\|test.fixme\\|test.fail' e2e/helpers.ts e2e/style-manager.spec.ts e2e/open-recent.spec.ts",
+      "exit": 0,
+      "keluaran": "Diff terhadap origin/main hanya dua berkas: e2e/helpers.ts (+33 -4) dan e2e/style-manager.spec.ts (+6 -0). Nol path apps/**, nol path e2e/mapbox-*, nol perubahan scripts/untested-modules-baseline.json, nol perubahan package.json sehingga --max-warnings tetap 242 dan --max-errors tetap 0. Nol test.skip/test.fixme/test.fail di ketiga berkas.",
+      "catatan": "Batas brief dipatuhi: e2e/** milik lane uji, dan tidak ada perubahan produk yang dibutuhkan untuk dua kegagalan ini."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 2 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/b95.md --judul /tmp/t95.txt --commits /tmp/c95.txt --issue 95",
+      "exit": 0,
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: rujukan non-penutup #88, #95), 2 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "npx eslint e2e/helpers.ts e2e/style-manager.spec.ts e2e/open-recent.spec.ts",
+      "exit": 0,
+      "keluaran": "Exit 0, nol warning, nol eslint-disable baru."
+    },
+    {
+      "perintah": "npx tsc --noEmit --skipLibCheck --module esnext --moduleResolution bundler --target es2022 --strict e2e/helpers.ts e2e/style-manager.spec.ts e2e/open-recent.spec.ts",
+      "exit": 0,
+      "keluaran": "Nol galat pada ketiga berkas (hanya galat resolusi tipe @playwright/test dan Buffer dari lingkungan yang tidak lengkap, yang disaring)."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Bersih sebelum receipt ditulis; node_modules adalah symlink dan di-ignore git."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/95#issuecomment-6303873611",
+  "cakupan": {
+    "salinan": "factory/bahan/95-usulan.md",
+    "usulan": []
+  }
+}
