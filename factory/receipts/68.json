@@ -3,7 +3,7 @@
   "lane": "ui",
   "branch": "ui/token-visual",
   "worktree": "~/GeoApps-ui-token-visual",
-  "commit": "07117990",
+  "commit": "5d736ce3",
   "status_short": [
     "?? factory/bahan/68-mobile-token-shot.spec.ts",
     "?? factory/usulan-ui.jsonl"
@@ -32,17 +32,18 @@
     },
     {
       "kriteria": "4. Tangkapan layar MobileShell dan DesktopShell sesudah perubahan, dari aplikasi nyata lewat E2E",
-      "status": "belum",
+      "status": "sebagian",
       "perintah": "npx playwright test e2e/68-mobile-token-shot.spec.ts --project=features",
       "exit": 137,
-      "keluaran": "TIDAK TERPENUHI, dua sebab terpisah. (a) Sumber spesifikasinya sudah ditulis di factory/bahan/68-mobile-token-shot.spec.ts (viewport 360x800 dan 412x915, tiga tema, asersi token hasil generator, asersi mobile-shell + mobile-tab-bar + field-status-strip terlihat, asersi tiap tab >= 48 px), tapi e2e/** milik lane uji, jadi berkas itu tidak bisa dipindahkan ke e2e/ oleh lane ui. (b) Playwright butuh webServer dari playwright.config.ts, yaitu `npm run build && npm run preview`; build di host ini dibunuh earlyoom. Bukti: journalctl -u earlyoom hari ini mencatat 'sending SIGTERM ... VmRSS 1419 MiB' untuk proses tsc dan 'VmRSS 1415 MiB' untuk vite, batas praktis tiap proses node di host ini ~1.2 GB, sedangkan build butuh lebih. Mencoba jalur dev server juga gagal: setelah halaman dimuat, [optimizer] bundling dependencies memuncak dan prosesnya dibunuh pada 1415 MiB. vited dev server + Playwright + WebGL SwiftShader tidak muat di 3.9 GB RAM yang 2.1 GB-nya sudah dipakai layanan lain."
+      "keluaran": "TIDAK TERPENUHI, dua sebab terpisah. (a) Sumber spesifikasinya sudah ditulis di factory/bahan/68-mobile-token-shot.spec.ts (viewport 360x800 dan 412x915, tiga tema, asersi token hasil generator, asersi mobile-shell + mobile-tab-bar + field-status-strip terlihat, asersi tiap tab >= 48 px), tapi e2e/** milik lane uji, jadi berkas itu tidak bisa dipindahkan ke e2e/ oleh lane ui. (b) Playwright butuh webServer dari playwright.config.ts, yaitu `npm run build && npm run preview`; build di host ini dibunuh earlyoom. Bukti: journalctl -u earlyoom hari ini mencatat 'sending SIGTERM ... VmRSS 1419 MiB' untuk proses tsc dan 'VmRSS 1415 MiB' untuk vite, batas praktis tiap proses node di host ini ~1.2 GB, sedangkan build butuh lebih. Mencoba jalur dev server juga gagal: setelah halaman dimuat, [optimizer] bundling dependencies memuncak dan prosesnya dibunuh pada 1415 MiB. vited dev server + Playwright + WebGL SwiftShader tidak muat di 3.9 GB RAM yang 2.1 GB-nya sudah dipakai layanan lain.",
+      "catatan": "Sumber spesifikasi E2E ada di factory/bahan/68-mobile-token-shot.spec.ts; tangkapan layarnya TIDAK dihasilkan karena e2e/** milik lane uji dan host ini tidak bisa menjalankan vite build atau dev server + Chromium WebGL (earlyoom membunuh node di ~1.2 GB)."
     },
     {
       "kriteria": "5. npm run lint tidak menambah warning di atas ratchet, npm run typecheck:tests lolos",
-      "status": "belum-diverifikasi-lokal",
-      "perintah": "npm run lint",
-      "exit": null,
-      "keluaran": "Tidak bisa dijalankan di host ini: eslint dengan projectService:true butuh lebih dari ~1.2 GB (batas earlyoom). Percobaan: heap default, 1800 MB, dan 1000 MB, tiga-tiganya berakhir 'Aborted' (V8 OOM) atau SIGTERM dari earlyoom pada ~1.27-1.41 GB RSS. Bukti akan datang dari job CI 'Lint and type check' pada PR, pola yang sama dengan receipt 55. --max-warnings TIDAK diubah (tetap 242)."
+      "status": "selesai-lewat-ci",
+      "perintah": "gh pr checks 73 --repo adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "Job CI \"Lint and type check\" SUCCESS (run 39420955739, head 5d736ce3), meliputi npm run lint (ratchet --max-warnings 242 tidak diubah) dan npm run typecheck:tests. Job \"Build and test\" SUCCESS pada run yang sama, jadi tsc -b + vite build lolos di runner. Lokal tidak bisa: eslint dengan projectService berakhir V8 OOM/SIGTERM earlyoom di ~1.27-1.41 GB RSS."
     }
   ],
   "checker": [
@@ -60,7 +61,18 @@
       "perintah": "git status --short",
       "exit": 0,
       "keluaran": "Dua berkas untracked yang disengaja: factory/bahan/68-mobile-token-shot.spec.ts (sumber E2E, cakupan lane ui, menunggu lane uji untuk memindahkannya ke e2e/) dan factory/usulan-ui.jsonl (berkas jejak milik HQ). Selain itu bersih."
+    },
+    {
+      "perintah": "gh pr checks 73 --repo adi805/GeoApps",
+      "exit": 1,
+      "keluaran": "Gate pada pohon ini: fail. Setelah badan PR ditambah \"Closes #68\", langkah \"PR tertaut ke issue\" LULUS; yang merah hanya \"Cakupan lane dan eskalasi\" dengan tiga path yang sama. Langkah lain (gate bisa menolak, ledger, kanal, uji mandiri) hijau. Jadi gate merah karena cakupan, bukan karena kebenaran."
     }
   ],
-  "komentar_issue": "Kode selesai dan tiga kriteria pertama terverifikasi lokal; kriteria 4 dan 5 tertahan oleh batas host dan cakupan lane, bukan oleh kode."
+  "komentar_issue": "Kode selesai dan tiga kriteria pertama terverifikasi lokal; kriteria 4 dan 5 tertahan oleh batas host dan cakupan lane, bukan oleh kode.",
+  "pr": 73,
+  "cakupan": {
+    "usulan": "u-ui-6e0442",
+    "berkas_usulan": "factory/usulan-ui.jsonl (untracked, milik lane HQ)",
+    "salinan": "factory/bahan/68-cakupan-lane.md"
+  }
 }
