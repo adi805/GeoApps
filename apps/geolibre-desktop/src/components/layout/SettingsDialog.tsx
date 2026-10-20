@@ -592,7 +592,7 @@ export function SettingsDialog({
       <Button
         key={item.id}
         ref={effectiveSection === item.id ? activeSectionButtonRef : undefined}
-        className="min-h-12 justify-start"
+        className="justify-start"
         size="sm"
         type="button"
         variant={effectiveSection === item.id ? "secondary" : "ghost"}
