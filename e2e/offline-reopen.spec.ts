@@ -19,9 +19,17 @@ import { bindMapLibreMap, layerRow, waitForMap } from "./helpers";
  * silently passing on a machine that happens to have a connection.
  */
 
-/** 1x1 PNG, the same bytes `field-collection-photos.spec.ts` uses. */
-const PHOTO_PNG =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=";
+/**
+ * Three distinct 1x1 PNGs, one per photo point. They must differ: the test
+ * collects the popup `<img>` sources into a Set to prove each point renders
+ * *its own* photo, and identical bytes would collapse that Set to one entry no
+ * matter how many popups opened.
+ */
+const PHOTO_PNGS = [
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO4o6EBAAMQAS0Qc/Z2AAAAAElFTkSuQmCC",
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQ2BIAAAI0AS1by1fNAAAAAElFTkSuQmCC",
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQCLgDAAH4AVXsR+abAAAAAElFTkSuQmCC",
+];
 
 const POINT_COUNT = 20;
 /** Which of the 20 points carry a photo. Three of them do, as #11 requires. */
@@ -52,7 +60,8 @@ function offlineProject(): GeoLibreProject {
         type: "FeatureCollection",
         features: Array.from({ length: POINT_COUNT }, (_, index) => {
           const properties: Record<string, unknown> = { id: index + 1, nama: `Titik ${index + 1}` };
-          if (PHOTO_INDICES.includes(index)) properties.photo = PHOTO_PNG;
+          const photoIndex = PHOTO_INDICES.indexOf(index);
+          if (photoIndex !== -1) properties.photo = PHOTO_PNGS[photoIndex];
           return {
             type: "Feature" as const,
             id: index + 1,
@@ -156,7 +165,9 @@ test("reopens a project with every non-local request aborted", async ({ page }) 
     const collapse = page.getByRole("button", { name: "Collapse layers", exact: true });
     if (await collapse.isVisible({ timeout: 2_000 }).catch(() => false)) await collapse.click();
 
-    // 3 photos: every photo point opens the popup with its inline thumbnail.
+    // 3 photos: every photo point opens the popup with its own inline
+    // thumbnail. The Set proves the three are distinct, not one photo shown
+    // three times.
     const sources = new Set<string>();
     for (const index of PHOTO_INDICES) {
       const lngLat: [number, number] = [110.3 + (index % 5) * 0.03, -7.8 + Math.floor(index / 5) * 0.03];
