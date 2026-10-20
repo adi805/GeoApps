@@ -592,7 +592,7 @@ export function SettingsDialog({
       <Button
         key={item.id}
         ref={effectiveSection === item.id ? activeSectionButtonRef : undefined}
-        className="justify-start"
+        className="min-h-12 justify-start"
         size="sm"
         type="button"
         variant={effectiveSection === item.id ? "secondary" : "ghost"}
@@ -948,7 +948,7 @@ export function SettingsDialog({
             <nav className="flex min-w-0 gap-1 overflow-x-auto border-b p-3 md:flex-col md:overflow-x-visible md:border-b-0 md:border-e">
               {SECTION_ITEMS.filter((item) => isSectionVisible(item.id)).map(renderSectionButton)}
             </nav>
-            <div className="min-h-0 min-w-0 overflow-y-auto p-6">
+            <div className="min-h-0 min-w-0 overflow-y-auto p-3 md:p-6">
               <SettingsDraftProvider value={draftContext}>
                 {effectiveSection === "language" ? (
                   <LanguageSection languagePack={languagePack} />
@@ -998,7 +998,7 @@ export function SettingsDialog({
           ) : null}
           {effectiveSection === "language" ? (
             <div className="flex justify-end border-t px-6 py-4">
-              <Button type="button" onClick={() => setOpen(false)}>
+              <Button className="min-h-12" type="button" onClick={() => setOpen(false)}>
                 {t("common.close")}
               </Button>
             </div>
@@ -1008,10 +1008,10 @@ export function SettingsDialog({
             </div>
           ) : (
             <div className="flex justify-end gap-2 border-t px-6 py-4">
-              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button className="min-h-12" type="button" variant="outline" onClick={() => setOpen(false)}>
                 {t("common.cancel")}
               </Button>
-              <Button type="button" onClick={saveSettings}>
+              <Button className="min-h-12" type="button" onClick={saveSettings}>
                 {t("settings.saveButton")}
               </Button>
             </div>

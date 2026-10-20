@@ -217,7 +217,13 @@ export function ServiceLibrarySection({
           {t("addData.serviceLibrary.title")}
         </span>
         <div className="flex items-center gap-1">
-          <Button type="button" size="sm" variant="ghost" onClick={openSaveForm}>
+          <Button
+            className="min-h-12"
+            type="button"
+            size="sm"
+            variant="ghost"
+            onClick={openSaveForm}
+          >
             <Save className="me-1.5 h-3.5 w-3.5" />
             {t("addData.serviceLibrary.saveCurrent")}
           </Button>
@@ -226,6 +232,7 @@ export function ServiceLibrarySection({
               single ambiguous control (issue #530). */}
           <span aria-hidden className="mx-0.5 h-5 w-px bg-border" />
           <Button
+            className="min-h-12 min-w-12"
             type="button"
             size="icon"
             variant="ghost"
@@ -236,6 +243,7 @@ export function ServiceLibrarySection({
             <Upload className="h-3.5 w-3.5" />
           </Button>
           <Button
+            className="min-h-12 min-w-12"
             type="button"
             size="icon"
             variant="ghost"
@@ -276,6 +284,7 @@ export function ServiceLibrarySection({
             ))}
           </Select>
           <Button
+            className="min-h-12 min-w-12"
             type="button"
             size="icon"
             variant="ghost"
@@ -325,10 +334,16 @@ export function ServiceLibrarySection({
             </div>
           </div>
           <div className="flex justify-end gap-2">
-            <Button type="button" size="sm" variant="ghost" onClick={() => setIsSaving(false)}>
+            <Button
+              className="min-h-12"
+              type="button"
+              size="sm"
+              variant="ghost"
+              onClick={() => setIsSaving(false)}
+            >
               {t("common.cancel")}
             </Button>
-            <Button type="button" size="sm" onClick={handleSave}>
+            <Button className="min-h-12" type="button" size="sm" onClick={handleSave}>
               <Save className="me-1.5 h-3.5 w-3.5" />
               {t("common.save")}
             </Button>

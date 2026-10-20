@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { MOBILE_DIALOG_SURFACE } from "./mobile/mobile-dialog-surface";
+import { MobileCard, MobileFieldRow } from "./mobile/mobilePrimitives";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { Feature, FeatureCollection, Position } from "geojson";
@@ -1053,7 +1054,7 @@ export function GpsTrackingDialog({
                       />
                       {t("gps.follow")}
                     </label>
-                    <Button variant="outline" className="w-full" onClick={handleStop}>
+                    <Button variant="outline" className="min-h-12 w-full" onClick={handleStop}>
                       {source === "nmea" ? (
                         <Unplug className="me-2 h-4 w-4" />
                       ) : (
@@ -1063,7 +1064,7 @@ export function GpsTrackingDialog({
                     </Button>
                   </>
                 ) : source === "device" ? (
-                  <Button className="w-full" onClick={handleStart}>
+                  <Button className="min-h-12 w-full" onClick={handleStart}>
                     <LocateFixed className="me-2 h-4 w-4" />
                     {t("gps.start")}
                   </Button>
@@ -1080,27 +1081,48 @@ export function GpsTrackingDialog({
               <div className="space-y-2">
                 <Label>{t("gps.trackLog")}</Label>
                 {recording !== "off" && (
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 rounded-md bg-muted p-2 text-sm tabular-nums">
-                    <span>{t("gps.points", { count: fixCount })}</span>
-                    <span>{formatDistance(stats.distanceM)}</span>
-                    <span>{formatDuration(stats.durationS)}</span>
-                  </div>
+                  <MobileCard
+                    title={t("gps.trackSummary", "Ringkasan sementara")}
+                    description={
+                      recording === "recording"
+                        ? t("gps.recordingNow", "Sedang merekam: jejak bertambah setiap titik.")
+                        : t("gps.recordingPaused", "Rekaman dijeda: jejak berhenti bertambah.")
+                    }
+                  >
+                    <MobileFieldRow
+                      label={t("gps.pointsLabel", "Titik")}
+                      value={fixCount}
+                      mono
+                    />
+                    <MobileFieldRow
+                      label={t("gps.distance", "Jarak")}
+                      value={formatDistance(stats.distanceM)}
+                      mono
+                      className="border-t"
+                    />
+                    <MobileFieldRow
+                      label={t("gps.duration", "Durasi")}
+                      value={formatDuration(stats.durationS)}
+                      mono
+                      className="border-t"
+                    />
+                  </MobileCard>
                 )}
                 <div className="flex flex-wrap gap-2">
                   {recording === "off" && (
-                    <Button size="sm" disabled={!canTrack} onClick={handleStartRecording}>
+                    <Button className="min-h-12" size="sm" disabled={!canTrack} onClick={handleStartRecording}>
                       <Circle className="me-1 h-3.5 w-3.5 fill-red-500 text-red-500" />
                       {t("gps.record")}
                     </Button>
                   )}
                   {recording === "recording" && (
-                    <Button size="sm" variant="outline" onClick={() => changeRecording("paused")}>
+                    <Button className="min-h-12" size="sm" variant="outline" onClick={() => changeRecording("paused")}>
                       <Pause className="me-1 h-3.5 w-3.5" />
                       {t("gps.pause")}
                     </Button>
                   )}
                   {recording === "paused" && (
-                    <Button size="sm" disabled={!canTrack} onClick={handleResumeRecording}>
+                    <Button className="min-h-12" size="sm" disabled={!canTrack} onClick={handleResumeRecording}>
                       <Play className="me-1 h-3.5 w-3.5" />
                       {t("gps.resume")}
                     </Button>
@@ -1109,6 +1131,7 @@ export function GpsTrackingDialog({
                     <>
                       <Button
                         size="sm"
+                        className="min-h-12"
                         variant="outline"
                         disabled={!canSaveTrack}
                         onClick={handleSaveTrack}
@@ -1118,6 +1141,7 @@ export function GpsTrackingDialog({
                       </Button>
                       <Button
                         size="sm"
+                        className="min-h-12"
                         variant="outline"
                         disabled={!canSaveTrack}
                         onClick={() => void handleExportTrack("gpx")}
@@ -1127,6 +1151,7 @@ export function GpsTrackingDialog({
                       </Button>
                       <Button
                         size="sm"
+                        className="min-h-12"
                         variant="outline"
                         disabled={!canSaveTrack}
                         onClick={() => void handleExportTrack("geojson")}
@@ -1134,7 +1159,7 @@ export function GpsTrackingDialog({
                         <Download className="me-1 h-3.5 w-3.5" />
                         {t("gps.exportGeojson")}
                       </Button>
-                      <Button size="sm" variant="ghost" onClick={handleDiscardTrack}>
+                      <Button className="min-h-12" size="sm" variant="ghost" onClick={handleDiscardTrack}>
                         <Trash2 className="me-1 h-3.5 w-3.5" />
                         {t("gps.discard")}
                       </Button>
@@ -1150,7 +1175,7 @@ export function GpsTrackingDialog({
                 <Label>{t("gps.capture")}</Label>
                 <Button
                   variant="outline"
-                  className="w-full"
+                  className="min-h-12 w-full"
                   disabled={!lastFix}
                   onClick={handleCapturePoint}
                 >
