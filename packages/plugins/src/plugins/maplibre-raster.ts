@@ -447,6 +447,19 @@ export async function addRasterToMap(
     const { addNativeRaster } = await import("./native-raster-import");
     return addNativeRaster(app, source, options);
   }
+  // GeoPDF import: a georeferenced PDF (Esri ArcMap / OGC) becomes a tiled
+  // raster source served through the `geopdf://` protocol. It never goes
+  // through the raster control, which only reads GeoTIFF/COG bytes, and it is
+  // never rendered into one page-sized canvas (issue #8).
+  if (typeof source !== "string" && source instanceof File && /\.pdf$/i.test(source.name)) {
+    const { addGeoPdfToMap } = await import("./geopdf/geopdf-render");
+    return addGeoPdfToMap(app, source, {
+      ...(options.name ? { name: options.name } : {}),
+      ...(options.localPath ? { localPath: options.localPath } : {}),
+      ...(options.beforeId ? { beforeId: options.beforeId } : {}),
+      zoomTo: options.zoomTo ?? shouldZoomToNewLayers(),
+    });
+  }
   // `s3://` sources and private-bucket object URLs are read through a
   // presigned URL; the store sync maps it back to `source`. Signed before the
   // control is taken, so a control replaced while signing is never used.
@@ -463,31 +476,6 @@ export async function addRasterToMap(
   // being rendered once and swapped.
   if (options.defaults?.engine && control.getEngine() !== options.defaults.engine) {
     control.setEngine(options.defaults.engine);
-  }
-  // GeoPDF import: a georeferenced PDF (Esri ArcMap / OGC) is rendered to a PNG
-  // blob and added as a raster. The bounds come from the PDF's own
-  // georeferencing, so no world file is needed.
-  if (typeof source !== "string" && source instanceof File && /\.pdf$/i.test(source.name)) {
-    const { renderGeoPdfToBlob } = await import("./geopdf/geopdf-render");
-    const rendered = await renderGeoPdfToBlob(await source.arrayBuffer());
-    if (!rendered) {
-      throw new Error(
-        "This PDF is not a GeoPDF or carries no georeferencing. Export it from Avenza, " +
-          "ArcMap or another GIS with georeferencing embedded, or convert it to GeoTIFF.",
-      );
-    }
-    const pdfFile = new File([rendered.blob], options.name ?? "geopdf.png", { type: "image/png" });
-    const pdfId = await control.addRaster(pdfFile, {
-      name: options.name,
-      zoomTo: options.zoomTo ?? shouldZoomToNewLayers(),
-      ...(options.beforeId ? { beforeId: options.beforeId } : {}),
-    });
-    applyRgbBandDefaults(control, pdfId, options.defaults?.rgbBands);
-    if (options.localPath) {
-      rememberLocalRasterPath(pdfId, options.localPath);
-      syncRasterLayersToStoreForRuntime(control);
-    }
-    return pdfId;
   }
   // Named here rather than by the control, so a failure below removes exactly
   // this add's raster and never one a concurrent add created.
@@ -792,6 +780,10 @@ export function readRasterWindow(
  * @param app - The GeoLibre app API.
  */
 export function restoreRasterLayers(app: GeoLibreAppAPI): void {
+  // A saved GeoPDF layer points at a `geopdf://` URL whose tile set lives in
+  // memory only, so it has to be re-registered before MapLibre asks for tiles.
+  // Independent of the raster control: a project can hold nothing but a PDF.
+  void restoreGeoPdfTileSets();
   if (drawsCogNatively(app)) {
     void import("./native-raster-import")
       .then(({ restoreNativeRasterFiles }) => restoreNativeRasterFiles(localRasterFileReader))
@@ -976,6 +968,46 @@ export function restoreRasterLayers(app: GeoLibreAppAPI): void {
   })().catch((error) => {
     console.error("[GeoLibre] Failed to restore raster layers", error);
   });
+}
+
+/**
+ * Re-register the tile sets saved GeoPDF layers point at.
+ *
+ * The `geopdf://` registry lives in memory, and the layer's saved URL carries
+ * the PDF's content hash, so re-registering under the same hash makes the
+ * existing layer resolve without rewriting the store.
+ */
+async function restoreGeoPdfTileSets(): Promise<void> {
+  const layers = useAppStore
+    .getState()
+    .layers.filter((layer) => typeof layer.metadata.geopdfFileHash === "string");
+  if (layers.length === 0) return;
+  const reader = localRasterFileReader;
+  const { hasGeoPdfTileSet, registerGeoPdfTileSet } = await import("./geopdf/geopdf-render");
+  for (const layer of layers) {
+    const hash = layer.metadata.geopdfFileHash;
+    const path = layer.metadata.localFilePath;
+    if (typeof hash !== "string" || hasGeoPdfTileSet(hash)) continue;
+    if (!reader || typeof path !== "string" || !path) continue;
+    try {
+      const opened = await reader(path);
+      await registerGeoPdfTileSet(
+        typeof opened === "string" ? await fileFromBlobUrl(opened) : opened,
+        hash,
+      );
+    } catch (error) {
+      console.warn(
+        `[GeoLibre] Could not reload GeoPDF tiles for "${layer.name}" from "${path}".`,
+        error,
+      );
+    }
+  }
+}
+
+/** Wrap a live blob URL back into a File so the PDF can be parsed again. */
+async function fileFromBlobUrl(url: string): Promise<File> {
+  const blob = await (await fetch(url)).blob();
+  return new File([blob], "geopdf.pdf", { type: "application/pdf" });
 }
 
 /**

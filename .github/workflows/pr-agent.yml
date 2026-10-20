@@ -1,8 +1,9 @@
 # PR-Agent (https://github.com/The-PR-Agent/pr-agent) - automated review for our PRs.
 #
 # Why this file exists: manual review of our own PRs kept missing things
-# (false-green CI, stale status lines), so review is now machine-run on every PR
-# and on demand from a comment.
+# (false-green CI, stale status lines), so review runs on demand from a comment.
+# It used to run automatically on every PR; that path is off until PR_AGENT_KEY
+# is valid (see the note above `on:`).
 #
 # Cost control:
 #   - auto-runs on opened / reopened / ready_for_review, NOT on every push
@@ -28,9 +29,11 @@
 #     secrets to fork PRs anyway
 name: PR Agent
 
+# Hanya manual (#u-HQ-3d9d59, putusan owner 2026-10-20, diterapkan juga ke PR-Agent). Jalur
+# otomatis dihapus karena PR_AGENT_KEY tidak sah: setiap PR yang dibuka menghasilkan run yang
+# gagal di `_fail_on_recorded_tool_error`, dan check merah yang selalu ada melatih pembaca
+# mengabaikan check merah. Pasang kembali blok `pull_request:` sesudah kuncinya diisi.
 on:
-  pull_request:
-    types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
 
@@ -57,7 +60,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: PR Agent
-        uses: the-pr-agent/pr-agent@8e5a9295973b24af4b70cafd0b660a230811ef9e # v0.47.0
+        uses: the-pr-agent/pr-agent@981344be2755e303df501e18e3f60b848a188a80 # v0.48.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OPENAI__KEY: ${{ secrets.PR_AGENT_KEY }}
