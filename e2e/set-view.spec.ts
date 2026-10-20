@@ -1,13 +1,5 @@
-import { expect, test, type Page } from "./test";
-
-/** Waits for MapLibre to mount its WebGL canvas — the app's "map ready" signal. */
-async function waitForMap(page: Page): Promise<void> {
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
-}
+import { expect, test } from "./test";
+import { waitForMap } from "./helpers";
 
 /**
  * Regression guard for issue #669: the Set View dialog prefills its inputs from
