@@ -2,11 +2,10 @@
  * Tauri bundle store rules (issue #11): path binding, traversal refusal,
  * recursive listing, and a full import → reopen → delete round trip.
  *
- * The fs plugin is replaced by an in-memory fake that behaves like it in the
- * two ways that matter: writing into a directory that was never created fails,
- * and reading a path that is not there fails. So a store that forgets to create
- * parent directories, or that resolves a path outside its project, fails here
- * instead of on a phone.
+ * The store is bound to `projects/<slug>/` RELATIVE to app-local data, and the
+ * fake below refuses an absolute path, so a store that starts building one
+ * fails here instead of on a phone. `tauriBundleDirIo` is exercised separately
+ * with a fake plugin module, which is where `baseDir` is asserted.
  */
 
 /* `it()` dari node:test mengembalikan promise yang dilacak runner, bukan promise
@@ -16,6 +15,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
+import { BaseDirectory } from "@tauri-apps/plugin-fs";
+
 import { importBundleFile, deleteBundle, openBundle } from "./project-bundle";
 import {
   BUNDLE_PROJECTS_DIR,
@@ -24,54 +25,68 @@ import {
   listBundleProjectSlugs,
   listFilesRecursively,
   resolveBundlePath,
+  tauriBundleDirIo,
   type BundleDirEntry,
   type BundleDirIo,
+  type TauriFsModules,
 } from "./project-bundle-tauri";
 import { createManifest, projectSlug, writeManifest } from "./project-manifest";
 import { UnsafeBundlePathError } from "./project-manifest";
 
-/** In-memory stand-in for `@tauri-apps/plugin-fs`'s directory surface. */
-function fakeIo(appLocalData = "/appdata") {
+/**
+ * In-memory stand-in for the fs plugin's directory surface, bound to a virtual
+ * app-local root. An absolute path is refused exactly as the plugin refuses it,
+ * because the store must only ever name a path relative to its base directory.
+ */
+function fakeIo() {
   const files = new Map<string, Uint8Array>();
-  const dirs = new Set<string>([appLocalData]);
+  const dirs = new Set<string>([""]);
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
 
+  const guard = (path: string): string => {
+    if (path.startsWith("/") || /^[A-Za-z]:/.test(path)) {
+      throw new Error(`absolute path refused: ${path}`);
+    }
+    return path;
+  };
+
   const io: BundleDirIo = {
-    appLocalDataDir: async () => appLocalData,
     async mkdir(path, options) {
+      const target = guard(path);
       if (options?.recursive) {
-        const parts = path.split("/").filter(Boolean);
         let current = "";
-        for (const part of parts) {
-          current += `/${part}`;
+        for (const part of target.split("/").filter(Boolean)) {
+          current = current === "" ? part : `${current}/${part}`;
           dirs.add(current);
         }
         return;
       }
-      if (!dirs.has(path.split("/").slice(0, -1).join("/") || "/")) {
-        throw new Error(`forbidden path: ${path}`);
-      }
-      dirs.add(path);
+      const parent = target.split("/").slice(0, -1).join("/");
+      if (!dirs.has(parent)) throw new Error(`forbidden path: ${target}`);
+      dirs.add(target);
     },
     async writeFile(path, bytes) {
-      const parent = path.split("/").slice(0, -1).join("/") || "/";
-      if (!dirs.has(parent)) throw new Error(`forbidden path: ${path}`);
-      files.set(path, bytes);
+      const target = guard(path);
+      const parent = target.split("/").slice(0, -1).join("/");
+      if (!dirs.has(parent)) throw new Error(`forbidden path: ${target}`);
+      files.set(target, bytes);
     },
     async readFile(path) {
-      const bytes = files.get(path);
+      const bytes = files.get(guard(path));
       if (!bytes) throw new Error(`not found: ${path}`);
       return bytes;
     },
     async readDir(path) {
-      if (!dirs.has(path)) throw new Error(`forbidden path: ${path}`);
-      const prefix = path.endsWith("/") ? path : `${path}/`;
+      const target = guard(path);
+      if (!dirs.has(target)) throw new Error(`forbidden path: ${target}`);
+      const prefix = target === "" ? "" : `${target}/`;
       const seen = new Map<string, BundleDirEntry>();
       for (const dir of dirs) {
-        if (dir.startsWith(prefix) && dir !== path && !dir.slice(prefix.length).includes("/")) {
-          seen.set(dir, { name: dir.slice(prefix.length), isDirectory: true });
-        }
+        if (dir === target || !dir.startsWith(prefix)) continue;
+        const rest = dir.slice(prefix.length);
+        if (rest.includes("/")) continue;
+        seen.set(dir, { name: rest, isDirectory: true });
       }
       for (const file of files.keys()) {
         if (!file.startsWith(prefix)) continue;
@@ -82,7 +97,7 @@ function fakeIo(appLocalData = "/appdata") {
       return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name));
     },
     async remove(path) {
-      if (!files.delete(path)) throw new Error(`not found: ${path}`);
+      if (!files.delete(guard(path))) throw new Error(`not found: ${path}`);
     },
   };
 
@@ -99,52 +114,58 @@ function fakeIo(appLocalData = "/appdata") {
 }
 
 describe("bundleProjectRoot", () => {
-  it("puts the project under projects/<slug>", () => {
-    assert.equal(bundleProjectRoot("/appdata", "kebun-utara"), "/appdata/projects/kebun-utara");
-    assert.equal(bundleProjectRoot("/appdata/", "kebun-utara"), "/appdata/projects/kebun-utara");
+  it("puts the project under projects/<slug>, relative to app-local data", () => {
+    assert.equal(bundleProjectRoot("kebun-utara"), "projects/kebun-utara");
     assert.equal(BUNDLE_PROJECTS_DIR, "projects");
   });
 
-  it("keeps a Windows root's separator", () => {
-    assert.equal(
-      bundleProjectRoot("C:\\Users\\adi\\AppData\\Local\\GeoLibre", "kebun-utara"),
-      "C:\\Users\\adi\\AppData\\Local\\GeoLibre\\projects\\kebun-utara",
-    );
+  it("never returns an absolute path", () => {
+    const root = bundleProjectRoot("kebun-utara");
+    assert.ok(!root.startsWith("/"));
+    assert.ok(!/^[A-Za-z]:/.test(root));
   });
 
   it("refuses a slug that is not a plain directory name", () => {
-    assert.throws(() => bundleProjectRoot("/appdata", "../other"), UnsafeBundlePathError);
-    assert.throws(() => bundleProjectRoot("/appdata", "a/b"), UnsafeBundlePathError);
-    assert.throws(() => bundleProjectRoot("/appdata", ""), UnsafeBundlePathError);
-    assert.throws(() => bundleProjectRoot("/appdata", "C:evil"), UnsafeBundlePathError);
+    assert.throws(() => bundleProjectRoot("../other"), UnsafeBundlePathError);
+    assert.throws(() => bundleProjectRoot("a/b"), UnsafeBundlePathError);
+    assert.throws(() => bundleProjectRoot(""), UnsafeBundlePathError);
+    assert.throws(() => bundleProjectRoot("C:evil"), UnsafeBundlePathError);
   });
 });
 
 describe("resolveBundlePath", () => {
   it("joins a relative path onto the project root", () => {
-    assert.equal(resolveBundlePath("/appdata/projects/k", "data/2026/photo.jpg"), "/appdata/projects/k/data/2026/photo.jpg");
-    assert.equal(resolveBundlePath("/appdata/projects/k", "project.json"), "/appdata/projects/k/project.json");
+    assert.equal(
+      resolveBundlePath("projects/k", "data/2026/photo.jpg"),
+      "projects/k/data/2026/photo.jpg",
+    );
+    assert.equal(resolveBundlePath("projects/k", "project.json"), "projects/k/project.json");
   });
 
   it("refuses to leave the project directory", () => {
     for (const bad of ["../other/project.json", "/etc/passwd", "data/../../escape", "C:\\x", "a\\b"]) {
-      assert.throws(() => resolveBundlePath("/appdata/projects/k", bad), UnsafeBundlePathError, bad);
+      assert.throws(() => resolveBundlePath("projects/k", bad), UnsafeBundlePathError, bad);
     }
   });
 });
 
 describe("createTauriBundleStore", () => {
+  it("binds to a relative root and manifest path", async () => {
+    const { io } = fakeIo();
+    const store = await createTauriBundleStore("kebun-utara", io);
+    assert.equal(store.root, "projects/kebun-utara");
+    assert.equal(store.manifestPath, "projects/kebun-utara/project.json");
+  });
+
   it("creates parent directories, then writes and reads bytes", async () => {
     const { io, dirs, files } = fakeIo();
     const store = await createTauriBundleStore("kebun-utara", io);
-    assert.equal(store.root, "/appdata/projects/kebun-utara");
-    assert.equal(store.manifestPath, "/appdata/projects/kebun-utara/project.json");
 
     const bytes = new Uint8Array([1, 2, 3]);
     await store.write("data/foto/kebun.jpg", bytes);
 
-    assert.ok(dirs.has("/appdata/projects/kebun-utara/data/foto"));
-    assert.deepEqual([...files.get("/appdata/projects/kebun-utara/data/foto/kebun.jpg")!], [1, 2, 3]);
+    assert.ok(dirs.has("projects/kebun-utara/data/foto"));
+    assert.deepEqual([...files.get("projects/kebun-utara/data/foto/kebun.jpg")!], [1, 2, 3]);
     assert.deepEqual([...(await store.read("data/foto/kebun.jpg"))], [1, 2, 3]);
   });
 
@@ -185,6 +206,72 @@ describe("createTauriBundleStore", () => {
     });
     await writeManifest(store, manifest);
     assert.match(text(store.manifestPath) ?? "", /"kebun-utara"/);
+  });
+});
+
+describe("tauriBundleDirIo", () => {
+  /** Fake plugin module that records every call the real binding makes. */
+  function fakePlugin() {
+    const calls: { op: string; path: string; baseDir?: unknown }[] = [];
+    const modules: TauriFsModules = {
+      BaseDirectory: { AppLocalData: BaseDirectory.AppLocalData },
+      fs: {
+        async mkdir(path, options) {
+          calls.push({ op: "mkdir", path, baseDir: options?.baseDir });
+        },
+        async writeFile(path, _bytes, options) {
+          calls.push({ op: "writeFile", path, baseDir: options?.baseDir });
+        },
+        async readFile(path, options) {
+          calls.push({ op: "readFile", path, baseDir: options?.baseDir });
+          return new Uint8Array();
+        },
+        async readDir(path, options) {
+          calls.push({ op: "readDir", path, baseDir: options?.baseDir });
+          return [];
+        },
+        async remove(path, options) {
+          calls.push({ op: "remove", path, baseDir: options?.baseDir });
+        },
+      },
+    };
+    return { modules, calls };
+  }
+
+  it("passes a relative path and AppLocalData baseDir on every call", async () => {
+    const { modules, calls } = fakePlugin();
+    const io = await tauriBundleDirIo(async () => modules);
+    const store = await createTauriBundleStore("kebun-utara", io);
+
+    await store.write("data/foto/a.jpg", new Uint8Array([1]));
+    await store.read("data/foto/a.jpg");
+    await store.list();
+    await store.remove("data/foto/a.jpg");
+    await listBundleProjectSlugs(io);
+
+    assert.deepEqual(
+      calls.map((call) => `${call.op}:${call.path}`),
+      [
+        "mkdir:projects/kebun-utara/data/foto",
+        "writeFile:projects/kebun-utara/data/foto/a.jpg",
+        "readFile:projects/kebun-utara/data/foto/a.jpg",
+        "readDir:projects/kebun-utara",
+        "remove:projects/kebun-utara/data/foto/a.jpg",
+        "readDir:projects",
+      ],
+    );
+    for (const call of calls) {
+      assert.equal(call.baseDir, BaseDirectory.AppLocalData, `${call.op} baseDir`);
+      assert.ok(!call.path.startsWith("/"), `${call.op} path absolute: ${call.path}`);
+      assert.ok(!/^[A-Za-z]:/.test(call.path), `${call.op} path absolute: ${call.path}`);
+    }
+  });
+
+  it("does not create the projects root before listing it", async () => {
+    const { modules, calls } = fakePlugin();
+    const io = await tauriBundleDirIo(async () => modules);
+    assert.deepEqual(await listBundleProjectSlugs(io), []);
+    assert.deepEqual(calls.map((call) => `${call.op}:${call.path}`), ["readDir:projects"]);
   });
 });
 
@@ -235,7 +322,7 @@ describe("listBundleProjectSlugs", () => {
     await createTauriBundleStore("kebun-selatan", io).then((store) =>
       store.write("project.json", new TextEncoder().encode("{}")),
     );
-    await io.writeFile("/appdata/projects/notes.txt", new TextEncoder().encode("bukan bundel"));
+    await io.writeFile("projects/notes.txt", new TextEncoder().encode("bukan bundel"));
 
     assert.deepEqual(await listBundleProjectSlugs(io), ["kebun-selatan", "kebun-utara"]);
   });
@@ -249,7 +336,7 @@ describe("listBundleProjectSlugs", () => {
 describe("listFilesRecursively", () => {
   it("returns nothing for a directory that is not there", async () => {
     const { io } = fakeIo();
-    assert.deepEqual(await listFilesRecursively(io, "/appdata/projects/hilang", ""), []);
+    assert.deepEqual(await listFilesRecursively(io, "projects/hilang", ""), []);
   });
 });
 

@@ -1,6 +1,7 @@
 /**
  * The Tauri (desktop + Android) side of a portable project bundle: a
- * {@link BundleStore} bound to `$APPLOCALDATA/projects/<slug>/`.
+ * {@link BundleStore} bound to `projects/<slug>/` under the app's local data
+ * directory.
  *
  * Why the app's private data directory and not wherever the project came from:
  * a `.geolibre.json` opened from device storage on Android is identified by a
@@ -9,6 +10,14 @@
  * directory the app owns makes the bundle readable after a restart, and the
  * relative paths in `project.json` make it movable to another device.
  *
+ * Every path here is RELATIVE and every fs-plugin call carries
+ * `baseDir: BaseDirectory.AppLocalData`. That is deliberate: an absolute path
+ * built from `appLocalDataDir()` would need the fs scope to grant
+ * `$APPLOCALDATA/projects/**`, and on Android the absolute root can differ
+ * between the JS and the Rust side. With a base directory the plugin resolves
+ * the path itself, so the scope entry is just `projects/**` and this store
+ * needs no grant for the root it does not create.
+ *
  * The I/O is injected ({@link BundleDirIo}) rather than imported, for two
  * reasons: the store's path rules — traversal, separators, recursive listing —
  * are then testable in plain Node, and `@tauri-apps/plugin-fs` is only loaded
@@ -16,11 +25,14 @@
  * in a web build. {@link tauriBundleDirIo} is the real binding.
  *
  * Scope: the fs plugin refuses paths outside the `fs:scope` allowlist in
- * `src-tauri/capabilities/default.json`. That file names
- * `$APPLOCALDATA/projects/**` for bundles — adding it is the lane `android`
- * request recorded for issue #11, because `capabilities/**` is outside the
- * `offline` lane. Until it lands, every write here fails with "forbidden path".
+ * `src-tauri/capabilities/default.json`. That file needs one entry for bundles,
+ * `projects/**` (resolved against the base directory above), and
+ * `capabilities/**` is outside the `offline` lane, so the entry is recorded as
+ * the lane `android` request for issue #11. Until it lands, every write here
+ * fails with "forbidden path". No absolute-path entry is required.
  */
+
+import type { BaseDirectory, DirEntry } from "@tauri-apps/plugin-fs";
 
 import type { BundleStore } from "./project-manifest";
 import {
@@ -49,13 +61,15 @@ export interface BundleDirEntry {
 /**
  * The directory operations a bundle store needs.
  *
+ * Every path is relative to `BaseDirectory.AppLocalData`; an implementation
+ * must refuse an absolute one rather than treat it as relative, because the
+ * whole point of the base directory is that the store never names a root.
+ *
  * Deliberately narrower than the fs plugin: no text reads, no stat, no rename.
  * `mkdir` is called with `{ recursive: true }` by the store, so an
  * implementation may assume nested creation.
  */
 export interface BundleDirIo {
-  /** Absolute path of the app's local data directory (`$APPLOCALDATA`). */
-  appLocalDataDir: () => Promise<string>;
   mkdir: (path: string, options?: { recursive?: boolean }) => Promise<void>;
   writeFile: (path: string, bytes: Uint8Array) => Promise<void>;
   readFile: (path: string) => Promise<Uint8Array>;
@@ -65,22 +79,22 @@ export interface BundleDirIo {
 
 /** A store that also exposes where it is bound, for the UI and for logging. */
 export interface TauriBundleStore extends BundleStore {
-  /** Absolute project directory, e.g. `<appLocalData>/projects/kebun-utara`. */
+  /** Project directory relative to app-local data, e.g. `projects/kebun-utara`. */
   readonly root: string;
-  /** Absolute path of this project's `project.json`. */
+  /** Path of this project's `project.json`, e.g. `projects/kebun-utara/project.json`. */
   readonly manifestPath: string;
 }
 
 /**
- * Absolute directory of one project bundle.
+ * Directory of one project bundle, relative to app-local data.
  *
  * `slug` must already be a slug (see `projectSlug`); a value that could climb
  * out of the projects directory is rejected rather than sanitised, because a
  * silently-rewritten path would put one project's files inside another's.
  */
-export function bundleProjectRoot(appLocalData: string, slug: string): string {
+export function bundleProjectRoot(slug: string): string {
   if (!isSafeBundlePath(slug) || slug.includes("/")) throw new UnsafeBundlePathError(slug);
-  return joinLocalPath(joinLocalPath(appLocalData, BUNDLE_PROJECTS_DIR), slug);
+  return joinLocalPath(BUNDLE_PROJECTS_DIR, slug);
 }
 
 /**
@@ -94,14 +108,14 @@ export function resolveBundlePath(root: string, relativePath: string): string {
   return safe.split("/").reduce((dir, segment) => joinLocalPath(dir, segment), root);
 }
 
-/** Join a directory entry name onto its parent, separator style preserved. */
-function parentOf(absolutePath: string): string {
-  const index = Math.max(absolutePath.lastIndexOf("/"), absolutePath.lastIndexOf("\\"));
-  return index > 0 ? absolutePath.slice(0, index) : absolutePath;
+/** Parent directory of a path, separator style preserved. */
+function parentOf(path: string): string {
+  const index = Math.max(path.lastIndexOf("/"), path.lastIndexOf("\\"));
+  return index > 0 ? path.slice(0, index) : path;
 }
 
 /**
- * Build a store over `$APPLOCALDATA/projects/<slug>/`.
+ * Build a store over `projects/<slug>/` under app-local data.
  *
  * @param slug - Already-slugged project directory name.
  * @param io - Directory operations; defaults to the real fs plugin binding.
@@ -111,7 +125,7 @@ export async function createTauriBundleStore(
   io?: BundleDirIo,
 ): Promise<TauriBundleStore> {
   const dirIo = io ?? (await tauriBundleDirIo());
-  const root = bundleProjectRoot(await dirIo.appLocalDataDir(), slug);
+  const root = bundleProjectRoot(slug);
 
   return {
     root,
@@ -172,12 +186,11 @@ export async function listFilesRecursively(
  * deleted). A missing `projects/` directory means no bundles, not an error.
  */
 export async function listBundleProjectSlugs(
-  io: Pick<BundleDirIo, "appLocalDataDir" | "readDir">,
+  io: Pick<BundleDirIo, "readDir">,
 ): Promise<string[]> {
-  const projectsDir = joinLocalPath(await io.appLocalDataDir(), BUNDLE_PROJECTS_DIR);
   let entries: BundleDirEntry[];
   try {
-    entries = await io.readDir(projectsDir);
+    entries = await io.readDir(BUNDLE_PROJECTS_DIR);
   } catch {
     return [];
   }
@@ -188,22 +201,53 @@ export async function listBundleProjectSlugs(
 }
 
 /**
+ * The fs-plugin surface the real binding uses. Injectable so a Node test can
+ * assert what actually reaches the plugin: relative path, explicit `baseDir`.
+ */
+export interface TauriFsModules {
+  fs: {
+    mkdir: (
+      path: string,
+      options?: { recursive?: boolean; baseDir?: BaseDirectory },
+    ) => Promise<void>;
+    writeFile: (
+      path: string,
+      bytes: Uint8Array,
+      options?: { baseDir?: BaseDirectory },
+    ) => Promise<void>;
+    readFile: (path: string, options?: { baseDir?: BaseDirectory }) => Promise<Uint8Array>;
+    readDir: (path: string, options?: { baseDir?: BaseDirectory }) => Promise<DirEntry[]>;
+    remove: (path: string, options?: { baseDir?: BaseDirectory }) => Promise<void>;
+  };
+  BaseDirectory: { AppLocalData: BaseDirectory };
+}
+
+/**
  * The real fs-plugin binding.
  *
  * Imported lazily so this module stays importable in Node and in a web build.
  * `remove` is called without `{ recursive: true }` on purpose: a bundle's files
  * are removed one by one, so a bug in the listing can never take a whole
  * directory tree with it.
+ *
+ * @param load - Module loader; defaults to the real `@tauri-apps/plugin-fs`.
  */
-export async function tauriBundleDirIo(): Promise<BundleDirIo> {
-  const fs = await import("@tauri-apps/plugin-fs");
-  const path = await import("@tauri-apps/api/path");
+export async function tauriBundleDirIo(
+  load: () => Promise<TauriFsModules> = loadTauriFs,
+): Promise<BundleDirIo> {
+  const modules = await load();
+  const baseDir = modules.BaseDirectory.AppLocalData;
   return {
-    appLocalDataDir: () => path.appLocalDataDir(),
-    mkdir: (path, options) => fs.mkdir(path, options),
-    writeFile: (path, bytes) => fs.writeFile(path, bytes),
-    readFile: (path) => fs.readFile(path),
-    readDir: (path) => fs.readDir(path),
-    remove: (path) => fs.remove(path),
+    mkdir: (path, options) => modules.fs.mkdir(path, { ...options, baseDir }),
+    writeFile: (path, bytes) => modules.fs.writeFile(path, bytes, { baseDir }),
+    readFile: (path) => modules.fs.readFile(path, { baseDir }),
+    readDir: (path) => modules.fs.readDir(path, { baseDir }),
+    remove: (path) => modules.fs.remove(path, { baseDir }),
   };
+}
+
+/** Load the real plugin; separate so the dynamic import stays in one place. */
+async function loadTauriFs(): Promise<TauriFsModules> {
+  const fs = await import("@tauri-apps/plugin-fs");
+  return { fs, BaseDirectory: fs.BaseDirectory };
 }
