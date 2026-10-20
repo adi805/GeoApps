@@ -182,12 +182,15 @@ test("reopens a project with every non-local request aborted", async ({ page }) 
     }
     expect(sources.size).toBe(PHOTO_INDICES.length);
 
-    // Collapsing above left only the panel's thin rail, and the rail renders no
-    // layer rows (LayerPanel.tsx:488-500), so the row the menu hangs off is gone
-    // from the DOM. Expand it back before reaching for that row; mirror of the
-    // collapse, and conditional for the same reason. The assertion is what turns
-    // a missing row into a named failure instead of a 60s click timeout.
-    const expand = page.getByRole("button", { name: "Expand layers", exact: true });
+    // Collapsing above left only the Layers rail, and the rail renders no layer
+    // rows, so the row the menu hangs off is gone from the DOM. Which rail shows
+    // depends on the dock: the Browser panel docks `replace-layers` by default,
+    // which sets `hideOwnRail` and makes the collapsed panel render null
+    // (LayerPanel.tsx:485), leaving the shared rail's entry labelled from
+    // `sharedRail.expand` ("Expand Layers"). The panel's own rail, used when no
+    // plugin holds the dock, is labelled from `layers.expand` ("Expand layers").
+    // The regex covers both, so this does not depend on which dock is active.
+    const expand = page.getByRole("button", { name: /^expand layers$/i });
     if (await expand.isVisible({ timeout: 2_000 }).catch(() => false)) await expand.click();
     await expect(layerRow(page, LAYER_NAME)).toBeVisible();
 
