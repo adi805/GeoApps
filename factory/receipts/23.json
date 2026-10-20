@@ -6,13 +6,44 @@
   "commit": "8efc44e4",
   "status_short": [],
   "kriteria": [
-    {"perintah": "npx tsc -p tsconfig.e2e-check.json", "exit": 0, "keluaran": "11 berkas e2e yang berubah, tanpa diagnostik"},
-    {"perintah": "npx playwright test --project=core", "exit": null, "keluaran": "TIDAK DIJALANKAN: tsc -b dan vite build di mesin ini di-SIGTERM earlyoom di ~1.6 GB RSS (disk 94%, RAM tersedia 1.9 GB), jadi tidak ada build untuk disajikan. Verifikasi 31 spec diserahkan ke CI pada PR #33."},
-    {"perintah": "git status --short", "exit": 0, "keluaran": "bersih setelah commit 0805d8a4"}
+    {
+      "perintah": "npx tsc -p tsconfig.e2e-check.json",
+      "exit": 0,
+      "keluaran": "11 berkas e2e yang berubah, tanpa diagnostik"
+    },
+    {
+      "perintah": "npx playwright test --project=core (lokal)",
+      "exit": null,
+      "keluaran": "TIDAK DIJALANKAN: tsc -b dan vite build di-SIGTERM earlyoom di ~1.6 GB RSS (disk 94%, RAM tersedia 1.9 GB), tidak ada build untuk disajikan."
+    },
+    {
+      "perintah": "CI job 'E2E core (Playwright)' pada PR #33",
+      "exit": 0,
+      "keluaran": "Running 31 tests using 3 workers -> 30 passed, 1 flaky, 0 failed (7.5m). Flaky: e2e/keyboard-only.spec.ts:37, gagal sekali di browser.newContext dengan 'Protocol error (Storage.setCookies): Failed to find browser context' lalu lolos di retry; berkas itu tidak diubah unit ini, jadi itu race infra Playwright, bukan regresi."
+    },
+    {
+      "perintah": "CI job 'Gate pada pohon ini' pada PR #33",
+      "exit": 0,
+      "keluaran": "pass 23s"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "bersih setelah commit 8efc44e4"
+    }
   ],
   "checker": [
-    {"perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD", "exit": 0, "keluaran": "LULUS  lane uji: 11 path, semuanya di cakupan"}
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 11 path, semuanya di cakupan"
+    }
   ],
   "pr": "https://github.com/adi805/GeoApps/pull/33",
-  "komentar_issue": null
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/23#issuecomment-6284827337",
+  "catatan_merah": [
+    "CI job 'Lint and type check' MERAH (246 problems, 0 errors, cap 242). Ini kondisi main sesudah merge #26, bukan akibat unit ini: e2e/ tidak masuk scope eslint (dibuktikan: 0 path e2e di output lint CI). PR #31 yang menurunkannya ke 217.",
+    "CI job 'Build and test' MERAH di langkah check:untested-modules: DesktopShell.tsx 1284 -> 1350 baris (+66, allowance 50), tumbuh oleh merge #26 (42bf885d). Juga bukan unit ini. PR #31 menghapus entri DesktopShell dari baseline dan menambah tests/component-desktop-shell.test.ts yang me-load-nya, jadi #31 menutup keduanya.",
+    "Konsekuensi urutan merge: #33 butuh cap lint dari #31, #31 butuh perbaikan E2E dari #33. Keduanya harus masuk berurutan; main baru hijau penuh setelah keduanya merge."
+  ]
 }
