@@ -79,7 +79,7 @@ export function KomposisiUnduhRegion({ keadaan = "utama", ...varian }: Varian) {
         <BilahAtas judul="Unduh region" keterangan="612 dari 1.284 ubin" />
         <Isi>
           <Kartu judul="Mengunduh" keterangan="Unduhan berhenti sendiri kalau aplikasi ditutup, dan bisa dilanjutkan.">
-            <BilahKemajuan nilai={48} />
+            <BilahKemajuan nilai={48} label="Kemajuan unduhan ubin region" />
             <span style={gayaTeks("kecil", { warna: p.teksLembut, mono: true })}>48% · sisa ± 3 menit</span>
           </Kartu>
           <SpandukKeadaan jenis="info">Kamu boleh menutup layar ini; unduhan lanjut di latar belakang.</SpandukKeadaan>
@@ -261,7 +261,7 @@ export function KomposisiStatusPenyimpanan({ keadaan = "utama", ...varian }: Var
               <span style={gayaLabel(p.teksLembut)}>Terpakai</span>
               <span style={gayaTeks("badanBesar", { bobot: "tebal", warna: p.teks, mono: true })}>41%</span>
             </div>
-            <BilahKemajuan nilai={41} />
+            <BilahKemajuan nilai={41} label="Ruang penyimpanan terpakai" />
           </Kartu>
           <Kartu judul="Rincian">
             <BarisDaftar judul="Ubin peta" keterangan="3 region" ujung={<span style={gayaTeks("badan", { mono: true, warna: p.teks })}>1,02 GB</span>} />

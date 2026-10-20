@@ -521,13 +521,19 @@ export function Pemisah() {
   return <hr style={{ border: "none", borderBlockStart: `1px solid ${p.garis}`, margin: `${spasi.sm}px 0` }} />;
 }
 
-/** Bilah kemajuan yang tidak bergantung pada animasi untuk terbaca. */
-export function BilahKemajuan({ nilai }: { nilai: number }) {
+/**
+ * Bilah kemajuan yang tidak bergantung pada animasi untuk terbaca.
+ *
+ * `label` wajib: bilah yang sama dipakai untuk unduhan, penyimpanan, dan mutu
+ * georeferensi, jadi pembaca layar harus tahu apa yang sedang diukur.
+ */
+export function BilahKemajuan({ nilai, label }: { nilai: number; label: string }) {
   const p = usePalet();
   const persen = Math.max(0, Math.min(100, Math.round(nilai)));
   return (
     <div
       role="progressbar"
+      aria-label={label}
       aria-valuenow={persen}
       aria-valuemin={0}
       aria-valuemax={100}

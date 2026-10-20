@@ -51,7 +51,7 @@ export function KomposisiImporGeopdf({ keadaan = "utama", ...varian }: Varian) {
             <Bidang label="Sistem acuan" nilai="EPSG:32748" satuan="UTM 48S" mono />
             <Pemisah />
             <Bidang label="Titik kontrol" nilai="4 titik" satuan="sisa galat 1,8 m" />
-            <BilahKemajuan nilai={92} />
+            <BilahKemajuan nilai={92} label="Mutu georeferensi" />
           </Kartu>
           <Tombol lebarPenuh ikon={<FileDown size={sentuh.ikon} />}>
             Tambahkan sebagai lapisan
