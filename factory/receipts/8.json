@@ -3,14 +3,14 @@
   "lane": "geo-pdf",
   "branch": "geopdf/render-ubin",
   "worktree": "~/GeoApps-geopdf-render",
-  "commit": "a41c4652",
+  "commit": "89af5ef3",
   "status_short": [],
   "catatan_status": "Hanya factory/usulan-geo-pdf.jsonl yang kotor di worktree, ditulis usulan.py dan sengaja tidak di-commit: berkas jejak itu milik lane HQ (factory/LAW.md, gate --tanpa-label menolak berkas jejak di PR non-HQ).",
   "kriteria": [
     {
       "perintah": "node --import tsx --test packages/plugins/src/plugins/geopdf/geopdf-tiles.test.ts",
       "exit": 0,
-      "keluaran": "tests 8, pass 8, fail 0, duration_ms 793"
+      "keluaran": "tests 8, pass 8, fail 0"
     },
     {
       "perintah": "node --import tsx packages/plugins/src/plugins/geopdf/probe-a1.tmp.ts (probe sementara, dihapus sebelum commit)",
@@ -18,21 +18,31 @@
       "keluaran": "zoom 0..12 lembar A1: 29 ubin diminta, 29 dirender, 53 kanvas dibuat, peakLiveCanvases 2, peakLiveTiles 2, maxCanvasSideRendered 512, dua ubin hidup 2097152 byte vs kanvas lama 4768x6740 = 128545280 byte"
     },
     {
-      "perintah": "node node_modules/typescript/bin/tsc --noResolve --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck --lib ES2022,DOM,DOM.Iterable <3 berkas berubah> > /tmp/nr4.log 2>&1; grep -E 'error TS' /tmp/nr4.log | grep -v TS2307 | wc -l",
+      "perintah": "node node_modules/typescript/bin/tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --skipLibCheck --lib ES2022,DOM,DOM.Iterable --jsx react-jsx <3 berkas berubah> (resolusi modul NYATA, bukan --noResolve)",
       "exit": 0,
-      "keluaran": "0 error non-TS2307 (tsc penuh dibunuh earlyoom di host ini; gerbang tipe yang sah adalah CI tsc -b apps/geolibre-desktop)"
+      "keluaran": "0 error di tiga berkas itu; 4 error tersisa semuanya di ../GeoApps-geopdf-parser/packages/map (artefak symlink node_modules lintas worktree)"
+    },
+    {
+      "perintah": "gh pr checks 51 --repo adi805/GeoApps (job 'Lint and type check')",
+      "exit": 0,
+      "keluaran": "Lint and type check pass 5m21s pada run 39402023316 setelah perbaikan kedalaman impor di 89af5ef3; sebelumnya job yang sama fail di geopdf-render.ts(12,37) TS2307 '../types'"
     }
   ],
   "checker": [
     {
       "perintah": "python3 tools/factory/gate_commit_paths.py --lane geo-pdf --base origin/main --head HEAD",
       "exit": 0,
-      "keluaran": "LULUS lane geo-pdf: 4 path, semuanya di cakupan"
+      "keluaran": "LULUS lane geo-pdf: 5 path, semuanya di cakupan"
     },
     {
       "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr-8.md --issue 8 --commits /tmp/commits-8.txt",
       "exit": 0,
       "keluaran": "LULUS menutup issue #8, 3 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "gh api repos/adi805/GeoApps/actions/jobs/118542420204/logs | grep 'NEW ' (run main 39397056973, merge #47)",
+      "exit": 0,
+      "keluaran": "NEW apps/geolibre-desktop/src/visual/{inventaris.ts,primitives.tsx,screens/peta.tsx} — tiga entri yang sama sudah gagal di main sebelum PR ini, bukan akibat #8"
     }
   ],
   "komentar_issue": "https://github.com/adi805/GeoApps/issues/8#issuecomment-6287779167"
