@@ -1,0 +1,44 @@
+{
+  "issue": 43,
+  "lane": "HQ",
+  "branch": "hq/gate-dependabot",
+  "worktree": "~/GeoApps-hq-gate-dependabot",
+  "commit": "22f5fa09",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "python3 tools/factory/uji_gate_mandiri.py",
+      "exit": 0,
+      "keluaran": "UJI MANDIRI: 80 kasus, 0 gagal (termasuk dua kasus baru: 'penanda Tanpa issue membebaskan judul commit bot' LULUS, dan 'Refs #N tidak membebaskan judul commit' TOLAK)"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr5-body.md --commits /tmp/pr5-commits.txt",
+      "exit": 0,
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: `Tanpa issue:`), 1 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH (0 baris)"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "PYTHONPATH=tools/factory python3 /tmp/old_gate.py --body /tmp/pr5-body.md --commits /tmp/pr5-commits.txt",
+      "exit": 1,
+      "keluaran": "GAGAL  unit kerja tidak tertaut ke issue / - commit ke-1 tidak menyebut issue: chore(deps-dev): bump happy-dom from 20.14.6 to 21.0.3"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr5-body.md --commits /tmp/pr5-commits.txt",
+      "exit": 0,
+      "keluaran": "LULUS"
+    }
+  ],
+  "catatan": [
+    "Bukti sebelum/sesudah memakai badan dan daftar commit PR #5 yang ASLI, bukan fixture: /tmp/old_gate.py adalah tools/factory/gate_pr_link.py dari origin/main (b5728cbd5).",
+    "Badan PR #5 sudah memuat penanda 'Tanpa issue: pembaruan dependensi otomatis dari Dependabot...' sebelum unit ini. Yang menahannya cuma pemeriksaan judul commit, dan itu persis error yang muncul di CI run 39391517451.",
+    "usulan u-HQ-deca89 mencatat 'issue: #4', padahal #4 adalah PR Dependabot, bukan issue. Unit ini memakai issue #43 yang dibuat khusus untuk gate ini; nomor di catatan usulan itu keliru.",
+    "Perbaikan ini hanya membuka jalan. Kelima PR Dependabot tetap perlu penanda 'Tanpa issue:' di badannya masing-masing, dan Dependabot menimpa badan PR saat bump berikutnya, jadi penandanya tidak permanen. Kalau ingin permanen, jalurnya opsi 2 usulan (gate membaca author dependabot[bot]) yang butuh perubahan .github/workflows/** plus label eskalasi.",
+    "Tidak ada berkas .github/workflows/** yang disentuh di unit ini, jadi tidak perlu label eskalasi."
+  ]
+}
