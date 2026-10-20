@@ -107,11 +107,13 @@ function wktName(wkt: string): string {
  * type. Anything outside the supported set resolves to a null definition.
  */
 export function crsFromProjectionDict(projection: {
-  wkt?: string;
-  datum?: string;
-  projectionType?: string;
-  zone?: number;
-  hemisphere?: string;
+  // `null` is what `readProjection` produces for an absent entry, so the
+  // parameter accepts it rather than forcing every caller to normalise first.
+  wkt?: string | null;
+  datum?: string | null;
+  projectionType?: string | null;
+  zone?: number | null;
+  hemisphere?: string | null;
 }): CrsInfo {
   if (projection.wkt) return crsFromWkt(projection.wkt);
 
