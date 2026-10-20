@@ -86,14 +86,14 @@ describe("target sentuh dan properti logis", () => {
   });
 
   it("tombol nonaktif benar-benar nonaktif, bukan sekadar kelihatan pucat", () => {
-    const html = render(createElement(Tombol, { nonaktif: true }, "Hapus"));
+    const html = render(createElement(Tombol, { nonaktif: true, children: "Hapus" }));
     assert.match(html, /disabled=""/);
     assert.match(html, /cursor:not-allowed/);
     assert.match(html, /opacity:0\.5/);
   });
 
   it("tombol lebar penuh mengisi baris", () => {
-    assert.match(render(createElement(Tombol, { lebarPenuh: true }, "Lanjut")), /width:100%/);
+    assert.match(render(createElement(Tombol, { lebarPenuh: true, children: "Lanjut" })), /width:100%/);
   });
 
   it("tombol ikon tetap punya nama aksesibel", () => {
@@ -104,7 +104,7 @@ describe("target sentuh dan properti logis", () => {
   });
 
   it("chip melaporkan keadaan terpilih lewat aria-pressed", () => {
-    assert.match(render(createElement(Chip, { terpilih: true }, "Peta")), /aria-pressed="true"/);
+    assert.match(render(createElement(Chip, { terpilih: true, children: "Peta" })), /aria-pressed="true"/);
     assert.match(render(createElement(Chip, null, "Peta")), /aria-pressed="false"/);
   });
 
@@ -127,7 +127,7 @@ describe("target sentuh dan properti logis", () => {
       createElement(Pemisah, null),
       createElement(Isi, null, "F"),
       createElement(Peta, null),
-      createElement(Layar, { lebar: 360, tinggi: 800 }, "G"),
+      createElement(Layar, { lebar: 360, tinggi: 800, children: "G" }),
       createElement(BilahAtas, { judul: "H" }),
       createElement(Kartu, null, "I"),
     ];
@@ -196,7 +196,7 @@ describe("tema", () => {
 
   it("menyalurkan tema lewat konteks, bukan variabel global", () => {
     for (const tema of ["gelap", "kontras"] as const) {
-      const html = render(createElement(PenyediaTema, { tema }, createElement(Probe)));
+      const html = render(createElement(PenyediaTema, { tema, children: createElement(Probe) }));
       assert.equal(html, `<span>${tema}|${palet[tema].utama}</span>`);
     }
   });
@@ -209,7 +209,7 @@ describe("tema", () => {
 
 describe("bingkai layar", () => {
   it("memakai lebar dan tinggi yang diminta serta arah tulis yang diminta", () => {
-    const html = render(createElement(Layar, { lebar: 412, tinggi: 915, arah: "rtl", nama: "Peta" }, "isi"));
+    const html = render(createElement(Layar, { lebar: 412, tinggi: 915, arah: "rtl", nama: "Peta", children: "isi" }));
     assert.match(html, /width:412px/);
     assert.match(html, /height:915px/);
     assert.match(html, /dir="rtl"/);
@@ -217,7 +217,7 @@ describe("bingkai layar", () => {
   });
 
   it("menutup dasar layar dengan penanda rumah supaya isi pendek tidak terlihat terpotong", () => {
-    const html = render(createElement(Layar, { lebar: 360, tinggi: 800 }, "isi"));
+    const html = render(createElement(Layar, { lebar: 360, tinggi: 800, children: "isi" }));
     assert.match(html, /width:108px/);
     assert.match(html, /height:4px/);
   });
