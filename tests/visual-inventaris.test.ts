@@ -72,7 +72,7 @@ describe("inventaris komposisi visual", () => {
 
   it("menyebut kelima keadaan di tiap entri, dengan alasan yang bisa dibantah", () => {
     for (const entri of INVENTARIS) {
-      const keadaan = entri.keadaan as Record<string, unknown>;
+      const keadaan: Record<string, unknown> = { ...entri.keadaan };
       assert.deepEqual(
         Object.keys(keadaan).sort(),
         [...KUNCI_KEADAAN].sort(),

@@ -3,7 +3,7 @@
   "lane": "uji",
   "branch": "uji/ratchet-visual",
   "worktree": "~/GeoApps-uji-ratchet-visual",
-  "commit": "d4f02566",
+  "commit": "5200880f",
   "status_short": [],
   "kriteria": [
     {
@@ -23,6 +23,12 @@
       "exit": 0,
       "keluaran": "nol baris menyebut apps/geolibre-desktop/src/visual; keluaran checker sendiri '46 source file(s) over 500 lines are loaded by no test (30 in the baseline)'",
       "catatan": "Perintah ini menguji properti yang diklaim issue #42: ketiga berkas tidak lagi NEW. Checker-nya SENDIRI tetap exit 1 karena 16 NEW lain (packages/map/src/CesiumCanvas.tsx, MapCanvas.tsx, MapboxCanvas.tsx, packages/plugins/src/plugins/gods-eye-view-*, maplibre-*), dan itu artefak run: 99 test gagal membuat lcov parsial sehingga berkas yang dites test gagal tampak tanpa uji. Kegagalan itu pra-ada, dibuktikan dengan tests/arcgis-i3s-tiles.test.ts yang identik dengan origin/main (git diff kosong) dan tetap gagal saat dijalankan sendiri (actual undefined vs expected [-122.4, 37.8]). Bukan cakupan #42."
+    },
+    {
+      "perintah": "cd ~/GeoApps-uji-ratchet-visual && NODE_OPTIONS=--max-old-space-size=900 npx tsc --noEmit --pretty false -p tests/tsconfig.probe42.json  # berkas: visual-inventaris.test.ts",
+      "exit": 0,
+      "keluaran": "keluaran kosong (0 error); sebelumnya 1 error TS2352",
+      "catatan": "Ratchet typecheck untuk berkas uji yang MENGIMPOR primitives.tsx tidak bisa dijalankan lokal: node dibunuh pada ~1.0-1.15 GB (heavy-slice-evacuate.sh, MemoryMax=1800M) sementara tsc untuk pohon itu butuh lebih. 7 error TS2769 yang tersisa dibuktikan hilang lewat CI `Lint and type check`, bukan lewat run lokal. --max-errors 0 tidak dinaikkan."
     }
   ],
   "checker": [
@@ -35,7 +41,7 @@
     {
       "perintah": "cd ~/GeoApps-uji-ratchet-visual && python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
       "exit": 0,
-      "keluaran": "LULUS  lane uji: 3 path, semuanya di cakupan"
+      "keluaran": "LULUS  lane uji: 4 path, semuanya di cakupan"
     },
     {
       "perintah": "gh issue view 42 -R adi805/GeoApps --json comments --jq '.comments[-1].body' | grep -q 'd4f02566'",
@@ -43,5 +49,5 @@
       "keluaran": "komentar bukti terpasang di issue #42 (issuecomment-6287771458), menyebut hash d4f02566 dan hasil ketiga pemeriksa"
     }
   ],
-  "komentar_issue": "https://github.com/adi805/GeoApps/issues/42#issuecomment-6287771458"
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/42#issuecomment-6288373692"
 }
