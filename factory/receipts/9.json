@@ -1,0 +1,78 @@
+{
+  "issue": 9,
+  "lane": "android",
+  "branch": "android/build-mainactivity",
+  "worktree": "~/GeoApps-android-build",
+  "commit": "5b987973",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/9#issuecomment-6280315619",
+  "kriteria": [
+    {
+      "perintah": "npx tauri android build --apk --split-per-abi",
+      "exit": 0,
+      "keluaran": "job Build Android APK (release) hijau di run 39344237712"
+    },
+    {
+      "perintah": "aapt2 dump packagename apks/geolibre-android-x86_64.apk",
+      "exit": 0,
+      "keluaran": "All 4 APKs report package com.geokebun.app."
+    },
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane android --base origin/main --head HEAD --izin-eskalasi",
+      "exit": 0,
+      "keluaran": "LULUS  lane android: 4 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "grep -q 'median=1531' factory/receipts/android-startup.md",
+      "exit": 0,
+      "keluaran": "angka waktu mulai + perangkat sdk_gphone64_x86_64 tercatat di receipt"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 apps/geolibre-desktop/src-tauri/android/uji-langkah-workflow.py",
+      "exit": 0,
+      "keluaran": "8 lulus, 0 gagal"
+    },
+    {
+      "perintah": "uvx ruff@0.15.22 check apps/geolibre-desktop/src-tauri/android/uji-langkah-workflow.py",
+      "exit": 0,
+      "keluaran": "All checks passed!"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --judul /tmp/judul.txt --body /tmp/badan.md --commits /tmp/commits.txt",
+      "exit": 0,
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: rujukan non-penutup #9), 6 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_ontology.py",
+      "exit": 0,
+      "keluaran": "LULUS  kosakata terkendali: 31 berkas diperiksa, tidak ada pelanggaran"
+    },
+    {
+      "perintah": "python3 tools/factory/uji_gate_mandiri.py",
+      "exit": 0,
+      "keluaran": "UJI MANDIRI: 78 kasus, 0 gagal"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_law_fresh.py --sync-mode lewati",
+      "exit": 0,
+      "keluaran": "LULUS  factory/LAW.md masih sama dengan baseline yang disahkan"
+    },
+    {
+      "perintah": "python3 tools/factory/sync_law.py --check",
+      "exit": 0,
+      "keluaran": "LULUS  blok hasil generate di factory/LAW.md sama dengan factory/lanes.json"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_ledger.py",
+      "exit": 0,
+      "keluaran": "LULUS  ledger 8 entri, penulis tunggal `HQ`"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_kanal.py",
+      "exit": 0,
+      "keluaran": "LULUS  kanal agent: 5 pemeriksaan lolos"
+    }
+  ],
+  "status_short": []
+}
