@@ -1,0 +1,146 @@
+{
+  "versi": 3,
+  "penulis_ledger": "HQ",
+  "catatan": "Cakupan lane: satu lane hanya boleh menyentuh path yang cocok dengan glob-nya. Pola peka huruf besar-kecil, lihat tools/factory/_umum.py. factory/bahan/** dan factory/receipts/** adalah direktori keluaran bersama: tiap lane menulis berkasnya sendiri di sana. Sisa factory/ tetap milik HQ. Lane gh-ops dan uji tidak menulis kode produk; globnya cuma untuk laporan, receipt, dan berkas uji. Versi 2 (2026-10-19): lane offline dan geofence diperluas ke bundel proyek portabel, pelacakan GPS, dan uji satuan yang tinggal di sebelah kodenya (#10). Versi 3 (2026-10-19): lane visual ditambahkan (topic 157) untuk bahasa visual aplikasi yang digenerate lewat kode: tiap fungsi digambar sebagai satu komposisi terpisah, dan glob baseline modul tanpa uji masuk ke lane uji supaya ratchet-nya bisa diperbaiki lane itu (#21). Versi 1 (2026-10-19): lane awal GeoApps, delapan lane, topic sudah dibuat di forum grup GeoApps.",
+  "eskalasi": {
+    "glob": [
+      "apps/geolibre-desktop/src-tauri/tauri.conf.json",
+      "apps/geolibre-desktop/src-tauri/tauri.android.conf.json",
+      "apps/geolibre-desktop/src-tauri/tauri.ios.conf.json",
+      "apps/geolibre-desktop/src-tauri/tauri.mas.conf.json",
+      "packaging/**"
+    ],
+    "glob_agen": [
+      ".github/workflows/**"
+    ],
+    "alasan": "identitas paket dan rilis: applicationId Android dibakar permanen oleh Google Play pada unggahan pertama, jadi blast radius-nya di luar repo dan wajib naik ke owner dulu",
+    "alasan_agen": "CI dan runner: berkasnya di dalam repo, ditinjau lewat PR, dan bisa dibalik dengan revert. Izin tetap lewat label PR `eskalasi`, dan tiap keputusan wajib dicatat sebagai entri ledger `ruling` dengan oleh=agent."
+  },
+  "lane": [
+    {
+      "id": "HQ",
+      "topic": 12,
+      "cakupan": "hukum, ruling, gate, percakapan dengan owner; tidak mengerjakan implementasi",
+      "glob": [
+        "factory/**",
+        "factory/docs/**",
+        "tools/factory/**",
+        "README.md",
+        "ONTOLOGY.md",
+        ".gitignore"
+      ]
+    },
+    {
+      "id": "android",
+      "topic": 13,
+      "cakupan": "build dan paket Android: Tauri mobile, gradle, izin lokasi, workflow android dan ios, rilis ke Play Store",
+      "glob": [
+        "apps/geolibre-desktop/src-tauri/android/**",
+        "apps/geolibre-desktop/src-tauri/gen/**",
+        "apps/geolibre-desktop/src-tauri/vendor/**",
+        "apps/geolibre-desktop/src-tauri/capabilities/**",
+        "apps/geolibre-desktop/src-tauri/tauri.android.conf.json",
+        ".github/workflows/android.yml",
+        ".github/workflows/ios.yml",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "geo-pdf",
+      "topic": 15,
+      "cakupan": "impor GeoPDF dan GeoTIFF: parser georeferensi, render PDF ke raster, bounds dan CRS, jalur raster source",
+      "glob": [
+        "packages/plugins/src/plugins/geopdf/**",
+        "packages/plugins/src/plugins/maplibre-raster.ts",
+        "packages/plugins/src/plugins/native-raster-import.ts",
+        "packages/plugins/src/plugins/raster-layer-sync.ts",
+        "packages/plugins/src/plugins/**/*.test.ts",
+        "packages/plugins/package.json",
+        "package-lock.json",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "geofence",
+      "topic": 16,
+      "cakupan": "geofence, GPS averaging, pelacakan GPS, track dan UTM, preset lokasi lapangan",
+      "glob": [
+        "packages/plugins/src/plugins/maplibre-geofence.ts",
+        "packages/plugins/src/plugins/gps-averaging.ts",
+        "apps/geolibre-desktop/src/lib/gps-tracking.ts",
+        "apps/geolibre-desktop/src/lib/geolocation.ts",
+        "packages/plugins/src/plugins/utm-converter.ts",
+        "packages/plugins/src/kebun-preset.ts",
+        "packages/plugins/src/plugin-ids.ts",
+        "packages/plugins/src/plugins/**/*.test.ts",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "offline",
+      "topic": 17,
+      "cakupan": "peta offline: unduh region, MBTiles, basemap offline, cache tile, bundel proyek portabel dan koleksi lapangan",
+      "glob": [
+        "apps/geolibre-desktop/src/lib/offline-*.ts",
+        "apps/geolibre-desktop/src/lib/mbtiles.ts",
+        "apps/geolibre-desktop/src/lib/project-bundle*.ts",
+        "apps/geolibre-desktop/src/lib/project-manifest*.ts",
+        "apps/geolibre-desktop/src/lib/field-collection.ts",
+        "apps/geolibre-desktop/src/**/*offline*",
+        "apps/geolibre-desktop/src/**/*.test.ts",
+        "packages/**/*offline*",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "ui",
+      "topic": 19,
+      "cakupan": "shell aplikasi: home My Maps, navigasi bawah, branding, tema",
+      "glob": [
+        "apps/geolibre-desktop/src/App.tsx",
+        "apps/geolibre-desktop/src/components/**",
+        "apps/geolibre-desktop/src/hooks/**",
+        "apps/geolibre-desktop/src/**/*.test.ts",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "gh-ops",
+      "topic": 20,
+      "cakupan": "issue, PR, label, dan rilis di GitHub",
+      "glob": [
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "uji",
+      "topic": 21,
+      "cakupan": "berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan, baseline modul tanpa uji; uji satuan yang tinggal di sebelah kodenya milik lane modulnya",
+      "glob": [
+        "tests/**",
+        "e2e/**",
+        "scripts/untested-modules-baseline.json",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    },
+    {
+      "id": "visual",
+      "topic": 157,
+      "cakupan": "bahasa visual aplikasi yang digenerate lewat kode: token, primitif, satu komposisi per fungsi, galeri dan tangkapan layarnya. Tidak menyentuh App.tsx, komponen, atau hook yang sudah ada: lane ini menggambar ulang, bukan menambal shell",
+      "glob": [
+        "apps/geolibre-desktop/src/visual/**",
+        "apps/geolibre-desktop/visual.*",
+        "factory/bahan/**",
+        "factory/receipts/**"
+      ]
+    }
+  ],
+  "catatan_identitas": "Grup, kanal owner, nama proyek, repo, dan pohon kanonik TIDAK disimpan di sini. Sumber tunggalnya factory/identitas.json, supaya nilainya tidak punya dua salinan yang bisa melenceng."
+}
