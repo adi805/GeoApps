@@ -40,6 +40,7 @@ import {
   useState,
 } from "react";
 import { useTranslation } from "react-i18next";
+import { MobileCard } from "./mobile/mobilePrimitives";
 import { screenOverlayCovers, useExtentScreenOverlay } from "../../hooks/useExtentScreenOverlay";
 import { clamp } from "../../lib/clamp";
 import {
@@ -947,11 +948,13 @@ export function BasemapExtractPanel({
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-auto p-3 text-sm">
-          <div className="space-y-1">
-            <Label htmlFor="basemap-extract-url" className="text-xs">
+          <MobileCard title={t("basemapExtract.url")}>
+            <div className="space-y-1 p-3">
+            <Label htmlFor="basemap-extract-url" className="sr-only">
               {t("basemapExtract.url")}
             </Label>
             <Input
+              className="min-h-12"
               id="basemap-extract-url"
               type="url"
               placeholder={t("basemapExtract.urlPlaceholder")}
@@ -962,14 +965,15 @@ export function BasemapExtractPanel({
                 clearStatus();
               }}
             />
-          </div>
+            </div>
+          </MobileCard>
 
           <div className="flex gap-2">
             <Button
               type="button"
               size="sm"
               variant={drawing ? "secondary" : "default"}
-              className="flex-1"
+              className="min-h-12 flex-1"
               disabled={running}
               onClick={() => setDrawing((d) => !d)}
               aria-pressed={drawing}
@@ -981,7 +985,7 @@ export function BasemapExtractPanel({
               type="button"
               size="sm"
               variant="outline"
-              className="flex-1"
+              className="min-h-12 flex-1"
               disabled={running}
               onClick={handleUseView}
             >
@@ -999,6 +1003,7 @@ export function BasemapExtractPanel({
                   setCoords(EMPTY_COORDS);
                   clearStatus();
                 }}
+                className="min-h-12"
                 title={t("basemapExtract.clearBbox")}
                 aria-label={t("basemapExtract.clearBbox")}
               >
@@ -1010,7 +1015,8 @@ export function BasemapExtractPanel({
             <p className="text-xs text-muted-foreground">{t("basemapExtract.drawHint")}</p>
           ) : null}
 
-          <div className="grid grid-cols-2 gap-2">
+          <MobileCard title={t("basemapExtract.bbox", "Batas area")}>
+          <div className="grid grid-cols-2 gap-2 p-3">
             {(
               [
                 ["north", t("basemapExtract.north")],
@@ -1024,6 +1030,7 @@ export function BasemapExtractPanel({
                   {label}
                 </Label>
                 <Input
+                  className="min-h-12"
                   id={`basemap-extract-${field}`}
                   type="number"
                   step="any"
@@ -1035,11 +1042,13 @@ export function BasemapExtractPanel({
               </div>
             ))}
           </div>
+          </MobileCard>
           {bboxInvalid ? (
             <p className="text-xs text-destructive">{t("basemapExtract.bboxHint")}</p>
           ) : null}
 
-          <div className="grid grid-cols-2 gap-2">
+          <MobileCard title={t("basemapExtract.zoom", "Tingkat zoom")}>
+          <div className="grid grid-cols-2 gap-2 p-3">
             <div className="space-y-1">
               <Label htmlFor="basemap-extract-minzoom" className="text-xs">
                 {t("basemapExtract.minZoom")}
@@ -1077,15 +1086,18 @@ export function BasemapExtractPanel({
               />
             </div>
           </div>
+          </MobileCard>
           {zoomInvalid && minZoom !== "" && maxZoom !== "" ? (
             <p className="text-xs text-destructive">{t("basemapExtract.zoomHint")}</p>
           ) : null}
 
-          <div className="space-y-1">
-            <Label htmlFor="basemap-extract-style" className="text-xs">
+          <MobileCard title={t("basemapExtract.style")}>
+            <div className="space-y-1 p-3">
+            <Label htmlFor="basemap-extract-style" className="sr-only">
               {t("basemapExtract.style")}
             </Label>
             <Select
+              className="min-h-12"
               id="basemap-extract-style"
               value={flavor}
               disabled={running}
@@ -1106,7 +1118,8 @@ export function BasemapExtractPanel({
                 ? t("basemapExtract.styleHintOverlay")
                 : t("basemapExtract.styleHintBasemap")}
             </p>
-          </div>
+            </div>
+          </MobileCard>
 
           {pendingPlan ? (
             <div className="space-y-2 rounded-md border border-amber-500/50 bg-amber-500/10 p-3">
@@ -1120,6 +1133,7 @@ export function BasemapExtractPanel({
                 <Button
                   type="button"
                   size="sm"
+                  className="min-h-12"
                   onClick={() => {
                     pendingPlan.resolve(true);
                     setPendingPlan(null);
@@ -1130,6 +1144,7 @@ export function BasemapExtractPanel({
                 <Button
                   type="button"
                   size="sm"
+                  className="min-h-12"
                   variant="outline"
                   onClick={() => {
                     pendingPlan.resolve(false);
@@ -1195,13 +1210,20 @@ export function BasemapExtractPanel({
 
           <div className="flex flex-wrap justify-end gap-2">
             {running && !pendingPlan ? (
-              <Button type="button" size="sm" variant="outline" onClick={handleCancel}>
+              <Button
+                className="min-h-12"
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleCancel}
+              >
                 {t("common.cancel")}
               </Button>
             ) : null}
             <Button
               type="button"
               size="sm"
+              className="min-h-12"
               disabled={!canExtract}
               onClick={() => void handleExtract()}
             >
@@ -1214,14 +1236,17 @@ export function BasemapExtractPanel({
             </Button>
           </div>
 
-          <div className="space-y-1.5 border-t pt-3">
+          <MobileCard title={t("basemapExtract.savedTitle")}>
+          <div className="space-y-1.5 p-3">
             <div className="flex items-center justify-between gap-2">
-              <Label className="text-xs">{t("basemapExtract.savedTitle")}</Label>
+              <span className="text-xs text-muted-foreground">
+                {t("basemapExtract.savedCount", "Tersimpan di perangkat ini")}
+              </span>
               <Button
                 type="button"
                 size="sm"
                 variant="outline"
-                className="h-7 text-xs"
+                className="min-h-12 text-xs"
                 disabled={opening}
                 onClick={() => void openPmtilesAsBasemap()}
               >
@@ -1380,6 +1405,7 @@ export function BasemapExtractPanel({
               </div>
             )}
           </div>
+          </MobileCard>
         </div>
 
         <div
