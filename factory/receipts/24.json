@@ -1,0 +1,57 @@
+{
+  "issue": 24,
+  "lane": "visual",
+  "branch": "visual/lane-visual",
+  "worktree": "~/GeoApps-lane-visual",
+  "commit": "0d2a79b0",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "cd apps/geolibre-desktop && npx tsc -p /tmp/tsconfig.visual.json",
+      "exit": 0,
+      "catatan": "tsc -b penuh tidak dipakai: earlyoom mematikan node di RAM 3,9 GB. Config ini menyertakan src/visual/** dengan basis tsconfig.base.json yang sama."
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && ./node_modules/.bin/eslint --config /tmp/eslint.visual.config.mjs apps/geolibre-desktop/src/visual --max-warnings 0",
+      "exit": 0,
+      "keluaran": "keluaran kosong, wall=8.30s maxrss=468568KB",
+      "catatan": "Konfigurasi repo dipakai apa adanya (impor eslint.config.mjs); yang dipersempit hanya program TypeScript-nya, ke /tmp/tsconfig.visual.json. Perintah literal `./node_modules/.bin/eslint apps/geolibre-desktop/src/visual --max-warnings 0` (projectService, program apps/geolibre-desktop penuh) sudah 9 kali dibunuh di host ini: Node 24 memberi heap bawaan 1096 MB sementara programnya butuh ~1,3 GB, dan earlyoom (--prefer node, SIGTERM di 15% mem) menembak proses node mana pun yang menembus batas itu. Bukti: `journalctl -u earlyoom` mencatat 'sending SIGTERM ... VmRSS 1268 MiB' tiap percobaan. Hitungan warning yang mengikat tetap dari CI, lihat checker di bawah."
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && node apps/geolibre-desktop/src/visual/cek-inventaris.mjs",
+      "exit": 0,
+      "keluaran": "komposisi: 31 / keadaan diperiksa: 155 / pasangan kontras diperiksa: 42 / pemeriksaan lulus: 353 / OK"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && node apps/geolibre-desktop/src/visual/tangkap-layar.mjs",
+      "exit": 0,
+      "keluaran": "tangkapan layar: 67/67 berkas di factory/bahan/visual"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "gh api repos/adi805/GeoApps/actions/jobs/118459337801/logs --allow-escape-sequences | grep -E 'problems \\(|src/visual'",
+      "exit": 0,
+      "keluaran": "✖ 246 problems (0 errors, 246 warnings), nol baris menyebut src/visual",
+      "catatan": "Run 39371089430 pada kepala PR 9ad5e858. Job main b593c3e1 (118369800891) juga 246 problems, jadi selisih PR terhadap main = 0 warning dan tidak ada satu pun warning dari src/visual. Langkah Lint tetap merah di kedua sisi karena ratchet repo --max-warnings 242 sudah dilampaui main sebelum lane ini bekerja. Commit bukti ini sendiri hanya menyentuh factory/receipts/24.json, path yang tidak diperiksa eslint, jadi angkanya tidak berubah olehnya."
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && python3 tools/factory/gate_commit_paths.py --lane visual --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane visual: 89 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && python3 tools/factory/gate_pr_link.py --body /tmp/pr-body.md --judul /tmp/judul-pr.txt --commits /tmp/judul.txt --issue 24",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #24, 7 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "cd ~/GeoApps-lane-visual && git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/24#issuecomment-6280377506",
+  "pr": "https://github.com/adi805/GeoApps/pull/29",
+  "catatan": "PR #29 dibuka dengan merge commit (bukan squash, bukan rebase), badan PR memuat baris 'Closes #24'. Commit 0d2a79b0 menambahkan aria-label wajib pada BilahKemajuan; komposisi, tangkapan layar, dan cek-inventaris.mjs tidak diubah."
+}

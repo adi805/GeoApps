@@ -1,8 +1,15 @@
 // Replaces the MainActivity that `tauri android init` generates (gen/android is
 // not committed, so .github/workflows/android.yml copies this file over the
-// generated one after init). Keep the package and the TauriActivity base in
-// step with the template.
-package org.geolibre.app
+// generated one after init). Keep the TauriActivity base in step with the
+// template.
+//
+// The package below MUST equal `identifier` in src-tauri/tauri.android.conf.json
+// (currently com.geokebun.app). tauri-cli generates the template copy at
+// app/src/main/java/<identifier with '.' as '/'>/MainActivity.kt, so the
+// workflow derives the destination from that file and refuses to copy when this
+// line disagrees — a mismatched package compiles into a class the manifest does
+// not launch.
+package com.geokebun.app
 
 import android.os.Bundle
 import android.view.View
