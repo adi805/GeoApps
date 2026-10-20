@@ -9,7 +9,7 @@
  */
 import { addProtocol, type RequestParameters } from "maplibre-gl";
 import * as pdfjs from "pdfjs-dist";
-import type { GeoLibreAppAPI } from "../types";
+import type { GeoLibreAppAPI } from "../../types";
 import { firstGeoreferencedPage, parseGeoPdfDocument, type GeoPdfPage } from "./geopdf-parser";
 import {
   GeoPdfTileRenderer,
