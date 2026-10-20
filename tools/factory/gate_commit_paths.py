@@ -16,6 +16,8 @@ membaca `factory/lanes.json` dan menolak:
 Cara pakai:
   python3 tools/factory/gate_commit_paths.py --lane payroll --base origin/main --head HEAD
   python3 tools/factory/gate_commit_paths.py --lane HQ --paths daftar-berkas.txt
+  python3 tools/factory/gate_commit_paths.py --lane deps --lane geo-pdf --paths daftar-berkas.txt
+  python3 tools/factory/gate_commit_paths.py --lane deps,geo-pdf --paths daftar-berkas.txt
   python3 tools/factory/gate_commit_paths.py --hanya-eskalasi --base origin/main --head HEAD
   python3 tools/factory/gate_commit_paths.py --tanpa-label --base origin/main --head HEAD
   python3 tools/factory/gate_commit_paths.py --daftar-lane
@@ -73,7 +75,13 @@ def entri_mati(lanes, akar):
 def main():
     p = argparse.ArgumentParser(add_help=True)
     p.add_argument("--akar", default=u.akar_factory())
-    p.add_argument("--lane", required=False, default=None)
+    p.add_argument(
+        "--lane",
+        required=False,
+        default=None,
+        action="append",
+        help="id lane; boleh diulang atau dipisah koma untuk PR lintas lane",
+    )
     p.add_argument("--paths", default=None, help="berkas berisi satu path per baris")
     p.add_argument("--base", default=None)
     p.add_argument("--head", default=None)
@@ -108,28 +116,43 @@ def main():
         return 0
 
     if a.hanya_eskalasi or a.tanpa_label:
-        lane = {"id": "tanpa-lane", "glob": [], "cakupan": "cakupan lane tidak diperiksa"}
+        daftar_lane = []
     else:
         if not a.lane:
             print("GAGAL  --lane wajib (lihat --daftar-lane), atau pakai --hanya-eskalasi")
             return 2
-        lane = u.cari_lane(lanes, a.lane)
-        if lane is None:
-            print("GAGAL  lane tidak dikenal: %s" % a.lane)
-            return 2
+        # PR lintas lane butuh lebih dari satu label `lane:<id>`. Sebelum ini gate cuma
+        # membaca satu label (`head -1`), sehingga PR yang sah menyentuh dua cakupan tidak
+        # punya label tunggal yang jujur: memasang satu label berarti bohong soal cakupan,
+        # dan tanpa label berkas jejak ditolak. `--lane` boleh diulang atau dipisah koma.
+        ids = []
+        for nilai in a.lane:
+            for bagian in nilai.split(","):
+                bagian = bagian.strip()
+                if bagian and bagian not in ids:
+                    ids.append(bagian)
+        daftar_lane = []
+        for lane_id in ids:
+            lane = u.cari_lane(lanes, lane_id)
+            if lane is None:
+                print("GAGAL  lane tidak dikenal: %s" % lane_id)
+                return 2
+            daftar_lane.append(lane)
+    label_lane = "+".join(l["id"] for l in daftar_lane) or "tanpa-lane"
 
     paths, galat = u.baca_paths(akar, a.paths, a.base, a.head)
     if galat:
         print("GAGAL  %s" % galat)
         return 2
     if not paths:
-        return u.lulus("lane %s: tidak ada berkas yang berubah" % lane["id"])
+        return u.lulus("lane %s: tidak ada berkas yang berubah" % label_lane)
 
     eskalasi = lanes.get("eskalasi", {})
     glob_owner = eskalasi.get("glob", [])
     glob_agen = eskalasi.get("glob_agen", [])
     agen_diizinkan = []
     alasan = []
+    dipakai = set()
     for path in paths:
         masuk_agen, pola_a = u.cocok_salah_satu(glob_agen, path)
         masuk_owner, pola_o = u.cocok_salah_satu(glob_owner, path)
@@ -165,14 +188,45 @@ def main():
             continue
         if a.hanya_eskalasi:
             continue
-        cocok, _ = u.cocok_salah_satu(lane["glob"], path)
-        if not cocok:
-            alasan.append(
-                "%s: di luar cakupan lane %s. Cakupan: %s" % (path, lane["id"], lane["cakupan"])
-            )
+        pemilik = None
+        for kandidat in daftar_lane:
+            cocok, _ = u.cocok_salah_satu(kandidat["glob"], path)
+            if cocok:
+                pemilik = kandidat
+                break
+        if pemilik is None:
+            if len(daftar_lane) == 1:
+                alasan.append(
+                    "%s: di luar cakupan lane %s. Cakupan: %s"
+                    % (path, daftar_lane[0]["id"], daftar_lane[0]["cakupan"])
+                )
+            else:
+                alasan.append(
+                    "%s: di luar cakupan semua lane berlabel (%s). Cakupan: %s"
+                    % (
+                        path,
+                        label_lane,
+                        " | ".join("%s: %s" % (l["id"], l["cakupan"]) for l in daftar_lane),
+                    )
+                )
+        else:
+            dipakai.add(pemilik["id"])
 
+    # Label yang menganggur = label yang dipasang cuma untuk membuka gerbang, bukan untuk
+    # menandatangani kerja. Hanya diperiksa di PR lintas lane, supaya perilaku satu label
+    # (dan seluruh uji lamanya) tidak berubah. Path eskalasi tidak dihitung sebagai kerja
+    # lane: izinnya datang dari label `eskalasi`, bukan dari label lane.
+    if len(daftar_lane) > 1 and not alasan:
+        for kandidat in daftar_lane:
+            if kandidat["id"] not in dipakai:
+                alasan.append(
+                    "label `lane:%s` tidak dipakai satu path pun di cakupannya. Setiap "
+                    "label lane harus membuktikan ada kerja nyata: lepas label itu, atau "
+                    "masukkan berkas yang benar-benar disentuh. Path eskalasi tidak "
+                    "dihitung." % kandidat["id"]
+                )
     if alasan:
-        return u.tolak("cakupan lane %s dilanggar: %d path" % (lane["id"], len(alasan)), alasan)
+        return u.tolak("cakupan lane %s dilanggar: %d path" % (label_lane, len(alasan)), alasan)
     if agen_diizinkan:
         print(
             "CATATAN  %d path eskalasi tingkat agent diizinkan: %s. "
@@ -191,7 +245,7 @@ def main():
             "Pemeriksaan cakupan penuh menunggu label itu."
         )
         return u.lulus("%d path, tidak ada yang menyentuh path eskalasi owner" % len(paths))
-    return u.lulus("lane %s: %d path, semuanya di cakupan" % (lane["id"], len(paths)))
+    return u.lulus("lane %s: %d path, semuanya di cakupan" % (label_lane, len(paths)))
 
 
 if __name__ == "__main__":

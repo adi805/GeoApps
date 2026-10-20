@@ -1,6 +1,6 @@
 # Hukum Proses, Factory {{proyek}}
 
-**Versi:** 0.63.0
+**Versi:** 0.64.0
 **Punya:** bagaimana factory ini berjalan: briefing, dispatch, closing, escalation.
 **Identitas proyek:** `factory/identitas.json` — nama, slug, grup, kanal owner, repo, pohon kanonik.
 **Daftar lane, topic, cakupan, dan path eskalasi:** `factory/lanes.json`.
@@ -399,6 +399,13 @@ Gate cakupan lane butuh tahu lane mana yang bekerja, dan lane itu baru terbaca d
 `lane:<id>`. Tanpa label, `gate_commit_paths.py --hanya-eskalasi` tetap memeriksa daftar eskalasi
 dan mengatakan terus terang bahwa cakupan tidak diperiksa. Diam-diam melewati pemeriksaan lebih
 buruk daripada tidak punya pemeriksaan.
+
+Sejak 2026-10-21 PR boleh memikul lebih dari satu label `lane:<id>`, dan gate memeriksa setiap
+path terhadap gabungan cakupan label-label itu (`--lane` boleh diulang atau dipisah koma). Dua
+aturan menutup celah yang dibuka kelonggaran ini: setiap path wajib cocok dengan minimal satu
+label, dan setiap label wajib dipakai minimal satu path. Label yang menganggur ditolak, supaya
+PR tidak bisa memasang semua label demi membuka gerbang. Perilaku satu label tidak berubah, dan
+seluruh uji lama tetap hijau.
 
 Sejak 2026-10-11, cabang tanpa label di CI memakai `gate_commit_paths.py --tanpa-label`, bukan
 `--hanya-eskalasi`. Bedanya satu: `--tanpa-label` **menolak** berkas jejak

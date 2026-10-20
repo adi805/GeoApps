@@ -89,7 +89,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           BASE="origin/${{ github.base_ref }}"
-          LANE=$(sed -n 's/^lane://p' /tmp/labels.txt | head -1)
+          # Semua label `lane:` dipakai, bukan cuma yang pertama: PR lintas lane (mis.
+          # #4: package-lock.json milik deps + maplibre-a5.ts milik geo-pdf) tidak punya
+          # satu label pun yang jujur menutup seluruh path-nya. `--lane` menerima daftar
+          # dipisah koma, dan gate menolak label yang tidak dipakai satu path pun.
+          LANE=$(sed -n 's/^lane://p' /tmp/labels.txt | paste -sd, -)
           ESK=""
           grep -qx 'eskalasi' /tmp/labels.txt && ESK="--izin-eskalasi"
           if [ -n "$LANE" ]; then

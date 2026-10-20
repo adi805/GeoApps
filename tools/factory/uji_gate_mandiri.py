@@ -245,6 +245,38 @@ def paths_geopdf_tolak_lockfile_akar(tmp):
     p = tulis_paths(tmp, ["package-lock.json"])
     return jln(["tools/factory/gate_commit_paths.py", "--akar", tmp, "--lane", "geo-pdf", "--paths", p])
 
+def paths_dua_lane_gabungan_lolos(tmp):
+    salin_lanes(tmp)
+    p = tulis_paths(tmp, ["package-lock.json", "packages/plugins/src/plugins/maplibre-a5.ts"])
+    return jln([
+        "tools/factory/gate_commit_paths.py", "--akar", tmp,
+        "--lane", "deps", "--lane", "geo-pdf", "--paths", p,
+    ])
+
+def paths_dua_lane_koma_lolos(tmp):
+    salin_lanes(tmp)
+    p = tulis_paths(tmp, ["package-lock.json", "packages/plugins/src/plugins/maplibre-a5.ts"])
+    return jln([
+        "tools/factory/gate_commit_paths.py", "--akar", tmp,
+        "--lane", "deps,geo-pdf", "--paths", p,
+    ])
+
+def paths_dua_lane_label_menganggur_ditolak(tmp):
+    salin_lanes(tmp)
+    p = tulis_paths(tmp, ["package-lock.json"])
+    return jln([
+        "tools/factory/gate_commit_paths.py", "--akar", tmp,
+        "--lane", "deps", "--lane", "geo-pdf", "--paths", p,
+    ])
+
+def paths_dua_lane_kurang_satu_ditolak(tmp):
+    salin_lanes(tmp)
+    p = tulis_paths(tmp, ["package-lock.json", "packages/plugins/src/plugins/maplibre-a5.ts"])
+    return jln([
+        "tools/factory/gate_commit_paths.py", "--akar", tmp,
+        "--lane", "deps", "--paths", p,
+    ])
+
 def _lanes_tambah_glob(tmp, pola):
     salin_lanes(tmp)
     berkas = os.path.join(tmp, "factory", "lanes.json")
@@ -889,6 +921,10 @@ KASUS = [
     ("gate_commit_paths", "positif: lane deps tanda tangan 11 manifes", True, paths_deps_manifes_lolos),
     ("gate_commit_paths", "negatif: lane deps menyentuh kode produk", False, paths_deps_tolak_kode_produk),
     ("gate_commit_paths", "negatif: geo-pdf ditolak untuk lockfile akar", False, paths_geopdf_tolak_lockfile_akar),
+    ("gate_commit_paths", "positif: dua label lane menutup dua cakupan", True, paths_dua_lane_gabungan_lolos),
+    ("gate_commit_paths", "positif: dua label lane bentuk koma", True, paths_dua_lane_koma_lolos),
+    ("gate_commit_paths", "negatif: label lane menganggur ditolak", False, paths_dua_lane_label_menganggur_ditolak),
+    ("gate_commit_paths", "negatif: dua cakupan dengan satu label ditolak", False, paths_dua_lane_kurang_satu_ditolak),
     ("gate_commit_paths", "negatif: entri lanes.json menunjuk path mati", False, paths_entri_mati_menolak),
     ("gate_commit_paths", "positif: glob wildcard tanpa match tetap lolos", True, paths_glob_wildcard_tanpa_match_lolos),
     ("gate_commit_paths", "positif: base sudah maju, kerja lane lain tidak dihitung", True, paths_base_maju_ok),
