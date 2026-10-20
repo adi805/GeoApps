@@ -21,9 +21,68 @@ export function readFixture(name: string): string {
 export const COPC_URL =
   "https://raw.githubusercontent.com/PDAL/PDAL/3b2942bf5874070bd00f4de2907c90dade2c0a20/test/data/copc/1.2-with-color.copc.laz";
 
+/**
+ * The recent project the helpers seed so a spec can enter the viewer from home.
+ *
+ * ASCII on purpose: it is matched by accessible name, and the home screen's own
+ * labels are translated per locale.
+ */
+const SEED_RECENT_PROJECT = {
+  path: "/e2e/seed-project.geolibre.json",
+  name: "E2E Seed Project",
+  openedAt: "2026-01-01T00:00:00.000Z",
+};
+
+/** The storage key `loadRecentProjects` reads (`useRecentProjectsPersistence`). */
+const RECENT_PROJECTS_STORAGE_KEY = "geolibre.recentProjects";
+
+/**
+ * Enters the full GIS shell ("viewer") from the Avenza-style home screen.
+ *
+ * `/` lands on `HomeScreen`: `App.tsx` keeps its `screen` state at `home`, and
+ * `DesktopShell` — the only parent of `MapCanvas` — mounts for `viewer` alone.
+ * So `map-canvas` is not merely hidden before a project is opened, it is never
+ * created, and a spec that waits for it straight after `goto` fails at any
+ * timeout. Every map spec has to walk through home first.
+ *
+ * A seeded recent project is tapped rather than the "Tambah Peta" button,
+ * because that button also sets `autoOpenRaster`, which opens the raster layer
+ * panel 250 ms after the map is ready — a side effect no spec asked for. On the
+ * browser build `planStartup` never restores a recent project (it restores on
+ * desktop only), so the seed stays inert apart from the row it renders.
+ *
+ * Use after a navigation that already happened (`page.reload()`, an in-app
+ * route change). `openViewer` seeds and navigates as well.
+ */
+export async function enterViewer(page: Page): Promise<void> {
+  await page.getByRole("button", { name: new RegExp(SEED_RECENT_PROJECT.name) }).click();
+}
+
+/** Seeds the recent-project row on every navigation of `page`. */
+export async function seedViewerEntry(page: Page): Promise<void> {
+  await page.addInitScript(
+    ({ key, seed }) => {
+      try {
+        window.localStorage.setItem(key, JSON.stringify([seed]));
+      } catch {
+        // Storage may be unavailable; the click then fails with "not found"
+        // rather than a swallowed error here.
+      }
+    },
+    { key: RECENT_PROJECTS_STORAGE_KEY, seed: SEED_RECENT_PROJECT },
+  );
+}
+
+/** Seeds the recent-project row, navigates to `path`, then enters the viewer. */
+export async function openViewer(page: Page, path = "/"): Promise<void> {
+  await seedViewerEntry(page);
+  await page.goto(path);
+  await enterViewer(page);
+}
+
 /** Waits for MapLibre to mount its WebGL canvas — the app's "map ready" signal. */
 export async function waitForMap(page: Page, path = "/"): Promise<void> {
-  await page.goto(path);
+  await openViewer(page, path);
   await expect(page.getByTestId("map-canvas")).toBeVisible();
   await expect(page.locator(".maplibregl-canvas")).toBeVisible({
     timeout: 30_000,

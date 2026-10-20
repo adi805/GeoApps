@@ -1,12 +1,12 @@
 import { expect, test } from "../test";
-import { collectPageProblems, waitForMapLoaded } from "../helpers";
+import { collectPageProblems, openViewer, waitForMapLoaded } from "../helpers";
 
 test("the deployed app renders the map with a clean console", async ({ page }, testInfo) => {
   const { problems } = collectPageProblems(page);
   try {
     // Relative to baseURL, so a subpath deployment (the previews' /demo/) is
     // loaded from its own path, where its base-relative requests resolve.
-    await page.goto("./");
+    await openViewer(page, "./");
     await expect(page.getByTestId("map-canvas")).toBeVisible();
     await expect(page.locator(".maplibregl-canvas")).toBeVisible({ timeout: 30_000 });
     await waitForMapLoaded(page);

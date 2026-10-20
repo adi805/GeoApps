@@ -3,15 +3,7 @@ import { mkdtemp, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { DESKTOP_SETTINGS_STORAGE_KEY } from "../apps/geolibre-desktop/src/lib/storage-keys";
-
-/** Waits for MapLibre to mount its WebGL canvas — the app's "map ready" signal. */
-async function waitForMap(page: Page, path = "/"): Promise<void> {
-  await page.goto(path);
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
-}
+import { waitForMap } from "./helpers";
 
 /** Opens Project → Story Map and returns the dialog locator. */
 async function openStoryMapPanel(page: Page) {
