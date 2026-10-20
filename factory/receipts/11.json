@@ -3,38 +3,43 @@
   "lane": "offline",
   "branch": "offline/bundel-proyek",
   "worktree": "~/GeoApps-offline-bundel",
-  "commit": "6ff6985f",
+  "commit": "670e2649",
   "status_short": [],
   "kriteria": [
     {
       "perintah": "node --import tsx --test apps/geolibre-desktop/src/lib/project-manifest.test.ts apps/geolibre-desktop/src/lib/project-bundle.test.ts apps/geolibre-desktop/src/lib/offline-region-manifest.test.ts apps/geolibre-desktop/src/lib/project-bundle-tauri.test.ts apps/geolibre-desktop/src/lib/project-bundle-web.test.ts factory/bahan/offline-bundle.test.ts",
       "exit": 0,
-      "keluaran": "tests 85 / pass 85 / fail 0 / duration_ms 1319. Mencakup: impor lalu buka lagi dengan sha256 cocok (lewat store disk dan store IndexedDB), berkas hilang dilaporkan sebagai incomplete, manifes rusak jadi ManifestError, hapus hanya menyentuh direktori proyeknya (store saudara tetap utuh), region offline tercatat di manifes dan totals.offlineRegionBytes dihitung ulang."
+      "keluaran": "tests 88 / pass 88 / fail 0. Mencakup: impor lalu buka lagi dengan sha256 cocok (lewat store disk dan store IndexedDB), berkas hilang dilaporkan sebagai incomplete, manifes rusak jadi ManifestError, hapus hanya menyentuh direktori proyeknya (store saudara tetap utuh), region offline tercatat di manifes dan totals.offlineRegionBytes dihitung ulang, dan store Tauri hanya mengoper path relatif + baseDir AppLocalData ke plugin-fs."
     },
     {
-      "perintah": "npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node --skipLibCheck <10 berkas modul+uji> factory/bahan/offline-bundle.test.ts",
+      "perintah": "npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node --skipLibCheck <5 modul + 5 uji in-tree>",
       "exit": 0,
-      "keluaran": "tanpa diagnostik. Dipakai sebagai pengganti `npx tsc -b apps/geolibre-desktop` yang mati `FATAL ERROR: Reached heap limit` (exit 134) di host ini."
+      "keluaran": "tanpa diagnostik. Dipakai sebagai pengganti `npx tsc -b apps/geolibre-desktop` yang mati `FATAL ERROR: Reached heap limit` (exit 134) di host ini; `npx tsc -p tsconfig.json --noEmit` dan `tsc -b` tetap dijalankan CI."
     },
     {
       "perintah": "git status --short",
       "exit": 0,
-      "keluaran": "bersih setelah commit 6ff6985f"
+      "keluaran": "bersih setelah commit 670e2649"
     }
   ],
   "checker": [
     {
       "perintah": "python3 tools/factory/gate_commit_paths.py --lane offline --base origin/main --head HEAD",
       "exit": 0,
-      "keluaran": "LULUS  lane offline: 12 path, semuanya di cakupan"
+      "keluaran": "LULUS  lane offline: 13 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_receipt.py --berkas factory/receipts/11.json",
+      "exit": 0,
+      "keluaran": "LULUS"
     }
   ],
   "pr": "https://github.com/adi805/GeoApps/pull/34",
   "komentar_issue": "https://github.com/adi805/GeoApps/issues/11#issuecomment-6286879266",
   "catatan_merah": [
-    "PR memakai `Refs #11`, bukan `Closes #11`: dua kriteria selesai ada di lane lain. `tests/project-bundle.test.ts` dan `e2e/offline-reopen.spec.ts` masuk glob lane `uji`; `scripts/coverage-check.mjs` hanya menjalankan `tests/*.test.ts`, jadi 64 uji in-tree di `src/lib/` TIDAK ikut CI. Usulan u-offline-2ac447.",
-    "Store Tauri belum bisa dipakai dari UI: `src-tauri/capabilities/default.json` belum memuat `fs:scope` `$APPLOCALDATA/projects/**` dan berkas itu milik lane `android`. Setiap tulis akan gagal `forbidden path`. Usulan u-offline-c061f0.",
-    "`npm run lint` TIDAK dijalankan di host ini: ESLint type-aware kehabisan heap (RAM 3.9 GB, ~1.4 GB tersedia, proses agen ~940 MB), percobaan `NODE_OPTIONS=--max-old-space-size=1536` dibunuh `timeout 300` dengan keluaran `Terminated`. `--max-warnings` TIDAK dinaikkan. Verifikasi lint diserahkan ke CI.",
+    "PR memakai `Refs #11`, bukan `Closes #11`: dua kriteria selesai ada di lane lain. `tests/project-bundle.test.ts` dan `e2e/offline-reopen.spec.ts` masuk glob lane `uji`; `scripts/coverage-check.mjs` hanya menjalankan `tests/*.test.ts`, jadi uji in-tree di `src/lib/` TIDAK ikut CI. Usulan u-offline-2ac447, diputuskan HQ opsi 1 (lane `uji` yang memindahkan; lane ini berhenti menambah/memperbaiki uji in-tree).",
+    "Store Tauri belum bisa dipakai dari UI sampai `src-tauri/capabilities/default.json` memuat `fs:scope` `projects/**`, dan berkas itu milik lane `android`. Store kini memakai path relatif + `baseDir: BaseDirectory.AppLocalData` (keputusan HQ atas u-offline-c061f0 opsi 2), jadi yang dibutuhkan cuma `projects/**` dan tidak ada entri path absolut atau mkdir root tambahan. Usulan u-offline-c061f0.",
+    "`npm run lint` TIDAK dijalankan di host ini: ESLint type-aware kehabisan heap (RAM 3.9 GB, ~1.4 GB tersedia, proses agen ~940 MB), percobaan `NODE_OPTIONS=--max-old-space-size=1536` dibunuh `timeout 300` dengan keluaran `Terminated`. `--max-warnings` TIDAK dinaikkan. Lima berkas uji memakai blok `eslint-disable @typescript-eslint/no-floating-promises` beralasan (pola `packages/plugins/src/plugins/gps-averaging.test.ts`), yang menghapus 88 warning dari kelas itu; verifikasi akhir diserahkan ke CI.",
     "`factory/usulan-offline.jsonl` sengaja TIDAK ikut PR ini: berkas jejak dimiliki lane `HQ` (glob `factory/**`) dan `gate_commit_paths.py` menolaknya di lane lain (LAW 8.5). Isinya disalin ke `~/GeoApps/factory/usulan-offline.jsonl` untuk dibawa PR HQ; id dan isi usulan juga tercatat di komentar issue."
   ]
 }
