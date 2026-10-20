@@ -116,8 +116,8 @@ async function pdfWithViewport(): Promise<Uint8Array> {
   return doc.save({ useObjectStreams: false });
 }
 
-describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
-  it("reads ESRI /VP with a projected WKT CRS and reprojects to WGS84", async () => {
+void describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
+  void it("reads ESRI /VP with a projected WKT CRS and reprojects to WGS84", async () => {
     const doc = await parseGeoPdfDocument(readFixture("esri-arcmap-utm20n.pdf"));
     assert.equal(doc.status, "ok");
     assert.equal(doc.encrypted, false);
@@ -139,7 +139,7 @@ describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
     assert.equal(page.corners?.length, 4);
   });
 
-  it("reads the QGIS /VP map spanning almost the whole Web Mercator world", async () => {
+  void it("reads the QGIS /VP map spanning almost the whole Web Mercator world", async () => {
     const doc = await parseGeoPdfDocument(readFixture("qgis-3.35-getprint.pdf"));
     assert.equal(doc.status, "ok");
 
@@ -156,7 +156,7 @@ describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
     });
   });
 
-  it("reads the OGC /LGIDict map without touching its CRS", async () => {
+  void it("reads the OGC /LGIDict map without touching its CRS", async () => {
     const doc = await parseGeoPdfDocument(readFixture("ogc-lgidict.pdf"));
     assert.equal(doc.status, "ok");
 
@@ -168,7 +168,7 @@ describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
     assertBounds(page.bounds, { west: 2, south: 48, east: 3, north: 49 });
   });
 
-  it("reports a PDF without dictionaries as no-georeference, not as a failure", async () => {
+  void it("reports a PDF without dictionaries as no-georeference, not as a failure", async () => {
     const doc = await parseGeoPdfDocument(readFixture("tanpa-georeferensi.pdf"));
     assert.equal(doc.status, "no-georeference");
     assert.equal(doc.pageCount, 2);
@@ -184,8 +184,8 @@ describe("parseGeoPdfDocument fixture #6", { skip: NO_FIXTURES }, () => {
   });
 });
 
-describe("parseGeoPdfDocument synthetic dictionaries", () => {
-  it("rejects a file without a PDF header", async () => {
+void describe("parseGeoPdfDocument synthetic dictionaries", () => {
+  void it("rejects a file without a PDF header", async () => {
     const bytes = new TextEncoder().encode("bukan pdf sama sekali");
     assert.equal(looksLikePdf(bytes), false);
 
@@ -195,7 +195,7 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
     assert.equal(doc.encrypted, false);
   });
 
-  it("detects an encrypted PDF instead of guessing its dictionaries", async () => {
+  void it("detects an encrypted PDF instead of guessing its dictionaries", async () => {
     const plain = await PDFDocument.create();
     plain.addPage([20, 20]);
     const text = Buffer.from(await plain.save({ useObjectStreams: false })).toString("latin1");
@@ -211,7 +211,7 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
     assert.match(doc.message ?? "", /terenkripsi/i);
   });
 
-  it("maps a /VP measure in geographic coordinates", async () => {
+  void it("maps a /VP measure in geographic coordinates", async () => {
     const doc = await parseGeoPdfDocument(await pdfWithViewport());
     assert.equal(doc.status, "ok");
 
@@ -230,7 +230,7 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
     );
   });
 
-  it("reprojects a UTM 48S /LGIDict (EPSG:32748) into WGS84", async () => {
+  void it("reprojects a UTM 48S /LGIDict (EPSG:32748) into WGS84", async () => {
     // 20 pt at 100 m/pt is 2000 m; anchored on the zone's central meridian.
     const doc = await parseGeoPdfDocument(await pdfWithLgiDict([100, 0, 0, 100, 500000, 9000000]));
     assert.equal(doc.status, "ok");
@@ -245,7 +245,7 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
     });
   });
 
-  it("reprojects all four corners when the /CTM carries rotation", async () => {
+  void it("reprojects all four corners when the /CTM carries rotation", async () => {
     const flat = await parseGeoPdfDocument(await pdfWithLgiDict([100, 0, 0, 100, 500000, 9000000]));
     const diagonal = 70.7106781;
     const rotated = await parseGeoPdfDocument(
@@ -284,7 +284,7 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
     assert.equal(unique.size, 4);
   });
 
-  it("treats every page as its own map", async () => {
+  void it("treats every page as its own map", async () => {
     const georeferenced = await pdfWithLgiDict([100, 0, 0, 100, 500000, 9000000]);
     const doc = await PDFDocument.load(georeferenced, { updateMetadata: false });
     doc.addPage([20, 20]);
@@ -301,8 +301,8 @@ describe("parseGeoPdfDocument synthetic dictionaries", () => {
   });
 });
 
-describe("legacy parseGeoPdf", () => {
-  it("returns an Adobe-order affine that affineToBounds turns into the same bounds", async () => {
+void describe("legacy parseGeoPdf", () => {
+  void it("returns an Adobe-order affine that affineToBounds turns into the same bounds", async () => {
     const info = await parseGeoPdf(await pdfWithViewport());
     assert.ok(info, "legacy parser must find the viewport");
     assert.equal(info.crs, "EPSG:4326");
@@ -317,7 +317,7 @@ describe("legacy parseGeoPdf", () => {
     assertClose(bounds.north, -9, "north");
   });
 
-  it("returns null for a PDF without georeference", async () => {
+  void it("returns null for a PDF without georeference", async () => {
     const doc = await PDFDocument.create();
     doc.addPage([20, 20]);
     assert.equal(await parseGeoPdf(await doc.save()), null);
