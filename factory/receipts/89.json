@@ -16,11 +16,11 @@
     },
     {
       "kriteria": "2. Setelah penyebab terbukti, npx playwright test e2e/a11y-screens.spec.ts --project=features lulus, dan SettingsDialog tetap memberi target sentuh 48 px pada tombol nav",
-      "status": "sebagian",
-      "perintah": "grep -n 'min-h-12 justify-start' apps/geolibre-desktop/src/components/layout/SettingsDialog.tsx",
+      "status": "selesai",
+      "perintah": "gh pr checks 94 --repo adi805/GeoApps | grep 'E2E features 1/4'; gh run view 39505494527 --repo adi805/GeoApps --log --job 118913474294 | grep 'Settings sections'",
       "exit": 0,
-      "keluaran": "595:        className=\"min-h-12 justify-start\" -> target 48 px utuh di setiap tombol nav, sesuai kriteria 4 unit #69. Perbaikan komposisinya ada di commit d6c400e2 (bodyClassName grid-rows-[auto_minmax(0,1fr)_auto_auto] dan nav md:overflow-x-hidden md:overflow-y-auto). Eksekusi spec-nya sedang berjalan di CI PR #94 lewat label full-e2e, job E2E features 1/4; hasilnya belum ada saat receipt ini ditulis.",
-      "catatan": "Status sebagian, bukan selesai: kriteria ini baru terbukti di tingkat kelas CSS dan di tingkat mekanisme (probe di kriteria 3), belum di tingkat eksekusi Playwright. Verifikator sebenarnya adalah job E2E features 1/4 di PR #94, karena host ini tidak bisa menjalankan webServer Playwright: vite build memuncak sekitar 1.8 GB dan earlyoom mengirim SIGTERM ke proses node di sekitar 590 MB tersedia."
+      "keluaran": "595: className=\"min-h-12 justify-start\" -> target 48 px utuh di setiap tombol nav, sesuai kriteria 4 unit #69. Perbaikan komposisi ada di d6c400e2: bodyClassName grid-rows-[auto_minmax(0,1fr)_auto_auto] dan nav md:overflow-x-hidden md:overflow-y-auto. Eksekusi Playwright di CI PR #94, head f9b6eecd, run 39505494527, job E2E features 1/4 (118913474294): conclusion success, 13m12s, dan log job memuat baris '✓   4 [features] › e2e/a11y-screens.spec.ts:137:5 › Settings sections (54.7s)'. Spec yang sama timeout 240000ms dua percobaan di 04f9e169 (run 39450566837). Kriteria terpenuhi.",
+      "catatan": "Verdict diambil dari CI, bukan dari lokal: host ini tidak bisa menjalankan webServer Playwright karena vite build memuncak sekitar 1.8 GB dan earlyoom mengirim SIGTERM ke proses node di sekitar 590 MB tersedia. npm run typecheck:tests juga mati di sini dengan 'FATAL ERROR: Reached heap limit' di heap sekitar 1 GB."
     },
     {
       "kriteria": "3. Nav dan footer tidak boleh saling menimpa di lebar 360, 412, dan 1280 px, dan tangkapan layar ketiga lebar itu dilampirkan ke PR",
@@ -32,11 +32,11 @@
     },
     {
       "kriteria": "4. Lint and type check, Build and test, dan E2E core hijau di PR",
-      "status": "sebagian",
-      "perintah": "gh pr view 94 --repo adi805/GeoApps --json statusCheckRollup --jq '[.statusCheckRollup[]|{name,status,conclusion}]'",
+      "status": "selesai",
+      "perintah": "gh pr checks 94 --repo adi805/GeoApps",
       "exit": 0,
-      "keluaran": "PR #94 baru dibuka saat receipt ini ditulis. Gate pada pohon ini pass 18s, Gate bisa menolak (uji mandiri) pass 10s, Detect changed paths pass 3s. Lint and type check, Build and test, E2E core (Playwright), dan keempat shard E2E features masih pending. npm run typecheck:tests tidak bisa dijalankan lokal: tsc berhenti dengan 'FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory' di heap sekitar 1 GB, sama seperti yang tercatat di receipt #69.",
-      "catatan": "Verdict kriteria ini diambil dari CI, bukan dari lokal, dan belum ada saat receipt ditulis."
+      "keluaran": "PR #94 head f9b6eecd. Hijau: Lint and type check pass 4m3s, Build and test pass 8m41s, E2E core (Playwright) pass 6m56s, E2E features 1/4 pass 13m12s, E2E features 3/4 pass 7m55s, E2E enterprise SSO pass 3m12s, Gate pada pohon ini pass 19s, Gate bisa menolak (uji mandiri) pass 10s, Detect changed paths pass 4s, Build website and demo pass 2m40s, Build and publish container image pass 2m34s, Test Python package 3.11/3.12/3.13/3.14 pass, CI passed pass. Yang merah hanya E2E features 2/4 dan 4/4, dan keduanya merah tanpa perubahan ini.",
+      "catatan": "Bukti bahwa 2/4 dan 4/4 bukan akibat PR ini, di tiga keadaan. (a) main 61200c14, run 39422678054, sebelum regresi #89 ada: gagal di mapbox-swipe 3, mapbox-deck-overlays 3, mapbox-streetview 2, mapbox-overture 2, mapbox-geo-editor 2, mapbox-geoagent 2, mapbox-flight-simulator 2, open-recent 1, mapbox-zarr 1, dan style-manager 2. (b) branch falsify 7c91542a, run 39502230584, min-h-12 dikembalikan: himpunan yang sama ditambah offline-reopen 1. (c) head PR f9b6eecd: himpunan identik dengan (b). Himpunan kegagalan tidak bergerak oleh perbaikan ini. offline-reopen.spec.ts masuk lewat a7094968 (#81, lane uji), bukan lewat PR ini: git log 61200c14..HEAD -- e2e/offline-reopen.spec.ts hanya menampilkan commit itu."
     }
   ],
   "checker": [
