@@ -24,11 +24,11 @@
     },
     {
       "kriteria": "3. Job Lint and type check, Build and test, dan E2E core hijau di PR",
-      "status": "menunggu",
-      "perintah": "gh pr view 86 -R adi805/GeoApps --json statusCheckRollup --jq '.statusCheckRollup[] | \"\\(.name) \\(.status) \\(.conclusion)\"'",
+      "status": "selesai",
+      "perintah": "gh pr checks 86 -R adi805/GeoApps",
       "exit": 0,
-      "keluaran": "PR #86 baru dibuka; hasil job menyusul di PR dan tidak diklaim hijau di sini. Lint penuh dan typecheck:tests tidak bisa dijalankan lokal di host ini (earlyoom mengirim SIGTERM ke proses node di sekitar 1.2-1.5 GB RSS), jadi CI adalah satu-satunya pengukur untuk kedua job itu. Yang bisa dibuktikan lokal hanya eslint per berkas, exit 0 tanpa warning, dan ratchet --max-warnings tetap 242.",
-      "catatan": "Belum hijau, belum merah: belum diukur. Jangan dibaca sebagai terpenuhi sebelum run CI di PR #86 selesai."
+      "keluaran": "Ketiga job yang diminta kriteria hijau di PR #86 pada commit fe723cba: 'Lint and type check' pass 5m13s (run 39446917122, job 118711578504), 'Build and test' pass 6m28s (job 118711578766), 'E2E core (Playwright)' pass 7m2s (job 118711634358). Ringkasannya 'CI passed' pass 3s (job 118715400049). Gate pada pohon ini pass 18s dan 'Gate bisa menolak (uji mandiri)' pass 9s. Job yang skipping memang tidak dipicu PR ini (E2E features, E2E enterprise SSO, Backend tests, Container checks, Rust check, Identity integration, Sidecar SQL Server integration), jadi tidak dihitung hijau. Lint penuh dan typecheck:tests yang tidak bisa dijalankan lokal (earlyoom membunuh node di ~1.2-1.5 GB RSS) akhirnya terukur di CI dan hijau, jadi tidak ada ratchet yang perlu dinaikkan.",
+      "catatan": "Hijau di CI, bukan klaim lokal. E2E features tetap skipping di PR, sesuai receipt: spec baru hanya berjalan di jalur nightly e2e-full.yml, bukan di gate tiap PR."
     },
     {
       "kriteria": "4. Nol entri baru di scripts/untested-modules-baseline.json, dan --max-warnings tidak dinaikkan",
