@@ -9,7 +9,7 @@
     {
       "perintah": "CI job 'E2E core (Playwright)' pada PR #56",
       "exit": 0,
-      "keluaran": "31 passed (7.2m). Baris yang dimaksud: '✓ 29 [core] › e2e/smoke.spec.ts:85:5 › keeps every toolbar menu on one scrollable row on small screens (9.0s)'. Sebelum unit ini, run 39400219748 merah dengan 'Received has value: undefined' di baris 93."
+      "keluaran": "31 passed (7.2m), dua kali: run 39403487842 (head cae05884) dan run 39405070272 (head e8355a33, sesudah main di-merge ke branch). Baris yang dimaksud: '✓ 29 [core] › e2e/smoke.spec.ts:85:5 › keeps every toolbar menu on one scrollable row on small screens'. Sebelum unit ini, run 39400219748 merah dengan 'Received has value: undefined' di baris 93."
     },
     {
       "perintah": "grep -n \"setViewportSize\" e2e/smoke.spec.ts",
@@ -42,8 +42,8 @@
   "pr": "https://github.com/adi805/GeoApps/pull/56",
   "komentar_issue": "https://github.com/adi805/GeoApps/issues/55#issuecomment-6288411136",
   "catatan_merah": [
-    "CI job 'Build and test' MERAH di PR #56 pada check:untested-modules: tiga modul visual dari PR #29 (inventaris.ts 514 baris, primitives.tsx 681, screens/peta.tsx 526) tidak dimuat tes mana pun. Bukan unit ini: merah yang sama ada di main (run 39400219748) dan itu isi issue #42, diperbaiki PR #49.",
-    "Konsekuensi urutan merge: #56 menutup merah E2E yang juga menahan #49, sementara #49 menutup merah Build and test yang menahan #56. Salah satu harus masuk lebih dulu; #56 lebih murah karena hijau di job yang ia perbaiki, dan #49 tinggal rebase.",
+    "CI job 'Build and test' semula MERAH di PR #56 karena tiga modul visual dari PR #29 tanpa uji (#42). Hijau setelah PR #49 merge ke main; branch ini ikut merge main sehingga job itu pass 6m17s di run 39405070272.",
+    "CI job 'Lint and type check' MASIH MERAH di PR #56, tapi bukan dari berkas unit ini: langkah 'Type check tests (ratchet)' melaporkan 8 error TypeScript di tests/visual-primitives.test.ts (7) dan tests/visual-inventaris.test.ts (1), dua berkas yang masuk lewat PR #49. Didaftarkan sebagai issue #59. Job yang sama juga merah di main sebelum branch ini ada.",
     "e2e/smoke.spec.ts sebelumnya mengukur toolbar desktop di 400 px. Sejak 8ed508cc (#12) di bawah 768 px TopToolbar memang display:none, jadi yang salah tesnya, bukan produknya."
   ]
 }
