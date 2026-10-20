@@ -1,0 +1,76 @@
+{
+  "issue": 81,
+  "lane": "uji",
+  "branch": "uji/bundel-tests-v2",
+  "worktree": "~/GeoApps-uji-bundel",
+  "commit": "a7094968",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. node --import tsx --test tests/project-bundle.test.ts tests/project-manifest.test.ts melaporkan 0 gagal",
+      "status": "selesai",
+      "perintah": "node --import tsx --test tests/project-bundle.test.ts tests/project-manifest.test.ts",
+      "exit": 0,
+      "keluaran": "tests 24 | suites 7 | pass 24 | fail 0 | cancelled 0 | skipped 0 | todo 0 | duration_ms 432. Kedua berkas dipulihkan byte-identik dari 6963470c lewat `git checkout 6963470c -- tests/project-bundle.test.ts tests/project-manifest.test.ts`, jadi isinya sama dengan yang pernah lolos di PR #41.",
+      "catatan": "Nol gagal, nol skip. Yang berubah dibanding 6963470c hanya lokasinya di pohon: sekarang di atas origin/main f3f34ade, bukan di atas base offline/bundel-proyek."
+    },
+    {
+      "kriteria": "2. npx playwright test e2e/offline-reopen.spec.ts lulus, dengan route.abort() aktif dan tanpa test.skip",
+      "status": "sebagian",
+      "perintah": "npx playwright test e2e/offline-reopen.spec.ts --list",
+      "exit": 0,
+      "keluaran": "Spec terdaftar dan bisa dimuat Playwright: `[features] > offline-reopen.spec.ts:99:5 > reopens a project with every non-local request aborted`, Total 1 test in 1 file. Isi spec memakai page.route('**/*') yang memanggil route.abort() untuk setiap URL yang bukan localhost/127.0.0.1, dan grep memastikan nol test.skip, nol test.fixme, nol test.fail di berkas itu. BELUM PERNAH DIJALANKAN: `npx playwright test e2e/offline-reopen.spec.ts` keluar dengan `Error: Process from config.webServer was not able to start. Exit code: 134`, dan log webServer memuat `FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory` pada heap sekitar 707 MB. cgroup sesi ini memory.max = 2516582400 (2.4 GB) dengan 1.5 GB sudah dipakai daemon, jadi V8 mengukur sisa itu. Percobaan `systemd-run --user --scope` dengan batas 1.9 GB juga gagal, dan percobaan build terpisah gagal lebih awal dengan `Could not resolve '@vitejs/plugin-react'` karena node_modules worktree ini hasil hardlink yang tidak lengkap, sementara `npm ci` juga OOM di mesin 3.9 GB ini.",
+      "catatan": "Status sebagian, bukan selesai: kriteria ini baru terbukti di tingkat deklarasi (spec sah dan terdaftar), belum di tingkat eksekusi. Verifikator sebenarnya adalah runner CI lewat jalur nightly e2e-full.yml (--project=features, sharded 4x, --workers=1), karena spec ini tidak ada di CORE_SPECS playwright.config.ts dan berkas itu di luar glob lane uji sehingga tidak diubah dari PR ini."
+    },
+    {
+      "kriteria": "3. Job Lint and type check, Build and test, dan E2E core hijau di PR",
+      "status": "selesai",
+      "perintah": "gh pr checks 86 -R adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "Ketiga job yang diminta kriteria hijau di PR #86 pada commit fe723cba: 'Lint and type check' pass 5m13s (run 39446917122, job 118711578504), 'Build and test' pass 6m28s (job 118711578766), 'E2E core (Playwright)' pass 7m2s (job 118711634358). Ringkasannya 'CI passed' pass 3s (job 118715400049). Gate pada pohon ini pass 18s dan 'Gate bisa menolak (uji mandiri)' pass 9s. Job yang skipping memang tidak dipicu PR ini (E2E features, E2E enterprise SSO, Backend tests, Container checks, Rust check, Identity integration, Sidecar SQL Server integration), jadi tidak dihitung hijau. Lint penuh dan typecheck:tests yang tidak bisa dijalankan lokal (earlyoom membunuh node di ~1.2-1.5 GB RSS) akhirnya terukur di CI dan hijau, jadi tidak ada ratchet yang perlu dinaikkan.",
+      "catatan": "Hijau di CI, bukan klaim lokal. E2E features tetap skipping di PR, sesuai receipt: spec baru hanya berjalan di jalur nightly e2e-full.yml, bukan di gate tiap PR."
+    },
+    {
+      "kriteria": "4. Nol entri baru di scripts/untested-modules-baseline.json, dan --max-warnings tidak dinaikkan",
+      "status": "selesai",
+      "perintah": "git diff --stat origin/main...HEAD -- scripts/untested-modules-baseline.json package.json",
+      "exit": 0,
+      "keluaran": "Nol keluaran untuk kedua berkas, artinya tidak ada entri baseline baru dan package.json tidak disentuh sehingga --max-warnings tetap 242 dan --max-errors tetap 0. Seluruh diff terhadap origin/main hanya tiga berkas: e2e/offline-reopen.spec.ts 174 baris, tests/project-bundle.test.ts 261 baris, tests/project-manifest.test.ts 242 baris, total 677 sisipan dan nol penghapusan.",
+      "catatan": "Nol perubahan pada apps/**, nol perubahan pada visual/**, nol perubahan pada scripts/untested-modules-baseline.json."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 3 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr81.md --judul /tmp/judul81.txt --commits /tmp/commits81.txt --issue 81",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #81, 2 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "npx eslint tests/project-bundle.test.ts tests/project-manifest.test.ts e2e/offline-reopen.spec.ts",
+      "exit": 0,
+      "keluaran": "Exit 0, nol warning. Tidak ada eslint-disable baru di luar satu komentar yang sudah ada di berkas hasil pemulihan."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Bersih sebelum receipt ditulis; tidak ada berkas setengah jadi yang tertinggal."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/81#issuecomment-6294246179",
+  "cakupan": {
+    "berkas_usulan": "factory/usulan-uji.jsonl (tidak ada di repo dan di luar glob lane uji; ditulis lewat usulan.py catat lalu dihapus supaya worktree bersih)",
+    "salinan": "factory/bahan/81-usulan.md",
+    "usulan": [
+      {
+        "id": "u-uji-eb6fb2",
+        "ringkas": "e2e/offline-reopen.spec.ts hanya berjalan di jalur nightly e2e-full.yml (--project=features), tidak di gate tiap PR, karena playwright.config.ts ada di akar repo dan tidak masuk glob lane uji",
+        "rekomendasi": "masukkan offline-reopen.spec.ts ke CORE_SPECS di playwright.config.ts lewat unit HQ, supaya kriteria 2 issue #11 diukur tiap PR, bukan hanya nightly"
+      }
+    ]
+  }
+}
