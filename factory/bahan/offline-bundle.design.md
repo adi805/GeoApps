@@ -4,10 +4,10 @@
 > Kode: `project-manifest.ts` (skema, jalur, sha256, parse/serialize) ·
 > `project-bundle.ts` (impor/verifikasi/buka/hapus) ·
 > `offline-region-manifest.ts` (katalog region → manifes) ·
-> `project-bundle-tauri.ts` (store `$APPLOCALDATA/projects/<slug>/`) ·
+> `project-bundle-tauri.ts` (store `projects/<slug>/` relatif ke app-local data) ·
 > `project-bundle-web.ts` (store IndexedDB).
-> Uji: `*.test.ts` di sebelah tiap modul (64 uji) + prototipe
-> `factory/bahan/offline-bundle.test.ts` (21 uji) = 85 uji, semuanya lulus.
+> Uji: `*.test.ts` di sebelah tiap modul (67 uji) + prototipe
+> `factory/bahan/offline-bundle.test.ts` (21 uji) = 88 uji, semuanya lulus.
 > Verifikasi: `node --import tsx --test <berkas>` dan `npx tsc --noEmit --strict` exit 0.
 
 ## 1. Masalah
@@ -195,12 +195,18 @@ interface BundleStore {
 Dua implementasi, keduanya sudah ada:
 
 1. **Tauri** — `project-bundle-tauri.ts`, `createTauriBundleStore(slug, io?)`
-   mengikat store ke `$APPLOCALDATA/projects/<slug>/`. `list()` menelusuri
-   subdirektori; `write()` membuat direktori induk (`mkdir recursive`).
+   mengikat store ke `projects/<slug>/` **relatif** terhadap app-local data, dan
+   setiap panggilan plugin-fs membawa `baseDir: BaseDirectory.AppLocalData`.
+   Store tidak pernah menyusun path absolut dari `appLocalDataDir()`: dengan base
+   directory plugin yang me-resolve sendiri, jadi root Android tidak perlu
+   disamakan antara sisi JS dan Rust. `list()` menelusuri subdirektori;
+   `write()` membuat direktori induk (`mkdir recursive`).
    `listBundleProjectSlugs()` memberi daftar bundel di perangkat.
-   **Masih butuh `fs:scope` `$APPLOCALDATA/projects/**` di
-   `src-tauri/capabilities/default.json`** — sekarang cuma `startup-projects`
-   yang di-scope, jadi setiap tulis gagal "forbidden path". Path itu milik lane
+   **Masih butuh `fs:scope` `projects/**`** (relatif ke base directory itu) di
+   `src-tauri/capabilities/default.json` — sekarang cuma `startup-projects`
+   yang di-scope, jadi setiap tulis gagal "forbidden path". Tidak ada entri path
+   absolut yang dibutuhkan, dan `projects/` tidak perlu dibuat lebih dulu: store
+   hanya membaca root itu saat listing. Path `capabilities/**` milik lane
    `android` → diajukan lewat komentar #11, bukan dikerjakan di sini.
 2. **Web** — `project-bundle-web.ts`, IndexedDB `geolibre-project-bundles` v1,
    object store `bundle-files`, key `"<slug>/<path>"`. Satu record per **berkas**,
@@ -237,13 +243,13 @@ dan tidak membebani build web.
 | berkas hilang dilaporkan, bukan proyek setengah jadi | uji "berkas hilang → incomplete" + "manifes rusak → error" |
 | hapus hanya isi direktorinya | `project-bundle-tauri.test.ts`: hapus satu proyek, store saudara tetap utuh |
 | manifes mencatat region offline | `offline-region-manifest.test.ts` + `totals.offlineRegionBytes` |
-| `npm run lint` exit 0 | belum bisa dijalankan di host ini (lihat catatan di bawah) |
+| `npm run lint` exit 0 | CI job "Lint and type check"; warning `no-floating-promises` dari berkas uji dimatikan per berkas (lihat catatan di bawah) |
 
 Berkas uji: `project-manifest.test.ts` (manifes), `project-bundle.test.ts`
 (operasi), `offline-region-manifest.test.ts` (adaptor region),
 `project-bundle-tauri.test.ts` (store disk + round trip),
 `project-bundle-web.test.ts` (store IndexedDB + round trip), plus prototipe
-`factory/bahan/offline-bundle.test.ts`. Total 85 uji, 0 gagal.
+`factory/bahan/offline-bundle.test.ts`. Total 88 uji, 0 gagal.
 
 **Catatan cakupan CI:** `scripts/coverage-check.mjs` hanya menjalankan
 `tests/*.test.ts`, jadi uji in-tree `src/**/*.test.ts` **tidak** ikut CI. Itu
@@ -258,3 +264,11 @@ Catatan lingkungan: `npx tsc --noEmit --strict` pada seluruh modul dan ujinya
 `NODE_OPTIONS=--max-old-space-size=1536` dibunuh `timeout 300` (`Terminated`).
 Lint dan build type-aware harus dijalankan di mesin/CI yang punya RAM cukup;
 **jangan** menaikkan `--max-warnings` untuk melewatinya.
+
+`it()` dari `node:test` mengembalikan promise yang dilacak runner sendiri, bukan
+promise yang perlu di-`await` di berkas uji, dan aturan
+`@typescript-eslint/no-floating-promises` tidak bisa membedakannya. Lima berkas
+uji baru menyumbang 88 warning dari kelas itu, yang menembus ratchet
+`--max-warnings 242`; tiap berkas memakai blok `eslint-disable` beralasan,
+mengikuti pola `packages/plugins/src/plugins/gps-averaging.test.ts`. Ratchet-nya
+tidak dinaikkan.
