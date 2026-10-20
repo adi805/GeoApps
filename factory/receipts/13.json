@@ -1,0 +1,44 @@
+{
+  "issue": 13,
+  "lane": "geofence",
+  "branch": "geofence/alat-lapangan",
+  "worktree": "~/GeoApps-geofence-lapangan",
+  "commit": "5096f497971b81a132afcd7d28123012f6e7a0fc",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "node --import tsx --test packages/plugins/src/plugins/*.test.ts",
+      "exit": 0,
+      "keluaran": "tests 48 | pass 48 | fail 0 (termasuk tepat di batas, lintas garis tanggal, CSV nama ber-koma, dan dua bentuk Circle)"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH (0 baris)"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "node --import tsx --test packages/plugins/src/plugins/*.test.ts",
+      "exit": 0,
+      "keluaran": "48 uji lulus: 13 UTM (galat bolak-balik 3,15e-9 m), 11 rata-rata GPS, 24 geofence"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/13#issuecomment-6280200139",
+  "pr": "https://github.com/adi805/GeoApps/pull/28",
+  "catatan": [
+    "KOREKSI receipt sebelumnya: commit ee59f1e0 tidak memuat hasil build. Build preview CI gagal dengan error TS2352 di maplibre-geofence.ts baris 180 (cast Position[] ke Position). Receipt ini menggantikannya dengan hasil sebenarnya.",
+    "TS2352 sudah diperbaiki di commit 10bbcd31 dan 5096f497. Bukti CI pada commit 5096f497: job 'Build preview' (run 39368345843) SUKSES, dan langkah 'Build web demo' menjalankan tsc -b && vite build sehingga tsc -b apps/geolibre-desktop terbukti lolos di lingkungan bersih.",
+    "tsc tidak bisa dijalankan di host ini: earlyoom (EARLYOOM_ARGS --prefer node, batas mem 15%) membunuh proses node pada ~1,3 GB RSS sementara tiga worktree lain berjalan. Sudah dicoba puluhan kali dengan heap 1024 sampai 1600 MB dan guard memori, semuanya exit 143 atau 134. Karena itu verifikasi typecheck diambil dari CI, bukan dari host ini.",
+    "npm run lint di CI keluar 1 dengan '246 problems (0 errors, 246 warnings)' terhadap ambang --max-warnings 242. Angka ini identik dengan main (commit b593c3e1, run 39343185303), jadi bukan regresi PR ini. Nol anotasi menyebut maplibre-geofence.ts, gps-averaging.ts, atau utm-converter.ts.",
+    "gate_commit_paths.py --lane geofence keluar 1 karena tiga berkas *.test.ts di luar glob lane. Glob lane perlu diperluas HQ atau berkas uji diberi label lane:uji.",
+    "packages/plugins/src/index.ts di luar glob lane, jadi ekspor baru (GeofenceMonitor, eventsToCsv, GEOFENCE_CSV_COLUMNS, latLngToUtm, GpsAverager) belum di-re-export dari indeks paket.",
+    "Bagian 6 (pemeriksaan latar + notifikasi lokal) belum dikerjakan, menunggu #10. Tidak diklaim lulus.",
+    "Izin ACCESS_BACKGROUND_LOCATION dan manifes Android adalah eskalasi owner, tidak diubah."
+  ]
+}

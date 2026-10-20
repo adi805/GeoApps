@@ -50,12 +50,14 @@ env:
   # Set at workflow level so the APK and AAB steps agree — a mismatch changes
   # the cargo fingerprint and forces a full rebuild between them.
   RUSTFLAGS: "-C link-arg=-Wl,-z,max-page-size=16384 -C link-arg=-Wl,-z,common-page-size=16384"
-  # The Android package id, asserted twice below. It comes from `identifier` in
-  # src-tauri/tauri.android.conf.json, which overrides the desktop
-  # `org.geolibre.desktop` for Android only. Google Play burns this permanently
-  # on first upload — it cannot be changed or reused afterwards — so it is
+  # The Android package id is NOT set here. It is read from `identifier` in
+  # src-tauri/tauri.android.conf.json by the "Read Android package identity"
+  # step and exported as EXPECTED_PACKAGE / PACKAGE_PATH for the rest of the
+  # job. A second copy in this file is a second source of truth: the copy that
+  # used to live here named the identifier while the MainActivity step still
+  # wrote to the old desktop package path, and nothing reconciled the two. Google Play
+  # burns the id permanently on first upload, so it is derived once and
   # verified rather than trusted.
-  EXPECTED_PACKAGE: "com.geokebun.app"
 
 jobs:
   build:
@@ -71,6 +73,50 @@ jobs:
         uses: actions/checkout@v7
         with:
           persist-credentials: false
+
+      - name: Read Android package identity
+        # One source of truth for the package id: `identifier` in
+        # src-tauri/tauri.android.conf.json (owner-level file; the desktop
+        # `org.geolibre.desktop` is overridden for Android only). Everything
+        # downstream derives from it:
+        #
+        #   EXPECTED_PACKAGE — asserted on the generated Gradle project and on
+        #     the built APK/AAB bytes.
+        #   PACKAGE_PATH     — the java/ path `tauri android init` writes
+        #     MainActivity.kt into.
+        #
+        # That path is not a convention we choose: tauri-cli renders every
+        # `app/src/main/**/*.kt` template into
+        # app/src/main/java/<identifier with '.' replaced by '/'>. See
+        # crates/tauri-cli/src/mobile/android/project.rs (`package_path`) and
+        # templates/mobile/android/app/src/main/MainActivity.kt, whose first
+        # line is `package {{escape-kotlin-keyword app.identifier}}`. The
+        # literal package path that used to sit in this workflow went stale the
+        # moment the identifier became com.geokebun.app, and the
+        # failure surfaced as `test -f` rather than as a package mismatch.
+        run: |
+          set -euo pipefail
+          conf=apps/geolibre-desktop/src-tauri/tauri.android.conf.json
+          if [ ! -f "$conf" ]; then
+            echo "::error::$conf not found — cannot derive the Android package id"
+            exit 1
+          fi
+          identifier="$(jq -er '.identifier' "$conf")" || {
+            echo "::error::$conf has no readable .identifier"
+            exit 1
+          }
+          # Gradle accepts a dot-separated Java package, and this value also
+          # becomes a directory path, so reject anything that is not one
+          # (empty segment, slash, spaces) before it is used as either.
+          if ! printf '%s' "$identifier" |
+            grep -qE '^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$'; then
+            echo "::error::identifier '$identifier' is not a valid Android package id"
+            exit 1
+          fi
+          package_path="${identifier//.//}"
+          echo "EXPECTED_PACKAGE=$identifier" >> "$GITHUB_ENV"
+          echo "PACKAGE_PATH=$package_path" >> "$GITHUB_ENV"
+          echo "Android identifier: $identifier (generated java path: $package_path)"
 
       - name: Set up Node.js
         uses: actions/setup-node@v7
@@ -118,6 +164,23 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
+      - name: Uji langkah jalur paket
+        # Regression guard for the defect this workflow shipped: the MainActivity
+        # step wrote to a literal java/ path that stopped existing the moment the
+        # identifier changed, and the failure surfaced as `test -f` rather than as
+        # a package mismatch. The harness extracts the real `run:` scripts of the
+        # two package-path steps from this file and executes them against a
+        # throwaway gen/android tree, so a future edit that reintroduces a
+        # hardcoded path (or drops the package check) fails here in seconds
+        # instead of after the cross-compile.
+        #
+        # PyYAML is the only non-stdlib import; the runner image usually has it,
+        # and the fallback keeps this step working on an image that does not.
+        run: |
+          set -euo pipefail
+          python3 -c 'import yaml' 2>/dev/null || python3 -m pip install --quiet --user pyyaml
+          python3 apps/geolibre-desktop/src-tauri/android/uji-langkah-workflow.py
+
       - name: Generate Android project
         # gen/android is not committed; regenerate it on the clean runner. The
         # Tauri CLI is resolved through the geolibre-desktop workspace.
@@ -161,12 +224,36 @@ jobs:
         # content, so the toolbar sits under the status bar on WebViews that
         # report env(safe-area-inset-*) as 0 (GeoLibre#3044). Fail if the
         # template moved the file rather than silently shipping the default.
+        #
+        # The destination is derived (PACKAGE_PATH), not spelled out: `tauri
+        # android init` puts MainActivity.kt under java/<identifier as path>,
+        # so a hardcoded java path silently became one that never exists once
+        # the identifier changed to com.geokebun.app.
+        #
+        # The copy is also gated on the source file's `package` line matching
+        # the identifier. Copying a file that declares a different package
+        # would place a class in the wrong package: the build still succeeds
+        # and the app fails to launch, which is a worse failure than a red
+        # step here.
         working-directory: apps/geolibre-desktop
         run: |
           set -euo pipefail
-          target=src-tauri/gen/android/app/src/main/java/org/geolibre/app/MainActivity.kt
-          test -f "$target" || { echo "::error::$target not generated"; exit 1; }
-          cp src-tauri/android/MainActivity.kt "$target"
+          target="src-tauri/gen/android/app/src/main/java/$PACKAGE_PATH/MainActivity.kt"
+          if [ ! -f "$target" ]; then
+            echo "::error::$target not generated (identifier $EXPECTED_PACKAGE)"
+            echo "::error::.kt files tauri android init actually produced:"
+            find src-tauri/gen/android/app/src/main/java -name '*.kt' -print 2>/dev/null || true
+            exit 1
+          fi
+          source=src-tauri/android/MainActivity.kt
+          declared="$(sed -n 's/^[[:space:]]*package[[:space:]]\{1,\}\([A-Za-z0-9_.]*\).*/\1/p' \
+            "$source" | head -n 1)"
+          if [ "$declared" != "$EXPECTED_PACKAGE" ]; then
+            echo "::error::$source declares package '$declared', identifier is '$EXPECTED_PACKAGE'"
+            exit 1
+          fi
+          cp "$source" "$target"
+          echo "Applied $source -> $target (package $declared)"
 
       - name: Build release APKs (per ABI)
         # Release (not --debug): the size-optimized + stripped Cargo profile keeps
@@ -598,4 +685,90 @@ jobs:
         if: github.event_name == 'release' && steps.sign.outputs.signed != 'release'
         run: |
           echo "::warning::APKs were debug-signed (no ANDROID_KEYSTORE_BASE64 secret) and were NOT attached to the release; no AAB was built at all. The APKs are available as the CI artifact for testing only."
+  ukur-waktu-mulai:
+    # Startup time is measured on an emulator, on demand only. It is not a
+    # release gate: a release run is already the only producer of that tag's
+    # assets, and a slow first frame on a software-GL emulator must not block
+    # shipping. Manual runs are where a number is wanted, and that is where it
+    # is produced.
+    name: Measure app startup (emulator)
+    needs: build
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      # aapt2 reads the package id off the built APK; it ships in build-tools.
+      ANDROID_BUILD_TOOLS: "build-tools;36.0.0"
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Download signed APKs
+        uses: actions/download-artifact@v6
+        with:
+          name: geolibre-android-release-apks
+          path: apks
+
+      - name: Set up JDK
+        # sdkmanager (and the emulator runner) need a JDK on PATH; same
+        # distribution and version as the build job.
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        # Pinned to the same commit as the build job. Only build-tools is
+        # installed here: the emulator runner provisions its own system image
+        # and platform.
+        uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd # v4.0.4
+
+      - name: Install build-tools
+        run: sdkmanager --install "$ANDROID_BUILD_TOOLS"
+
+      - name: Enable KVM
+        # GitHub's ubuntu runners expose /dev/kvm only after this udev rule, and
+        # the x86_64 emulator is unusable without it (falls back to full
+        # emulation, which takes tens of minutes to boot).
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Measure cold start on the emulator
+        # The emulator has no GPU passthrough, so WebGL goes through SwiftShader
+        # (software). The number is therefore an upper bound, not a device
+        # figure, and the receipt says so. It is still the honest way to get a
+        # repeatable number from CI: same AVD, same APK, same script.
+        uses: ReactiveCircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
+        with:
+          api-level: 36
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          disable-animations: true
+          emulator-options: >-
+            -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+            -no-snapshot -memory 2048
+          # `script:` MUST be a single line. This action does not run the input
+          # as one shell block: src/script-parser.ts splits it on newlines,
+          # drops blank and `#` lines, and executes each remaining line as its
+          # own `sh -c`. So a `\` continuation continues nothing and a
+          # `{ ... }` block cannot span lines. Run 39340791618 measured
+          # correctly (n=3, median 2416 ms) and then died on the redirect line
+          # with "Syntax error: end of file unexpected (expecting \"}\")".
+          # Everything the step needs lives in the wrapper script instead.
+          script: bash apps/geolibre-desktop/src-tauri/android/jalankan-ukur.sh apks 3
+
+      - name: Upload measurement
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-startup-measurement
+          path: startup.txt
+          if-no-files-found: error
+          retention-days: 30
+
 # workflow re-index trigger

@@ -92,6 +92,7 @@
     "ngeohash": "^0.6.4",
     "open-location-code-typescript": "^1.5.0",
     "pbf": "^5.1.2",
+    "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.2.108",
     "pmtiles": "^4.5.0",
     "proj4": "^2.22.0",
