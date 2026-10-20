@@ -1,5 +1,5 @@
 {
-  "versi": "0.62.0",
-  "sha256": "a485b9998f682e32c960b0d94a078cba0fa8e6cfc9d1f04382b02575558bf71b",
+  "versi": "0.63.0",
+  "sha256": "ad25b43050aefa9b2f9ca7e365571c09562081bc581af4e861e484a5d6ba5acf",
   "catatan": "disahkan tools/factory/gate_law_fresh.py --sahkan"
 }
