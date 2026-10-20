@@ -31,11 +31,11 @@
     },
     {
       "kriteria": "4. npm run lint tidak menambah warning di atas batas ratchet; npm run typecheck:tests lolos; E2E core hijau",
-      "status": "sebagian",
-      "perintah": "git diff --stat origin/main...HEAD -- package.json",
+      "status": "selesai-lewat-ci",
+      "perintah": "gh pr checks 83 --repo adi805/GeoApps",
       "exit": 0,
-      "keluaran": "Nol keluaran, artinya package.json tidak disentuh dan ratchet --max-warnings 242 tidak dinaikkan. Lokal tidak bisa memverifikasi lint maupun typecheck:tests, dan ini bukan klaim hijau. Bukti percobaan: (a) NODE_OPTIONS=--max-old-space-size=900 npm run lint keluar 134 dengan 'FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory' setelah 22 baris log; (b) npm run typecheck:tests dengan batas heap bawaan mati di 'FATAL ERROR: Reached heap limit', (c) dengan --max-old-space-size=1400 mati di 'Ineffective mark-compacts near heap limit', (d) dengan --max-old-space-size=2400 proses tsc dibunuh earlyoom pada VmRSS 1576 MiB (journalctl: 'sending SIGTERM to process 449173 uid 1000 MainThread: badness 882, VmRSS 1576 MiB'), karena ambang host 15 persen dari 3915 MiB tercapai. Batas praktis satu proses node di host ini sekitar 1.5 GB RSS dan tsc untuk tests/tsconfig.json butuh lebih. Verdict sebenarnya diambil dari CI: .github/workflows/ci.yml baris 146 menjalankan npm run lint dan baris 167 menjalankan npm run typecheck:tests, jadi hasilnya menyusul di PR.",
-      "catatan": "Belum hijau, belum merah: belum diukur. Yang bisa dipastikan hanya ratchet tidak dinaikkan dan seluruh berkas berubah lolos parse lewat npx esbuild (exit 0 untuk setiap berkas)."
+      "keluaran": "Tiga job yang diminta kriteria hijau semua di PR #83 (head 26061104): 'Lint and type check' pass 4m21s (run 39442720790, job 118696508882), 'E2E core (Playwright)' pass 8m29s (job 118696576476), 'Build and test' pass 8m1s (job 118696508665). Job Lint menjalankan npm run lint (ratchet --max-warnings 242 tidak diubah, package.json tidak disentuh sama sekali: git diff --stat origin/main...HEAD -- package.json kosong) dan npm run typecheck:tests pada .github/workflows/ci.yml baris 146 dan 167. Lokal tidak bisa dan itu dicatat apa adanya, bukan diklaim hijau: npm run lint keluar 134 dengan 'FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory'; npm run typecheck:tests mati di 'Ineffective mark-compacts near heap limit' pada batas heap 1400 MB, dan pada batas 2400 MB proses tsc dibunuh earlyoom di VmRSS 1576 MiB (journalctl: 'sending SIGTERM to process 449173 uid 1000 MainThread: badness 882, VmRSS 1576 MiB'). Batas praktis satu proses node di host ini sekitar 1.5 GB RSS.",
+      "catatan": "Verdict diambil dari CI, bukan dari lokal. Seluruh gate lain di PR #83 juga pass: Gate pada pohon ini, Gate bisa menolak (uji mandiri), Detect changed paths, Build website and demo, Build and publish container image, Test Python package 3.11 sampai 3.14."
     },
     {
       "kriteria": "5. Tangkapan layar tiap layar nyata (bukan galeri) di 360 px dan 412 px dilampirkan di receipt",
@@ -46,6 +46,8 @@
       "catatan": "Tidak ada tangkapan layar di factory/receipts/mobile/. Jangan dibaca sebagai terpenuhi."
     }
   ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/69#issuecomment-6293923191",
+  "pr": 83,
   "checker": [
     {
       "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
