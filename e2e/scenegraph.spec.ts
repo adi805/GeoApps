@@ -1,4 +1,5 @@
-import { expect, test, type Page } from "./test";
+import { expect, test } from "./test";
+import { waitForMap } from "./helpers";
 
 /**
  * Exercises the glTF 3D model layer (#306): the "3D Model (glTF)" Add Data
@@ -8,15 +9,6 @@ import { expect, test, type Page } from "./test";
  * worker and is non-fatal if the network is unavailable), so this runs without
  * external network access.
  */
-
-/** Waits for MapLibre to mount its WebGL canvas — the app's "map ready" signal. */
-async function waitForMap(page: Page): Promise<void> {
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
-}
 
 test("adds a glTF 3D model layer placed at a single coordinate", async ({ page }) => {
   await waitForMap(page);
