@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MOBILE_DIALOG_SURFACE } from "./mobile/mobile-dialog-surface";
 import { useTranslation } from "react-i18next";
 import type { MapEngine } from "@geolibre/map";
 import {
@@ -370,7 +371,7 @@ export function GeoreferencerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[48rem] min-w-[22rem] max-w-[95vw] resize">
+      <DialogContent className={`w-[48rem] min-w-[22rem] max-w-[95vw] resize ${MOBILE_DIALOG_SURFACE}`}>
         <DialogHeader>
           <DialogTitle>{t("georeferencer.title")}</DialogTitle>
           <DialogDescription>{t("georeferencer.description")}</DialogDescription>
