@@ -83,12 +83,18 @@ test("Identify owns the MapLibre cursor across the whole interactive surface", a
 });
 
 test("keeps every toolbar menu on one scrollable row on small screens", async ({ page }) => {
-  await page.setViewportSize({ width: 400, height: 720 });
+  // 768 px is the narrowest *desktop* window: below it the shell hands the
+  // chrome over to MobileShell, and the desktop toolbar is deliberately
+  // `display: none` (DesktopShell's `data-mobile-toolbar-host` wrapper, #12).
+  // Asserting the toolbar at phone width would measure an element that is
+  // supposed to be gone, which is what this test did before #12.
+  await page.setViewportSize({ width: 768, height: 720 });
   await waitForMap(page);
 
   // The menu bar stays a single row and scrolls horizontally instead of
   // wrapping onto a second row.
-  const header = page.locator("header").first();
+  const header = page.locator("[data-mobile-toolbar-host] > header");
+  await expect(header).toBeVisible();
   const box = await header.boundingBox();
   expect(box?.height).toBeLessThan(56);
   expect(await header.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true);
@@ -113,6 +119,14 @@ test("keeps every toolbar menu on one scrollable row on small screens", async ({
   const renderingEngine = page.getByRole("menuitem", { name: "Rendering engine" });
   await expect(renderingEngine).toBeVisible();
   await expect(renderingEngine).toBeInViewport();
+  await page.keyboard.press("Escape");
+
+  // Below 768 px the same chrome moves to MobileShell (#12). Pin the handover
+  // so a toolbar that quietly disappears on phones fails here instead of
+  // passing as "the element the old locator wanted is not there".
+  await page.setViewportSize({ width: 400, height: 720 });
+  await expect(page.getByTestId("mobile-shell")).toBeVisible();
+  await expect(header).toBeHidden();
 });
 
 // The accessibility gate now lives in its own multi-screen suite (a11y.spec.ts,
