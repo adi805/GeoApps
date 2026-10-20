@@ -33,12 +33,14 @@
     {
       "id": "android",
       "topic": 13,
-      "cakupan": "build dan paket Android: Tauri mobile, gradle, izin lokasi, workflow android dan ios, rilis ke Play Store",
+      "cakupan": "build dan paket Android: Tauri mobile, gradle, izin lokasi, workflow android dan ios, rilis ke Play Store, plus shell Rust Tauri (src-tauri/src, src-tauri/Cargo.toml)",
       "glob": [
         "apps/geolibre-desktop/src-tauri/android/**",
         "apps/geolibre-desktop/src-tauri/gen/**",
         "apps/geolibre-desktop/src-tauri/vendor/**",
         "apps/geolibre-desktop/src-tauri/capabilities/**",
+        "apps/geolibre-desktop/src-tauri/src/**",
+        "apps/geolibre-desktop/src-tauri/Cargo.toml",
         "apps/geolibre-desktop/src-tauri/tauri.android.conf.json",
         ".github/workflows/android.yml",
         ".github/workflows/ios.yml",
@@ -49,9 +51,10 @@
     {
       "id": "geo-pdf",
       "topic": 15,
-      "cakupan": "impor GeoPDF dan GeoTIFF: parser georeferensi, render PDF ke raster, bounds dan CRS, jalur raster source",
+      "cakupan": "impor GeoPDF dan GeoTIFF: parser georeferensi, render PDF ke raster, bounds dan CRS, jalur raster source; juga plugin peta dan raster lain di packages/plugins/src/plugins/*.ts yang tidak punya lane sendiri",
       "glob": [
         "packages/plugins/src/plugins/geopdf/**",
+        "packages/plugins/src/plugins/*.ts",
         "packages/plugins/src/plugins/maplibre-raster.ts",
         "packages/plugins/src/plugins/native-raster-import.ts",
         "packages/plugins/src/plugins/raster-layer-sync.ts",
@@ -121,11 +124,12 @@
     {
       "id": "uji",
       "topic": 21,
-      "cakupan": "berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan, baseline modul tanpa uji; uji satuan yang tinggal di sebelah kodenya milik lane modulnya",
+      "cakupan": "berkas uji dan verifikasi: tests/**, e2e/**, skrip cek penerimaan, baseline modul tanpa uji, dan workflow ci.yml; uji satuan yang tinggal di sebelah kodenya milik lane modulnya",
       "glob": [
         "tests/**",
         "e2e/**",
         "scripts/untested-modules-baseline.json",
+        ".github/workflows/ci.yml",
         "factory/bahan/**",
         "factory/receipts/**"
       ]

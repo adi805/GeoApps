@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MOBILE_DIALOG_SURFACE } from "./mobile/mobile-dialog-surface";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import type { Feature, FeatureCollection, Position } from "geojson";
@@ -1006,7 +1007,7 @@ export function GpsTrackingDialog({
       )}
 
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-md">
+        <DialogContent className={`max-w-md ${MOBILE_DIALOG_SURFACE}`}>
           <DialogHeader>
             <DialogTitle>{t("gps.title")}</DialogTitle>
             <DialogDescription>{t("gps.description")}</DialogDescription>

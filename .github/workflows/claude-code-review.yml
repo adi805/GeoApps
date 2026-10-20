@@ -30,23 +30,24 @@ name: Claude Code Review
 # work — the token is not there — it will only burn credits on commands that
 # fail unauthenticated.
 #
-# Who gets an automatic review, and who needs a maintainer to trigger one:
-#   - Known authors (OWNER / MEMBER / COLLABORATOR / CONTRIBUTOR) are reviewed
-#     automatically when they open or push to a PR.
-#   - First-time contributors (FIRST_TIME_CONTRIBUTOR / FIRST_TIMER / NONE) are
-#     NOT reviewed automatically. This blocks the low-effort economic-DoS vector
-#     where throwaway accounts spam PRs to burn CLAUDE_CODE_OAUTH_TOKEN budget.
-#     A maintainer opts such a PR in either by commenting `/claude-review` on it
-#     (only OWNER / MEMBER / COLLABORATOR comments are honored) or by applying
-#     the `claude-review` label. Labelling needs no author_association check:
-#     GitHub only lets accounts with write or triage access add a label, so a
-#     fork author cannot self-trigger a review. It is still restricted to human
-#     senders, so a future auto-labeler cannot become an indirect opt-in.
+# Nothing is reviewed automatically (owner ruling, 2026-10-20, #u-HQ-3d9d59). A
+# maintainer opts a PR in either by commenting `/claude-review` on it (only
+# OWNER / MEMBER / COLLABORATOR comments are honored) or by applying the
+# `claude-review` label. Labelling needs no author_association check: GitHub
+# only lets accounts with write or triage access add a label, so a fork author
+# cannot self-trigger a review. It is still restricted to human senders, so a
+# future auto-labeler cannot become an indirect opt-in.
 #
-#     Both opt-ins are one-shot: they review the head as it stands. Later pushes
-#     to a first-timer PR are not re-reviewed (that would hand a throwaway
-#     account an unbounded budget drain once opted in) — re-trigger by
-#     commenting again, or by removing and re-adding the label.
+# Why the automatic path is gone: CLAUDE_CODE_OAUTH_TOKEN was unset, so every
+# PR that opened or pushed produced a `[CC] Review` run that failed at
+# `_fail_on_recorded_tool_error`. A check that is always red teaches readers to
+# ignore red checks, which costs more than the coverage the automatic path was
+# meant to buy. Nothing here is lost mechanically: the two opt-ins below run the
+# same job with the same tools.
+#
+# Both opt-ins are one-shot: they review the head as it stands. Later pushes are
+# not re-reviewed. Re-trigger by commenting again, or by removing and re-adding
+# the label.
 on:
   pull_request_target:
     types: [opened, synchronize, ready_for_review, reopened, labeled]
@@ -137,14 +138,11 @@ jobs:
     # actors not in its allowed_bots list, and an autofix formatting commit does
     # not need a fresh (paid) review anyway. Skipping here shows the run as
     # skipped instead of failed; a maintainer can still `/claude-review`.
+    # Hanya manual (#u-HQ-3d9d59, putusan owner 2026-10-20). Jalur otomatis dihapus: selama
+    # CLAUDE_CODE_OAUTH_TOKEN tidak sah, setiap PR membuka run yang gagal di langkah
+    # `_fail_on_recorded_tool_error`, dan check merah yang selalu ada melatih pembaca
+    # mengabaikan check merah. Peninjauan tetap tersedia lewat dua opt-in di bawah.
     if: >
-      (github.event_name == 'pull_request_target' &&
-        github.event.action != 'labeled' &&
-        github.event.sender.type != 'Bot' &&
-        (github.event.pull_request.author_association == 'OWNER' ||
-         github.event.pull_request.author_association == 'MEMBER' ||
-         github.event.pull_request.author_association == 'COLLABORATOR' ||
-         github.event.pull_request.author_association == 'CONTRIBUTOR')) ||
       (github.event_name == 'issue_comment' &&
         github.event.issue.pull_request != null &&
         (github.event.comment.body == '/claude-review' ||
