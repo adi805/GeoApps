@@ -33,6 +33,12 @@ yang dilarang di sini kegagalan SENYAP: `Refs #42` dan `Tanpa issue: ...` menyat
 PR-nya tidak menutup, sementara `Menutup #42` mengklaim menutup padahal GitHub tidak memprosesnya.
 Alasan di belakang `Tanpa issue:` wajib tidak kosong; penanda tanpa alasan cuma pintu belakang.
 
+Sejak #43 penanda `Tanpa issue:` juga membebaskan pemeriksaan judul commit, bukan cuma badan PR.
+Tanpa itu penandanya mustahil dipakai PR ber-commit bot: kelima PR Dependabot merah di gate yang
+sama karena judul `chore(deps): bump ...` tidak menyebut nomor, dan menurut penandanya sendiri
+memang tidak ada nomor yang bisa disebut. `Refs #N` tetap TIDAK membebaskan pemeriksaan commit,
+karena maknanya menyebut N tanpa menutupnya: N ada, dan judul commit tetap bisa menyebutnya.
+
 Cara pakai:
   python3 tools/factory/gate_pr_link.py --judul judul.txt --body body.md
   python3 tools/factory/gate_pr_link.py --body body.md --commits commits.txt --issue 42
@@ -183,7 +189,18 @@ def main():
     # eksplisit, bukan kegagalan senyap yang jadi alasan gate ini ada.
     teks_penanda = tanpa_kode(teks_pr)
     penanda = []
-    if POLA_TANPA_ISSUE.search(teks_penanda):
+    # `Tanpa issue:` menyatakan "PR ini memang tidak punya issue", dan pernyataan itu berlaku untuk
+    # SELURUH PR, bukan cuma badannya. Sebelum #43 penanda ini hanya membebaskan pemeriksaan badan,
+    # sementara pemeriksaan judul commit tetap menuntut nomor issue yang menurut penandanya sendiri
+    # tidak ada. Akibatnya penandanya mustahil dipakai PR ber-commit bot: kelima PR Dependabot
+    # (#1-#5) merah di gate yang sama karena judul commit `chore(deps): bump ...` tidak menyebut
+    # nomor apa pun, dan tidak ada nomor yang bisa disebut.
+    #
+    # `Refs #N` sengaja TIDAK membebaskan pemeriksaan commit. Maknanya "menyebut N tanpa
+    # menutupnya", jadi N tetap ada dan judul commit tetap bisa menyebutnya. Yang dibebaskan hanya
+    # pernyataan eksplisit bahwa tidak ada issue sama sekali.
+    tanpa_issue = bool(POLA_TANPA_ISSUE.search(teks_penanda))
+    if tanpa_issue:
         penanda.append("`Tanpa issue:`")
     nomor_rujukan = sorted(nomor_refs(teks_pr))
     if nomor_rujukan:
@@ -235,6 +252,11 @@ def main():
             if POLA_MERGE.match(judul):
                 continue
             jumlah_commit += 1
+            if tanpa_issue:
+                # Penanda `Tanpa issue:` di badan berlaku untuk seluruh PR (#43): tidak ada nomor
+                # yang bisa dituntut dari judul commit kalau PR-nya sendiri menyatakan tidak punya
+                # issue. Judulnya tetap dihitung, jadi laporan jumlah commit tidak berubah.
+                continue
             nomor = nomor_ditemukan(judul)
             if a.issue is not None:
                 nomor = {n for n in nomor if n == a.issue}

@@ -399,6 +399,26 @@ def pr_penanda_tanpa_alasan(tmp):
     tulis(os.path.join(tmp, "body.md"), "Perbaikan kecil.\nTanpa issue:\n")
     return jln(["tools/factory/gate_pr_link.py", "--body", os.path.join(tmp, "body.md")])
 
+def pr_penanda_bebaskan_commit(tmp):
+    # #43: `Tanpa issue:` menyatakan PR ini memang tidak punya issue, jadi tidak ada nomor yang bisa
+    # dituntut dari judul commit. Kelima PR Dependabot merah di gate yang sama karena judul
+    # `chore(deps): bump ...` dibuat bot dan tidak menyebut nomor apa pun.
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Bump dependensi.\nTanpa issue: PR bot Dependabot, tidak ada unit kerja yang ditutup.\n")
+    tulis(commits, "chore(deps): bump happy-dom from 20.14.6 to 21.0.3\n")
+    return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
+
+def pr_refs_tidak_bebaskan_commit(tmp):
+    # `Refs #42` berarti "menyebut #42 tanpa menutupnya": nomornya ADA, jadi judul commit tetap
+    # dituntut menyebutnya. Kalau `Refs` ikut membebaskan, jalur yang lebih longgar menelan jalur
+    # yang lebih ketat dan pemeriksaan commit kehilangan sisa maknanya.
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Sebagian kerja. Refs #42\n")
+    tulis(commits, "perbaikan tanpa nomor\n")
+    return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
+
 def pr_penanda_dalam_backtick(tmp):
     # Badan PR yang MENGUTIP penandanya sedang mendokumentasikan, bukan memakainya. Sama seperti
     # kutipan bentuk terlarang: yang diperiksa teks apa adanya di luar potongan kode.
@@ -849,6 +869,8 @@ KASUS = [
     ("gate_pr_link", "positif: rujukan non-penutup `Refs #42`", True, pr_penanda_refs),
     ("gate_pr_link", "negatif: penanda `Tanpa issue:` tanpa alasan", False, pr_penanda_tanpa_alasan),
     ("gate_pr_link", "negatif: penanda cuma dikutip di dalam backtick", False, pr_penanda_dalam_backtick),
+    ("gate_pr_link", "positif: penanda `Tanpa issue:` membebaskan judul commit bot", True, pr_penanda_bebaskan_commit),
+    ("gate_pr_link", "negatif: `Refs #N` tidak membebaskan judul commit", False, pr_refs_tidak_bebaskan_commit),
     ("gate_pr_link", "positif: pesan tolak backtick menjelaskan backtick", True, pr_pesan_backtick_menjelaskan),
     ("gate_receipt", "positif: bukti lengkap", True, bukti_ok),
     ("gate_receipt", "negatif: checker keluar 1", False, bukti_checker_gagal),
