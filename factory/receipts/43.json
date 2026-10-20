@@ -1,0 +1,41 @@
+{
+ "issue": 43,
+ "lane": "HQ",
+ "branch": "hq/receipt-43",
+ "worktree": "~/GeoApps",
+ "commit": "46f87676",
+ "status_short": [],
+ "kriteria": [
+  {
+   "perintah": "python3 tools/factory/uji_gate_mandiri.py",
+   "exit": 0,
+   "keluaran": "UJI MANDIRI: 80 kasus, 0 gagal"
+  },
+  {
+   "perintah": "gh pr view 2/5 --json statusCheckRollup (Gate pada pohon ini)",
+   "exit": 0,
+   "keluaran": "#2 gate=SUCCESS, #5 gate=SUCCESS: PR Dependabot berpenanda `Tanpa issue:` lolos"
+  },
+  {
+   "perintah": "python3 tools/factory/uji_gate_mandiri.py --daftar gate_pr_link",
+   "exit": 0,
+   "keluaran": "negatif: ada commit tanpa nomor issue (pr_commit_tanpa_rujukan) dan negatif: `Refs #N` tetap mewajibkan nomor di judul commit tetap TOLAK"
+  }
+ ],
+ "checker": [
+  {
+   "perintah": "grep -n 'if tanpa_issue' tools/factory/gate_pr_link.py",
+   "exit": 0,
+   "keluaran": "baris 244: `if tanpa_issue: continue` di dalam loop judul commit, jalur bebas yang sama dengan badan PR"
+  },
+  {
+   "perintah": "git log --oneline -1 837fc56c",
+   "exit": 0,
+   "keluaran": "PR #47 masuk main; kasus uji baru terdaftar di uji_gate_mandiri.py baris 870 dan 871"
+  }
+ ],
+ "catatan": [
+  "PR #44 (branch hq/gate-dependabot) ditutup sebagai tergantikan, bukan digabung: isinya sudah ada di main lewat #47, dan diff mentahnya menghapus #49-#52."
+ ],
+ "komentar_issue": "https://github.com/adi805/GeoApps/issues/43#issuecomment-6288444587"
+}

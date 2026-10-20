@@ -30,69 +30,75 @@ name: Claude Code Review
 # work — the token is not there — it will only burn credits on commands that
 # fail unauthenticated.
 #
-# Nothing is reviewed automatically (owner ruling, 2026-10-20, #u-HQ-3d9d59). A
-# maintainer opts a PR in either by commenting `/claude-review` on it (only
-# OWNER / MEMBER / COLLABORATOR comments are honored) or by applying the
-# `claude-review` label. Labelling needs no author_association check: GitHub
-# only lets accounts with write or triage access add a label, so a fork author
-# cannot self-trigger a review. It is still restricted to human senders, so a
-# future auto-labeler cannot become an indirect opt-in.
+# Reviews are MANUAL ONLY. No PR is reviewed automatically. The repo carries no
+# CLAUDE_CODE_OAUTH_TOKEN secret, so every automatic run died in env validation
+# after ~35s and reported `[CC] Review` as a failure on every PR, including
+# healthy ones. A red check that fires on healthy PRs is worse than no check: it
+# teaches readers to skip red. The workflow stays in the tree, so the capability
+# is intact the moment the secret is filled; see the job comment below for how to
+# restore the automatic path deliberately.
 #
-# Why the automatic path is gone: CLAUDE_CODE_OAUTH_TOKEN was unset, so every
-# PR that opened or pushed produced a `[CC] Review` run that failed at
-# `_fail_on_recorded_tool_error`. A check that is always red teaches readers to
-# ignore red checks, which costs more than the coverage the automatic path was
-# meant to buy. Nothing here is lost mechanically: the two opt-ins below run the
-# same job with the same tools.
+# A maintainer opts a PR in either by commenting `/claude-review` on it (only
+# OWNER / MEMBER / COLLABORATOR comments are honored) or by applying the
+# `claude-review` label. Labelling needs no author_association check: GitHub only
+# lets accounts with write or triage access add a label, so a fork author cannot
+# self-trigger a review. It is still restricted to human senders, so a future
+# auto-labeler cannot become an indirect opt-in.
 #
 # Both opt-ins are one-shot: they review the head as it stands. Later pushes are
-# not re-reviewed. Re-trigger by commenting again, or by removing and re-adding
+# not re-reviewed; re-trigger by commenting again, or by removing and re-adding
 # the label.
 on:
   pull_request_target:
-    types: [opened, synchronize, ready_for_review, reopened, labeled]
+    types: [labeled]
   issue_comment:
     types: [created]
 
-# Cancel a superseded run when a PR is pushed to repeatedly, capping the
-# CI-minute / Claude-credit cost from rapid synchronize events.
+# Cancel a superseded run when a maintainer re-triggers the same review, capping
+# the CI-minute / Claude-credit cost of remove-and-re-add or a repeated comment.
 #
 # The group key is evaluated at the RUN level, before the job's `if:` gate. So it
 # must NOT collapse unrelated issue_comment events into the same group as a
-# running review — otherwise any comment (from anyone) would spawn a run that,
+# running review: otherwise any comment (from anyone) would spawn a run that,
 # though ultimately skipped by `if:`, cancels the in-flight review first. We
 # therefore key on the event name plus, for comments, the unique comment id:
-#   - pull_request_target pushes to PR N  -> claude-review-pull_request_target-N-push
-#     (shared across pushes, so cancel-in-progress dedupes rapid synchronizes)
-#   - issue_comment on PR N               -> claude-review-issue_comment-N-<comment id>
-#     (unique per comment, so it never cancels — and is never cancelled by — anything)
-#   - `labeled` on PR N                   -> claude-review-pull_request_target-N-label-<label name>
+#   - issue_comment on PR N  -> claude-review-issue_comment-N-<comment id>
+#     (unique per comment, so it never cancels, and is never cancelled by,
+#     anything)
+#   - `labeled` on PR N      -> claude-review-pull_request_target-N-label-<label name>
 #     (keyed on the label NAME, not a shared `label` slot: the GitHub UI fires
 #     one `labeled` event per label, so a shared slot would let adding `bug`
-#     cancel an in-flight `claude-review` run — the second run skips at `if:`,
-#     but cancel-in-progress has already killed the first. Per-name keeps the
-#     review isolated from every other label, while remove-and-re-add of
-#     `claude-review` still supersedes its own older run, which is what we want.)
+#     cancel an in-flight `claude-review` run. Per-name keeps the review isolated
+#     from every other label, while remove-and-re-add of `claude-review` still
+#     supersedes its own older run, which is what we want.)
 concurrency:
-  group: claude-review-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.event.comment.id || (github.event.action == 'labeled' && format('label-{0}', github.event.label.name)) || 'push' }}
+  group: claude-review-${{ github.event_name }}-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.event.comment.id || (github.event.action == 'labeled' && format('label-{0}', github.event.label.name)) }}
   cancel-in-progress: true
 
 jobs:
   claude-review:
-    # Run when ANY of:
-    #  (a) a known author (not a first-timer) opens/updates a PR,
-    #  (b) a maintainer comments `/claude-review` on a PR, OR
-    #  (c) a maintainer applies the `claude-review` label to a PR.
-    # (b) and (c) are the opt-in paths for first-time-contributor PRs.
+    # Run when EITHER of:
+    #  (a) a maintainer comments `/claude-review` on a PR, OR
+    #  (b) a maintainer applies the `claude-review` label to a PR.
     #
-    # author_association on the comment gates (b): only OWNER/MEMBER/COLLABORATOR
-    # accounts — i.e. people with write/admin on the repo — can trigger a review.
-    # (c) needs no such check: GitHub itself restricts labelling to accounts with
+    # There is deliberately NO automatic path. It used to review any PR from a
+    # known author on open/push. The repo carries no CLAUDE_CODE_OAUTH_TOKEN
+    # secret, so every one of those runs died in env validation after ~35s and
+    # marked `[CC] Review` red on every PR, including ones with nothing wrong.
+    # A red check that fires on healthy PRs is worse than no check: it teaches
+    # readers to skip red. Restoring the automatic path is a deliberate act, not
+    # a default: fill the secret, add `opened`/`synchronize`/`ready_for_review`/
+    # `reopened` back to the `pull_request_target` types, and re-add the
+    # author_association branch to this `if:`.
+    #
+    # author_association on the comment gates (a): only OWNER/MEMBER/COLLABORATOR
+    # accounts, i.e. people with write/admin on the repo, can trigger a review.
+    # (b) needs no such check: GitHub itself restricts labelling to accounts with
     # write or triage access, so the event cannot originate from a fork author.
-    # It does check the label NAME, because `labeled` fires for every label —
+    # It does check the label NAME, because `labeled` fires for every label;
     # without it, tagging a PR `bug` would spend a review.
     #
-    # (c) also requires a human sender. GitHub's write/triage restriction covers
+    # (b) also requires a human sender. GitHub's write/triage restriction covers
     # people, but automation with write access can label too, so an auto-labeler
     # that keys off PR title/paths (i.e. attacker-controlled content) would
     # become an indirect way for a first-timer to self-trigger a paid review.
@@ -107,40 +113,34 @@ jobs:
     # nothing that would separate them, so this narrows the gap rather than
     # closing it; a PAT-driven labeler would need its own review of this gate.
     #
-    # (c) also requires the PR to still be OPEN. `labeled` fires on closed and
+    # (b) also requires the PR to still be OPEN. `labeled` fires on closed and
     # merged PRs too, and reviewing one spends the budget this whole gate exists
-    # to protect on a diff nobody can act on. Branch (a) needs no such check —
-    # `synchronize`/`reopened` imply an open PR.
+    # to protect on a diff nobody can act on. The comment path needs no such
+    # check: commenting on a merged PR is visible in the same place the reviewer
+    # is looking.
     #
-    # Draft PRs are deliberately NOT excluded. The repo has no draft gate at all
-    # (a draft PR fires `opened`, so branch (a) already reviews drafts), and
-    # asking for a review ON a draft is a normal thing to want — that is the
-    # point of an explicit opt-in.
+    # Draft PRs are deliberately NOT excluded. Asking for a review ON a draft is
+    # a normal thing to want, and it is the whole point of an explicit opt-in.
     #
-    # Branch (c) needs no `opened` + `contains(labels.*)` fallback for a PR that
-    # arrives already labelled, the way e2e-full.yml has. The create-PR API takes
-    # no `labels` field, so labelling is always a separate act that fires its own
-    # `labeled` event — and it requires triage or write access, which means the
-    # actor is OWNER/MEMBER/COLLABORATOR and already covered by branch (a)
-    # anyway. The case this gate exists for, a first-time contributor, cannot
-    # self-attach the label at all. The gap is unreachable from either
-    # direction, and adding the fallback would widen the trigger surface for no
-    # gain. (e2e-full.yml's comment says such a PR fires no `labeled` event; that
-    # is not right, but the extra `opened` type is harmless there since the job
-    # re-checks `contains(labels.*.name, …)` on every event.)
+    # The label path needs no `opened` + `contains(labels.*)` fallback for a PR
+    # that arrives already labelled, the way e2e-full.yml has. The create-PR API
+    # takes no `labels` field, so labelling is always a separate act that fires
+    # its own `labeled` event. The case this gate exists for, a first-time
+    # contributor, cannot self-attach the label at all, and a maintainer who
+    # wants a review on such a PR can equally just comment. The gap is
+    # unreachable from either direction, and adding the fallback would widen the
+    # trigger surface for no gain. (e2e-full.yml's comment says such a PR fires
+    # no `labeled` event; that is not right, but the extra `opened` type is
+    # harmless there since the job re-checks `contains(labels.*.name, ...)` on
+    # every event.)
     #
-    # Branch (a) must exclude `labeled`, or adding any label to a known
-    # contributor's PR would re-review it under the automatic path and sidestep
-    # the name check in (c).
-    #
-    # sender.type gates out bot-initiated events (e.g. a pre-commit.ci autofix
-    # push firing `synchronize`): claude-code-action hard-fails on non-human
-    # actors not in its allowed_bots list, and an autofix formatting commit does
-    # not need a fresh (paid) review anyway. Skipping here shows the run as
-    # skipped instead of failed; a maintainer can still `/claude-review`.
-    # Hanya manual (#u-HQ-3d9d59, putusan owner 2026-10-20). Jalur otomatis dihapus: selama
-    # CLAUDE_CODE_OAUTH_TOKEN tidak sah, setiap PR membuka run yang gagal di langkah
-    # `_fail_on_recorded_tool_error`, dan check merah yang selalu ada melatih pembaca
+    # sender.type gates out bot-initiated events: claude-code-action hard-fails
+    # on non-human actors not in its allowed_bots list, and a bot label does not
+    # need a fresh (paid) review anyway. Skipping here shows the run as skipped
+    # instead of failed; a maintainer can still `/claude-review`.
+    # Hanya manual (#u-HQ-3d9d59, putusan owner 2026-10-20; dieksekusi lewat #48). Jalur otomatis
+    # dihapus: selama CLAUDE_CODE_OAUTH_TOKEN tidak sah, setiap PR membuka run yang gagal di
+    # langkah `_fail_on_recorded_tool_error`, dan check merah yang selalu ada melatih pembaca
     # mengabaikan check merah. Peninjauan tetap tersedia lewat dua opt-in di bawah.
     if: >
       (github.event_name == 'issue_comment' &&
