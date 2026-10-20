@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { onSpaceborneLidarGranuleRequest } from "../../lib/spaceborne-lidar-handoff";
+import {
+  onFieldToolRequest,
+  onNewProjectRequest,
+  type FieldToolId,
+} from "../../components/layout/field-tool-events";
 
 /**
  * Open state for the dialogs the top toolbar owns and opens from its menus,
@@ -42,6 +47,21 @@ export function useToolbarDialogs() {
   const [setViewOpen, setSetViewOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  // The mobile shell has no toolbar to reach these from, so it asks for them
+  // over `OPEN_FIELD_TOOL_EVENT` instead (see
+  // `components/layout/field-tool-events.ts`).
+  useEffect(
+    () =>
+      onFieldToolRequest((tool: FieldToolId) => {
+        if (tool === "fieldCollection") setFieldCollectionOpen(true);
+        else if (tool === "gpsTracking") setGpsTrackingOpen(true);
+        else setGeoreferencerOpen(true);
+      }),
+    [],
+  );
+  // Same route for the New Project dialog, which the mobile project sheet also
+  // needs but which lives here with the other toolbar-owned dialogs.
+  useEffect(() => onNewProjectRequest(() => setNewProjectDialogOpen(true)), []);
   // AboutDialog runs one update check per increment, and only while open, so
   // every increment must come with opening it.
   const [checkForUpdatesRequest, setCheckForUpdatesRequest] = useState(0);

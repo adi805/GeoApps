@@ -183,7 +183,8 @@ def main():
     # eksplisit, bukan kegagalan senyap yang jadi alasan gate ini ada.
     teks_penanda = tanpa_kode(teks_pr)
     penanda = []
-    if POLA_TANPA_ISSUE.search(teks_penanda):
+    tanpa_issue = bool(POLA_TANPA_ISSUE.search(teks_penanda))
+    if tanpa_issue:
         penanda.append("`Tanpa issue:`")
     nomor_rujukan = sorted(nomor_refs(teks_pr))
     if nomor_rujukan:
@@ -235,6 +236,13 @@ def main():
             if POLA_MERGE.match(judul):
                 continue
             jumlah_commit += 1
+            # `Tanpa issue:` adalah pernyataan eksplisit bahwa unit kerja ini tidak bertanggungan
+            # pada issue mana pun. Mewajibkan tiap judul commit menyebut nomor issue di bawah
+            # pernyataan itu membuat penanda yang sah jadi mustahil dipakai: bot (Dependabot) tidak
+            # pernah menulis nomor issue di judulnya, jadi satu-satunya jalan keluarnya adalah
+            # menyunting judul commit orang lain. Badan PR tetap wajib menyebut alasannya.
+            if tanpa_issue:
+                continue
             nomor = nomor_ditemukan(judul)
             if a.issue is not None:
                 nomor = {n for n in nomor if n == a.issue}

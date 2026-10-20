@@ -1,4 +1,5 @@
 import { readControlPreference, writeControlPreference } from "../../lib/control-preferences";
+import { MOBILE_DIALOG_SURFACE } from "./mobile/mobile-dialog-surface";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -984,7 +985,7 @@ export function FieldCollectionDialog({
       {portalHost ? createPortal(overlays, portalHost) : null}
 
       <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-        <DialogContent className="max-w-md">
+        <DialogContent className={`max-w-md ${MOBILE_DIALOG_SURFACE}`}>
           <DialogHeader>
             <DialogTitle>{t("fieldCollection.title")}</DialogTitle>
             <DialogDescription>
