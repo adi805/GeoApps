@@ -3,18 +3,10 @@ import { mkdtemp, rm, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { waitForMap } from "./helpers";
 
 const FIXTURE_PATH = join(__dirname, "fixtures", "smoke.geojson");
 const FIXTURE_TEXT = readFileSync(FIXTURE_PATH, "utf8");
-
-/** Waits for MapLibre to mount its WebGL canvas — the app's "map ready" signal. */
-async function waitForMap(page: Page): Promise<void> {
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
-}
 
 /** Drops a GeoJSON file onto the map, exercising the real drag-and-drop path. */
 async function dropGeoJson(page: Page, name: string, text: string): Promise<void> {
