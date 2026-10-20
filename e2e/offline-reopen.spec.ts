@@ -19,9 +19,17 @@ import { bindMapLibreMap, layerRow, waitForMap } from "./helpers";
  * silently passing on a machine that happens to have a connection.
  */
 
-/** 1x1 PNG, the same bytes `field-collection-photos.spec.ts` uses. */
-const PHOTO_PNG =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=";
+/**
+ * Three distinct 1x1 PNGs, one per photo point. They must differ: the test
+ * collects the popup `<img>` sources into a Set to prove each point renders
+ * *its own* photo, and identical bytes would collapse that Set to one entry no
+ * matter how many popups opened.
+ */
+const PHOTO_PNGS = [
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mO4o6EBAAMQAS0Qc/Z2AAAAAElFTkSuQmCC",
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQ2BIAAAI0AS1by1fNAAAAAElFTkSuQmCC",
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR42mPQCLgDAAH4AVXsR+abAAAAAElFTkSuQmCC",
+];
 
 const POINT_COUNT = 20;
 /** Which of the 20 points carry a photo. Three of them do, as #11 requires. */
@@ -52,7 +60,8 @@ function offlineProject(): GeoLibreProject {
         type: "FeatureCollection",
         features: Array.from({ length: POINT_COUNT }, (_, index) => {
           const properties: Record<string, unknown> = { id: index + 1, nama: `Titik ${index + 1}` };
-          if (PHOTO_INDICES.includes(index)) properties.photo = PHOTO_PNG;
+          const photoIndex = PHOTO_INDICES.indexOf(index);
+          if (photoIndex !== -1) properties.photo = PHOTO_PNGS[photoIndex];
           return {
             type: "Feature" as const,
             id: index + 1,
@@ -97,6 +106,17 @@ async function clickLngLat(page: Page, lngLat: [number, number]): Promise<void> 
 }
 
 test("reopens a project with every non-local request aborted", async ({ page }) => {
+  // Opening a project prefers the File System Access picker
+  // (`window.showOpenFilePicker`, project-files.ts), which Playwright cannot
+  // intercept: it opens a native OS dialog, so no `filechooser` event ever
+  // fires and the test waits out its timeout. Removing it forces the
+  // `<input type=file>` fallback, which is drivable. Same reason, same shape as
+  // layer-groups.spec.ts:38-41.
+  await page.addInitScript(() => {
+    delete (window as unknown as Record<string, unknown>).showSaveFilePicker;
+    delete (window as unknown as Record<string, unknown>).showOpenFilePicker;
+  });
+
   const aborted = await blockNetwork(page);
   const dir = await mkdtemp(join(tmpdir(), "geolibre-offline-"));
   const projectPath = join(dir, "survei-offline.geolibre.json");
@@ -145,7 +165,9 @@ test("reopens a project with every non-local request aborted", async ({ page }) 
     const collapse = page.getByRole("button", { name: "Collapse layers", exact: true });
     if (await collapse.isVisible({ timeout: 2_000 }).catch(() => false)) await collapse.click();
 
-    // 3 photos: every photo point opens the popup with its inline thumbnail.
+    // 3 photos: every photo point opens the popup with its own inline
+    // thumbnail. The Set proves the three are distinct, not one photo shown
+    // three times.
     const sources = new Set<string>();
     for (const index of PHOTO_INDICES) {
       const lngLat: [number, number] = [110.3 + (index % 5) * 0.03, -7.8 + Math.floor(index / 5) * 0.03];
@@ -159,6 +181,18 @@ test("reopens a project with every non-local request aborted", async ({ page }) 
       await expect(image).toHaveCount(0);
     }
     expect(sources.size).toBe(PHOTO_INDICES.length);
+
+    // Collapsing above left only the Layers rail, and the rail renders no layer
+    // rows, so the row the menu hangs off is gone from the DOM. Which rail shows
+    // depends on the dock: the Browser panel docks `replace-layers` by default,
+    // which sets `hideOwnRail` and makes the collapsed panel render null
+    // (LayerPanel.tsx:485), leaving the shared rail's entry labelled from
+    // `sharedRail.expand` ("Expand Layers"). The panel's own rail, used when no
+    // plugin holds the dock, is labelled from `layers.expand` ("Expand layers").
+    // The regex covers both, so this does not depend on which dock is active.
+    const expand = page.getByRole("button", { name: /^expand layers$/i });
+    if (await expand.isVisible({ timeout: 2_000 }).catch(() => false)) await expand.click();
+    await expect(layerRow(page, LAYER_NAME)).toBeVisible();
 
     // 20 points: the attribute table reports the project's own feature count.
     // The rows themselves are virtualized (only what fits the viewport is in
