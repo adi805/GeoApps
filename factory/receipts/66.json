@@ -1,0 +1,39 @@
+{
+  "issue": 66,
+  "lane": "geo-pdf",
+  "branch": "geopdf/cache-ubin",
+  "worktree": "~/GeoApps-geopdf-cache",
+  "commit": "7ef0c1a3",
+  "status_short": [],
+  "catatan_status": "Hanya factory/usulan-geo-pdf.jsonl yang kotor, ditulis usulan.py (u-geo-pdf-6910e3, u-geo-pdf-4c83ec) dan sengaja tidak di-commit: berkas jejak itu milik lane HQ, dan gate --tanpa-label menolak berkas jejak di PR non-HQ.",
+  "kriteria": [
+    {
+      "perintah": "node --import tsx --test packages/plugins/src/plugins/geopdf/*.test.ts",
+      "exit": 0,
+      "keluaran": "tests 34, suites 9, pass 34, fail 0"
+    },
+    {
+      "perintah": "node --import tsx /tmp/probe66.ts (probe sementara, tidak masuk repo: createDefaultGeoPdfTileCacheStore, dua renderer atas satu store)",
+      "exit": 0,
+      "keluaran": "z=0 tiles=1 first_rendered=1 reopen_rendered=0 persistentHits=1 peakLiveTiles=1 pdf_reads_reopen=0; z=6 tiles=2 reopen_rendered=0 persistentHits=2 peakLiveTiles=2; z=12 tiles=9 reopen_rendered=0 persistentHits=9 peakLiveTiles=2; z=13 tiles=25 reopen_rendered=0 persistentHits=25 peakLiveTiles=2"
+    },
+    {
+      "perintah": "bash -c 'node node_modules/typescript/bin/tsc -p /tmp/tsconfig.geopdf.json > /tmp/tsc9.log 2>&1; if grep -q \"plugins/geopdf\" /tmp/tsc9.log; then grep \"plugins/geopdf\" /tmp/tsc9.log; exit 1; fi; echo \"0 error plugins/geopdf; $(grep -c \"error TS\" /tmp/tsc9.log) error sisa di packages/map\"; exit 0'",
+      "exit": 0,
+      "keluaran": "0 error plugins/geopdf; 4 error sisa di packages/map (TS2307 aset ?url/css di packages/map, sudah ada di main sebelum PR ini)"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane geo-pdf --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane geo-pdf: 4 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr-66.md --issue 66 --commits /tmp/commits-66.txt",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #66, 1 commit semuanya menyebut issue"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/66#issuecomment-6290661268"
+}
