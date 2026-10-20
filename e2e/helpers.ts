@@ -58,15 +58,44 @@ export async function enterViewer(page: Page): Promise<void> {
   await page.getByRole("button", { name: new RegExp(SEED_RECENT_PROJECT.name) }).click();
 }
 
-/** Seeds the recent-project row on every navigation of `page`. */
+/**
+ * Seeds the recent-project row on every navigation of `page`.
+ *
+ * Merged into whatever is already stored rather than written over it. This
+ * script runs on EVERY navigation, and the app persists its own recents to the
+ * same key (`useRecentProjectsPersistence`), so overwriting erased the project a
+ * spec had just saved: `open-recent.spec.ts` saves a project, navigates a second
+ * time, and found the menu holding only the seed. 19 specs call `waitForMap`
+ * more than once, so the overwrite was a hazard for all of them, not one test.
+ *
+ * The seed is kept first so the row `enterViewer` clicks is the top one.
+ */
 export async function seedViewerEntry(page: Page): Promise<void> {
   await page.addInitScript(
     ({ key, seed }) => {
+      const writeSeedOnly = () => {
+        try {
+          window.localStorage.setItem(key, JSON.stringify([seed]));
+        } catch {
+          // Storage may be unavailable; the click then fails with "not found"
+          // rather than a swallowed error here.
+        }
+      };
       try {
-        window.localStorage.setItem(key, JSON.stringify([seed]));
+        const stored = window.localStorage.getItem(key);
+        const parsed: unknown = stored ? JSON.parse(stored) : [];
+        if (!Array.isArray(parsed)) {
+          writeSeedOnly();
+          return;
+        }
+        const others = parsed.filter((entry) => {
+          if (!entry || typeof entry !== "object") return false;
+          return (entry as { path?: unknown }).path !== seed.path;
+        });
+        window.localStorage.setItem(key, JSON.stringify([seed, ...others]));
       } catch {
-        // Storage may be unavailable; the click then fails with "not found"
-        // rather than a swallowed error here.
+        // Unreadable storage or invalid JSON: the seed alone is still a target.
+        writeSeedOnly();
       }
     },
     { key: RECENT_PROJECTS_STORAGE_KEY, seed: SEED_RECENT_PROJECT },
