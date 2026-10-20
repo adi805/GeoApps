@@ -97,6 +97,17 @@ async function clickLngLat(page: Page, lngLat: [number, number]): Promise<void> 
 }
 
 test("reopens a project with every non-local request aborted", async ({ page }) => {
+  // Opening a project prefers the File System Access picker
+  // (`window.showOpenFilePicker`, project-files.ts), which Playwright cannot
+  // intercept: it opens a native OS dialog, so no `filechooser` event ever
+  // fires and the test waits out its timeout. Removing it forces the
+  // `<input type=file>` fallback, which is drivable. Same reason, same shape as
+  // layer-groups.spec.ts:38-41.
+  await page.addInitScript(() => {
+    delete (window as unknown as Record<string, unknown>).showSaveFilePicker;
+    delete (window as unknown as Record<string, unknown>).showOpenFilePicker;
+  });
+
   const aborted = await blockNetwork(page);
   const dir = await mkdtemp(join(tmpdir(), "geolibre-offline-"));
   const projectPath = join(dir, "survei-offline.geolibre.json");
