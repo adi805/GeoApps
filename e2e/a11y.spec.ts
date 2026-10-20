@@ -2,6 +2,7 @@ import { expect, test, type Page } from "./test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { expectAccessible } from "./a11y";
+import { waitForMap } from "./helpers";
 
 const FIXTURE_TEXT = readFileSync(join(__dirname, "fixtures", "smoke.geojson"), "utf8");
 
@@ -9,14 +10,6 @@ const FIXTURE_TEXT = readFileSync(join(__dirname, "fixtures", "smoke.geojson"), 
 // cards wrapping their own controls (a serious `nested-interactive` finding);
 // they are listitems now, with a dedicated name button for selection (#2858).
 // The broader per-dialog sweep lives in a11y-screens.spec.ts (nightly).
-
-async function waitForMap(page: Page): Promise<void> {
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
-}
 
 async function dropFixtureLayer(page: Page): Promise<void> {
   const dataTransfer = await page.evaluateHandle((contents) => {

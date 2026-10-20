@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "./test";
+import { enterViewer, seedViewerEntry } from "./helpers";
 
 /**
  * Validates the web build's PWA/offline support (issue #274):
@@ -63,6 +64,9 @@ test("registers a service worker and serves the shell offline after first visit"
   await page.addInitScript(() => {
     performance.setResourceTimingBufferSize(1000);
   });
+  // `/` opens on the home screen, so the map only mounts once a project is
+  // opened. Seed the row here and tap it after each reload below.
+  await seedViewerEntry(page);
 
   await page.goto("/");
 
@@ -90,6 +94,7 @@ test("registers a service worker and serves the shell offline after first visit"
 
   // Warm boot under SW control: the map fetches the (non-precached) MapLibre
   // chunk through the SW, which CacheFirst then stores for offline use.
+  await enterViewer(page);
   await expect(page.getByTestId("map-canvas")).toBeVisible({ timeout: 30_000 });
   await expect(page.locator(".maplibregl-canvas")).toBeVisible({
     timeout: 30_000,
@@ -112,6 +117,7 @@ test("registers a service worker and serves the shell offline after first visit"
     await page.reload();
     // The offline cold boot re-parses/executes the ~13 MB MapLibre chunk from
     // cache under software WebGL on CI, so give it a generous budget.
+    await enterViewer(page);
     await expect(page.getByTestId("map-canvas")).toBeVisible({
       timeout: 60_000,
     });
