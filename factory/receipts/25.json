@@ -1,0 +1,61 @@
+{
+  "issue": 25,
+  "lane": "HQ",
+  "branch": "main",
+  "worktree": "~/GeoApps",
+  "commit": "9e8af07d",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "cd ~/GeoApps && gh run view 39416160626 -R adi805/GeoApps --json jobs --jq '[.jobs[]|select(.name==\"Lint and type check\" or .name==\"Build and test\" or .name==\"E2E core (Playwright)\")|\"\\(.name)=\\(.conclusion)\"]|join(\" | \")'",
+      "exit": 0,
+      "keluaran": "Build and test=success | Lint and type check=success | E2E core (Playwright)=success",
+      "catatan": "Run terbaru di main, commit 9e8af07d, status completed/success. Seluruh sembilan job success termasuk Rust check, Backend tests, Container checks, Sidecar SQL Server integration, Identity integration."
+    },
+    {
+      "perintah": "cd ~/GeoApps && grep -c -- '--max-warnings 242' package.json",
+      "exit": 0,
+      "keluaran": "1",
+      "catatan": "package.json:22 masih --max-warnings 242. Commit 1b6f3731 menurunkannya dari 263 ke 242; tidak ada kenaikan sesudahnya."
+    },
+    {
+      "perintah": "cd ~/GeoApps && for c in 1b6f3731 cba7cf6e origin/main; do git show $c:scripts/untested-modules-baseline.json | python3 -c 'import json,sys;print(len(json.load(sys.stdin)))'; done",
+      "exit": 0,
+      "keluaran": "56\n30\n30",
+      "catatan": "Baseline tidak bertambah: 56 entri saat ratchet diperkenalkan, 30 sekarang. cba7cf6e (#22) memangkas, tidak menambah."
+    },
+    {
+      "perintah": "cd ~/GeoApps && git log --format=%h -20 origin/main -- e2e/ | while read c; do git show $c -- e2e/ | grep -E '^\\+.*test\\.skip'; done | wc -l",
+      "exit": 0,
+      "keluaran": "0",
+      "catatan": "Tidak ada test.skip baru di 20 commit terakhir yang menyentuh e2e/. test.skip yang ada semuanya bergantung token (MAPBOX_TOKEN, ARCGIS_API_KEY) dan sudah ada sebelumnya."
+    },
+    {
+      "perintah": "cd ~/GeoApps && for n in 21 22 23 24; do gh issue view $n -R adi805/GeoApps --json state --jq .state; done",
+      "exit": 0,
+      "keluaran": "CLOSED\nCLOSED\nCLOSED\nCLOSED",
+      "catatan": "Keempat unit yang disebut issue induk ini sudah tertutup semua."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "cd ~/GeoApps && gh run view 39416469916 -R adi805/GeoApps --json conclusion --jq .conclusion",
+      "exit": 0,
+      "keluaran": "success",
+      "catatan": "Workflow di luar cakupan yang dulu merah, pages.yml (Deploy Website), sekarang success di 9bfa9b97."
+    },
+    {
+      "perintah": "cd ~/GeoApps && grep -c \"github.repository == 'opengeos/GeoLibre'\" .github/workflows/pr-preview.yml .github/workflows/pr-preview-deploy.yml",
+      "exit": 0,
+      "keluaran": ".github/workflows/pr-preview.yml:1\n.github/workflows/pr-preview-deploy.yml:1",
+      "catatan": "PR #65 (merge 9e8af07d) menambahkan guard repo upstream, jadi job preview keluar skipped di fork ini, bukan gagal pada DEPLOY_TOKEN yang tidak pernah ada."
+    },
+    {
+      "perintah": "cd ~/GeoApps && grep -c -- '--max-errors 0' package.json",
+      "exit": 0,
+      "keluaran": "1",
+      "catatan": "Ratchet type check uji tidak diturunkan: package.json:46 masih --max-errors 0."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/25#issuecomment-6290201793"
+}
