@@ -1,7 +1,7 @@
 {
-  "versi": 5,
+  "versi": 6,
   "penulis_ledger": "HQ",
-  "catatan": "Cakupan lane: satu lane hanya boleh menyentuh path yang cocok dengan glob-nya. Pola peka huruf besar-kecil, lihat tools/factory/_umum.py. factory/bahan/** dan factory/receipts/** adalah direktori keluaran bersama: tiap lane menulis berkasnya sendiri di sana. Sisa factory/ tetap milik HQ. Lane gh-ops dan uji tidak menulis kode produk; globnya cuma untuk laporan, receipt, dan berkas uji. Versi 2 (2026-10-19): lane offline dan geofence diperluas ke bundel proyek portabel, pelacakan GPS, dan uji satuan yang tinggal di sebelah kodenya (#10). Versi 3 (2026-10-19): lane visual ditambahkan (topic 157) untuk bahasa visual aplikasi yang digenerate lewat kode: tiap fungsi digambar sebagai satu komposisi terpisah, dan glob baseline modul tanpa uji masuk ke lane uji supaya ratchet-nya bisa diperbaiki lane itu (#21). Versi 4 (2026-10-20): glob android diperluas ke src-tauri/src/**, Cargo.toml, Cargo.lock, dan build.rs, dan glob geo-pdf ke packages/plugins/src/plugins/*.ts, supaya berkas yang menahan PR Dependabot #1 dan #4 punya lane yang bisa dibrief (#14). Versi 1 (2026-10-19): lane awal GeoApps, delapan lane, topic sudah dibuat di forum grup GeoApps. Versi 5 (2026-10-20): glob ui diperluas ke apps/geolibre-desktop/src/*.css, src/styles/**, dan scripts/gen-*-css.mjs, supaya token CSS yang diminta brief #68 punya lane pemilik dan PR #73 bisa lolos gate cakupan (#68).",
+  "catatan": "Cakupan lane: satu lane hanya boleh menyentuh path yang cocok dengan glob-nya. Pola peka huruf besar-kecil, lihat tools/factory/_umum.py. factory/bahan/** dan factory/receipts/** adalah direktori keluaran bersama: tiap lane menulis berkasnya sendiri di sana. Sisa factory/ tetap milik HQ. Lane gh-ops dan uji tidak menulis kode produk; globnya cuma untuk laporan, receipt, dan berkas uji. Versi 2 (2026-10-19): lane offline dan geofence diperluas ke bundel proyek portabel, pelacakan GPS, dan uji satuan yang tinggal di sebelah kodenya (#10). Versi 3 (2026-10-19): lane visual ditambahkan (topic 157) untuk bahasa visual aplikasi yang digenerate lewat kode: tiap fungsi digambar sebagai satu komposisi terpisah, dan glob baseline modul tanpa uji masuk ke lane uji supaya ratchet-nya bisa diperbaiki lane itu (#21). Versi 4 (2026-10-20): glob android diperluas ke src-tauri/src/**, Cargo.toml, Cargo.lock, dan build.rs, dan glob geo-pdf ke packages/plugins/src/plugins/*.ts, supaya berkas yang menahan PR Dependabot #1 dan #4 punya lane yang bisa dibrief (#14). Versi 1 (2026-10-19): lane awal GeoApps, delapan lane, topic sudah dibuat di forum grup GeoApps. Versi 5 (2026-10-20): glob ui diperluas ke apps/geolibre-desktop/src/*.css, src/styles/**, dan scripts/gen-*-css.mjs, supaya token CSS yang diminta brief #68 punya lane pemilik dan PR #73 bisa lolos gate cakupan (#68). Versi 6 (2026-10-20): playwright.config.ts di akar repo masuk glob lane uji, supaya berkas konfigurasi e2e satu tangan dengan spec-nya dan lane uji bisa mendaftarkan spec ke CORE_SPECS tanpa unit HQ tiap kali (#81).",
   "eskalasi": {
     "glob": [
       "apps/geolibre-desktop/src-tauri/tauri.conf.json",
@@ -133,6 +133,7 @@
       "glob": [
         "tests/**",
         "e2e/**",
+        "playwright.config.ts",
         "scripts/untested-modules-baseline.json",
         ".github/workflows/ci.yml",
         "factory/bahan/**",
