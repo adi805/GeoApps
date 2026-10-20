@@ -70,6 +70,12 @@ concurrency:
 jobs:
   build:
     name: Build preview
+    # Previews only mean something where the publish half can reach
+    # opengeos/pages-preview, which is the upstream repository. On a fork the
+    # secrets are absent, so stage 2 could only fail -- and it did, on every
+    # merged or closed pull request (#64). Guarding stage 1 stops the pipeline
+    # before it starts, so stage 2 is never triggered at all.
+    if: github.repository == 'opengeos/GeoLibre'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
