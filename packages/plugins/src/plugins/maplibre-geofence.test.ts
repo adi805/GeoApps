@@ -13,13 +13,14 @@
 
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { Position } from "geojson";
+import type { Feature, Geometry, Position } from "geojson";
 import {
   GeofenceMonitor,
   eventsFromCsv,
   eventsToCsv,
   pointInRing,
   unwrapLongitude,
+  zoneFromFeature,
   zoneSignedDistance,
   type GeofenceZone,
 } from "./maplibre-geofence";
@@ -321,5 +322,55 @@ describe("jurnal peristiwa dan CSV", () => {
       monitor.update(i % 2 === 0 ? CENTER : north(CENTER, 100), i * 1000);
     }
     assert.equal(monitor.events().length, 2);
+  });
+});
+
+describe("membaca zona dari feature", () => {
+  /**
+   * `Circle` bukan tipe GeoJSON standar, jadi bentuknya tidak ada di tipe
+   * `geojson`. Cast di sini hanya menyatakan bentuk masukan yang memang
+   * disimpan lapisan peta; yang diuji adalah tafsir pembacanya.
+   */
+  function circleFeature(
+    coordinates: unknown,
+    properties: Record<string, unknown> = {},
+  ): Feature<Geometry> {
+    return {
+      type: "Feature",
+      id: "mata-air",
+      properties: { name: "Mata Air", ...properties },
+      geometry: { type: "Circle", coordinates },
+    } as unknown as Feature<Geometry>;
+  }
+
+  it("membaca bentuk pusat saja [lng, lat]", () => {
+    const zone = zoneFromFeature(circleFeature([106.8, -6.2], { geofence_radius_m: 50 }));
+    assert.ok(zone);
+    assert.equal(zone.kind, "circle");
+    if (zone.kind !== "circle") return; // sempitkan tipe untuk pemeriksaan di bawah
+    assert.deepEqual(zone.center, [106.8, -6.2]);
+    assert.equal(zone.radiusM, 50);
+    // Radius tidak boleh diambil dari lintang: pusat zona wajib di dalam.
+    assert.equal(zoneSignedDistance(zone, [106.8, -6.2]).inside, true);
+  });
+
+  it("membaca bentuk pusat dan radius [[lng, lat], radius]", () => {
+    const zone = zoneFromFeature(circleFeature([[106.8, -6.2], 120], { geofence_radius_m: 50 }));
+    assert.ok(zone);
+    assert.equal(zone.kind, "circle");
+    if (zone.kind !== "circle") return;
+    assert.deepEqual(zone.center, [106.8, -6.2]);
+    // Radius dari geometri menang atas properti: 120, bukan 50.
+    assert.equal(zone.radiusM, 120);
+    assert.equal(zoneSignedDistance(zone, east(CENTER, 100)).inside, true);
+    assert.equal(zoneSignedDistance(zone, east(CENTER, 130)).inside, false);
+  });
+
+  it("memakai radius bawaan saat radius tidak disebut di mana pun", () => {
+    const zone = zoneFromFeature(circleFeature([106.8, -6.2]));
+    assert.ok(zone);
+    assert.equal(zone.kind, "circle");
+    if (zone.kind !== "circle") return;
+    assert.equal(zone.radiusM, 50);
   });
 });

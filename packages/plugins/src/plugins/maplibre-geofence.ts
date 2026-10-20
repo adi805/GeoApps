@@ -167,23 +167,57 @@ export function zoneSignedDistance(
   return { inside, signedM: inside ? -distance : distance };
 }
 
-/** Baca zona dari feature GeoJSON yang disimpan lapisan peta. */
+/** Titik dari dua nilai mentah; null kalau salah satunya bukan angka. */
+function toPosition(lng: unknown, lat: unknown): Position | null {
+  const x = Number(lng);
+  const y = Number(lat);
+  return Number.isFinite(x) && Number.isFinite(y) ? [x, y] : null;
+}
+
+/** Radius dari nilai mentah; null kalau bukan angka positif. */
+function positiveMeters(value: unknown): number | null {
+  const meters = Number(value);
+  return Number.isFinite(meters) && meters > 0 ? meters : null;
+}
+
+/**
+ * Baca zona dari feature GeoJSON yang disimpan lapisan peta.
+ *
+ * Bentuk `Circle` tidak seragam: ada yang menyimpan pusat saja (`[lng, lat]`),
+ * ada yang menyimpan pusat beserta radiusnya (`[[lng, lat], radius]`). Keduanya
+ * harus terbaca, jadi bentuknya ditentukan dari elemen pertama: pasangan
+ * berarti bentuk kedua, angka berarti bentuk pertama.
+ *
+ * Sebelumnya keduanya dipaksa menjadi `Position[]`, sehingga bentuk pertama
+ * mengambil radius dari lintang (mis. -6,2 meter): zona lingkaran tidak pernah
+ * memuat titik apa pun.
+ */
 export function zoneFromFeature(feature: Feature<Geometry>): GeofenceZone | null {
   const name = String(feature.properties?.name ?? feature.id ?? "zona");
   const id = String(feature.id ?? name);
-  const geometry = feature.geometry as unknown as { type: string; coordinates: unknown };
-  if (geometry?.type === "Polygon") {
-    return { id, name, kind: "polygon", rings: geometry.coordinates as Position[][] };
+  const geometry = feature.geometry as unknown as {
+    type?: string;
+    coordinates?: unknown;
+  } | null;
+  if (!geometry || !Array.isArray(geometry.coordinates)) return null;
+  const coordinates: unknown[] = geometry.coordinates;
+
+  if (geometry.type === "Polygon") {
+    return { id, name, kind: "polygon", rings: coordinates as Position[][] };
   }
-  if (geometry?.type === "Circle") {
-    const coordinates = geometry.coordinates as unknown as Position[];
-    const center = Array.isArray(coordinates[0]) ? coordinates[0] : (coordinates as Position);
-    const radiusM = Number(
-      feature.properties?.geofence_radius_m ?? (coordinates[1] as unknown) ?? DEFAULT_RADIUS_M,
-    );
-    return { id, name, kind: "circle", center, radiusM };
-  }
-  return null;
+  if (geometry.type !== "Circle") return null;
+
+  const first = coordinates[0];
+  const center = Array.isArray(first)
+    ? toPosition(first[0], first[1])
+    : toPosition(coordinates[0], coordinates[1]);
+  if (!center) return null;
+
+  const radiusM =
+    positiveMeters(Array.isArray(first) ? coordinates[1] : undefined) ??
+    positiveMeters(feature.properties?.geofence_radius_m) ??
+    DEFAULT_RADIUS_M;
+  return { id, name, kind: "circle", center, radiusM };
 }
 
 /**
