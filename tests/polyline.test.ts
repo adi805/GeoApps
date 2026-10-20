@@ -5,11 +5,22 @@ import {
   decodePolyline,
   encodePolyline,
   geoJSONToPolylineStr,
+  DEFAULT_LAYER_STYLE,
   polylineStrToGeoJSON,
   unescapePolyline,
+  type GeoLibreLayer,
 } from "@geolibre/core";
 import type { Feature, FeatureCollection, LineString, MultiLineString } from "geojson";
 import type { LoadedVectorLayer } from "../apps/geolibre-desktop/src/lib/file-io/loaded-layer";
+
+/**
+ * RFC 7946 §3.2 allows a Feature whose geometry is null, and `decodePolylineTool`
+ * only ever reads `feature.properties` before writing the decoded geometry back.
+ * `@types/geojson` defaults `Feature.geometry` to `Geometry` (never null), so the
+ * fixtures declare the attribute-only shape explicitly instead of widening the
+ * whole fixture with `any`. The narrowing stays confined to this one slot.
+ */
+const NULL_GEOMETRY = null as unknown as Feature["geometry"];
 
 describe("polyline codec", () => {
   describe("decodePolyline", () => {
@@ -257,13 +268,13 @@ describe("polyline codec", () => {
   describe("processing tools", () => {
     it("decodePolylineTool decodes polyline attribute into LineString layer", async () => {
       const { decodePolylineTool } = await import("@geolibre/processing");
-      const layerWithPolyline = {
+      const layerWithPolyline: GeoLibreLayer = {
         id: "test-poly-layer",
         name: "Polyline Test",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -272,7 +283,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "R1", poly: "_p~iF~ps|U_ulLnnqC_mqNvxq`@" },
-              geometry: null as any,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -283,7 +294,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       decodePolylineTool.run({
-        layers: [layerWithPolyline as any],
+        layers: [layerWithPolyline],
         parameters: {
           layer: "test-poly-layer",
           field: "poly",
@@ -306,13 +317,13 @@ describe("polyline codec", () => {
 
     it("encodePolylineTool encodes line geometries into attribute field", async () => {
       const { encodePolylineTool } = await import("@geolibre/processing");
-      const lineLayer = {
+      const lineLayer: GeoLibreLayer = {
         id: "test-line-layer",
         name: "Line Test",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -339,7 +350,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       encodePolylineTool.run({
-        layers: [lineLayer as any],
+        layers: [lineLayer],
         parameters: {
           layer: "test-line-layer",
           precision: "5",
@@ -361,13 +372,13 @@ describe("polyline codec", () => {
 
     it("decodePolylineTool skips malformed polyline string containing invalid characters like '/'", async () => {
       const { decodePolylineTool } = await import("@geolibre/processing");
-      const layerWithInvalidPoly = {
+      const layerWithInvalidPoly: GeoLibreLayer = {
         id: "test-poly-layer-invalid",
         name: "Invalid Polyline",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -376,7 +387,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "Bad", poly: "_p~iF/invalid" },
-              geometry: null as any,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -386,7 +397,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       decodePolylineTool.run({
-        layers: [layerWithInvalidPoly as any],
+        layers: [layerWithInvalidPoly],
         parameters: {
           layer: "test-poly-layer-invalid",
           field: "poly",
@@ -405,13 +416,13 @@ describe("polyline codec", () => {
 
     it("round-trips MultiLineString features through encodePolylineTool and decodePolylineTool", async () => {
       const { encodePolylineTool, decodePolylineTool } = await import("@geolibre/processing");
-      const multiLineLayer = {
+      const multiLineLayer: GeoLibreLayer = {
         id: "test-multi-layer",
         name: "MultiLine Test",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -440,7 +451,7 @@ describe("polyline codec", () => {
 
       let encodedFc: FeatureCollection | undefined;
       encodePolylineTool.run({
-        layers: [multiLineLayer as any],
+        layers: [multiLineLayer],
         parameters: {
           layer: "test-multi-layer",
           precision: "5",
@@ -457,13 +468,13 @@ describe("polyline codec", () => {
       const encodedProp = encodedFc.features[0].properties?.poly_str;
       assert.ok(typeof encodedProp === "string" && encodedProp.includes(";"));
 
-      const encodedLayer = {
+      const encodedLayer: GeoLibreLayer = {
         id: "test-encoded-layer",
         name: "Encoded",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: encodedFc,
@@ -471,7 +482,7 @@ describe("polyline codec", () => {
 
       let decodedFc: FeatureCollection | undefined;
       decodePolylineTool.run({
-        layers: [encodedLayer as any],
+        layers: [encodedLayer],
         parameters: {
           layer: "test-encoded-layer",
           field: "poly_str",
@@ -494,13 +505,13 @@ describe("polyline codec", () => {
 
     it("decodePolylineTool skips oversized-varint input that exceeds coordinate bounds", async () => {
       const { decodePolylineTool } = await import("@geolibre/processing");
-      const layerWithOversizedPoly = {
+      const layerWithOversizedPoly: GeoLibreLayer = {
         id: "test-poly-layer-oversized",
         name: "Oversized Polyline",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -509,7 +520,7 @@ describe("polyline codec", () => {
             {
               type: "Feature" as const,
               properties: { routeId: "Oversized", poly: "_o`diA~gw}qC_pR_pR_pR_af@" },
-              geometry: null as any,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -519,7 +530,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       decodePolylineTool.run({
-        layers: [layerWithOversizedPoly as any],
+        layers: [layerWithOversizedPoly],
         parameters: {
           layer: "test-poly-layer-oversized",
           field: "poly",
@@ -538,13 +549,13 @@ describe("polyline codec", () => {
 
     it("decodePolylineTool skips valid polyline with an appended incomplete coordinate", async () => {
       const { decodePolylineTool } = await import("@geolibre/processing");
-      const layerWithIncompletePoly = {
+      const layerWithIncompletePoly: GeoLibreLayer = {
         id: "test-poly-layer-incomplete",
         name: "Incomplete Polyline",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -556,7 +567,7 @@ describe("polyline codec", () => {
                 routeId: "Incomplete",
                 poly: "_p~iF~ps|U_ulLnnqC_mqNvxq`@_mqN",
               },
-              geometry: null as any,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -566,7 +577,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       decodePolylineTool.run({
-        layers: [layerWithIncompletePoly as any],
+        layers: [layerWithIncompletePoly],
         parameters: {
           layer: "test-poly-layer-incomplete",
           field: "poly",
@@ -585,13 +596,13 @@ describe("polyline codec", () => {
 
     it("decodePolylineTool skips overlong varint input '_______?' and does not accept it as LineString", async () => {
       const { decodePolylineTool } = await import("@geolibre/processing");
-      const layerWithOverlongPoly = {
+      const layerWithOverlongPoly: GeoLibreLayer = {
         id: "test-poly-layer-overlong",
         name: "Overlong Polyline",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -603,7 +614,7 @@ describe("polyline codec", () => {
                 routeId: "Overlong",
                 poly: "_______?",
               },
-              geometry: null as any,
+              geometry: NULL_GEOMETRY,
             },
           ],
         },
@@ -613,7 +624,7 @@ describe("polyline codec", () => {
       const logs: string[] = [];
 
       decodePolylineTool.run({
-        layers: [layerWithOverlongPoly as any],
+        layers: [layerWithOverlongPoly],
         parameters: {
           layer: "test-poly-layer-overlong",
           field: "poly",
@@ -656,13 +667,13 @@ describe("polyline codec", () => {
       const { layerSupportsPolylineExport } =
         await import("../apps/geolibre-desktop/src/lib/vector-export");
 
-      const lineLayer = {
+      const lineLayer: GeoLibreLayer = {
         id: "l1",
         name: "Line Layer",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -683,13 +694,13 @@ describe("polyline codec", () => {
         },
       };
 
-      const pointLayer = {
+      const pointLayer: GeoLibreLayer = {
         id: "p1",
         name: "Point Layer",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: { geometryType: "point" },
         source: { type: "geojson" as const },
         geojson: {
@@ -707,13 +718,13 @@ describe("polyline codec", () => {
         },
       };
 
-      const polygonLayer = {
+      const polygonLayer: GeoLibreLayer = {
         id: "poly1",
         name: "Polygon Layer",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: { geometryType: "polygon" },
         source: { type: "geojson" as const },
         geojson: {
@@ -739,13 +750,13 @@ describe("polyline codec", () => {
         },
       };
 
-      const mixedLayer = {
+      const mixedLayer: GeoLibreLayer = {
         id: "m1",
         name: "Mixed Layer",
         type: "geojson" as const,
         visible: true,
         opacity: 1,
-        style: {} as any,
+        style: DEFAULT_LAYER_STYLE,
         metadata: {},
         source: { type: "geojson" as const },
         geojson: {
@@ -774,10 +785,10 @@ describe("polyline codec", () => {
         },
       };
 
-      assert.equal(layerSupportsPolylineExport(lineLayer as any), true);
-      assert.equal(layerSupportsPolylineExport(pointLayer as any), false);
-      assert.equal(layerSupportsPolylineExport(polygonLayer as any), false);
-      assert.equal(layerSupportsPolylineExport(mixedLayer as any), false);
+      assert.equal(layerSupportsPolylineExport(lineLayer), true);
+      assert.equal(layerSupportsPolylineExport(pointLayer), false);
+      assert.equal(layerSupportsPolylineExport(polygonLayer), false);
+      assert.equal(layerSupportsPolylineExport(mixedLayer), false);
     });
   });
 });
