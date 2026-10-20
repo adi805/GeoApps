@@ -1,0 +1,49 @@
+{
+  "issue": 55,
+  "lane": "uji",
+  "branch": "uji/smoke-toolbar",
+  "worktree": "~/GeoApps-uji-smoke-toolbar",
+  "commit": "cae05884",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "CI job 'E2E core (Playwright)' pada PR #56",
+      "exit": 0,
+      "keluaran": "31 passed (7.2m), dua kali: run 39403487842 (head cae05884) dan run 39405070272 (head e8355a33, sesudah main di-merge ke branch). Baris yang dimaksud: '✓ 29 [core] › e2e/smoke.spec.ts:85:5 › keeps every toolbar menu on one scrollable row on small screens'. Sebelum unit ini, run 39400219748 merah dengan 'Received has value: undefined' di baris 93."
+    },
+    {
+      "perintah": "grep -n \"setViewportSize\" e2e/smoke.spec.ts",
+      "exit": 0,
+      "keluaran": "91:  width: 768 (lebar desktop tersempit) dan 127: width: 400 dengan asersi handover: mobile-shell terlihat, header desktop toBeHidden()."
+    },
+    {
+      "perintah": "CI job 'Lint and type check' pada PR #56",
+      "exit": 0,
+      "keluaran": "pass 5m42s, --max-warnings tidak diubah"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "bersih setelah commit cae05884"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 1 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --judul ... --body ... --commits ...",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #55, 1 commit semuanya menyebut issue"
+    }
+  ],
+  "pr": "https://github.com/adi805/GeoApps/pull/56",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/55#issuecomment-6288411136",
+  "catatan_merah": [
+    "CI job 'Build and test' semula MERAH di PR #56 karena tiga modul visual dari PR #29 tanpa uji (#42). Hijau setelah PR #49 merge ke main; branch ini ikut merge main sehingga job itu pass 6m17s di run 39405070272.",
+    "CI job 'Lint and type check' MASIH MERAH di PR #56, tapi bukan dari berkas unit ini: langkah 'Type check tests (ratchet)' melaporkan 8 error TypeScript di tests/visual-primitives.test.ts (7) dan tests/visual-inventaris.test.ts (1), dua berkas yang masuk lewat PR #49. Didaftarkan sebagai issue #59. Job yang sama juga merah di main sebelum branch ini ada.",
+    "e2e/smoke.spec.ts sebelumnya mengukur toolbar desktop di 400 px. Sejak 8ed508cc (#12) di bawah 768 px TopToolbar memang display:none, jadi yang salah tesnya, bukan produknya."
+  ]
+}
