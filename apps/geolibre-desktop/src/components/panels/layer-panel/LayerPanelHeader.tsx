@@ -84,7 +84,7 @@ export function LayerPanelHeader({
           {contextLabel}
         </span>
       </div>
-      <div className="flex flex-wrap items-center justify-end gap-1">
+      <div className="flex flex-wrap items-center justify-end gap-1" data-testid="layer-panel-toolbar">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
