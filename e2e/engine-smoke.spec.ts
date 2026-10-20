@@ -2,6 +2,7 @@ import { expect, test, type Page } from "./test";
 import {
   dropGeoJsonOnShell,
   layerRow,
+  openViewer,
   setViewAndSettle,
   waitForSettledZoom,
   waitForSettledZoomNear,
@@ -124,7 +125,7 @@ for (const engine of ENGINES) {
     const layerName = `${engine.label.toLowerCase()}-smoke`;
     const featureName = `${engine.label} smoke area`;
 
-    await page.goto("/");
+    await openViewer(page);
     await expect(page.locator(".maplibregl-canvas")).toBeVisible({ timeout: 30_000 });
     await engine.prepare?.(page);
 
