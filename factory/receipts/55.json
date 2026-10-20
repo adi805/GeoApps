@@ -1,0 +1,49 @@
+{
+  "issue": 55,
+  "lane": "uji",
+  "branch": "uji/smoke-toolbar",
+  "worktree": "~/GeoApps-uji-smoke-toolbar",
+  "commit": "cae05884",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "CI job 'E2E core (Playwright)' pada PR #56",
+      "exit": 0,
+      "keluaran": "31 passed (7.2m). Baris yang dimaksud: '✓ 29 [core] › e2e/smoke.spec.ts:85:5 › keeps every toolbar menu on one scrollable row on small screens (9.0s)'. Sebelum unit ini, run 39400219748 merah dengan 'Received has value: undefined' di baris 93."
+    },
+    {
+      "perintah": "grep -n \"setViewportSize\" e2e/smoke.spec.ts",
+      "exit": 0,
+      "keluaran": "91:  width: 768 (lebar desktop tersempit) dan 127: width: 400 dengan asersi handover: mobile-shell terlihat, header desktop toBeHidden()."
+    },
+    {
+      "perintah": "CI job 'Lint and type check' pada PR #56",
+      "exit": 0,
+      "keluaran": "pass 5m42s, --max-warnings tidak diubah"
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "bersih setelah commit cae05884"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 1 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --judul ... --body ... --commits ...",
+      "exit": 0,
+      "keluaran": "LULUS  menutup issue #55, 1 commit semuanya menyebut issue"
+    }
+  ],
+  "pr": "https://github.com/adi805/GeoApps/pull/56",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/55#issuecomment-6288411136",
+  "catatan_merah": [
+    "CI job 'Build and test' MERAH di PR #56 pada check:untested-modules: tiga modul visual dari PR #29 (inventaris.ts 514 baris, primitives.tsx 681, screens/peta.tsx 526) tidak dimuat tes mana pun. Bukan unit ini: merah yang sama ada di main (run 39400219748) dan itu isi issue #42, diperbaiki PR #49.",
+    "Konsekuensi urutan merge: #56 menutup merah E2E yang juga menahan #49, sementara #49 menutup merah Build and test yang menahan #56. Salah satu harus masuk lebih dulu; #56 lebih murah karena hijau di job yang ia perbaiki, dan #49 tinggal rebase.",
+    "e2e/smoke.spec.ts sebelumnya mengukur toolbar desktop di 400 px. Sejak 8ed508cc (#12) di bawah 768 px TopToolbar memang display:none, jadi yang salah tesnya, bukan produknya."
+  ]
+}
