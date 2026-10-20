@@ -10,7 +10,16 @@ import { useCallback, useEffect, useState } from "react";
  */
 export const HIGH_CONTRAST_STORAGE_KEY = "geolibre.highContrast";
 
-/** The light-mode overrides: black on white, heavier borders, darker accents. */
+/**
+ * The sunlight overrides: black on white, heavier borders, darker accents.
+ *
+ * Only the light variant lives here. `tokens.ts` defines a single `kontras`
+ * palette (black background, yellow accent) and the generated
+ * `styles/tokens.css` already paints it for `:root[data-contrast="high-dark"]`,
+ * so the dark case sets the attribute and lets the stylesheet do the work. The
+ * sunlight case has no equivalent in `tokens.ts` — that palette is built for
+ * dark screens — so it stays inline.
+ */
 const LIGHT_VARS: Record<string, string> = {
   "--background": "0 0% 100%",
   "--foreground": "0 0% 0%",
@@ -31,28 +40,7 @@ const LIGHT_VARS: Record<string, string> = {
   "--ring": "221 100% 32%",
 };
 
-/** The dark-mode overrides: white on black, yellow accent, bright borders. */
-const DARK_VARS: Record<string, string> = {
-  "--background": "0 0% 0%",
-  "--foreground": "0 0% 100%",
-  "--card": "0 0% 0%",
-  "--card-foreground": "0 0% 100%",
-  "--popover": "0 0% 0%",
-  "--popover-foreground": "0 0% 100%",
-  "--primary": "50 100% 55%",
-  "--primary-foreground": "0 0% 0%",
-  "--secondary": "0 0% 12%",
-  "--secondary-foreground": "0 0% 100%",
-  "--muted": "0 0% 14%",
-  "--muted-foreground": "0 0% 88%",
-  "--accent": "0 0% 18%",
-  "--accent-foreground": "0 0% 100%",
-  "--border": "0 0% 75%",
-  "--input": "0 0% 75%",
-  "--ring": "50 100% 55%",
-};
-
-const ALL_VARS = new Set([...Object.keys(LIGHT_VARS), ...Object.keys(DARK_VARS)]);
+const ALL_VARS = new Set(Object.keys(LIGHT_VARS));
 
 function readStoredPreference(): boolean {
   if (typeof window === "undefined") return false;
@@ -77,18 +65,22 @@ function readStoredPreference(): boolean {
  */
 function applyContrastVars(enabled: boolean): void {
   const root = document.documentElement;
+  // Clear the inline tokens before anything else: a leftover light value would
+  // shadow the stylesheet's dark block, because inline styles beat every
+  // selector regardless of specificity.
+  for (const name of ALL_VARS) root.style.removeProperty(name);
   if (!enabled) {
     root.removeAttribute("data-contrast");
-    for (const name of ALL_VARS) root.style.removeProperty(name);
     return;
   }
   const dark = root.classList.contains("dark");
-  const vars = dark ? DARK_VARS : LIGHT_VARS;
-  // Clear the other palette first: switching light/dark while enabled would
-  // otherwise leave the previous mode's values behind for keys it lacks.
-  for (const name of ALL_VARS) root.style.removeProperty(name);
-  for (const [name, value] of Object.entries(vars)) root.style.setProperty(name, value);
-  root.setAttribute("data-contrast", dark ? "high-dark" : "high-light");
+  if (dark) {
+    // `styles/tokens.css` owns this palette; the attribute is the whole switch.
+    root.setAttribute("data-contrast", "high-dark");
+    return;
+  }
+  for (const [name, value] of Object.entries(LIGHT_VARS)) root.style.setProperty(name, value);
+  root.setAttribute("data-contrast", "high-light");
 }
 
 /**

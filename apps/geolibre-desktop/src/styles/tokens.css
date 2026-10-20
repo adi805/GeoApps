@@ -1,0 +1,120 @@
+/*
+ * GENERATED FILE - do not edit.
+ *
+ * Produced by `apps/geolibre-desktop/scripts/gen-tokens-css.mjs` from the
+ * palette in `src/visual/tokens.ts` (themes: `terang`, `gelap`, `kontras`). Change the palette
+ * there and regenerate; editing this file only makes the sync check fail.
+ *
+ *   node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs
+ *   node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check
+ *
+ * The declarations sit in `@layer base` and `index.css` imports this file
+ * *after* `@geolibre/ui/globals.css`, so at equal specificity they win on source
+ * order and replace the stock palette instead of fighting it. Unlayered rules
+ * were not an option: unlayered beats every layer, which would also beat the
+ * `[data-theme]` accent schemes.
+ *
+ * Three surfaces are all `tokens.ts` offers (`latar`, `permukaan`,
+ * `permukaanTinggi`), while shadcn splits the sunken fill three ways
+ * (`--secondary`, `--muted`, `--accent`). Those three therefore resolve to the
+ * same value. Hover still reads: it always sits on `--popover` or
+ * `--background`, one step away from `permukaanTinggi`.
+ *
+ * `--radius` comes from `radius.md` (10px). Tailwind derives
+ * `md`/`sm` from it by subtracting 2px/4px, so the scale is
+ * 10/8/6px and every step stays positive.
+ */
+
+@layer base {
+
+  /* Light theme: `latar` behind `permukaan` cards. */
+  :root {
+    --background: 90 18.2% 95.7%;
+    --foreground: 111.4 14.3% 9.6%;
+    --card: 0 0% 100%;
+    --card-foreground: 111.4 14.3% 9.6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 111.4 14.3% 9.6%;
+    --secondary: 94.3 16.3% 91.6%;
+    --secondary-foreground: 111.4 14.3% 9.6%;
+    --muted: 94.3 16.3% 91.6%;
+    --muted-foreground: 141.8 6.7% 32%;
+    --accent: 94.3 16.3% 91.6%;
+    --accent-foreground: 111.4 14.3% 9.6%;
+    --destructive: 0 67.2% 38.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 100 12% 80.4%;
+    --input: 100 12% 80.4%;
+  }
+
+  /* Scheme-bearing light tokens: skipped once `[data-theme]` selects a preset,
+   * because a plain `:root` here would win on source order over the preset's
+   * block and turn the scheme picker into a no-op. `.dark` is excluded because
+   * the dark block below owns those values. */
+  html:not([data-theme]):not(.dark) {
+    --primary: 149.1 53.3% 23.5%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 216.9 90% 42.9%;
+  }
+
+  /* Dark theme: same roles, `latar` lifted off pure black. */
+  .dark {
+    --background: 135 11.8% 6.7%;
+    --foreground: 94.3 20% 93.1%;
+    --card: 132 9.4% 10.4%;
+    --card-foreground: 94.3 20% 93.1%;
+    --popover: 132 9.4% 10.4%;
+    --popover-foreground: 94.3 20% 93.1%;
+    --secondary: 137.1 9.3% 14.7%;
+    --secondary-foreground: 94.3 20% 93.1%;
+    --muted: 137.1 9.3% 14.7%;
+    --muted-foreground: 125.5 8.1% 73.5%;
+    --accent: 137.1 9.3% 14.7%;
+    --accent-foreground: 94.3 20% 93.1%;
+    --destructive: 0 100% 78%;
+    --destructive-foreground: 0 61.5% 10.2%;
+    --border: 130.9 8.8% 24.5%;
+    --input: 130.9 8.8% 24.5%;
+  }
+
+  /* Scheme-bearing dark tokens: a preset's `[data-theme].dark` block outranks this. */
+  .dark:not([data-theme]) {
+    --primary: 145 48.8% 66.3%;
+    --primary-foreground: 137.1 24.1% 5.7%;
+    --ring: 215.8 100% 80.6%;
+  }
+
+  /* High contrast, dark: the `kontras` palette, selected by `useHighContrast`.
+   * The light variant stays in that hook because `tokens.ts` defines one kontras
+   * palette (black and yellow) and the sunlight case needs a white background. */
+  :root[data-contrast="high-dark"] {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
+    --secondary: 0 0% 7.8%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 7.8%;
+    --muted-foreground: 0 0% 91%;
+    --accent: 0 0% 7.8%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 100% 80.4%;
+    --destructive-foreground: 0 0% 0%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --primary: 49.9 100% 50%;
+    --primary-foreground: 0 0% 0%;
+    --ring: 49.9 100% 50%;
+  }
+
+}
+
+/* Radius is theme-independent, so it is declared once rather than repeated in
+   every block above. */
+@layer base {
+  :root {
+    --radius: 0.625rem;
+  }
+}
