@@ -41,6 +41,7 @@
         "apps/geolibre-desktop/src-tauri/capabilities/**",
         "apps/geolibre-desktop/src-tauri/src/**",
         "apps/geolibre-desktop/src-tauri/Cargo.toml",
+        "apps/geolibre-desktop/src-tauri/Cargo.lock",
         "apps/geolibre-desktop/src-tauri/tauri.android.conf.json",
         ".github/workflows/android.yml",
         ".github/workflows/ios.yml",
