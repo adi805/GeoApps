@@ -1,0 +1,23 @@
+{
+  "versi": 1,
+  "catatan": "Sumber tunggal identitas proyek. Tidak ada skrip di tools/factory/ yang boleh menulis nilai identitas secara literal; semuanya membacanya dari sini lewat _umum.identitas().",
+  "proyek": "GeoApps",
+  "slug": "geoapps",
+  "repo": {
+    "github": "adi805/GeoApps"
+  },
+  "grup": -1004352601288,
+  "grup_nama": "GeoApps",
+  "owner": {
+    "kanal": "[chat:-1004352601288:topic:37]",
+    "topik": 37,
+    "topik_nama": "agent",
+    "alasan": "Topic tempat owner berbicara dengan agent. lapor.py dan pintu.py mengantar ke sesi ini. Kalau kanal ini tidak punya tepat satu sesi hidup, keduanya DIAM dan opsinya tetap menunggu: tidak ada cadangan ke topic lane, karena topic lane justru ruangan yang dibaca owner."
+  },
+  "pohon": "~/GeoApps",
+  "log_dir": "~/.opencrabs/logs",
+  "state_dir": "~/.opencrabs/state",
+  "skills_dir": "~/.opencrabs/skills",
+  "skill_factory": "geoapps-factory",
+  "env_paksa_branch": "FACTORY_PAKSA_BRANCH"
+}
