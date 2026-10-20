@@ -1,6 +1,7 @@
 import { expect, test, type Download, type Page } from "./test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { waitForMap as waitForMapInViewer } from "./helpers";
 
 // A GeoJSON drop is parsed in-browser; GeoPackage export uses bundled sql.js and
 // Shapefile export is pure JS + fflate, so this stays hermetic (no DuckDB/CDN).
@@ -13,11 +14,7 @@ async function waitForMap(page: Page): Promise<void> {
     // @ts-expect-error - removing the optional API selects the fallback path
     delete window.showSaveFilePicker;
   });
-  await page.goto("/");
-  await expect(page.getByTestId("map-canvas")).toBeVisible();
-  await expect(page.locator(".maplibregl-canvas")).toBeVisible({
-    timeout: 30_000,
-  });
+  await waitForMapInViewer(page);
 }
 
 async function dropGeoJson(page: Page, name: string): Promise<void> {

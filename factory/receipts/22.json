@@ -1,0 +1,20 @@
+{
+  "issue": 22,
+  "lane": "uji",
+  "branch": "uji/ci-b-ratchet",
+  "worktree": "~/GeoApps-uji-ci-b-ratchet",
+  "commit": "cba7cf6e",
+  "status_short": [],
+  "kriteria": [
+    {"perintah": "./node_modules/.bin/eslint tests --max-warnings 242", "exit": 0},
+    {"perintah": "./node_modules/.bin/eslint tests/polyline.test.ts tests/component-desktop-shell.test.ts", "exit": 0},
+    {"perintah": "node scripts/check-untested-modules.mjs", "exit": 0},
+    {"perintah": "node scripts/check-untested-modules.mjs --prune", "exit": 0},
+    {"perintah": "node --import tsx --test tests/polyline.test.ts", "exit": 0},
+    {"perintah": "node --import tsx --test tests/component-desktop-shell.test.ts", "exit": 0}
+  ],
+  "checker": [
+    {"perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD", "exit": 0, "keluaran": "LULUS  lane uji: 3 path, semuanya di cakupan"}
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/22#issuecomment-6280760475"
+}
