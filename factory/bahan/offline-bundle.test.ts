@@ -15,21 +15,23 @@ import {
   UnsafeBundlePathError,
   bundleFileKind,
   createManifest,
-  deleteBundle,
-  importBundleFile,
   isSafeBundlePath,
-  openBundle,
   parseManifest,
   projectSlug,
   readManifest,
   serializeManifest,
   sha256Hex,
-  verifyBundle,
   withOfflineRegions,
   writeManifest,
   type BundleStore,
   type ProjectManifest,
-} from "../../apps/geolibre-desktop/src/lib/offline-bundle";
+} from "../../apps/geolibre-desktop/src/lib/project-manifest";
+import {
+  deleteBundle,
+  importBundleFile,
+  openBundle,
+  verifyBundle,
+} from "../../apps/geolibre-desktop/src/lib/project-bundle";
 
 /** Direktori proyek di "disk" palsu: path relatif → byte. */
 type Disk = Map<string, Uint8Array>;

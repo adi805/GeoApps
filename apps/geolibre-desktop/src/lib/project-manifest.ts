@@ -1,33 +1,22 @@
 /**
- * Portable project bundles: a project that carries its own files instead of
- * pointing at paths outside it.
+ * `project.json`: the manifest that makes a project bundle self-describing.
  *
- * The problem this solves is Android-shaped but not Android-only. A
- * `.geolibre.json` project stores absolute paths to the PDF map, the GeoTIFF
+ * A `.geolibre.json` project stores absolute paths to the PDF map, the GeoTIFF
  * and the field photos it uses. On Android those paths are `content://` SAF
  * URIs whose read grant dies with the process, so reopening the project after
- * the app is killed finds nothing to read. Even on desktop, a project is only
- * as portable as the folders it happens to reference.
+ * the app is killed finds nothing to read. The bundle fixes that by copying
+ * every file into a directory the app owns and recording paths *relative* to
+ * it, which is what makes the bundle movable and reopenable.
  *
- * A bundle is a directory the app owns, one per project, holding:
- *
- *   projects/<slug>/project.json   — the manifest described below
- *   projects/<slug>/<relative path> — every imported file, copied in
- *
- * The project records paths *relative to that directory*, so the bundle can be
- * moved, copied or reopened on another device without rewriting anything.
- *
- * This module is the storage-agnostic half: it decides what a manifest holds,
- * how a file is admitted, what "missing" means, and what deleting a project is
- * allowed to touch. It deliberately imports no Tauri, DOM or React code — the
- * `BundleStore` it is handed is the only I/O it performs, which is what makes
- * every rule here testable in plain Node.
+ * This module owns the manifest half: the schema, the types, path safety, the
+ * SHA-256 helper, and parsing/serializing. It deliberately imports no Tauri,
+ * DOM or React code, so every rule here is testable in plain Node. The
+ * operations that touch files (import, verify, open, delete) live in
+ * `project-bundle.ts`.
  *
  * Safety rules encoded below, because they are the ones that cost data:
  *   - a bundle path is always relative, POSIX-separated, and may not climb out
  *     of the project directory (`..`, absolute paths, drive letters);
- *   - deleting a project removes what the manifest lists plus the manifest, and
- *     nothing else;
  *   - a manifest that fails to parse is an error, never an empty project. An
  *     empty project silently "opened" looks like data loss.
  */
@@ -396,49 +385,6 @@ export async function writeManifest(store: BundleStore, manifest: ProjectManifes
 }
 
 /**
- * Copy `bytes` into the bundle at `path` and return the manifest entry.
- *
- * The copy happens before the manifest is updated, and the entry records the
- * hash of the bytes actually written, so a manifest never claims a file that is
- * not on disk. Re-importing the same path replaces the entry (the newest copy
- * wins) rather than leaving two entries for one file.
- */
-export async function importBundleFile(
-  store: BundleStore,
-  manifest: ProjectManifest,
-  options: {
-    path: string;
-    bytes: Uint8Array;
-    now: string;
-    kind?: BundleFileKind;
-    source?: string;
-  },
-): Promise<{ manifest: ProjectManifest; entry: BundleFileEntry }> {
-  const path = assertSafeBundlePath(options.path);
-  if (path === PROJECT_MANIFEST_FILE) {
-    throw new UnsafeBundlePathError(path);
-  }
-  const sha256 = await sha256Hex(options.bytes);
-  await store.write(path, options.bytes);
-  const entry: BundleFileEntry = {
-    path,
-    bytes: options.bytes.byteLength,
-    sha256,
-    kind: options.kind ?? bundleFileKind(path),
-    importedAt: options.now,
-    ...(options.source ? { source: options.source } : {}),
-  };
-  const files = [...manifest.files.filter((file) => file.path !== path), entry];
-  const next: ProjectManifest = {
-    ...manifest,
-    files,
-    updatedAt: options.now,
-    totals: bundleTotals({ files, offlineRegions: manifest.offlineRegions }),
-  };
-  return { manifest: next, entry };
-}
-
-/**
  * Replace the recorded offline regions (see {@link BundleOfflineRegion}) and
  * refresh the size summary.
  */
@@ -453,80 +399,4 @@ export function withOfflineRegions(
     updatedAt: now,
     totals: bundleTotals({ files: manifest.files, offlineRegions: regions }),
   };
-}
-
-/**
- * Check every listed file against the manifest: present, and hashing to the
- * recorded value.
- *
- * A missing file is reported, not thrown: the caller shows the list and offers
- * to find it again (issue #11, point 3). A hash mismatch is reported the same
- * way — it means the file changed outside the app, which is a user-visible
- * fact rather than a crash.
- */
-export async function verifyBundle(
-  store: BundleStore,
-  manifest: ProjectManifest,
-): Promise<BundleVerification> {
-  const missing: BundleFileEntry[] = [];
-  const mismatched: BundleVerification["mismatched"] = [];
-  let ok = 0;
-  for (const entry of manifest.files) {
-    let bytes: Uint8Array;
-    try {
-      bytes = await store.read(entry.path);
-    } catch {
-      missing.push(entry);
-      continue;
-    }
-    const actualSha256 = await sha256Hex(bytes);
-    if (actualSha256 === entry.sha256 && bytes.byteLength === entry.bytes) {
-      ok += 1;
-    } else {
-      mismatched.push({ entry, actualSha256 });
-    }
-  }
-  return { missing, mismatched, ok };
-}
-
-/**
- * Open a bundle: read the manifest, then check its files.
- *
- * Reading the manifest is the only way in. A directory without one is not a
- * bundle, and reporting that is better than opening an empty project that looks
- * like the user's data vanished.
- */
-export async function openBundle(store: BundleStore): Promise<OpenedBundle> {
-  const manifest = await readManifest(store);
-  const verification = await verifyBundle(store, manifest);
-  const status =
-    verification.missing.length === 0 && verification.mismatched.length === 0 ? "ok" : "incomplete";
-  return { manifest, status, verification };
-}
-
-/**
- * Delete a project bundle: every file the store lists, then the directory's
- * contents are gone.
- *
- * The store is scoped to one project directory, so "everything it lists" cannot
- * reach another project or the user's own files. The manifest is included
- * explicitly even if a store implementation somehow omits it from `list()`.
- * Returns the paths removed, so the caller can show what happened.
- */
-export async function deleteBundle(store: BundleStore): Promise<string[]> {
-  const listed = new Set(await store.list());
-  listed.add(PROJECT_MANIFEST_FILE);
-  const removed: string[] = [];
-  for (const path of [...listed].sort()) {
-    if (!isSafeBundlePath(path)) continue;
-    try {
-      await store.remove(path);
-      removed.push(path);
-    } catch (error) {
-      // Keep going: one unremovable file must not leave the rest behind. The
-      // caller compares `removed` with `listed` to report what survived.
-      console.warn(`Could not remove bundled file ${path}`, error);
-    }
-  }
-  return removed;
 }
