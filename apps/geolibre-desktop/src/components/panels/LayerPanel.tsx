@@ -162,6 +162,7 @@ export function LayerPanel({
   );
   const layers = useAppStore((s) => s.layers);
   const layerGroups = useAppStore((s) => s.layerGroups);
+  const projectName = useAppStore((s) => s.projectName);
   // The 3D globe draws a subset of the layer kinds MapLibre does, so rows it
   // cannot render are flagged while it owns the primary map area (#2217).
   // eslint-disable-next-line local/no-renderer-kind-checks -- selects the engine's layer support table
@@ -393,6 +394,22 @@ export function LayerPanel({
     basemapVisible &&
     layers.every((layer) => layer.visible) &&
     layerGroups.every((group) => group.visible);
+  // The panel title carries the project context the map screen shows when it is
+  // sitting still: which project this is and how much of it is drawn. Both
+  // values come from the store, never from a placeholder.
+  const visibleLayerCount = layers.filter((layer) => layer.visible).length;
+  const headerContext =
+    layers.length === 0
+      ? t("layers.headerContextEmpty", {
+          defaultValue: "{{project}} · belum ada lapisan",
+          project: projectName,
+        })
+      : t("layers.headerContext", {
+          defaultValue: "{{project}} · {{visible}} dari {{total}} lapisan terlihat",
+          project: projectName,
+          visible: visibleLayerCount,
+          total: layers.length,
+        });
   const toggleAllLayers = () => {
     const nextVisible = !allLayersVisible;
     for (const layer of layers) {
@@ -514,6 +531,7 @@ export function LayerPanel({
       <div>
         <LayerPanelHeader
           mapControllerRef={mapControllerRef}
+          contextLabel={headerContext}
           selectedPlanet={selectedPlanet}
           togglePlanet={togglePlanet}
           isPluginActive={isPluginActive}

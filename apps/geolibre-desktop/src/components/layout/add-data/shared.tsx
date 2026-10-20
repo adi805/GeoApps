@@ -286,11 +286,20 @@ export function AddDataFooter({
     <>
       {error ? <AddDataError message={error} /> : null}
 
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" onClick={closeDialog} disabled={isSubmitting}>
+      {/* Tombol lebarPenuh: on a phone the primary action spans the sheet and
+          both targets clear 48 px; from `sm` up they sit side by side at the
+          end of the form, which is where the composition puts them on a desk. */}
+      <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+        <Button
+          className="min-h-12 sm:min-h-0"
+          type="button"
+          variant="outline"
+          onClick={closeDialog}
+          disabled={isSubmitting}
+        >
           {t("common.cancel")}
         </Button>
-        <Button type="submit" disabled={submitDisabled}>
+        <Button className="min-h-12 w-full sm:w-auto" type="submit" disabled={submitDisabled}>
           {!isSubmitting ? (
             useServiceIcon ? (
               <Globe2 className="me-2 h-3.5 w-3.5" />
