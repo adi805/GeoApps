@@ -1,0 +1,49 @@
+{
+  "issue": 59,
+  "lane": "uji",
+  "branch": "uji/ratchet-visual",
+  "worktree": "~/GeoApps-uji-ratchet-visual",
+  "commit": "a4e718ad",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "cd ~/GeoApps && gh run view 39407327709 -R adi805/GeoApps --json jobs --jq '.jobs[]|select(.name==\"Lint and type check\")|.conclusion'",
+      "exit": 0,
+      "keluaran": "success",
+      "catatan": "Run CI di head main a4e718ad (merge PR #58). Sebelumnya run 39405070272 di e8355a33 melaporkan 'tests/tsconfig.json: 8 errors in tests/' dengan 'By code: TS2769 7, TS2352 1', persis dua berkas yang diperbaiki."
+    },
+    {
+      "perintah": "cd ~/GeoApps && git show --stat --oneline 79bf3de6 | grep -c 'tests/visual'",
+      "exit": 0,
+      "keluaran": "2",
+      "catatan": "Dua berkas uji visual yang disebut issue ini: tests/visual-primitives.test.ts (7 x TS2769) dan tests/visual-inventaris.test.ts (1 x TS2352)."
+    },
+    {
+      "perintah": "cd ~/GeoApps && grep -n 'typecheck:tests' package.json | grep -c -- '--max-errors 0'",
+      "exit": 0,
+      "keluaran": "1",
+      "catatan": "Ratchet tidak diturunkan: package.json:46 masih --max-errors 0, --max-warnings 242 tidak diubah, tidak ada @ts-expect-error baru, scripts/untested-modules-baseline.json tidak ditambah entri."
+    },
+    {
+      "perintah": "cd ~/GeoApps && gh issue view 59 -R adi805/GeoApps --json comments --jq '.comments[-1].body' | grep -c '39407327709'",
+      "exit": 0,
+      "keluaran": "1",
+      "catatan": "Komentar bukti terpasang di issue #59 dan menyebut run CI yang membuktikannya."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "cd ~/GeoApps && python3 tools/factory/gate_commit_paths.py --lane uji --base 79bf3de6^ --head 79bf3de6",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 2 path, semuanya di cakupan",
+      "catatan": "Commit perbaikan hanya menyentuh tests/**, tidak ada apps/** dan tidak ada baseline."
+    },
+    {
+      "perintah": "cd ~/GeoApps && gh issue view 59 -R adi805/GeoApps --json comments --jq '.comments[-1].body' | grep -c 'Batas yang tidak disentuh'",
+      "exit": 0,
+      "keluaran": "1",
+      "catatan": "Komentar penutup memuat batas yang tidak disentuh dan catatan host (tsc lokal exit 134), bukan cuma klaim hijau."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/59#issuecomment-6288866185"
+}
