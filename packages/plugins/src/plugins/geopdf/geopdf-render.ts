@@ -12,6 +12,10 @@ import * as pdfjs from "pdfjs-dist";
 import type { GeoLibreAppAPI } from "../../types";
 import { firstGeoreferencedPage, parseGeoPdfDocument, type GeoPdfPage } from "./geopdf-parser";
 import {
+  createDefaultGeoPdfTileCacheStore,
+  type GeoPdfTileCacheStore,
+} from "./geopdf-tile-cache";
+import {
   GeoPdfTileRenderer,
   MAX_RENDER_SCALE,
   TILE_SIZE,
@@ -26,6 +30,21 @@ export const GEOPDF_PROTOCOL = "geopdf";
 /** Renderers by content hash, so a saved project can re-register its own. */
 const renderers = new Map<string, GeoPdfTileRenderer>();
 let registered = false;
+
+/**
+ * The persistent tile cache, shared by every tile set in the session.
+ *
+ * Created lazily so importing this module costs nothing: the IndexedDB
+ * connection is only opened when the first tile asks for it. Each renderer
+ * gets a scope bound to its own `fileHash`, so one PDF cannot read or delete
+ * another's tiles.
+ */
+let tileCache: GeoPdfTileCacheStore | null = null;
+
+function sharedTileCache(): GeoPdfTileCacheStore {
+  tileCache ??= createDefaultGeoPdfTileCacheStore();
+  return tileCache;
+}
 
 /** A tile set registered for one PDF. */
 export interface GeoPdfTileSetInfo {
@@ -108,7 +127,7 @@ export async function registerGeoPdfTileSet(
   const hash = expectedHash ?? (await hashPdfBytes(data));
   const existing = renderers.get(hash);
   if (existing) return { hash, page, renderer: existing };
-  const renderer = createRenderer(data, page);
+  const renderer = createRenderer(data, page, hash);
   renderers.set(hash, renderer);
   registerGeoPdfProtocol();
   return { hash, page, renderer };
@@ -140,7 +159,7 @@ export async function addGeoPdfToMap(
   }
   const hash = await hashPdfBytes(data);
   if (!renderers.has(hash)) {
-    renderers.set(hash, createRenderer(data, page));
+    renderers.set(hash, createRenderer(data, page, hash));
   }
   registerGeoPdfProtocol();
 
@@ -177,6 +196,31 @@ export function hasGeoPdfTileSet(hash: string): boolean {
 export function releaseGeoPdfTileSet(hash: string): void {
   renderers.get(hash)?.clear();
   renderers.delete(hash);
+}
+
+/**
+ * Delete every persisted tile of one PDF.
+ *
+ * This is the call a host makes when a project is deleted, so the tiles go with
+ * it. `releaseGeoPdfTileSet` is the narrower one: it drops the renderer and its
+ * two in-memory tiles but keeps the persisted ones, because removing a layer
+ * from the map is not the same as deleting the project.
+ *
+ * @returns How many tiles were removed.
+ */
+export function deleteGeoPdfTileCache(hash: string): Promise<number> {
+  releaseGeoPdfTileSet(hash);
+  return sharedTileCache().deleteProject(hash);
+}
+
+/** Delete every persisted GeoPDF tile, e.g. when the user clears app storage. */
+export function deleteAllGeoPdfTileCaches(): Promise<void> {
+  return sharedTileCache().deleteAll();
+}
+
+/** Stored tile keys, for diagnostics. Excludes the per-project manifests. */
+export function listGeoPdfTileCacheKeys(hash?: string): Promise<string[]> {
+  return sharedTileCache().keys(hash);
 }
 
 function importFailureMessage(status: string, detail: string | null): string {
@@ -217,7 +261,11 @@ async function resolvePage(data: ArrayBuffer): Promise<GeoPdfPage | null> {
   return page && page.affineWgs84 && page.bounds ? page : null;
 }
 
-function createRenderer(data: ArrayBuffer, page: GeoPdfPage): GeoPdfTileRenderer {
+function createRenderer(
+  data: ArrayBuffer,
+  page: GeoPdfPage,
+  hash: string,
+): GeoPdfTileRenderer {
   const affineWgs84 = page.affineWgs84;
   if (!affineWgs84) throw new Error("The GeoPDF page carries no WGS84 georeference.");
   const affine = pageToMercatorAffine(affineWgs84, page.width, page.height);
@@ -234,6 +282,7 @@ function createRenderer(data: ArrayBuffer, page: GeoPdfPage): GeoPdfTileRenderer
       return canvas;
     },
     encode: encodePng,
+    cache: sharedTileCache().scope(hash),
   });
 }
 
