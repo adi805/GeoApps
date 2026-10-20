@@ -7,6 +7,7 @@ import {
   addLidarLayerFromBytes,
   addRasterToMap,
   getGeometryEditTargetLayerId,
+  openMeasurePanel,
   openRasterLayerPanel,
   subscribeGeometryEdit,
 } from "@geolibre/plugins";
@@ -28,7 +29,12 @@ import { CommentMapOverlay } from "../comments/CommentMapOverlay";
 import { useCommentTool } from "../comments/useCommentTool";
 import { AddCommentDialog } from "../comments/AddCommentDialog";
 import { openRightPanel } from "@geolibre/plugins";
-import { getIsMobileViewport } from "../../hooks/useIsMobileViewport";
+import { getIsMobileViewport, useIsMobileViewport } from "../../hooks/useIsMobileViewport";
+import { useHighContrast } from "../../hooks/useHighContrast";
+import { useDesktopSettingsStore } from "../../hooks/useDesktopSettings";
+import { MobileShell } from "./mobile/MobileShell";
+import type { MobileTab } from "./mobile/MobileTabBar";
+import { openFieldTool, openNewProjectDialog } from "./field-tool-events";
 import { useProjectFileActions } from "../../hooks/useProjectFileActions";
 import { useProjectHistory } from "../../hooks/useProjectHistory";
 import { useScreenshotReadiness } from "../../hooks/useScreenshotReadiness";
@@ -281,6 +287,49 @@ export function DesktopShell({
   const projectFilesRef = useRef(projectFiles);
   projectFilesRef.current = projectFiles;
   useNativeProjectOpenListener(projectFilesRef);
+  // ---- Phone-width chrome --------------------------------------------------
+  // Same breakpoint the side panels already switch on. On a desktop viewport
+  // `MobileShell` renders nothing but its children, so this costs one
+  // matchMedia listener and no layout change.
+  const isMobileViewport = useIsMobileViewport();
+  const [mobileTab, setMobileTab] = useState<MobileTab>("map");
+  const [mobileStatusVisible, setMobileStatusVisible] = useState(true);
+  const { highContrast, setHighContrast } = useHighContrast();
+  const setDesktopSettings = useDesktopSettingsStore((s) => s.setDesktopSettings);
+
+  // The mobile tab bar replaces the toolbar's menus, so each destination either
+  // opens a sheet here or asks the surface the toolbar would have opened. No
+  // data logic lives in this handler: every branch calls an existing owner.
+  const handleMobileTab = useCallback(
+    (tab: MobileTab) => {
+      if (tab === "layers") {
+        // Same persisted setting the toolbar's Layers toggle flips, so the
+        // phone and the desktop cannot disagree about whether it is open.
+        const settings = useDesktopSettingsStore.getState().desktopSettings;
+        setDesktopSettings({
+          ...settings,
+          layout: { ...settings.layout, layerPanelVisible: !settings.layout.layerPanelVisible },
+        });
+        setMobileTab("map");
+        return;
+      }
+      if (tab === "measure") {
+        openMeasurePanel(createAppAPI(mapControllerRef));
+        setMobileTab("map");
+        return;
+      }
+      if (tab === "track") {
+        // The GPS dialog's open state stays in `useToolbarDialogs`; this asks
+        // it over the same event the field actions use.
+        openFieldTool("gpsTracking");
+        setMobileTab("map");
+        return;
+      }
+      setMobileTab(tab);
+    },
+    [setDesktopSettings],
+  );
+
   const notebookOpen = useAppStore((s) => s.ui.notebookOpen);
   const storymapPresenting = useAppStore((s) => s.ui.storymapPresenting);
   // A plugin panel docks at one of four positions beside the Layers/Style
@@ -324,6 +373,21 @@ export function DesktopShell({
   );
   const [mapReadyGeneration, setMapReadyGeneration] = useState(0);
   const { clearDropMessageLater, setCrsWarning, setDropError, setDropMessage } = useDropStatus();
+
+  // The phone's import action lands here. A GeoPDF goes through
+  // `addRasterToMap`, which already renders it to a PNG and reads its
+  // georeferencing; TIFF/PNG/JPEG take the normal raster path. Neither is
+  // re-implemented for the mobile shell.
+  const handleMobileImportFile = useCallback(
+    async (file: File) => {
+      try {
+        await addRasterToMap(createAppAPI(mapControllerRef), file, { name: file.name });
+      } catch (error) {
+        setDropError(error instanceof Error ? error.message : t("browser.addFileFailed"));
+      }
+    },
+    [setDropError, t],
+  );
   useUrlLoadErrorNotices(projectUrlLoadState?.error, dataUrlLoadState?.error);
   const mapAreaRef = useRef<HTMLElement>(null);
   useWebglContextLossNotice(mapAreaRef);
@@ -582,6 +646,28 @@ export function DesktopShell({
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
+      <MobileShell
+        mobile={isMobileViewport}
+        activeTab={mobileTab}
+        onSelectTab={handleMobileTab}
+        statusStripVisible={mobileStatusVisible}
+        onStatusStripVisibleChange={setMobileStatusVisible}
+        highContrast={highContrast}
+        onHighContrastChange={setHighContrast}
+        onDropPoint={() => openFieldTool("fieldCollection")}
+        // The photo control lives in the Field Collection dialog, so this opens
+        // the same surface at the same place rather than a second one.
+        onTakePhoto={() => openFieldTool("fieldCollection")}
+        onStartTrack={() => openFieldTool("gpsTracking")}
+        onSaveProject={projectFiles.handleSave}
+        onOpenProject={() => void projectFiles.handleOpenFromFile()}
+        onNewProject={openNewProjectDialog}
+        onImportFile={(file) => void handleMobileImportFile(file)}
+      >
+      {/* Kept mounted on a phone (so the dialogs it owns keep working) but out
+          of the layout: `display: contents` on desktop leaves the toolbar
+          exactly where it was. */}
+      <div className={isMobileViewport ? "hidden" : "contents"} data-mobile-toolbar-host="">
       {layoutOptions.toolbarVisible ? (
         <SectionErrorBoundary label="Toolbar" displayName={t("shell.section.toolbar")}>
           <TopToolbar
@@ -607,6 +693,7 @@ export function DesktopShell({
           />
         </SectionErrorBoundary>
       ) : null}
+      </div>
       <div data-workspace-row="" className="relative flex min-h-0 flex-1 flex-col md:flex-row">
         <RightDockPortals
           activePanelId={activePanelId}
@@ -1111,6 +1198,7 @@ export function DesktopShell({
           </SectionErrorBoundary>
         ) : null}
       </div>
+      </MobileShell>
       {layoutOptions.attributePanelVisible ? (
         <SectionErrorBoundary
           label="Attribute table"
@@ -1163,6 +1251,10 @@ export function DesktopShell({
           </Suspense>
         </SectionErrorBoundary>
       ) : null}
+      {/* The field status strip takes this row's place on a phone; the desktop
+          status bar is hidden there rather than unmounted, so its diagnostics
+          button and autosave state stay reachable from the dialogs. */}
+      <div className={isMobileViewport ? "hidden" : "contents"} data-mobile-status-host="">
       {layoutOptions.statusBarVisible ? (
         <SectionErrorBoundary label="Status bar" displayName={t("shell.section.statusBar")}>
           <StatusBar
@@ -1175,6 +1267,7 @@ export function DesktopShell({
           />
         </SectionErrorBoundary>
       ) : null}
+      </div>
       <DiagnosticsDialog
         diagnostics={diagnostics}
         open={diagnosticsOpen}

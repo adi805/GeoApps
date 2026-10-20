@@ -387,6 +387,27 @@ def pr_penanda_tanpa_issue(tmp):
     )
     return jln(["tools/factory/gate_pr_link.py", "--body", os.path.join(tmp, "body.md")])
 
+def pr_penanda_tanpa_issue_bebas_commit(tmp):
+    # Dependabot tidak pernah menulis nomor issue di judul commitnya, dan menyunting judul commit
+    # orang lain bukan pilihan yang wajar. `Tanpa issue:` adalah pernyataan eksplisit bahwa unit
+    # kerja ini tidak bertanggungan pada issue, jadi pemeriksaan per-commit tidak boleh
+    # memaksakan yang sudah dinyatakan tidak ada (#u-HQ-deca89).
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Bump lodash dari 4.17.20 ke 4.17.21.\nTanpa issue: pembaruan dependensi otomatis.\n")
+    tulis(commits, "Bump lodash from 4.17.20 to 4.17.21\n")
+    return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
+
+def pr_penanda_refs_tetap_cek_commit(tmp):
+    # Batas jalur di atas: `Refs #42` MENGAKU ada unit kerja yang dirujuk, jadi tiap commit tetap
+    # wajib menyebut nomornya. Kalau penanda ini ikut membebaskan judul commit, rujukan jadi cara
+    # lolos tanpa jejak, dan gate kehilangan satu-satunya pemeriksaan per-commit yang tersisa.
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Sebagian kerja. Refs #42\n")
+    tulis(commits, "perbaikan tanpa nomor\n")
+    return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
+
 def pr_penanda_refs(tmp):
     # Rujukan non-penutup: PR menyebut issue tanpa menutupnya. `Refs` secara bahasa berarti menyebut,
     # jadi ini pernyataan yang eksplisit, bukan kegagalan senyap yang jadi alasan gate ini ada.
@@ -846,6 +867,8 @@ KASUS = [
     ("gate_pr_link", "positif: sebutan tutup buku bukan klaim penutup", True, pr_tutup_buku_bukan_klaim),
     ("gate_pr_link", "positif: kutipan di dalam backtick bukan klaim", True, pr_kutipan_bukan_klaim),
     ("gate_pr_link", "positif: PR jejak berpenanda `Tanpa issue:`", True, pr_penanda_tanpa_issue),
+    ("gate_pr_link", "positif: `Tanpa issue:` membebaskan judul commit tanpa nomor", True, pr_penanda_tanpa_issue_bebas_commit),
+    ("gate_pr_link", "negatif: `Refs #N` tetap mewajibkan nomor di judul commit", False, pr_penanda_refs_tetap_cek_commit),
     ("gate_pr_link", "positif: rujukan non-penutup `Refs #42`", True, pr_penanda_refs),
     ("gate_pr_link", "negatif: penanda `Tanpa issue:` tanpa alasan", False, pr_penanda_tanpa_alasan),
     ("gate_pr_link", "negatif: penanda cuma dikutip di dalam backtick", False, pr_penanda_dalam_backtick),
