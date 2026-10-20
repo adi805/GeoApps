@@ -1,0 +1,61 @@
+{
+ "issue": 45,
+ "lane": "HQ",
+ "branch": "hq/cakupan-pohon",
+ "worktree": "~/GeoApps-hq-cakupan-pohon",
+ "commit": "14775dff",
+ "status_short": [],
+ "kriteria": [
+  {
+   "perintah": "python3 tools/factory/gate_commit_paths.py --lane HQ --paths /tmp/p-hq45.txt",
+   "exit": 0,
+   "keluaran": "LULUS  lane HQ: 2 path, semuanya di cakupan"
+  },
+  {
+   "perintah": "python3 tools/factory/sync_law.py --check",
+   "exit": 0,
+   "keluaran": "LULUS  blok hasil generate di factory/LAW.md sama dengan factory/lanes.json"
+  },
+  {
+   "perintah": "python3 tools/factory/gate_law_fresh.py",
+   "exit": 0,
+   "keluaran": "LULUS  factory/LAW.md masih sama dengan baseline yang disahkan"
+  },
+  {
+   "perintah": "python3 tools/factory/cek_lane.py",
+   "exit": 0,
+   "keluaran": "9 dari 9 lane terikat: HQ, android, geo-pdf, geofence, offline, ui, gh-ops, uji, visual"
+  },
+  {
+   "perintah": "git status --short",
+   "exit": 0,
+   "keluaran": "BERSIH (0 baris)"
+  }
+ ],
+ "checker": [
+  {
+   "perintah": "python3 /tmp/cakupan.py (glob lane + eskalasi terhadap git ls-tree origin/main)",
+   "exit": 0,
+   "keluaran": "sebelum: 1649/3392 tanpa pemilik (48,6%); sesudah: 1436/3392 (42,3%)"
+  },
+  {
+   "perintah": "python3 tools/factory/gate_law_fresh.py",
+   "exit": 0,
+   "keluaran": "LULUS  factory/LAW.md masih sama dengan baseline yang disahkan"
+  },
+  {
+   "perintah": "python3 tools/factory/gate_commit_paths.py --lane HQ --paths <git diff --name-only>",
+   "exit": 0,
+   "keluaran": "LULUS  lane HQ: 1 path, semuanya di cakupan (factory/lanes.json)"
+  }
+ ],
+ "catatan": [
+  "KOREKSI atas isi usulan u-HQ-142547: .github/workflows (26 berkas) BUKAN tak bertuan. eskalasi.glob_agen sudah memuat .github/workflows/**, jadi berkas itu punya rumah (eskalasi agent). Angka sebenarnya 1649, bukan 1693, dan path .github/workflows tidak masuk hitungan tanpa pemilik.",
+  "Bagian ketiga keputusan (ci.yml masuk lane uji) TIDAK dikerjakan karena nol efek, sudah dibuktikan: dengan .github/workflows/ci.yml ditambahkan ke glob lane uji, gate_commit_paths tetap menolak dengan 'path eskalasi tingkat agent (pola .github/workflows/**)'. gate_commit_paths.py baris 134-137 memeriksa eskalasi lebih dulu, jadi path eskalasi tidak pernah sampai ke pemeriksaan cakupan lane. Menulis entri itu akan jadi entri mati yang menyesatkan.",
+  "Glob packages/plugins/src/plugins/*.ts hanya cocok satu segmen, jadi TIDAK menyerap subdirektori seperti plugins/geopdf/** yang sudah punya pemilik. Diukur: dari 208 berkas .ts top-level, 5 jadi dobel milik, yaitu 3 berkas geofence (gps-averaging.ts, maplibre-geofence.ts, utm-converter.ts) dan 2 berkas ujinya. Tumpang tindih ini disengaja: lane uji satuan mengikuti modulnya, dan gate memakai 'cocok salah satu'.",
+  "Masih 1436 berkas tanpa pemilik, terbanyak apps/geolibre-desktop/src (517), packages/map/src (144), packages/core/src (85), packages/processing/src (44), backend/** (81 gabungan), python/src/geolibre (22). Unit ini sengaja berhenti di path yang menahan PR Dependabot; sisa cakupan butuh keputusan terpisah karena berarti lane baru (map/core/backend) atau perluasan besar ke lane ui.",
+  "Penambahan Cargo.toml dan Cargo.lock ke lane android TIDAK melemahkan eskalasi owner: tauri.*.conf.json dan packaging/** tetap di eskalasi.glob, dan gate memeriksa eskalasi lebih dulu.",
+  "versi lanes.json naik 3 -> 4. sync_law --check hijau, jadi tabel lane dan daftar path eskalasi di LAW.md tidak perlu disunting tangan."
+ ],
+ "komentar_issue": "https://github.com/adi805/GeoApps/issues/45#issuecomment-6288344497"
+}
