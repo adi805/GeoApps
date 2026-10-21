@@ -1,0 +1,79 @@
+{
+  "issue": 119,
+  "lane": "visual",
+  "branch": "visual/lapangan-119",
+  "worktree": "~/GeoApps-visual-lapangan-119",
+  "commit": "033e7497",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. Sembilan komposisi jalur lapangan pindah ke bahasa #102 dan inventarisnya tetap utuh",
+      "status": "selesai",
+      "perintah": "node apps/geolibre-desktop/src/visual/cek-inventaris.mjs",
+      "exit": 0,
+      "keluaran": "komposisi: 33 / keadaan diperiksa: 165 / pasangan kontras diperiksa: 42 / pemeriksaan lulus: 383 / OK",
+      "catatan": "Angka 383 lebih tinggi dari 374 di PR #120 karena tiga berkas daun baru ikut diperiksa primitif dan larangan warna mentahnya. Sembilan id lapangan (rekam-jejak, mulai-jeda-hentikan, ringkasan-jejak, titik-baru, lampirkan-foto, ukur-jarak, ukur-luas, baca-koordinat, salin-koordinat) semuanya lolos kontrak berkas dan komponen."
+    },
+    {
+      "kriteria": "2. Delapan belas tangkapan layar lapangan ditulis ulang di 360 dan 412",
+      "status": "selesai",
+      "perintah": "ls factory/bahan/visual | grep -cE '^(rekam-jejak|mulai-jeda-hentikan|ringkasan-jejak|titik-baru|lampirkan-foto|ukur-jarak|ukur-luas|baca-koordinat|salin-koordinat)-(360|412)\\.png$'",
+      "exit": 0,
+      "keluaran": "18",
+      "catatan": "Tiap PNG diperiksa satu per satu dengan vision: tidak ada teks terpotong, tidak ada elemen menumpuk, dan tidak ada penanda peta yang tertutup label skala."
+    },
+    {
+      "kriteria": "3. Pita permukaan kosong di bawah layar turun, diukur per PNG",
+      "status": "selesai",
+      "perintah": "python3 /tmp/ukur-ekor.py factory/bahan/visual",
+      "exit": 0,
+      "keluaran": "412 sebelum -> sesudah: mulai-jeda-hentikan 32,2% -> 3,9%; rekam-jejak 28,4% -> 3,9%; ukur-luas 28,4% -> 3,9%; salin-koordinat 25,2% -> 8,1%; lampirkan-foto 18,8% -> 9,4%; titik-baru 17,2% -> 3,5%; ukur-jarak 16,3% -> 3,9%; ringkasan-jejak 14,0% -> 14,0%; baca-koordinat 6,8% -> 6,8%",
+      "catatan": "Yang diukur adalah rentetan seragam terpanjang dari warna permukaan dominan di 75% bawah layar, dihitung numpy, bukan penilaian model vision. Dua baris terakhir tidak turun karena isinya memang sudah mengisi layar."
+    },
+    {
+      "kriteria": "4. Pemecahan lapangan-ukur tidak mengubah satu bita pun yang terlihat",
+      "status": "selesai",
+      "perintah": "for id in ukur-jarak ukur-luas baca-koordinat salin-koordinat; do TEMBAK_HANYA=$id node apps/geolibre-desktop/src/visual/tangkap-layar.mjs; done && git status --short factory/bahan/visual | wc -l",
+      "exit": 0,
+      "keluaran": "tangkapan layar: 2/2 berkas di factory/bahan/visual, empat kali, semuanya exit 0; lalu git status pada factory/bahan/visual menghasilkan 0",
+      "catatan": "Nol berkas berubah setelah delapan PNG dirender ulang dari kode hasil pemecahan. Ini bukti mekanis bahwa refactor hanya memindahkan kode, bukan mengubah render, jadi tangkapan layar yang sudah diperiksa tetap sah."
+    },
+    {
+      "kriteria": "5. Tidak ada berkas jalur lain yang tersentuh",
+      "status": "selesai",
+      "perintah": "git diff --name-only origin/main -- apps/geolibre-desktop/src/visual/screens/geofence.tsx apps/geolibre-desktop/src/visual/screens/offline.tsx apps/geolibre-desktop/src/visual/screens/sistem.tsx apps/geolibre-desktop/src/visual/screens/peta.tsx apps/geolibre-desktop/src/visual/screens/beranda.tsx apps/geolibre-desktop/src/App.tsx apps/geolibre-desktop/src/components apps/geolibre-desktop/src/hooks apps/geolibre-desktop/src/visual/inventaris.ts | wc -l",
+      "exit": 0,
+      "keluaran": "0",
+      "catatan": "Issue meminta jalur geofence, offline, dan sistem tidak ditulis di PR ini. Ketiga berkas itu nol perubahan, begitu juga peta, beranda, App.tsx, components, hooks, dan inventaris.ts."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "NODE_OPTIONS=--max-old-space-size=2048 ../../node_modules/.bin/tsc -p /tmp/tsconfig.visual-lapangan.json (cwd apps/geolibre-desktop)",
+      "exit": 0,
+      "keluaran": "BERSIH, tanpa keluaran"
+    },
+    {
+      "perintah": "./node_modules/.bin/eslint apps/geolibre-desktop/src/visual/primitives.tsx apps/geolibre-desktop/src/visual/screens/lapangan-rekam.tsx apps/geolibre-desktop/src/visual/screens/lapangan-titik.tsx apps/geolibre-desktop/src/visual/screens/lapangan-ukur.tsx",
+      "exit": 0,
+      "keluaran": "BERSIH, tanpa keluaran, ESLINT_EXIT:0",
+      "catatan": "Dijalankan sebagai tugas latar karena direktori visual penuh melewati batas waktu 420 detik di host ini (bukan OOM: run yang sama selesai 10 menit saat dijalankan terpisah). Yang dicatat di sini adalah run pertama atas empat berkas sebelum pemecahan; run kedua atas tujuh berkas sesudah pemecahan dilaporkan terpisah."
+    },
+    {
+      "perintah": "node scripts/gen-demo-gallery.mjs --check",
+      "exit": 0,
+      "keluaran": "BERSIH, tanpa keluaran"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane visual --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS lane visual: 25 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr124.md --commits /tmp/pr124-commits.txt",
+      "exit": 0,
+      "keluaran": "LULUS tidak menutup issue (penanda non-penutup: rujukan non-penutup #119), 3 commit semuanya menyebut issue"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/119#issuecomment-6318409146"
+}
