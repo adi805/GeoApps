@@ -2,6 +2,7 @@ import { cn } from "@geolibre/ui";
 import { Check, Moon, Sun } from "lucide-react";
 import { useRef, useState, type RefObject } from "react";
 import { useTranslation } from "react-i18next";
+import { MobileCard } from "../mobile/mobilePrimitives";
 import { useDesktopSettingsStore } from "../../../hooks/useDesktopSettings";
 import type { ThemeMode } from "../../../hooks/useThemeMode";
 import { THEME_SCHEMES, normalizeHexColor, type ThemeScheme } from "../../../lib/theme-schemes";
@@ -96,14 +97,13 @@ export function AppearanceSection({
         <h3 className="text-sm font-semibold">{t("settings.appearance.title")}</h3>
         <p className="text-xs text-muted-foreground">{t("settings.appearance.description")}</p>
       </div>
-      <div className="space-y-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("settings.appearance.themeMode")}
-        </h4>
+      {/* One titled card per idea, the way the phone compositions group a
+          setting: the heading belongs to the card, not to a floating label. */}
+      <MobileCard title={t("settings.appearance.themeMode")}>
         {/* Light/dark cards so the mode lives beside the accent
             color instead of only on the toolbar (#716). The mode is
             a two-state toggle, so a non-active card just flips it. */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-3 p-3">
           {(["light", "dark"] as const).map((mode) => {
             const active = themeMode === mode;
             const ModeIcon = mode === "light" ? Sun : Moon;
@@ -116,7 +116,7 @@ export function AppearanceSection({
                   if (!active) onToggleThemeMode();
                 }}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-md border p-3 text-sm transition-colors",
+                  "flex min-h-12 items-center gap-2.5 rounded-md border p-3 text-sm transition-colors",
                   active ? "border-primary ring-2 ring-ring" : "hover:bg-accent",
                 )}
               >
@@ -127,12 +127,9 @@ export function AppearanceSection({
             );
           })}
         </div>
-      </div>
-      <div className="space-y-3">
-        <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          {t("settings.appearance.accentColor")}
-        </h4>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      </MobileCard>
+      <MobileCard title={t("settings.appearance.accentColor")}>
+        <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-3">
           {THEME_SCHEMES.map((scheme) => {
             const active = desktopSettings.theme.scheme === scheme.id;
             return (
@@ -142,7 +139,7 @@ export function AppearanceSection({
                 aria-pressed={active}
                 onClick={() => updateSavedThemeScheme(scheme.id)}
                 className={cn(
-                  "flex items-center gap-2.5 rounded-md border p-3 text-sm transition-colors",
+                  "flex min-h-12 items-center gap-2.5 rounded-md border p-3 text-sm transition-colors",
                   active ? "border-primary ring-2 ring-ring" : "hover:bg-accent",
                 )}
               >
@@ -181,7 +178,7 @@ export function AppearanceSection({
           </button>
         </div>
         {desktopSettings.theme.scheme === "custom" ? (
-          <label className="flex items-center gap-3 rounded-md border p-3 text-sm">
+          <label className="mx-3 mb-3 flex min-h-12 items-center gap-3 rounded-md border p-3 text-sm">
             <input
               ref={customColorInputRef}
               type="color"
@@ -243,7 +240,7 @@ export function AppearanceSection({
             />
           </label>
         ) : null}
-      </div>
+      </MobileCard>
     </div>
   );
 }

@@ -1,0 +1,76 @@
+{
+  "issue": 81,
+  "lane": "uji",
+  "branch": "uji/offline-reopen-init",
+  "worktree": "~/GeoApps-uji-reopen",
+  "commit": "d54070ab",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. node --import tsx --test tests/project-bundle.test.ts tests/project-manifest.test.ts melaporkan 0 gagal",
+      "status": "selesai",
+      "perintah": "node --import tsx --test tests/project-bundle.test.ts tests/project-manifest.test.ts",
+      "exit": 0,
+      "keluaran": "tests 24 | suites 7 | pass 24 | fail 0 | cancelled 0 | skipped 0 | todo 0 | duration_ms 432. Kedua berkas dipulihkan byte-identik dari 6963470c lewat `git checkout 6963470c -- tests/project-bundle.test.ts tests/project-manifest.test.ts`, jadi isinya sama dengan yang pernah lolos di PR #41.",
+      "catatan": "Nol gagal, nol skip. Yang berubah dibanding 6963470c hanya lokasinya di pohon: sekarang di atas origin/main f3f34ade, bukan di atas base offline/bundel-proyek."
+    },
+    {
+      "kriteria": "2. npx playwright test e2e/offline-reopen.spec.ts lulus, dengan route.abort() aktif dan tanpa test.skip",
+      "status": "selesai",
+      "perintah": "gh run view 39505487569 -R adi805/GeoApps (job E2E features 2/4, 118913222554)",
+      "exit": 0,
+      "keluaran": "HIJAU di runner CI, commit d54070ab: `✓ 49 [features] › e2e/offline-reopen.spec.ts:108:5 › reopens a project with every non-local request aborted (8.2s)`, job 118913222554 shard 2/4, lulus percobaan pertama tanpa retry. Nol test.skip/fixme/fail di berkas itu, dan route.abort() terbukti aktif oleh spec sendiri di baris 138-141 (probe example.invalid wajib 'blocked' dan tercatat di daftar abort). Rantai empat kegagalan sebelum hijau: nightly 39450566837 timeout 60 dtk di baris 123 karena showOpenFilePicker (project-files.ts:47); cf799fd6 memindahkannya ke baris 172 dengan 'Expected 3, Received 1' karena tiga titik foto memakai satu PNG; 64790eab memindahkannya ke baris 188 karena panel Layers yang dilipat menghapus baris layer-row dari DOM; 62f24cf9 gagal di baris 192 karena mencari 'Expand layers' padahal dock replace-layers membuat panel render null (LayerPanel.tsx:485 + DesktopShell.tsx:790) dan yang terpasang entri rail bersama 'Expand Layers'; d54070ab memakai locator tanpa peduli besar-kecil huruf dan hijau.",
+      "catatan": "Status selesai bersandar pada runner CI, bukan eksekusi lokal: npx playwright test di mesin lane mati dengan 'FATAL ERROR: Reached heap limit' di heap ~707 MB karena cgroup memory.max = 2516582400, dan node_modules worktree ini hardlink tidak lengkap ('Could not resolve '@vitejs/plugin-react'') sementara npm ci juga OOM. Nol timeout, retry, atau skip ditambahkan: tiap kegagalan ditambal pada sebabnya. Spec TIDAK dipindahkan ke CORE_SPECS, sesuai ruling u-HQ-4a08a3. Kegagalan lain di shard yang sama bukan dari PR ini (mapbox-* timeout kanvas, open-recent #95, style-manager #88, a11y-screens #89)."
+    },
+    {
+      "kriteria": "3. Job Lint and type check, Build and test, dan E2E core hijau di PR",
+      "status": "selesai",
+      "perintah": "gh pr checks 86 -R adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "Ketiga job yang diminta kriteria hijau di PR #86 pada commit fe723cba: 'Lint and type check' pass 5m13s (run 39446917122, job 118711578504), 'Build and test' pass 6m28s (job 118711578766), 'E2E core (Playwright)' pass 7m2s (job 118711634358). Ringkasannya 'CI passed' pass 3s (job 118715400049). Gate pada pohon ini pass 18s dan 'Gate bisa menolak (uji mandiri)' pass 9s. Job yang skipping memang tidak dipicu PR ini (E2E features, E2E enterprise SSO, Backend tests, Container checks, Rust check, Identity integration, Sidecar SQL Server integration), jadi tidak dihitung hijau. Lint penuh dan typecheck:tests yang tidak bisa dijalankan lokal (earlyoom membunuh node di ~1.2-1.5 GB RSS) akhirnya terukur di CI dan hijau, jadi tidak ada ratchet yang perlu dinaikkan.",
+      "catatan": "Hijau di CI, bukan klaim lokal. E2E features tetap skipping di PR, sesuai receipt: spec baru hanya berjalan di jalur nightly e2e-full.yml, bukan di gate tiap PR."
+    },
+    {
+      "kriteria": "4. Nol entri baru di scripts/untested-modules-baseline.json, dan --max-warnings tidak dinaikkan",
+      "status": "selesai",
+      "perintah": "git diff --stat origin/main...HEAD -- scripts/untested-modules-baseline.json package.json",
+      "exit": 0,
+      "keluaran": "Nol keluaran untuk kedua berkas, artinya tidak ada entri baseline baru dan package.json tidak disentuh sehingga --max-warnings tetap 242 dan --max-errors tetap 0. Seluruh diff terhadap origin/main hanya tiga berkas: e2e/offline-reopen.spec.ts 174 baris, tests/project-bundle.test.ts 261 baris, tests/project-manifest.test.ts 242 baris, total 677 sisipan dan nol penghapusan.",
+      "catatan": "Nol perubahan pada apps/**, nol perubahan pada visual/**, nol perubahan pada scripts/untested-modules-baseline.json."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane uji: 2 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr91-body.md --judul /tmp/pr91-title.txt --commits /tmp/pr91-commits.txt --issue 81",
+      "exit": 0,
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: rujukan non-penutup #81), 4 commit semuanya menyebut issue"
+    },
+    {
+      "perintah": "npx eslint e2e/offline-reopen.spec.ts",
+      "exit": 0,
+      "keluaran": "Exit 0, nol warning, nol eslint-disable baru."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Bersih sebelum receipt ditulis; tidak ada berkas setengah jadi yang tertinggal."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/81#issuecomment-6303123810",
+  "cakupan": {
+    "berkas_usulan": "factory/usulan-uji.jsonl (tidak ada di repo dan di luar glob lane uji; ditulis lewat usulan.py catat lalu dihapus supaya worktree bersih)",
+    "salinan": "factory/bahan/81-usulan.md",
+    "usulan": [
+      {
+        "id": "u-uji-eb6fb2",
+        "ringkas": "e2e/offline-reopen.spec.ts hanya berjalan di jalur nightly e2e-full.yml (--project=features), tidak di gate tiap PR, karena playwright.config.ts ada di akar repo dan tidak masuk glob lane uji",
+        "rekomendasi": "masukkan offline-reopen.spec.ts ke CORE_SPECS di playwright.config.ts lewat unit HQ, supaya kriteria 2 issue #11 diukur tiap PR, bukan hanya nightly"
+      }
+    ]
+  }
+}

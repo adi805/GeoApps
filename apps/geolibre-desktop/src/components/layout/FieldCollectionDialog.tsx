@@ -1,5 +1,6 @@
 import { readControlPreference, writeControlPreference } from "../../lib/control-preferences";
 import { MOBILE_DIALOG_SURFACE } from "./mobile/mobile-dialog-surface";
+import { MobileCard, MobileFieldRow } from "./mobile/mobilePrimitives";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
@@ -100,10 +101,6 @@ interface DraftField {
 
 function newDraftField(id: number): DraftField {
   return { id, label: "", type: "text", required: false, optionsText: "" };
-}
-
-function formatLatLng(lng: number, lat: number): string {
-  return `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 }
 
 /**
@@ -1300,7 +1297,7 @@ function SetupStep({
         ))}
       </div>
 
-      <Button className="w-full" onClick={onCreate}>
+      <Button className="min-h-12 w-full" onClick={onCreate}>
         <MapPin className="me-2 h-4 w-4" />
         {t("fieldCollection.createLayer")}
       </Button>
@@ -1368,13 +1365,13 @@ function CaptureStep({
         pending ? (
           // A point is already captured, so GPS would silently discard the
           // current selection; offer only an explicit reposition (#711).
-          <Button variant="outline" className="w-full" onClick={onPickOnMap}>
+          <Button variant="outline" className="min-h-12 w-full" onClick={onPickOnMap}>
             <Crosshair className="me-2 h-4 w-4" />
             {t("fieldCollection.reposition")}
           </Button>
         ) : (
           <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" onClick={onUseGps} disabled={locating}>
+            <Button variant="outline" className="min-h-12" onClick={onUseGps} disabled={locating}>
               {locating ? (
                 <Loader2 className="me-2 h-4 w-4 animate-spin" />
               ) : (
@@ -1382,14 +1379,14 @@ function CaptureStep({
               )}
               {locating ? t("fieldCollection.locating") : t("fieldCollection.useGps")}
             </Button>
-            <Button variant="outline" onClick={onPickOnMap}>
+            <Button variant="outline" className="min-h-12" onClick={onPickOnMap}>
               <Crosshair className="me-2 h-4 w-4" />
               {t("fieldCollection.pickOnMap")}
             </Button>
           </div>
         )
       ) : (
-        <Button variant="outline" className="w-full" onClick={onStartDrawing}>
+        <Button variant="outline" className="min-h-12 w-full" onClick={onStartDrawing}>
           <Pencil className="me-2 h-4 w-4" />
           {t("fieldCollection.drawOnMap")}
         </Button>
@@ -1403,14 +1400,45 @@ function CaptureStep({
         </p>
       ) : (
         <>
-          <div className="flex items-center gap-2 rounded-md bg-muted p-2 text-sm">
-            <MapPin className="h-4 w-4 shrink-0 text-primary" />
-            <span className="tabular-nums">
-              {isPoint
-                ? formatLatLng(pending[0][0], pending[0][1])
-                : t("fieldCollection.vertices", { count: pending.length })}
-            </span>
-          </div>
+          <MobileCard title={t("fieldCollection.positionCard", "Posisi")}>
+            {isPoint ? (
+              <>
+                <MobileFieldRow
+                  label={t("fieldCollection.latitude", "Lintang")}
+                  value={pending[0][1].toFixed(6)}
+                  mono
+                />
+                <MobileFieldRow
+                  label={t("fieldCollection.longitude", "Bujur")}
+                  value={pending[0][0].toFixed(6)}
+                  mono
+                  className="border-t"
+                />
+                {/* `gpsFix` is cleared when the point is picked on the map, so a
+                    non-null fix means this coordinate really came from the
+                    device. The row reports that rather than guessing a source. */}
+                <MobileFieldRow
+                  label={t("fieldCollection.source", "Sumber")}
+                  value={
+                    gpsFix
+                      ? t("fieldCollection.sourceGps", "GPS perangkat")
+                      : t("fieldCollection.sourceMap", "Peta")
+                  }
+                  unit={
+                    gpsFix && Number.isFinite(gpsFix.accuracy)
+                      ? `± ${formatAccuracy(gpsFix.accuracy, t("gps.notAvailable"))}`
+                      : undefined
+                  }
+                  className="border-t"
+                />
+              </>
+            ) : (
+              <MobileFieldRow
+                label={t("fieldCollection.verticesLabel", "Titik sudut")}
+                value={pending.length}
+              />
+            )}
+          </MobileCard>
 
           {schema.fields.map((field) => {
             const config = getAttributeFormField(attributeForm, field.key);
@@ -1499,13 +1527,14 @@ function CaptureStep({
           {/* Save sits above the optional photo so the primary action is
               reachable without scrolling past the upload, and the photo reads
               as the optional extra it is (#711). */}
-          <Button className="w-full" onClick={onSave} disabled={readingPhotos}>
+          <Button className="min-h-12 w-full" onClick={onSave} disabled={readingPhotos}>
             <Save className="me-2 h-4 w-4" />
             {t(`fieldCollection.save.${geometry}`)}
           </Button>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="fc-photo">{t("fieldCollection.photoOptional")}</Label>
+          <MobileCard title={t("fieldCollection.photoCard", "Foto terlampir")}>
+            <div className="space-y-1.5 p-2">
+            <Label htmlFor="fc-photo" className="text-xs text-muted-foreground">{t("fieldCollection.photoOptional")}</Label>
             {photos.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {photos.map((photo, index) => (
@@ -1543,13 +1572,14 @@ function CaptureStep({
             <Button
               type="button"
               variant="outline"
-              className="w-full"
+              className="min-h-12 w-full"
               onClick={() => photoInputRef.current?.click()}
             >
               <ImagePlus className="me-2 h-4 w-4" />
               {t("fieldCollection.choosePhoto")}
             </Button>
-          </div>
+            </div>
+          </MobileCard>
         </>
       )}
     </div>

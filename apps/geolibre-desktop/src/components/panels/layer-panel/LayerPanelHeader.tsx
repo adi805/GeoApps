@@ -30,8 +30,18 @@ import { useCompactLayerList } from "./useCompactLayerList";
 
 type PluginRegistry = ReturnType<typeof usePluginRegistry>;
 
+/**
+ * Panel toolbar targets. 48 px on phones, where the panel is a full-width
+ * overlay driven by a thumb, and the compact 28 px square from `md` up, where
+ * the pointer is precise. `min-*` wins over the size variant's `h-7 w-7`, so
+ * the desktop density is unchanged.
+ */
+const ICON_BUTTON_CLASS = "h-7 w-7 min-h-12 min-w-12 md:min-h-0 md:min-w-0";
+
 interface LayerPanelHeaderProps {
   mapControllerRef: RefObject<MapEngine | null>;
+  /** Project name and layer-visibility summary, shown under the panel title. */
+  contextLabel: string;
   /** The celestial body the active basemap belongs to, if any. */
   selectedPlanet: EllipsoidId | undefined;
   togglePlanet: (body: EllipsoidId, selected: boolean) => void;
@@ -49,6 +59,7 @@ interface LayerPanelHeaderProps {
 /** The Layers panel title bar and its toolbar buttons. */
 export function LayerPanelHeader({
   mapControllerRef,
+  contextLabel,
   selectedPlanet,
   togglePlanet,
   isPluginActive,
@@ -64,15 +75,22 @@ export function LayerPanelHeader({
   const setIdentifyLayer = useAppStore((s) => s.setIdentifyLayer);
   const [compactLayerList, setCompactLayerList] = useCompactLayerList();
   return (
-    <div className="flex items-center justify-between border-b px-3 py-1.5">
-      <span className="text-sm font-semibold">{t("sharedRail.layers")}</span>
-      <div className="flex items-center gap-1">
+    <div className="flex items-start justify-between gap-2 border-b px-3 py-1.5">
+      {/* BilahAtas: a title with a `keterangan` line under it, so the panel
+          reads as a still screen with readable context instead of a bare rail. */}
+      <div className="min-w-0">
+        <span className="block text-sm font-semibold">{t("sharedRail.layers")}</span>
+        <span className="block truncate text-xs text-muted-foreground" title={contextLabel}>
+          {contextLabel}
+        </span>
+      </div>
+      <div className="flex flex-wrap items-center justify-end gap-1" data-testid="layer-panel-toolbar">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7"
+              className={ICON_BUTTON_CLASS}
               title={t("planetSwitcher.label")}
               aria-label={t("planetSwitcher.label")}
             >
@@ -100,7 +118,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.basemaps")}
           aria-label={t("layers.basemaps")}
           aria-pressed={isPluginActive(BASEMAP_CONTROL_PLUGIN_ID)}
@@ -113,7 +131,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.geoEditor")}
           aria-label={t("layers.geoEditor")}
           aria-pressed={isPluginActive(GEO_EDITOR_PLUGIN_ID)}
@@ -126,7 +144,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.newGroup")}
           aria-label={t("layers.newGroup")}
           onClick={onCreateGroup}
@@ -136,7 +154,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.compactViewHint")}
           aria-label={t("layers.compactView")}
           aria-pressed={compactLayerList}
@@ -147,7 +165,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={allLayersVisible ? t("layers.hideAllLayers") : t("layers.showAllLayers")}
           aria-label={allLayersVisible ? t("layers.hideAllLayers") : t("layers.showAllLayers")}
           onClick={onToggleAllLayers}
@@ -164,7 +182,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.identifyVisibleLayersHint")}
           aria-label={t("layers.identifyVisibleLayers")}
           aria-pressed={identifyLayerId === IDENTIFY_ALL_LAYERS_ID}
@@ -182,7 +200,7 @@ export function LayerPanelHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-7 w-7"
+          className={ICON_BUTTON_CLASS}
           title={t("layers.collapse")}
           aria-label={t("layers.collapse")}
           onClick={onCollapse}

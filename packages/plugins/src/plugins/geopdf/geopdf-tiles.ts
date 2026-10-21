@@ -15,6 +15,7 @@
  * PDF or a DOM.
  */
 import { applyAffine, fitAffine, type Affine6, type ControlPoint } from "./geopdf-affine";
+import type { GeoPdfTileScope } from "./geopdf-tile-cache";
 
 /** Tile edge in pixels. MapLibre's raster source takes it as `tileSize`. */
 export const TILE_SIZE = 512;
@@ -214,8 +215,14 @@ export interface TileStats {
   maxCanvasSide: number;
   /** Tiles rendered from the page (cache misses). */
   rendered: number;
-  /** Tiles served from the cache. */
+  /** Tiles served from either cache. */
   cacheHits: number;
+  /** Tiles served from the persistent cache after a restart. */
+  persistentHits: number;
+  /** Tiles written to the persistent cache. */
+  persistentWrites: number;
+  /** Persistent cache failures. A failure never fails a tile. */
+  cacheErrors: number;
 }
 
 export interface TileRendererOptions {
@@ -226,6 +233,11 @@ export interface TileRendererOptions {
   rasterize: RegionRasterizer;
   createCanvas: CanvasFactory;
   encode: CanvasEncoder;
+  /**
+   * Persistent tiles for this page, keyed by zoom and index. Absent keeps the
+   * renderer memory-only, which is what the geometry tests use.
+   */
+  cache?: GeoPdfTileScope;
 }
 
 function abortError(): Error {
@@ -255,6 +267,9 @@ export class GeoPdfTileRenderer {
     maxCanvasSide: 0,
     rendered: 0,
     cacheHits: 0,
+    persistentHits: 0,
+    persistentWrites: 0,
+    cacheErrors: 0,
   };
 
   constructor(options: TileRendererOptions) {
@@ -289,6 +304,16 @@ export class GeoPdfTileRenderer {
       this.cache.set(key, hit);
       this.counters.cacheHits += 1;
       return hit;
+    }
+    if (signal?.aborted) throw abortError();
+    // The persistent lookup is I/O, not canvas work, so it runs before the
+    // render queue: a warm cache answers while another tile is still drawing.
+    const stored = await this.readPersisted(z, x, y);
+    if (stored) {
+      this.remember(key, stored);
+      this.counters.persistentHits += 1;
+      this.counters.cacheHits += 1;
+      return stored;
     }
     if (signal?.aborted) throw abortError();
     return this.runExclusive(() => this.renderUncached(key, z, x, y, signal));
@@ -356,6 +381,9 @@ export class GeoPdfTileRenderer {
       const encoded = await this.options.encode(tile);
       this.remember(key, encoded);
       this.counters.rendered += 1;
+      // Await the write before answering: a project closed right after a tile
+      // is drawn must not lose that tile, and the queue keeps writes ordered.
+      await this.persist(z, x, y, encoded);
       return encoded;
     } finally {
       this.releaseCanvas(tile);
@@ -400,6 +428,28 @@ export class GeoPdfTileRenderer {
       this.cache.delete(oldest.value);
     }
     this.counters.peakLiveTiles = Math.max(this.counters.peakLiveTiles, this.cache.size);
+  }
+
+  /** Read a tile from the persistent cache; a failure reads as a miss. */
+  private async readPersisted(z: number, x: number, y: number): Promise<ArrayBuffer | null> {
+    if (!this.options.cache) return null;
+    try {
+      return await this.options.cache.get(z, x, y);
+    } catch {
+      this.counters.cacheErrors += 1;
+      return null;
+    }
+  }
+
+  /** Write a tile to the persistent cache; a failure never fails the tile. */
+  private async persist(z: number, x: number, y: number, encoded: ArrayBuffer): Promise<void> {
+    if (!this.options.cache) return;
+    try {
+      await this.options.cache.set(z, x, y, encoded);
+      this.counters.persistentWrites += 1;
+    } catch {
+      this.counters.cacheErrors += 1;
+    }
   }
 
   private transparentTile(): Promise<ArrayBuffer> {
