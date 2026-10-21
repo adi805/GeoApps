@@ -1,0 +1,60 @@
+{
+  "issue": 89,
+  "lane": "ui",
+  "branch": "ui/settings-nav-footer",
+  "worktree": "~/GeoApps-ui-settings-nav",
+  "commit": "0cbfbc6c",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. Falsifikasi dulu: buktikan min-h-12 di tombol nav itu penyebabnya, atau bantah, dengan mengembalikan min-h-12 lalu menjalankan npx playwright test e2e/a11y-screens.spec.ts --project=features",
+      "status": "selesai",
+      "perintah": "gh run view 39502230584 --repo adi805/GeoApps --json headSha,conclusion,jobs --jq '{sha:.headSha[0:8],conclusion,jobs:[.jobs[]|{name,conclusion}]}'",
+      "exit": 0,
+      "keluaran": "Branch ui/settings-nav-falsify (7c91542a) berisi satu baris perubahan dibanding a79c4903: className tombol nav di SettingsDialog.tsx:595 berubah dari \"min-h-12 justify-start\" jadi \"justify-start\", tidak ada perubahan lain (git show --stat 7c91542a = 1 file, 1 insert, 1 delete). Run 39502230584 pada head 7c91542a, job E2E features 1/4 conclusion success, dan log job memuat baris '✓   4 [features] › e2e/a11y-screens.spec.ts:137:5 › Settings sections (55.9s)'. Pembanding dari issue ini: spec yang sama di 04f9e169 dengan min-h-12 terpasang timeout 240000ms dua percobaan (run 39450566837). Variabel yang membalik merah jadi hijau hanya tinggi tombol nav, jadi dugaan di issue terbukti.",
+      "catatan": "Arah falsifikasi sesuai kriteria: min-h-12 dilepas, bukan dinaikkan, karena main sudah memakai min-h-12. Kalau hasilnya tetap merah tanpa min-h-12, penyebabnya bukan itu; yang terjadi sebaliknya."
+    },
+    {
+      "kriteria": "2. Setelah penyebab terbukti, npx playwright test e2e/a11y-screens.spec.ts --project=features lulus, dan SettingsDialog tetap memberi target sentuh 48 px pada tombol nav",
+      "status": "selesai",
+      "perintah": "gh pr checks 94 --repo adi805/GeoApps | grep 'E2E features 1/4'; gh run view 39505494527 --repo adi805/GeoApps --log --job 118913474294 | grep 'Settings sections'",
+      "exit": 0,
+      "keluaran": "595: className=\"min-h-12 justify-start\" -> target 48 px utuh di setiap tombol nav, sesuai kriteria 4 unit #69. Perbaikan komposisi ada di d6c400e2: bodyClassName grid-rows-[auto_minmax(0,1fr)_auto_auto] dan nav md:overflow-x-hidden md:overflow-y-auto. Eksekusi Playwright di CI PR #94, head a3f6c14d, run 39508320658, job E2E features 1/4 (118922776852): conclusion success, 13m31s, dan log job memuat baris '✓   4 [features] › e2e/a11y-screens.spec.ts:137:5 › Settings sections (56.5s)'. Head sebelumnya f9b6eecd juga hijau di spec yang sama (54.7s, run 39505494527). Spec yang sama timeout 240000ms dua percobaan di 04f9e169 (run 39450566837). Kriteria terpenuhi.",
+      "catatan": "Verdict diambil dari CI, bukan dari lokal: host ini tidak bisa menjalankan webServer Playwright karena vite build memuncak sekitar 1.8 GB dan earlyoom mengirim SIGTERM ke proses node di sekitar 590 MB tersedia. npm run typecheck:tests juga mati di sini dengan 'FATAL ERROR: Reached heap limit' di heap sekitar 1 GB."
+    },
+    {
+      "kriteria": "3. Nav dan footer tidak boleh saling menimpa di lebar 360, 412, dan 1280 px, dan tangkapan layar ketiga lebar itu dilampirkan ke PR",
+      "status": "selesai",
+      "perintah": "python3 -c \"import json;d=json.load(open('factory/receipts/89/probe.json'));print([(r['case'],r['vp'],r['navH'],r['footerTop'],r['verticalOverlap'],r['coveredCount'],r['covered']) for r in d])\"",
+      "exit": 0,
+      "keluaran": "[('fix-360', '360x800', 73, 519, 0, 0, []), ('fix-412', '412x915', 73, 576, 0, 0, []), ('fix-1280', '1280x720', 418, 579, 0, 0, []), ('before-1280', '1280x720', 592, 595, 81, 3, ['Cloud Storage', 'Updates', 'Startup'])]. Tumpang tindih vertikal dan jumlah tombol tertutup nol di ketiga lebar wajib. Di 1280 navH 418 sementara navScrollH 592, artinya kolom nav bergulir sendiri di dalam selnya. Baris before-1280 adalah pembanding dari main: tumpang tindih 81 px dan tiga tombol tertutup, persis yang dilaporkan Playwright. Ketiga tangkapan layar plus pembandingnya ada di factory/receipts/89/ (commit 0cbfbc6c) dan ditampilkan di badan PR #94.",
+      "catatan": "Diukur pada replika statis markup dialog dengan CSS Tailwind hasil kompilasi (postcss + @tailwindcss/postcss 4.3.3), memakai playwright-core 1.64.0 dan Chrome for Testing 156.0.8078.4, probe document.elementFromPoint di tengah tiap tombol nav. Bukan aplikasi hidup, karena alasan build di kriteria 2."
+    },
+    {
+      "kriteria": "4. Lint and type check, Build and test, dan E2E core hijau di PR",
+      "status": "selesai",
+      "perintah": "gh pr checks 94 --repo adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "PR #94 head a3f6c14d. Hijau: Lint and type check pass 5m25s, Build and test pass 8m49s, E2E core (Playwright) pass 6m25s, E2E features 1/4 pass 13m31s, E2E features 3/4 pass 5m56s, E2E enterprise SSO pass, Detect changed paths pass, CI passed pass (run 39508320606 untuk lint/build/core, run 39508320658 untuk shard features). Yang merah hanya E2E features 2/4 dan 4/4, dan keduanya merah tanpa perubahan ini.",
+      "catatan": "Bukti bahwa 2/4 dan 4/4 bukan akibat PR ini, di tiga keadaan, dihitung dari baris ✘ tiap log job. (a) main 61200c14, run 39422678054, job 2/4 118627339945: 36 baris gagal di 9 spec (mapbox-swipe 6, mapbox-deck-overlays 6, mapbox-streetview 4, mapbox-overture 4, mapbox-geo-editor 4, mapbox-geoagent 4, mapbox-flight-simulator 4, open-recent 2, mapbox-zarr 2), job 4/4 118627340019: style-manager 4. (b) branch falsify 7c91542a, run 39502230584, job 2/4 118902328909: 38 baris di 10 spec, yaitu himpunan (a) ditambah offline-reopen 2; job 4/4 118902329326: style-manager 4. Branch falsify tidak memuat perbaikan ini sama sekali, hanya min-h-12 yang dilepas dari main. (c) head PR a3f6c14d, run 39508320658, job 2/4 118922776943: 38 baris di 10 spec, identik dengan (b); job 4/4 118922776522: style-manager 4. Himpunan kegagalan di (b) dan (c) sama persis, jadi perbaikan ini tidak menggeser satu pun kegagalan. Selisih (a) ke (b)/(c) hanya offline-reopen.spec.ts, dan file itu belum ada di 61200c14: git log 61200c14..origin/main -- e2e/offline-reopen.spec.ts hanya menampilkan a7094968 (uji buka ulang proyek dengan jaringan dimatikan, #81, lane uji), git show 61200c14:e2e/offline-reopen.spec.ts gagal dengan 'exists on disk, but not in 61200c14'. Jadi kegagalan itu masuk lewat main, bukan lewat PR ini."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane ui: 6 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "git diff --stat origin/main...HEAD -- e2e/ playwright.config.ts tests/",
+      "exit": 0,
+      "keluaran": "BERSIH: kosong. Lane uji tidak disentuh, tidak ada timeout dinaikkan, tidak ada retry tambahan, tidak ada test.skip."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH: kosong."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/89#issuecomment-6302792416"
+}

@@ -936,16 +936,28 @@ export function SettingsDialog({
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={open} onOpenChange={setOpen}>
+        {/* The body grid is the only place that decides which row gives way when
+            the dialog hits its max height. With implicit `auto` rows the content
+            row kept its max-content height, so at 1280x720 the eleven 48 px nav
+            items pushed the nav column past its cell and the footer row (painted
+            after it) covered the last buttons, leaving "Cloud Storage" unclickable
+            (#89). `minmax(0,1fr)` on the content row makes that row the single
+            flexible one; the nav then scrolls inside its own column instead of
+            spilling over the footer. The fourth `auto` row keeps the optional
+            error line above the footer from shifting the template. */}
         <DialogContent
           className="max-h-[min(88vh,760px)] max-w-3xl"
-          bodyClassName="overflow-hidden p-0"
+          bodyClassName="grid-rows-[auto_minmax(0,1fr)_auto_auto] overflow-hidden p-0"
         >
           <DialogHeader className="border-b px-6 pb-4 pt-6">
             <DialogTitle>{t("settings.title")}</DialogTitle>
             <DialogDescription>{t("settings.description")}</DialogDescription>
           </DialogHeader>
           <div className="grid min-h-0 min-w-0 grid-cols-1 md:grid-cols-[12rem_1fr]">
-            <nav className="flex min-w-0 gap-1 overflow-x-auto border-b p-3 md:flex-col md:overflow-x-visible md:border-b-0 md:border-e">
+            {/* Scrolls in its own column at md: a 720 px-tall window has room for
+                ~9 of the 11 sections at 48 px each, and the alternative to
+                scrolling is shrinking the targets below the touch minimum. */}
+            <nav className="flex min-w-0 gap-1 overflow-x-auto border-b p-3 md:flex-col md:overflow-x-hidden md:overflow-y-auto md:border-b-0 md:border-e">
               {SECTION_ITEMS.filter((item) => isSectionVisible(item.id)).map(renderSectionButton)}
             </nav>
             <div className="min-h-0 min-w-0 overflow-y-auto p-3 md:p-6">
