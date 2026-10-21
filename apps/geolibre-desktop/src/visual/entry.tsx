@@ -10,6 +10,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Galeri } from "./Gallery";
 import { pasangGayaDasar } from "./dasar";
+import { KomposisiBeranda, KomposisiChrome } from "./screens/beranda";
 import {
   KomposisiAturGayaLapisan,
   KomposisiBukaTutupLapisan,
@@ -54,6 +55,8 @@ import {
 } from "./screens/sistem";
 
 const KOMPONEN = {
+  KomposisiBeranda,
+  KomposisiChrome,
   KomposisiImporGeopdf,
   KomposisiImporGeotiff,
   KomposisiImporGeojson,

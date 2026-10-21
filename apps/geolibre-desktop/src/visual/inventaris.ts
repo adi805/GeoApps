@@ -22,8 +22,8 @@ export interface Keadaan {
 export interface Komposisi {
   /** Nama fungsi produk, sama dengan nama berkas tangkapan layar. */
   id: string;
-  /** Jalur kerja: peta, lapangan, offline, geofence, sistem. */
-  jalur: "peta" | "lapangan" | "offline" | "geofence" | "sistem";
+  /** Jalur kerja: beranda (titik masuk), peta, lapangan, offline, geofence, sistem. */
+  jalur: "beranda" | "peta" | "lapangan" | "offline" | "geofence" | "sistem";
   /** Berkas komposisi, relatif terhadap `src/visual/`. */
   berkas: string;
   /** Nama komponen yang diekspor. */
@@ -507,6 +507,36 @@ export const INVENTARIS: readonly Komposisi[] = [
       true,
     ),
     catatan: "Bedakan lokasi mati dari izin ditolak: yang satu sakelar, yang lain keputusan.",
+  },
+  {
+    id: "beranda",
+    jalur: "beranda",
+    berkas: "screens/beranda.tsx",
+    komponen: "KomposisiBeranda",
+    judul: "Beranda Peta Saya",
+    keadaan: lima(
+      true,
+      true,
+      true,
+      "Peta yang sudah diunduh tetap terbuka dan bisa diedit tanpa jaringan; hanya ubin yang belum diunduh yang kosong.",
+      "Beranda tidak meminta izin apa pun: izin lokasi baru diminta saat peta dibuka, dan itu digambar layar izin-lokasi-ditolak.",
+    ),
+    catatan: "Layar pertama: daftar peta terakhir, tombol Tambah Peta, dan tab Peta Saya/Layer.",
+  },
+  {
+    id: "chrome-peta",
+    jalur: "beranda",
+    berkas: "screens/beranda.tsx",
+    komponen: "KomposisiChrome",
+    judul: "Chrome peta dan sesi lapangan",
+    keadaan: lima(
+      "Chrome tidak punya keadaan kosong: bilah atas dan tab bawah tetap digambar walau belum ada peta yang terbuka.",
+      "Chrome tidak memuat data sendiri; yang memuat adalah isi peta di bawahnya, dan keadaan itu punya komposisinya sendiri.",
+      "Galat tampil di isi layar, bukan di chrome; bilah atas dan tab bawah tetap sama saat isi gagal dimuat.",
+      true,
+      true,
+    ),
+    catatan: "Bilah atas peta, tab bawah, dan bilah sesi lapangan yang sedang merekam.",
   },
 ];
 
