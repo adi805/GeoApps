@@ -272,3 +272,93 @@ uji baru menyumbang 88 warning dari kelas itu, yang menembus ratchet
 `--max-warnings 242`; tiap berkas memakai blok `eslint-disable` beralasan,
 mengikuti pola `packages/plugins/src/plugins/gps-averaging.test.ts`. Ratchet-nya
 tidak dinaikkan.
+
+## 9. Jalur simpan dan buka (tambahan, PR #111)
+
+Bagian 1-8 di atas membangun lima modul: manifes, operasi berkas, adaptor region,
+dua store. Semuanya lulus uji, tapi **tidak ada yang memanggilnya**. Yang hilang
+bukan satu modul kecil, melainkan separuh gunanya bundel: tidak ada kode yang
+mencari layer dengan `sourcePath` di luar bundel, menyalin berkasnya masuk, lalu
+menulis ulang proyeknya. Tanpa bagian itu bundel tetap tidak portabel, karena
+`content://` di Android mati bersama proses pemegang izin bacanya, jadi proyek
+yang disimpan dengan jalur absolut terbuka kosong di peluncuran berikutnya walau
+setiap byte-nya tersalin rapi.
+
+`offline-project-bundle.ts` mengisi lubang itu. Bentuknya:
+
+```ts
+saveProjectToBundle({ project, store, readSource, now, manifest?,
+                      projectId?, offlineRegions? })
+                                                  -> { project, manifest, files, copied }
+openProjectFromBundle(store)                      -> { project, manifest, status,
+                                                      missing, mismatched, affectedLayers }
+isExternalProjectPath(sourcePath)                 -> boolean
+bundlePathForSource(sourcePath, kind, taken?)     -> string
+collectExternalFiles(project)                     -> ExternalProjectFile[]
+missingProjectLayers(project, missingPaths)       -> AffectedLayer[]
+```
+
+Proyeknya sendiri tinggal di satu berkas tetap di akar bundel:
+`PROJECT_DATA_FILE = "proyek.geolibre.json"`. Nama itu sengaja bukan
+`project.json`: yang terakhir sudah dipakai manifes, dan dua berkas berbeda yang
+bernama sama di satu direktori adalah cara paling murah membuat salah baca.
+
+**Aturan yang dipegang modul ini:**
+
+1. **Apa yang dianggap "di luar bundel".** Hanya jalur yang menamai berkas yang
+   boleh disalin: skema `content:` dan `file:`, jalur absolut POSIX, huruf drive
+   Windows (`C:\...`), dan UNC (`\\server\share`). **`http(s):`, `data:`, dan
+   `blob:` sengaja TIDAK disalin**: layer itu memang mengambil atau membawa
+   isinya sendiri, dan membekukannya jadi salinan lokal justru mengubah layer
+   yang berfungsi jadi layer basi. Jalur yang sudah relatif juga tidak disentuh,
+   dan itulah yang membuat simpan ulang idempoten.
+2. **Ke mana salinannya mendarat.** Ditentukan `bundleFileKind`, dipetakan ke
+   `peta/` (peta), `raster/` (GeoTIFF), `foto/` (gambar), `berkas/` (sisanya).
+   Nama di dalam bundel adalah nama asli yang disanitasi (karakter di luar
+   `A-Za-z0-9._-` jadi `-`, query dan fragmen dibuang lebih dulu supaya
+   `scan.pdf?token=x` tetap berekstensi), dipotong 120 karakter dari belakang.
+   Dua berkas berbeda yang kebetulan bernama sama tidak saling menimpa: yang
+   kedua jadi `scan-2.pdf`, dan `taken` dioper antar layer dalam satu
+   penyimpanan supaya tabrakannya terdeteksi sekarang, bukan di penyimpanan
+   berikutnya.
+3. **Yang ditulis balik ke proyek hanya `sourcePath`.** Properti lain tidak
+   disentuh, jadi modul ini tidak perlu tahu arti `geolibre_*`. Salinan proyek
+   dibuat lewat `structuredClone`, jadi objek masukan tidak berubah.
+4. **Berkas yang isinya tidak berubah tidak disalin ulang.** Entri manifes
+   sebelumnya dibandingkan `sha256` dan jumlah byte-nya; kalau cocok, tidak ada
+   tulis dan `copied` tidak bertambah. Ini bukan optimasi, ini syarat: autosave
+   yang menyalin ulang PDF 200 MB tiap beberapa detik membuat aplikasi tidak
+   terpakai.
+5. **Membuka bukan menebak.** `openProjectFromBundle` membaca manifes, lalu
+   `proyek.geolibre.json`, lalu laporan per berkas. Bundel tanpa berkas proyek
+   yang bisa dibaca adalah **error**, bukan proyek kosong: proyek kosong terbaca
+   seperti data pengguna hilang, sedangkan "ini bukan bundel" benar dan bisa
+   ditindaklanjuti. Jalur relatif tidak diubah jadi absolut oleh fungsi ini;
+   store yang memegang `baseDir`, dan `assertSafeBundlePath` di lapisan manifes
+   yang menolak jalur keluar dari akar bundel.
+6. **Berkas yang hilang dilaporkan berikut layernya.** `missing` dan
+   `mismatched` berisi path relatif; `affectedLayers` menerjemahkannya kembali
+   ke layer lewat `layerIndex`, supaya UI bisa menampilkan "berkas ini perlu
+   dicari lagi" alih-alih proyek yang diam-diam kehilangan satu peta.
+
+**Pembaca berkas disuntikkan (`readSource`), bukan diimpor.** Alasannya sama
+dengan store: modul ini lalu tidak terikat Tauri maupun DOM, jadi bisa diuji di
+Node dengan store in-memory tanpa menyentuh filesystem. Itu juga alasan
+berkasnya ada di `apps/geolibre-desktop/src/lib/`, bukan `src/lib/file-io/`:
+`file-io/**` tidak masuk glob lane mana pun di `factory/lanes.json`, jadi berkas
+di sana tidak bisa di-commit oleh lane apa pun.
+
+**Yang sengaja belum dikerjakan:**
+
+- **Pemanggilnya.** Belum ada yang memanggil `saveProjectToBundle` dari UI
+  maupun dari `file-io/project-files.ts`. Berkas `file-io/**` tidak dimiliki
+  lane mana pun, jadi ini butuh keputusan HQ soal lane pemiliknya; dicatat
+  sebagai usulan, bukan diputuskan di sini.
+- **`fs:scope`.** Store Tauri tetap tidak bisa dipakai dari UI sampai
+  `src-tauri/capabilities/default.json` memuat `projects/**` (lane `android`).
+- **Foto base64.** Foto koleksi lapangan masih data URL di JSON proyek, jadi ikut
+  ditulis ulang tapi belum diekstrak jadi berkas di `foto/`. Memindahkannya
+  mengubah format proyek dan butuh migrasi (lihat bagian 7).
+- **Slug tabrakan.** `projectId` bawaan tetap `projectSlug(nama)`, dan
+  `projectId` yang sama dengan nama manifes ditolak. Kebijakan sufiks masih
+  terbuka seperti di bagian 7.
