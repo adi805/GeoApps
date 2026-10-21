@@ -1,0 +1,97 @@
+{
+  "issue": 11,
+  "lane": "offline",
+  "branch": "offline/proyek-relatif",
+  "worktree": "~/GeoApps-offline-bundel",
+  "commit": "6902c071",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "node --import tsx --test apps/geolibre-desktop/src/lib/offline-project-bundle.test.ts",
+      "exit": 0,
+      "keluaran": "tests 23 / pass 23 / fail 0. Mencakup: layer di luar bundel disalin ke peta/ raster/ foto/ sesuai jenisnya, sourcePath ditulis ulang jadi relatif terhadap akar bundel, simpan ulang proyek hasil bukaan menghasilkan nol salinan baru, jalur yang keluar dari akar bundel ditolak, dan layer yang sudah relatif tidak disentuh."
+    },
+    {
+      "perintah": "node --import tsx --test apps/geolibre-desktop/src/lib/project-manifest.test.ts apps/geolibre-desktop/src/lib/project-bundle.test.ts apps/geolibre-desktop/src/lib/offline-region-manifest.test.ts apps/geolibre-desktop/src/lib/project-bundle-tauri.test.ts apps/geolibre-desktop/src/lib/project-bundle-web.test.ts apps/geolibre-desktop/src/lib/offline-project-bundle.test.ts",
+      "exit": 0,
+      "keluaran": "tests 90 / suites 31 / pass 90 / fail 0 / duration_ms 9258. Enam suite bundel lulus bersama: tidak ada regresi pada lima modul yang sudah merge."
+    },
+    {
+      "perintah": "npx tsc --noEmit --strict --target ES2022 --module ESNext --moduleResolution bundler --lib ES2022,DOM --types node --skipLibCheck apps/geolibre-desktop/src/lib/offline-project-bundle.ts apps/geolibre-desktop/src/lib/offline-project-bundle.test.ts",
+      "exit": 0,
+      "keluaran": "TSC_EXIT:0, tanpa diagnostik. Dipakai sebagai pengganti `npx tsc -b apps/geolibre-desktop` yang kehabisan heap di host ini (RAM 3.9 GB); `tsc -b` dan `npm run lint` tetap dijalankan CI."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "bersih setelah commit 6902c071; yang tersisa hanya berkas bukti ini"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane offline --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane offline: 2 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_receipt.py --berkas factory/receipts/11b.json",
+      "exit": 0,
+      "keluaran": "LULUS"
+    }
+  ],
+  "pr": "https://github.com/adi805/GeoApps/pull/111",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/11#issuecomment-6306163859",
+  "catatan_merah": [
+    "PR memakai `Refs #11`, bukan `Closes #11`: sisa kriteria selesai ada di lane lain (`e2e/offline-reopen.spec.ts` milik lane `uji`, `fs:scope` milik lane `android`).",
+    "Belum ada pemanggil untuk `saveProjectToBundle`: UI dan `apps/geolibre-desktop/src/lib/file-io/project-files.ts` tidak dimiliki lane mana pun, karena `file-io/**` tidak muncul di glob lane mana pun di `factory/lanes.json`. Perlu keputusan HQ soal lane pemiliknya; tercatat sebagai usulan, bukan diputuskan di unit ini.",
+    "Store Tauri belum bisa dipakai dari UI sampai `src-tauri/capabilities/default.json` memuat `fs:scope` `projects/**`; berkas itu milik lane `android`.",
+    "Foto koleksi lapangan masih base64 di JSON proyek: ikut ditulis ulang jadi relatif, belum diekstrak jadi berkas terpisah di `foto/`.",
+    "`npm run lint` dan `tsc -b` TIDAK dijalankan di host ini (ESLint type-aware dan `tsc -b` kehabisan heap, RAM 3.9 GB). `--max-warnings` tidak dinaikkan. Verifikasi itu dijalankan CI dan HIJAU di run 39531170094: job `Lint and type check` success.",
+    "Repo kerja ini shallow clone: `git merge-base origin/main HEAD` gagal sebelum `git fetch --deepen=150 origin main`, sehingga `gate_commit_paths.py` sempat melapor `GAGAL git merge-base` walau commit-nya benar. Setelah deepen, gate LULUS."
+  ],
+  "komentar_pr": "https://github.com/adi805/GeoApps/pull/111#issuecomment-6306170980",
+  "ci": {
+    "run": 39531170094,
+    "kesimpulan": "success",
+    "job": [
+      {
+        "nama": "Lint and type check",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "Build and test",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "E2E core (Playwright)",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "CI passed",
+        "kesimpulan": "success"
+      }
+    ],
+    "factory_gate": {
+      "run": 39531170024,
+      "kesimpulan": "success"
+    },
+    "run_akhir": {
+      "run": 39532617227,
+      "head": "d821b33d",
+      "kesimpulan": "success",
+      "job_gagal": []
+    }
+  },
+  "usulan": [
+    {
+      "id": "u-offline-831ad0",
+      "ringkas": "saveProjectToBundle belum punya pemanggil: apps/geolibre-desktop/src/lib/file-io/project-files.ts dan UI tidak cocok glob lane mana pun",
+      "status": "menunggu keputusan HQ",
+      "berkas": "baris usulan disimpan di ~/.opencrabs/projects/geoapps-offline/usulan-831ad0.jsonl karena factory/usulan-offline.jsonl dimiliki lane HQ (glob factory/**) dan gate_commit_paths.py menolaknya di lane offline"
+    }
+  ],
+  "komentar_issue_tambahan": [
+    "https://github.com/adi805/GeoApps/issues/11#issuecomment-6306385029",
+    "https://github.com/adi805/GeoApps/issues/11#issuecomment-6306411213"
+  ]
+}
