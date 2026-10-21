@@ -47,8 +47,13 @@ const RESTORE_GATE_TIMEOUT_MS = 10_000;
  * only claims a `?data=` that is an absolute http(s) URL -- a malformed one
  * leaves `useDataUrlLoader` a no-op, so yielding to it would strand the user on
  * an empty workspace.
+ *
+ * `App` asks the same question for screen routing: these are exactly the
+ * launches that must mount `DesktopShell` straight away, because the loaders
+ * write to stores only that shell reads.
  */
-function hasExplicitLaunchPayload(): boolean {
+export function hasExplicitLaunchPayload(): boolean {
+  if (typeof window === "undefined") return false;
   if (projectUrlFromLocation() !== null) return true;
   if (dataUrlParameters(window.location.search) !== null) return true;
   if (serviceUrlParameter(window.location.search) !== null) return true;

@@ -1,0 +1,70 @@
+[
+ {
+  "case": "fix-360",
+  "vp": "360x800",
+  "png": "shot-360.png",
+  "navH": 73,
+  "navScrollH": 72,
+  "navClips": false,
+  "footerTop": 519,
+  "footerBottom": 600,
+  "viewportH": 800,
+  "footerBelowViewport": false,
+  "verticalOverlap": 0,
+  "coveredCount": 0,
+  "covered": [],
+  "outsideCount": 6
+ },
+ {
+  "case": "fix-412",
+  "vp": "412x915",
+  "png": "shot-412.png",
+  "navH": 73,
+  "navScrollH": 72,
+  "navClips": false,
+  "footerTop": 576,
+  "footerBottom": 657,
+  "viewportH": 915,
+  "footerBelowViewport": false,
+  "verticalOverlap": 0,
+  "coveredCount": 0,
+  "covered": [],
+  "outsideCount": 6
+ },
+ {
+  "case": "fix-1280",
+  "vp": "1280x720",
+  "png": "shot-1280.png",
+  "navH": 418,
+  "navScrollH": 592,
+  "navClips": true,
+  "footerTop": 579,
+  "footerBottom": 660,
+  "viewportH": 720,
+  "footerBelowViewport": false,
+  "verticalOverlap": 0,
+  "coveredCount": 0,
+  "covered": [],
+  "outsideCount": 3
+ },
+ {
+  "case": "before-1280",
+  "vp": "1280x720",
+  "png": "before-1280.png",
+  "navH": 592,
+  "navScrollH": 592,
+  "navClips": false,
+  "footerTop": 595,
+  "footerBottom": 676,
+  "viewportH": 720,
+  "footerBelowViewport": false,
+  "verticalOverlap": 81,
+  "coveredCount": 3,
+  "covered": [
+   "Cloud Storage",
+   "Updates",
+   "Startup"
+  ],
+  "outsideCount": 0
+ }
+]
