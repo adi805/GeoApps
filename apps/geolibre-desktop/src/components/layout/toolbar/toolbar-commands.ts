@@ -105,6 +105,17 @@ export interface ToolbarCommandContext {
   /** The Atmospheric Effects plugin, toggled from the Controls group. */
   effectsPluginId: string;
   isPluginEngineSupported: (plugin: PluginRef, engine: AppState["primaryRenderer"]) => boolean;
+  /**
+   * Whether a plugin belongs to the curated KEBUN set. Passed in for the same
+   * reason as `isPluginEngineSupported`: the preset lives in the plugins
+   * package, whose entry point cannot load outside the browser. The Plugins menu
+   * and this registry both call it, so the preset stays the only list (#122).
+   *
+   * Optional because the fixtures in `tests/` build this context and belong to
+   * the uji lane; a required field would have forced an edit there. Without it
+   * no plugin is curated, which is the plain list every caller had before #122.
+   */
+  isKebunPlugin?: (pluginId: string) => boolean;
   openRightPanel: (id: string) => void;
   /** Whether Earth Engine sign-in is compiled into this build. */
   earthEngineAvailable: boolean;
@@ -181,6 +192,7 @@ export function buildToolbarCommands(context: ToolbarCommandContext): Command[] 
     paletteExcludedPluginIds,
     effectsPluginId,
     isPluginEngineSupported,
+    isKebunPlugin,
     openRightPanel,
     earthEngineAvailable,
     isActive,
@@ -228,6 +240,21 @@ export function buildToolbarCommands(context: ToolbarCommandContext): Command[] 
     setRasterToolOpen,
     setStyleManagerOpen,
   } = context;
+
+  // One palette entry per plugin toggle. The caller picks the group, so the
+  // KEBUN preset's plugins can sit in their own section above the general
+  // plugin list without a second copy of the entry shape (#122).
+  const pluginCommand = (plugin: (typeof plugins)[number], group: string) => ({
+    id: `plugin.${plugin.id}`,
+    title: t("toolbar.command.togglePlugin", { name: pluginDisplayName(t, plugin) }),
+    group,
+    keywords: isActive(plugin.id) ? "plugin deactivate" : "plugin activate",
+    disabledReason:
+      !isActive(plugin.id) && !isPluginEngineSupported(plugin, primaryRenderer)
+        ? t("renderer.pluginUnsupported")
+        : undefined,
+    run: () => toggle(plugin.id, appApi),
+  });
 
   // The command registry: the single source of truth shared by the command
   // palette, the global shortcut layer, and the keyboard cheat sheet. Each
@@ -700,6 +727,17 @@ export function buildToolbarCommands(context: ToolbarCommandContext): Command[] 
       icon: LocateFixed,
       run: () => setGpsTrackingOpen(true),
     },
+    // The curated KEBUN plugins get their own section directly after Controls,
+    // so the daily-work switches are not buried among the ~70 plugin toggles
+    // below. `isKebunPlugin` from the preset is the only list of which plugins
+    // those are; a plugin it does not name keeps its entry in the Plugins group
+    // further down, so nothing drops out of Cmd-K search (#122).
+    ...plugins
+      .filter(
+        (plugin) =>
+          (isKebunPlugin?.(plugin.id) ?? false) && !paletteExcludedPluginIds.has(plugin.id),
+      )
+      .map((plugin) => pluginCommand(plugin, t("toolbar.commandGroup.kebun", "Everyday plugins"))),
     // View
     // All eight drive the shared engine's camera, which every engine
     // implements — so they stay in the palette (and in the shortcut layer and
@@ -887,19 +925,7 @@ export function buildToolbarCommands(context: ToolbarCommandContext): Command[] 
     // (matching the menus).
     ...plugins
       .filter((plugin) => !paletteExcludedPluginIds.has(plugin.id))
-      .map((plugin) => ({
-        id: `plugin.${plugin.id}`,
-        title: t("toolbar.command.togglePlugin", {
-          name: pluginDisplayName(t, plugin),
-        }),
-        group: t("toolbar.commandGroup.plugins"),
-        keywords: isActive(plugin.id) ? "plugin deactivate" : "plugin activate",
-        disabledReason:
-          !isActive(plugin.id) && !isPluginEngineSupported(plugin, primaryRenderer)
-            ? t("renderer.pluginUnsupported")
-            : undefined,
-        run: () => toggle(plugin.id, appApi),
-      })),
+      .map((plugin) => pluginCommand(plugin, t("toolbar.commandGroup.plugins"))),
     // Settings
     // The Mac App Store build omits the plugin marketplace: installing
     // external plugins is not allowed there, and bundled plugins need no
