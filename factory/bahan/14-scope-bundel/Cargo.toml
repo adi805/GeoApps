@@ -1,0 +1,15 @@
+[package]
+name = "scope-bundel"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+# Alat bukti, bukan bagian aplikasi: tidak ada yang mengompilasinya di CI.
+# Versi dikunci PERSIS ke yang dipakai aplikasi (apps/geolibre-desktop/src-tauri/Cargo.lock):
+# tauri 2.12.2, tauri-plugin-fs 2.7.1, tauri-utils 2.10.2.
+
+[dependencies]
+tauri-utils = "=2.10.2"
+glob = "0.3"
+serde_json = "1"
+toml = "0.8"
