@@ -34,7 +34,7 @@ import {
   Daftar,
   Kartu,
   LencanaStatus,
-  Peta,
+  PetaLengkap,
   Tombol,
   TombolIkon,
   gayaLabel,
@@ -103,41 +103,6 @@ function BilahSesi({
           baris saling menghimpit sampai durasinya pecah tiga baris. */}
       <div style={{ display: "flex", gap: spasi.sm }}>{aksi}</div>
     </div>
-  );
-}
-
-/**
- * Kisi ubin dan batas bidang.
- *
- * `Peta` di primitif hanya menggambar perairan, lahan, dan jalan dari token.
- * Di layar peta yang sesungguhnya, kanvas itu terlalu datar untuk dibaca
- * sebagai peta, jadi komposisi ini menambahkan kisi ubin dan batas bidang yang
- * sedang disunting. Keduanya tetap memakai warna token, bukan nilai baru.
- */
-function LapisanPeta({ garis, bidang }: { garis: string; bidang: string }) {
-  return (
-    <svg
-      aria-hidden="true"
-      viewBox="0 0 360 260"
-      preserveAspectRatio="xMidYMid slice"
-      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
-    >
-      {[52, 104, 156, 208].map((y) => (
-        <line key={`h${y}`} x1="0" y1={y} x2="360" y2={y} stroke={garis} strokeWidth="0.75" opacity="0.35" />
-      ))}
-      {[60, 120, 180, 240, 300].map((x) => (
-        <line key={`v${x}`} x1={x} y1="0" x2={x} y2="260" stroke={garis} strokeWidth="0.75" opacity="0.35" />
-      ))}
-      <polygon
-        points="96,196 150,168 214,150 268,170 262,222 190,238 128,226"
-        fill={bidang}
-        fillOpacity="0.16"
-        stroke={bidang}
-        strokeWidth="2"
-        strokeDasharray="7 5"
-        strokeLinejoin="round"
-      />
-    </svg>
   );
 }
 
@@ -225,43 +190,6 @@ function Penanda({ aksen, permukaan }: { aksen: string; permukaan: string }) {
         boxShadow: elevasi.sedang,
       }}
     />
-  );
-}
-
-/** Skala dan atribusi: dua label yang wajib ada di atas kanvas peta. */
-function LabelPeta() {
-  const p = usePalet();
-  return (
-    <>
-      <span
-        style={{
-          position: "absolute",
-          insetInlineStart: spasi.md,
-          insetBlockEnd: spasi.md,
-          paddingInline: spasi.sm,
-          paddingBlock: 2,
-          borderRadius: radius.xs,
-          background: p.permukaan,
-          ...gayaTeks("mikro", { warna: p.teks, mono: true }),
-        }}
-      >
-        500 m
-      </span>
-      <span
-        style={{
-          position: "absolute",
-          insetInlineEnd: spasi.md,
-          insetBlockEnd: spasi.md,
-          paddingInline: spasi.sm,
-          paddingBlock: 2,
-          borderRadius: radius.xs,
-          background: p.permukaan,
-          ...gayaTeks("mikro", { warna: p.teksLembut }),
-        }}
-      >
-        © OpenStreetMap
-      </span>
-    </>
   );
 }
 
@@ -406,12 +334,10 @@ export function KomposisiChrome({ keadaan = "utama", ...varian }: Varian) {
           penanda={<LencanaStatus jenis="sukses">Lokal</LencanaStatus>}
           aksi={<TombolIkon label="Cari di peta" ikon={<Search size={sentuh.ikon} />} />}
         />
-        <Peta>
-          <LapisanPeta garis={p.garis} bidang={p.utama} />
+        <PetaLengkap bidang={p.utama}>
           <Jejak warna={p.bahaya} />
           <Penanda aksen={p.aksen} permukaan={p.permukaan} />
-          <LabelPeta />
-        </Peta>
+        </PetaLengkap>
         <BilahSesi
           nada="aktif"
           judul="Merekam jejak"
@@ -439,12 +365,10 @@ export function KomposisiChrome({ keadaan = "utama", ...varian }: Varian) {
           penanda={<LencanaStatus jenis="peringatan">Offline</LencanaStatus>}
           aksi={<TombolIkon label="Cari di peta" ikon={<Search size={sentuh.ikon} />} />}
         />
-        <Peta>
-          <LapisanPeta garis={p.garis} bidang={p.utama} />
+        <PetaLengkap bidang={p.utama}>
           <Jejak warna={p.bahaya} />
           <Penanda aksen={p.aksen} permukaan={p.permukaan} />
-          <LabelPeta />
-        </Peta>
+        </PetaLengkap>
         <BilahSesi
           nada="aktif"
           judul="Merekam jejak"
@@ -466,10 +390,7 @@ export function KomposisiChrome({ keadaan = "utama", ...varian }: Varian) {
           kembali={false}
           penanda={<LencanaStatus jenis="bahaya">Lokasi nonaktif</LencanaStatus>}
         />
-        <Peta>
-          <LapisanPeta garis={p.garis} bidang={p.utama} />
-          <LabelPeta />
-        </Peta>
+        <PetaLengkap bidang={p.utama} />
         <BilahSesi
           nada="tertahan"
           judul="Perekaman tertahan"

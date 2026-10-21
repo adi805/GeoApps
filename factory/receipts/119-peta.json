@@ -1,0 +1,53 @@
+{
+  "issue": 119,
+  "lane": "visual",
+  "branch": "visual/peta-119",
+  "worktree": "~/GeoApps-visual-peta-119",
+  "commit": "b2d328b7",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "node apps/geolibre-desktop/src/visual/cek-inventaris.mjs",
+      "exit": 0,
+      "keluaran": "komposisi: 33 / keadaan diperiksa: 165 / pemeriksaan lulus: 374 / OK"
+    },
+    {
+      "perintah": "grep -c 'export function Komposisi' apps/geolibre-desktop/src/visual/screens/peta.tsx",
+      "exit": 0,
+      "keluaran": "7"
+    },
+    {
+      "perintah": "git diff --name-only origin/main -- apps/geolibre-desktop/src/components apps/geolibre-desktop/src/App.tsx apps/geolibre-desktop/src/hooks | wc -l",
+      "exit": 0,
+      "keluaran": "0"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "NODE_OPTIONS=--max-old-space-size=2048 ../../node_modules/.bin/tsc -p /tmp/tsconfig.visual.json (cwd apps/geolibre-desktop)",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    },
+    {
+      "perintah": "./node_modules/.bin/eslint apps/geolibre-desktop/src/visual",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane visual --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS lane visual: 17 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "for id in impor-geopdf impor-geotiff impor-geojson galeri-peta buka-tutup-lapisan atur-gaya-lapisan legenda; do TEMBAK_HANYA=$id node apps/geolibre-desktop/src/visual/tangkap-layar.mjs; done",
+      "exit": 0,
+      "keluaran": "14 berkas PNG ditulis ulang (7 komposisi x 360 dan 412), tiap gambar diperiksa dengan analyze_image"
+    },
+    {
+      "perintah": "node --import tsx --test tests/visual-inventaris.test.ts",
+      "exit": 0,
+      "keluaran": "pass 7 / fail 0"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/119#issuecomment-6313938822"
+}

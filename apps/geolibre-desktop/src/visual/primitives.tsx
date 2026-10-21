@@ -745,3 +745,86 @@ export function Peta({ children, tinggi }: { children?: ReactNode; tinggi?: numb
     </div>
   );
 }
+
+/**
+ * Peta lengkap: kanvas, kisi ubin, bidang tersorot, skala, dan atribusi.
+ *
+ * `Peta` sendirian hanya menggambar perairan, lahan, dan jalan dari token, dan
+ * kanvas sedatar itu tidak terbaca sebagai peta. Skala dan atribusi bukan
+ * hiasan: peta tanpa keduanya tidak bisa dipakai mengukur apa pun, dan atribusi
+ * adalah syarat pemakaian data OpenStreetMap. Ketiganya dipasang di sini supaya
+ * 31 komposisi tidak menyalin SVG yang sama, dan supaya tidak ada layar peta
+ * yang lupa memasang skalanya.
+ */
+export function PetaLengkap({
+  children,
+  tinggi,
+  bidang,
+  skala = "500 m",
+}: {
+  children?: ReactNode;
+  tinggi?: number;
+  /** Warna batas bidang yang sedang disunting. Tanpa ini, hanya kisi ubin. */
+  bidang?: string;
+  /** Jarak yang diwakili ruas skala, beserta satuannya. */
+  skala?: string;
+}) {
+  const p = usePalet();
+  return (
+    <Peta tinggi={tinggi}>
+      <svg
+        aria-hidden="true"
+        viewBox="0 0 360 260"
+        preserveAspectRatio="xMidYMid slice"
+        style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      >
+        {[52, 104, 156, 208].map((y) => (
+          <line key={`h${y}`} x1="0" y1={y} x2="360" y2={y} stroke={p.garis} strokeWidth="0.75" opacity="0.35" />
+        ))}
+        {[60, 120, 180, 240, 300].map((x) => (
+          <line key={`v${x}`} x1={x} y1="0" x2={x} y2="260" stroke={p.garis} strokeWidth="0.75" opacity="0.35" />
+        ))}
+        {bidang ? (
+          <polygon
+            points="96,196 150,168 214,150 268,170 262,222 190,238 128,226"
+            fill={bidang}
+            fillOpacity="0.16"
+            stroke={bidang}
+            strokeWidth="2"
+            strokeDasharray="7 5"
+            strokeLinejoin="round"
+          />
+        ) : null}
+      </svg>
+      {children}
+      <span
+        style={{
+          position: "absolute",
+          insetInlineStart: spasi.md,
+          insetBlockEnd: spasi.md,
+          paddingInline: spasi.sm,
+          paddingBlock: 2,
+          borderRadius: radius.xs,
+          background: p.permukaan,
+          ...gayaTeks("mikro", { warna: p.teks, mono: true }),
+        }}
+      >
+        {skala}
+      </span>
+      <span
+        style={{
+          position: "absolute",
+          insetInlineEnd: spasi.md,
+          insetBlockEnd: spasi.md,
+          paddingInline: spasi.sm,
+          paddingBlock: 2,
+          borderRadius: radius.xs,
+          background: p.permukaan,
+          ...gayaTeks("mikro", { warna: p.teksLembut }),
+        }}
+      >
+        © OpenStreetMap
+      </span>
+    </Peta>
+  );
+}
