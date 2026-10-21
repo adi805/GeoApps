@@ -22,8 +22,15 @@ export interface Keadaan {
 export interface Komposisi {
   /** Nama fungsi produk, sama dengan nama berkas tangkapan layar. */
   id: string;
-  /** Jalur kerja: beranda (titik masuk), peta, lapangan, offline, geofence, sistem. */
-  jalur: "beranda" | "peta" | "lapangan" | "offline" | "geofence" | "sistem";
+  /**
+   * Jalur kerja: peta, lapangan, offline, geofence, sistem.
+   *
+   * Daftar ini sengaja TIDAK diperluas untuk beranda: `tests/visual-inventaris.test.ts`
+   * memegang kontrak `JALUR_SAH`, dan berkas uji itu milik lane `uji`, bukan `visual`.
+   * Beranda dan chrome peta masuk jalur `peta` karena keduanya soal peta: daftar peta
+   * yang dibuka, dan chrome layar peta. Memperluas taksonomi = unit kerja lane `uji`.
+   */
+  jalur: "peta" | "lapangan" | "offline" | "geofence" | "sistem";
   /** Berkas komposisi, relatif terhadap `src/visual/`. */
   berkas: string;
   /** Nama komponen yang diekspor. */
@@ -510,7 +517,7 @@ export const INVENTARIS: readonly Komposisi[] = [
   },
   {
     id: "beranda",
-    jalur: "beranda",
+    jalur: "peta",
     berkas: "screens/beranda.tsx",
     komponen: "KomposisiBeranda",
     judul: "Beranda Peta Saya",
@@ -525,7 +532,7 @@ export const INVENTARIS: readonly Komposisi[] = [
   },
   {
     id: "chrome-peta",
-    jalur: "beranda",
+    jalur: "peta",
     berkas: "screens/beranda.tsx",
     komponen: "KomposisiChrome",
     judul: "Chrome peta dan sesi lapangan",

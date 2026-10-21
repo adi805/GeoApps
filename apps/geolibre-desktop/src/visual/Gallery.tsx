@@ -14,7 +14,7 @@ import { LEBAR_KANVAS, TEMA, palet, spasi, tipografi, type Tema } from "./tokens
 
 type KomponenKomposisi = (props: { keadaan?: "utama" | keyof Keadaan; lebar?: number }) => ReactElement;
 
-const JALUR: readonly Komposisi["jalur"][] = ["beranda", "peta", "lapangan", "offline", "geofence", "sistem"];
+const JALUR: readonly Komposisi["jalur"][] = ["peta", "lapangan", "offline", "geofence", "sistem"];
 
 const NAMA_KEADAAN: Record<"utama" | keyof Keadaan, string> = {
   utama: "utama",
