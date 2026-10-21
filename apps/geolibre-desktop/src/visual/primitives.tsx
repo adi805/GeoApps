@@ -325,6 +325,72 @@ export function BilahBawah({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Bilah tab bawah: dua sampai empat tujuan utama, bukan menu.
+ *
+ * Tab adalah tempat berpindah, bukan tempat beraksi. Aksi utama tetap di
+ * `BilahBawah` di atasnya, karena tab yang berubah-ubah isinya membuat jempol
+ * menekan tombol yang salah. Tingginya dari `krome.bilahBawah`, dan tiap tab
+ * memakai target sentuh penuh selebar kolomnya.
+ */
+export function BilahTab<T extends string>({
+  tab,
+  aktif,
+  label,
+}: {
+  tab: readonly { id: T; label: string; ikon: ReactNode }[];
+  aktif: T;
+  /** Nama aksesibel kumpulan tab, mis. "Navigasi utama". */
+  label: string;
+}) {
+  const p = usePalet();
+  return (
+    <div
+      role="tablist"
+      aria-label={label}
+      style={{
+        display: "flex",
+        background: p.permukaan,
+        borderBlockStart: `1px solid ${p.garis}`,
+      }}
+    >
+      {tab.map((t) => {
+        const terpilih = t.id === aktif;
+        return (
+          <button
+            key={t.id}
+            type="button"
+            role="tab"
+            aria-selected={terpilih}
+            style={{
+              flex: 1,
+              minHeight: krome.bilahBawah,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: spasi.xs,
+              paddingBlock: spasi.sm,
+              border: "none",
+              borderBlockStart: `2px solid ${terpilih ? p.utama : "transparent"}`,
+              background: terpilih ? p.permukaanTinggi : p.permukaan,
+              color: terpilih ? p.utama : p.teksLembut,
+              fontFamily: tipografi.keluarga.sans,
+              fontSize: tipografi.ukuran.mikro,
+              fontWeight: tipografi.bobot.tebal,
+              letterSpacing: tipografi.jarakHuruf.label,
+              cursor: "pointer",
+            }}
+          >
+            {t.ikon}
+            <span>{t.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 /** Chip: pilihan tunggal/berganda yang ringkas, tetap setinggi target sentuh. */
 export function Chip({
   children,
