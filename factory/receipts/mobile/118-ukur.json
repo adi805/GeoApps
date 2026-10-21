@@ -1,0 +1,222 @@
+{
+  "base": "http://127.0.0.1:4173",
+  "rows": [
+    {
+      "file": "/tmp/118/shots/beranda-kosong-360.png",
+      "viewport": "360x800",
+      "state": "kosong",
+      "navLabel": "Navigasi beranda",
+      "hasMain": true,
+      "headings": [
+        "Peta Saya"
+      ],
+      "progressbar": null,
+      "targets": [
+        {
+          "label": "Cari peta",
+          "tag": "button",
+          "w": 48,
+          "h": 48
+        },
+        {
+          "label": "Tambah Peta",
+          "tag": "button",
+          "w": 310,
+          "h": 48
+        },
+        {
+          "label": "Peta Saya",
+          "tag": "button",
+          "w": 168,
+          "h": 48
+        },
+        {
+          "label": "Layer",
+          "tag": "button",
+          "w": 168,
+          "h": 48
+        }
+      ],
+      "bodyText": "Belum ada petaPeta yang kamu tambahkan akan muncul di sini dan tetap terbuka tanpa jaringan.Tambah Peta"
+    },
+    {
+      "file": "/tmp/118/shots/beranda-berisi-360.png",
+      "viewport": "360x800",
+      "state": "berisi",
+      "navLabel": "Navigasi beranda",
+      "hasMain": true,
+      "headings": [
+        "Peta Saya",
+        "Peta terakhir",
+        "Ruang penyimpanan"
+      ],
+      "progressbar": {
+        "label": "Ruang penyimpanan terpakai",
+        "now": "0",
+        "text": "Belum diukur"
+      },
+      "targets": [
+        {
+          "label": "Cari peta",
+          "tag": "button",
+          "w": 48,
+          "h": 48
+        },
+        {
+          "label": "E2E Seed Project10 bulan yang laluLokal",
+          "tag": "button",
+          "w": 334,
+          "h": 54
+        },
+        {
+          "label": "Kebun Blok A3 hari yang laluLokal",
+          "tag": "button",
+          "w": 334,
+          "h": 54
+        },
+        {
+          "label": "Survei Ulang18 jam yang laluLokal",
+          "tag": "button",
+          "w": 334,
+          "h": 54
+        },
+        {
+          "label": "Tambah Peta",
+          "tag": "button",
+          "w": 336,
+          "h": 48
+        },
+        {
+          "label": "Peta Saya",
+          "tag": "button",
+          "w": 168,
+          "h": 48
+        },
+        {
+          "label": "Layer",
+          "tag": "button",
+          "w": 168,
+          "h": 48
+        }
+      ],
+      "bodyText": "Peta terakhirE2E Seed Project10 bulan yang laluLokalKebun Blok A3 hari yang laluLokalSurvei Ulang18 jam yang laluLokalRuang penyimpananBelum diukurUbin offline dan ukuran proyek belum diukur pada versi ini, jadi bilahnya masih nol.Pengukuran ruang diajukan terpisah."
+    },
+    {
+      "file": "/tmp/118/shots/beranda-kosong-412.png",
+      "viewport": "412x915",
+      "state": "kosong",
+      "navLabel": "Navigasi beranda",
+      "hasMain": true,
+      "headings": [
+        "Peta Saya"
+      ],
+      "progressbar": null,
+      "targets": [
+        {
+          "label": "Cari peta",
+          "tag": "button",
+          "w": 48,
+          "h": 48
+        },
+        {
+          "label": "Tambah Peta",
+          "tag": "button",
+          "w": 362,
+          "h": 48
+        },
+        {
+          "label": "Peta Saya",
+          "tag": "button",
+          "w": 194,
+          "h": 48
+        },
+        {
+          "label": "Layer",
+          "tag": "button",
+          "w": 194,
+          "h": 48
+        }
+      ],
+      "bodyText": "Belum ada petaPeta yang kamu tambahkan akan muncul di sini dan tetap terbuka tanpa jaringan.Tambah Peta"
+    },
+    {
+      "file": "/tmp/118/shots/beranda-berisi-412.png",
+      "viewport": "412x915",
+      "state": "berisi",
+      "navLabel": "Navigasi beranda",
+      "hasMain": true,
+      "headings": [
+        "Peta Saya",
+        "Peta terakhir",
+        "Ruang penyimpanan"
+      ],
+      "progressbar": {
+        "label": "Ruang penyimpanan terpakai",
+        "now": "0",
+        "text": "Belum diukur"
+      },
+      "targets": [
+        {
+          "label": "Cari peta",
+          "tag": "button",
+          "w": 48,
+          "h": 48
+        },
+        {
+          "label": "E2E Seed Project10 bulan yang laluLokal",
+          "tag": "button",
+          "w": 386,
+          "h": 54
+        },
+        {
+          "label": "Kebun Blok A3 hari yang laluLokal",
+          "tag": "button",
+          "w": 386,
+          "h": 54
+        },
+        {
+          "label": "Survei Ulang18 jam yang laluLokal",
+          "tag": "button",
+          "w": 386,
+          "h": 54
+        },
+        {
+          "label": "Tambah Peta",
+          "tag": "button",
+          "w": 388,
+          "h": 48
+        },
+        {
+          "label": "Peta Saya",
+          "tag": "button",
+          "w": 194,
+          "h": 48
+        },
+        {
+          "label": "Layer",
+          "tag": "button",
+          "w": 194,
+          "h": 48
+        }
+      ],
+      "bodyText": "Peta terakhirE2E Seed Project10 bulan yang laluLokalKebun Blok A3 hari yang laluLokalSurvei Ulang18 jam yang laluLokalRuang penyimpananBelum diukurUbin offline dan ukuran proyek belum diukur pada versi ini, jadi bilahnya masih nol.Pengukuran ruang diajukan terpisah."
+    }
+  ],
+  "contract": {
+    "nameStartsWithProject": true,
+    "tag": "button",
+    "keyboardOpensViewer": true,
+    "count": 1,
+    "accessibleName": "E2E Seed Project 10 bulan yang lalu Lokal"
+  },
+  "search": {
+    "fieldVisible": true,
+    "fieldBox": {
+      "w": 286,
+      "h": 48
+    },
+    "rowsAfterFilter": 1
+  },
+  "targetsBelow48": [],
+  "verdict": "SEMUA TARGET >= 48 px"
+}
