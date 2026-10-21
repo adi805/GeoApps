@@ -74,6 +74,12 @@
     "factory_gate": {
       "run": 39531170024,
       "kesimpulan": "success"
+    },
+    "run_akhir": {
+      "run": 39532617227,
+      "head": "d821b33d",
+      "kesimpulan": "success",
+      "job_gagal": []
     }
   },
   "usulan": [
