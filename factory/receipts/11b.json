@@ -46,8 +46,34 @@
     "Belum ada pemanggil untuk `saveProjectToBundle`: UI dan `apps/geolibre-desktop/src/lib/file-io/project-files.ts` tidak dimiliki lane mana pun, karena `file-io/**` tidak muncul di glob lane mana pun di `factory/lanes.json`. Perlu keputusan HQ soal lane pemiliknya; tercatat sebagai usulan, bukan diputuskan di unit ini.",
     "Store Tauri belum bisa dipakai dari UI sampai `src-tauri/capabilities/default.json` memuat `fs:scope` `projects/**`; berkas itu milik lane `android`.",
     "Foto koleksi lapangan masih base64 di JSON proyek: ikut ditulis ulang jadi relatif, belum diekstrak jadi berkas terpisah di `foto/`.",
-    "`npm run lint` dan `tsc -b` TIDAK dijalankan di host ini (ESLint type-aware dan `tsc -b` kehabisan heap). `--max-warnings` tidak dinaikkan; verifikasi akhir diserahkan ke CI.",
+    "`npm run lint` dan `tsc -b` TIDAK dijalankan di host ini (ESLint type-aware dan `tsc -b` kehabisan heap, RAM 3.9 GB). `--max-warnings` tidak dinaikkan. Verifikasi itu dijalankan CI dan HIJAU di run 39531170094: job `Lint and type check` success.",
     "Repo kerja ini shallow clone: `git merge-base origin/main HEAD` gagal sebelum `git fetch --deepen=150 origin main`, sehingga `gate_commit_paths.py` sempat melapor `GAGAL git merge-base` walau commit-nya benar. Setelah deepen, gate LULUS."
   ],
-  "komentar_pr": "https://github.com/adi805/GeoApps/pull/111#issuecomment-6306170980"
+  "komentar_pr": "https://github.com/adi805/GeoApps/pull/111#issuecomment-6306170980",
+  "ci": {
+    "run": 39531170094,
+    "kesimpulan": "success",
+    "job": [
+      {
+        "nama": "Lint and type check",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "Build and test",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "E2E core (Playwright)",
+        "kesimpulan": "success"
+      },
+      {
+        "nama": "CI passed",
+        "kesimpulan": "success"
+      }
+    ],
+    "factory_gate": {
+      "run": 39531170024,
+      "kesimpulan": "success"
+    }
+  }
 }
