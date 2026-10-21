@@ -5,4 +5,4 @@ Dihasilkan `node apps/geolibre-desktop/src/visual/tangkap-layar.mjs`, tema teran
 - `<id>-<lebar>.png`: satu komposisi pada keadaan utama, lebar 360 dan 412.
 - `keadaan/<id>-<keadaan>.png`: bukti satu layar per keadaan (kosong, memuat, galat, offline, izin ditolak).
 
-67 berkas ditulis.
+2 berkas ditulis.
