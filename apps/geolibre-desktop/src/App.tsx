@@ -24,7 +24,7 @@ import { useStartupLayerStyles } from "./hooks/useStartupLayerStyles";
 import { useTemplateLibraryPersistence } from "./hooks/useTemplateLibraryPersistence";
 import { useRuntimeEnvironmentVariables } from "./hooks/useRuntimeEnvironmentVariables";
 import { useStartupUpdateCheck } from "./hooks/useStartupUpdateCheck";
-import { useStartupProject } from "./hooks/useStartupProject";
+import { hasExplicitLaunchPayload, useStartupProject } from "./hooks/useStartupProject";
 import { useThemeMode } from "./hooks/useThemeMode";
 import { useThemeScheme } from "./hooks/useThemeScheme";
 import { useUiProfileBootstrap } from "./hooks/useUiProfileBootstrap";
@@ -48,9 +48,17 @@ export default function App() {
   // one-shot import and duplicate its layers.
   const [mapAppAPI, setMapAppAPI] = useState<ReturnType<typeof createAppAPI> | null>(null);
   // Avenza-style screen routing: home (My Maps) ↔ viewer (full GIS shell).
-  const [screen, setScreen] = useState<{ kind: "home" } | { kind: "viewer"; project: RecentProjectEntry; autoOpenRaster?: boolean }>({
-    kind: "home",
-  });
+  //
+  // A deep link starts in the viewer. `?project=`/`?url=`, `?data=`, `?serviceUrl=`
+  // and `?stac=` all load into stores that only `DesktopShell` reads, and the
+  // shell is what mounts the map they draw on. Starting on the home screen left
+  // a shared link showing "Belum ada peta" with no error at all, because the
+  // load-failure notices live in `DesktopShell` too (see issue #98). `project`
+  // is not read on this path: a deep link names a URL, not an entry in the
+  // recent list, and the loader reports its own outcome.
+  const [screen, setScreen] = useState<
+    { kind: "home" } | { kind: "viewer"; project?: RecentProjectEntry; autoOpenRaster?: boolean }
+  >(() => (hasExplicitLaunchPayload() ? { kind: "viewer" } : { kind: "home" }));
   const handleMapReady = useCallback((api: ReturnType<typeof createAppAPI>) => {
     setMapAppAPI((current) => current ?? api);
   }, []);
