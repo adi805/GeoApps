@@ -1,9 +1,9 @@
 {
   "issue": 81,
   "lane": "uji",
-  "branch": "uji/bundel-tests-v2",
-  "worktree": "~/GeoApps-uji-bundel",
-  "commit": "a7094968",
+  "branch": "uji/offline-reopen-init",
+  "worktree": "~/GeoApps-uji-reopen",
+  "commit": "d54070ab",
   "status_short": [],
   "kriteria": [
     {
@@ -16,11 +16,11 @@
     },
     {
       "kriteria": "2. npx playwright test e2e/offline-reopen.spec.ts lulus, dengan route.abort() aktif dan tanpa test.skip",
-      "status": "sebagian",
-      "perintah": "npx playwright test e2e/offline-reopen.spec.ts --list",
+      "status": "selesai",
+      "perintah": "gh run view 39505487569 -R adi805/GeoApps (job E2E features 2/4, 118913222554)",
       "exit": 0,
-      "keluaran": "Spec terdaftar dan bisa dimuat Playwright: `[features] > offline-reopen.spec.ts:99:5 > reopens a project with every non-local request aborted`, Total 1 test in 1 file. Isi spec memakai page.route('**/*') yang memanggil route.abort() untuk setiap URL yang bukan localhost/127.0.0.1, dan grep memastikan nol test.skip, nol test.fixme, nol test.fail di berkas itu. BELUM PERNAH DIJALANKAN: `npx playwright test e2e/offline-reopen.spec.ts` keluar dengan `Error: Process from config.webServer was not able to start. Exit code: 134`, dan log webServer memuat `FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory` pada heap sekitar 707 MB. cgroup sesi ini memory.max = 2516582400 (2.4 GB) dengan 1.5 GB sudah dipakai daemon, jadi V8 mengukur sisa itu. Percobaan `systemd-run --user --scope` dengan batas 1.9 GB juga gagal, dan percobaan build terpisah gagal lebih awal dengan `Could not resolve '@vitejs/plugin-react'` karena node_modules worktree ini hasil hardlink yang tidak lengkap, sementara `npm ci` juga OOM di mesin 3.9 GB ini.",
-      "catatan": "Status sebagian, bukan selesai: kriteria ini baru terbukti di tingkat deklarasi (spec sah dan terdaftar), belum di tingkat eksekusi. Verifikator sebenarnya adalah runner CI lewat jalur nightly e2e-full.yml (--project=features, sharded 4x, --workers=1), karena spec ini tidak ada di CORE_SPECS playwright.config.ts dan berkas itu di luar glob lane uji sehingga tidak diubah dari PR ini."
+      "keluaran": "HIJAU di runner CI, commit d54070ab: `✓ 49 [features] › e2e/offline-reopen.spec.ts:108:5 › reopens a project with every non-local request aborted (8.2s)`, job 118913222554 shard 2/4, lulus percobaan pertama tanpa retry. Nol test.skip/fixme/fail di berkas itu, dan route.abort() terbukti aktif oleh spec sendiri di baris 138-141 (probe example.invalid wajib 'blocked' dan tercatat di daftar abort). Rantai empat kegagalan sebelum hijau: nightly 39450566837 timeout 60 dtk di baris 123 karena showOpenFilePicker (project-files.ts:47); cf799fd6 memindahkannya ke baris 172 dengan 'Expected 3, Received 1' karena tiga titik foto memakai satu PNG; 64790eab memindahkannya ke baris 188 karena panel Layers yang dilipat menghapus baris layer-row dari DOM; 62f24cf9 gagal di baris 192 karena mencari 'Expand layers' padahal dock replace-layers membuat panel render null (LayerPanel.tsx:485 + DesktopShell.tsx:790) dan yang terpasang entri rail bersama 'Expand Layers'; d54070ab memakai locator tanpa peduli besar-kecil huruf dan hijau.",
+      "catatan": "Status selesai bersandar pada runner CI, bukan eksekusi lokal: npx playwright test di mesin lane mati dengan 'FATAL ERROR: Reached heap limit' di heap ~707 MB karena cgroup memory.max = 2516582400, dan node_modules worktree ini hardlink tidak lengkap ('Could not resolve '@vitejs/plugin-react'') sementara npm ci juga OOM. Nol timeout, retry, atau skip ditambahkan: tiap kegagalan ditambal pada sebabnya. Spec TIDAK dipindahkan ke CORE_SPECS, sesuai ruling u-HQ-4a08a3. Kegagalan lain di shard yang sama bukan dari PR ini (mapbox-* timeout kanvas, open-recent #95, style-manager #88, a11y-screens #89)."
     },
     {
       "kriteria": "3. Job Lint and type check, Build and test, dan E2E core hijau di PR",
@@ -43,17 +43,17 @@
     {
       "perintah": "python3 tools/factory/gate_commit_paths.py --lane uji --base origin/main --head HEAD",
       "exit": 0,
-      "keluaran": "LULUS  lane uji: 3 path, semuanya di cakupan"
+      "keluaran": "LULUS  lane uji: 2 path, semuanya di cakupan"
     },
     {
-      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr81.md --judul /tmp/judul81.txt --commits /tmp/commits81.txt --issue 81",
+      "perintah": "python3 tools/factory/gate_pr_link.py --body /tmp/pr91-body.md --judul /tmp/pr91-title.txt --commits /tmp/pr91-commits.txt --issue 81",
       "exit": 0,
-      "keluaran": "LULUS  menutup issue #81, 2 commit semuanya menyebut issue"
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: rujukan non-penutup #81), 4 commit semuanya menyebut issue"
     },
     {
-      "perintah": "npx eslint tests/project-bundle.test.ts tests/project-manifest.test.ts e2e/offline-reopen.spec.ts",
+      "perintah": "npx eslint e2e/offline-reopen.spec.ts",
       "exit": 0,
-      "keluaran": "Exit 0, nol warning. Tidak ada eslint-disable baru di luar satu komentar yang sudah ada di berkas hasil pemulihan."
+      "keluaran": "Exit 0, nol warning, nol eslint-disable baru."
     },
     {
       "perintah": "git status --short",
@@ -61,7 +61,7 @@
       "keluaran": "Bersih sebelum receipt ditulis; tidak ada berkas setengah jadi yang tertinggal."
     }
   ],
-  "komentar_issue": "https://github.com/adi805/GeoApps/issues/81#issuecomment-6294246179",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/81#issuecomment-6303123810",
   "cakupan": {
     "berkas_usulan": "factory/usulan-uji.jsonl (tidak ada di repo dan di luar glob lane uji; ditulis lewat usulan.py catat lalu dihapus supaya worktree bersih)",
     "salinan": "factory/bahan/81-usulan.md",
