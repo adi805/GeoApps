@@ -1,0 +1,60 @@
+{
+  "issue": 14,
+  "lane": "HQ",
+  "branch": "hq/scope-bundel-uji",
+  "worktree": "~/GeoApps-hq-scope-bundel",
+  "commit": "d7fcab20",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "./siapkan.sh && cargo build --release && ./target/release/scope-bundel",
+      "exit": 0,
+      "keluaran": "8 skenario, 0 hasil tidak sesuai harapan. S0 (capability apa adanya, tanpa entri projects/**): mkdir, write_file, write_text_file, read_file, read_dir, remove semuanya 4/4 jalur bundel. S1 dan S4: mkdir tidak diberikan permission begitu fs:default dibuang, entri scope absolut tidak menggantikannya. S2 identik dengan S0, jadi entri $APPLOCALDATA/projects/** tidak menambah satu jalur pun. S5: pola relatif projects/** tidak cocok dengan jalur absolut mana pun (1/4). S6: $APPLOCALDATA/projects/** tidak menutup direktori projects/ itu sendiri (3/4). S7: seluruh blok fs:scope dibuang, tetap 4/4."
+    },
+    {
+      "perintah": "cd factory/bahan/14-scope-bundel && ./uji-tolak.sh",
+      "exit": 0,
+      "keluaran": "ok: alat menolak capability tanpa fs:default (exit 1, 6 baris SALAH di S0)"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane HQ --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane HQ: 6 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "python3 tools/factory/sync_law.py --check",
+      "exit": 0,
+      "keluaran": "LULUS  blok hasil generate di factory/LAW.md sama dengan factory/lanes.json"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_law_fresh.py --sync-mode lewati",
+      "exit": 0,
+      "keluaran": "LULUS  factory/LAW.md masih sama dengan baseline yang disahkan"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_ledger.py",
+      "exit": 0,
+      "keluaran": "LULUS  ledger 90 entri, penulis tunggal `HQ`"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_plugin_lint.py",
+      "exit": 0,
+      "keluaran": "LULUS  24 skill lolos lint plugin (frontmatter, konvensi, sumber, git)"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_pr_link.py --judul /tmp/judul.txt --body /tmp/pr-body-14.md",
+      "exit": 0,
+      "keluaran": "LULUS  tidak menutup issue (penanda non-penutup: rujukan non-penutup #14)"
+    }
+  ],
+  "pr": "https://github.com/adi805/GeoApps/pull/112",
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/14#issuecomment-6306430517",
+  "catatan_merah": [
+    "Ini jawaban pertanyaan, bukan penutupan #14: #14 adalah issue induk delapan unit kerja dan tetap terbuka. PR #112 memakai `Refs #14`, bukan `Closes #14`.",
+    "Alat bukti tidak menjalankan aplikasinya di Android. Yang diuji aturan ACL dan pencocok glob yang dipakai plugin (tauri-utils 2.10.2, tauri-plugin-fs 2.7.1, versi yang sama dengan Cargo.lock aplikasi), bukan perilaku perangkat. `deny-default` tidak relevan untuk pertanyaan ini dan tidak diuji.",
+    "Dua klaim di repo terbukti keliru dan TIDAK diperbaiki di sini karena berkasnya milik lane lain: komentar `project-bundle-tauri.ts:27-32` (lane offline) dan komentar entri `fs:scope` di `capabilities/default.json` (lane android). Keduanya diusulkan ke lane masing-masing lewat komentar issue ini, bukan lewat PR ini.",
+    "Entri `fs:scope` untuk `startup-projects` ternyata juga tidak lagi diperlukan untuk lolos (S7). Tidak diusulkan untuk dihapus: berkasnya milik lane android dan menghapus entri yang tidak berbahaya bukan pekerjaan mendesak."
+  ]
+}
