@@ -139,6 +139,20 @@ try {
    */
   const gagal = [];
   let n = 0;
+  /**
+   * Jumlah berkas dihitung dari isi folder, bukan dari jumlah tugas yang jalan.
+   * Dulu yang ditulis `n`, dan `TEMBAK_HANYA` membuat satu jalan parsial menulis
+   * "2 berkas ditulis" padahal folder itu berisi 71: README-nya berbohong tanpa
+   * ada yang gagal.
+   */
+  const hitungPng = async (dir) => {
+    let jumlah = 0;
+    for (const isi of await readdir(dir, { withFileTypes: true })) {
+      if (isi.isDirectory()) jumlah += await hitungPng(path.join(dir, isi.name));
+      else if (isi.name.endsWith(".png")) jumlah += 1;
+    }
+    return jumlah;
+  };
   for (const t of tugas) {
     for (let percobaan = 1; percobaan <= 2; percobaan += 1) {
       let perambanTugas;
@@ -195,7 +209,7 @@ try {
       "- `<id>-<lebar>.png`: satu komposisi pada keadaan utama, lebar 360 dan 412.",
       "- `keadaan/<id>-<keadaan>.png`: bukti satu layar per keadaan (kosong, memuat, galat, offline, izin ditolak).",
       "",
-      `${n} berkas ditulis.`,
+      `${await hitungPng(keluaran)} berkas di folder ini.`,
       "",
     ].join("\n"),
   );
