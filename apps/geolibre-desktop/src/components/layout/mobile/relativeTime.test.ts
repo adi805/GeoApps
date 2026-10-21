@@ -1,3 +1,8 @@
+/* `it()` returns a promise the runner tracks; nothing here awaits it. The rule
+ * cannot know that, so it is silenced for this file only, the same way
+ * `src/styles/tokens.test.ts` handles it. */
+/* eslint-disable @typescript-eslint/no-floating-promises */
+
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { relativeOpenedAt } from "./relativeTime";
