@@ -1,0 +1,84 @@
+{
+  "issue": 103,
+  "lane": "ui",
+  "branch": "ui/beranda-103",
+  "worktree": "~/GeoApps-ui-beranda-103",
+  "commit": "13a020f9",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. grep -cE '#[0-9a-fA-F]{3,6}|rgba?\\(' apps/geolibre-desktop/src/components/layout/HomeScreen.tsx menghasilkan 0",
+      "status": "selesai",
+      "perintah": "grep -cE '#[0-9a-fA-F]{3,6}|rgba?\\(' apps/geolibre-desktop/src/components/layout/HomeScreen.tsx",
+      "exit": 0,
+      "keluaran": "0. Versi pertama rewrite mengembalikan 1 karena komentar '#103' sendiri cocok dengan pola heksadesimal: grep -nE mengembalikan '28: * The arrangement is the one #103 asks for'. Itu nomor issue, bukan warna. Komentar ditulis ulang menjadi 'issue 103' tanpa tanda pagar, lalu grep kembali 0. Seluruh warna di berkas berasal dari kelas semantik Tailwind (bg-background, text-primary, border, text-muted-foreground) yang dipetakan dari src/styles/tokens.css.",
+      "catatan": "Kriteria mekanis ini sempat memberi false positive pada teks, bukan pada warna. Yang diperbaiki teksnya, bukan regex-nya, karena regex itu milik unit dan tidak boleh dilonggarkan."
+    },
+    {
+      "kriteria": "2. node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check exit 0",
+      "status": "selesai",
+      "perintah": "node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check",
+      "exit": 0,
+      "keluaran": "OK      src/styles/tokens.css matches tokens.ts. Dijalankan dua kali: sebelum perubahan dan sesudah. Dua-duanya exit 0, jadi rewrite beranda tidak menyimpangkan token CSS dari tokens.ts.",
+      "catatan": "Perubahan ini tidak menyentuh token sama sekali; pemeriksaan dijalankan sebagai penjaga, bukan karena ada token yang diubah."
+    },
+    {
+      "kriteria": "3. npm run lint warning <= 242 (ratchet tidak dinaikkan)",
+      "status": "selesai",
+      "perintah": "NODE_OPTIONS=--max-old-space-size=3072 npx eslint apps/geolibre-desktop/src/components/layout/HomeScreen.tsx",
+      "exit": 0,
+      "keluaran": "Sebelum: 1 warning, '68:29 warning Physical Tailwind class `text-left` does not mirror in right-to-left locales; use `text-start` (local/no-physical-tailwind)'. Sesudah: 0 masalah, exit 0. Warning hilang karena baris itu diganti MobileListRow, yang memakai text-start. Angka absolut ratchet tidak bisa diukur di host ini: npm run lint penuh mati dengan 'FATAL ERROR: Reached heap limit' / exit 134, sama seperti yang tercatat di receipt #89.",
+      "catatan": "Karena ratchet penuh tidak terukur lokal, bukti angka 242 diserahkan ke job 'Lint and type check' di CI. Yang bisa dibuktikan lokal adalah arahnya: warning di berkas sasaran turun dari 1 ke 0, jadi perubahan ini tidak menambah beban ratchet."
+    },
+    {
+      "kriteria": "4. Tangkapan layar dari aplikasi nyata di factory/receipts/mobile/beranda-360.png dan beranda-412.png, bukan galeri visual.html",
+      "status": "selesai",
+      "perintah": "npx vite build && npx vite preview --port 4173 --strictPort, lalu node tmp-103-shoot.mjs /tmp/103/shots",
+      "exit": 0,
+      "keluaran": "vite build exit 0 dalam 44,49 s dan menghasilkan dist/. vite preview melayani HTTP 200 di 127.0.0.1:4173. Playwright 1.64.0 (chromium headless shell 1248) membuka build itu dengan storageState yang menandai onboarding selesai, di 360x800 dan 412x915, dua keadaan: kosong dan berisi tiga proyek. Empat berkas ditulis: beranda-360.png, beranda-412.png, beranda-kosong-360.png, beranda-kosong-412.png (commit 13a020f9). Target sentuh diukur dari getBoundingClientRect tiap elemen interaktif: 360 kosong 4 target tinggi minimum 48, 360 berisi 6 target minimum 48, 412 kosong 4 target minimum 48, 412 berisi 6 target minimum 48, targetsBelow48 = []. Keempat gambar diperiksa dengan vision: header, kartu, dan tab bawah tidak bertumpuk dan tidak terpotong.",
+      "catatan": "Ini aplikasi hasil build, bukan replika statis dan bukan galeri src/visual. Host ini ternyata sanggup menjalankan build dan preview setelah npm ci bersih (node_modules hasil hardlink dari worktree lain tidak lengkap, @vitejs/plugin-react hilang). Yang tidak sanggup dijalankan adalah webServer Playwright penuh lewat 'npm run build', karena 'tsc -b' lebih dulu gagal oleh 19 error lingkungan."
+    },
+    {
+      "kriteria": "5. npm run build hijau di CI",
+      "status": "menunggu-ci",
+      "perintah": "gh pr checks <nomor-pr> --repo adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "Belum dijalankan saat receipt ini ditulis; PR dibuka setelahnya. Di host ini 'npm run build' tidak bisa hijau karena 'tsc -b' mengembalikan 19 error lingkungan yang identik sebelum dan sesudah perubahan (diff himpunan kosong), semuanya di berkas yang tidak disentuh: src/lib/geolocation.ts (@tauri-apps/plugin-geolocation, import type yang dihapus saat emit), packages/plugins/** (@loaders.gl/i3s dinamis, deklarasi @mapbox/vector-tile, pbf PbfReader, mgrs). Nol error menyentuh HomeScreen atau components/layout.",
+      "catatan": "Dibuktikan pre-existing dengan mengukur dua kali: git stash perubahan ini, jalankan tsc -b, bandingkan himpunan 'error TS' dengan sesudahnya. Hasilnya 'IDENTIK: himpunan error sama persis', 19 baris di dua keadaan. Status sengaja ditulis menunggu-ci, bukan selesai, sampai job CI benar-benar hijau."
+    },
+    {
+      "kriteria": "6. Uji frontend tidak regresi",
+      "status": "selesai",
+      "perintah": "npm run test:frontend",
+      "exit": 0,
+      "keluaran": "# tests 12610, # pass 12605, # fail 2, # skipped 3, # cancelled 0. Dua yang gagal: tests/component-desktop-shell.test.ts dan tests/embed-api.test.ts. Keduanya gagal di baseline juga, dengan sebab yang sama: \"Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../node_modules/@geolibre/embed/dist/index.js' imported from .../src/lib/embed-api.ts\". Itu artefak workspace yang dibuat oleh prebuild dan tidak ada di host ini. Dibuktikan dengan git stash perubahan ini lalu menjalankan kedua berkas itu lagi: 'not ok 1 component-desktop-shell', 'not ok 2 embed-api', '# fail 2' tanpa perubahan gue.",
+      "catatan": "exit 0 di field ini adalah exit pemeriksaan pembanding di baseline (dua-duanya gagal), bukan klaim bahwa suite bersih. Suite penuh exit 1 karena dua kegagalan lingkungan itu."
+    },
+    {
+      "kriteria": "7. Kontrak lane uji tidak pecah: baris proyek tetap button dan tetap membuka viewer",
+      "status": "selesai",
+      "perintah": "node tmp-103-contract.mjs (terhadap vite preview 4173)",
+      "exit": 0,
+      "keluaran": "Empat tab stop berurutan di beranda: 'Tambah Peta', 'E2E Seed Project', 'Peta Saya', 'Layer'. rowReachableByKeyboard = true. Fokus ke baris proyek lalu Enter: mapCanvasVisible = true, verdict 'KONTRAK E2E UTUH'. Ini meniru e2e/helpers.ts:57 yang memakai getByRole('button', { name: /E2E Seed Project/ }) lalu menunggu getByTestId('map-canvas'). Baris proyek dipertahankan sebagai <button> dengan nama proyek di accessible name justru karena kontrak itu.",
+      "catatan": "e2e/** nol perubahan. enterViewer() tidak disentuh, dan saran menambah panggilan kedua sesudah waitForMap tidak dijalankan."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane ui: 6 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "git diff --stat origin/main...HEAD -- e2e/ playwright.config.ts tests/ apps/geolibre-desktop/src/visual/",
+      "exit": 0,
+      "keluaran": "BERSIH: kosong. Lane uji dan lane visual tidak disentuh, tidak ada timeout dinaikkan, tidak ada retry tambahan, tidak ada test.skip."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "BERSIH: kosong."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/103#issuecomment-6310050208"
+}
