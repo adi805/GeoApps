@@ -1,0 +1,84 @@
+{
+  "issue": 118,
+  "lane": "ui",
+  "branch": "ui/beranda-118",
+  "worktree": "~/GeoApps-ui-beranda-118",
+  "commit": "69c221b1",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. Nol warna literal pada ketiga berkas produk",
+      "status": "selesai",
+      "perintah": "for f in apps/geolibre-desktop/src/components/layout/HomeScreen.tsx apps/geolibre-desktop/src/components/layout/mobile/mobilePrimitives.tsx apps/geolibre-desktop/src/components/layout/mobile/relativeTime.ts; do if grep -qE '#[0-9a-fA-F]{3,6}|rgba?\\(' \"$f\"; then echo \"GAGAL ada warna literal: $f\"; else echo \"OK 0 warna literal: $f\"; fi; done",
+      "exit": 0,
+      "keluaran": "OK 0 warna literal: apps/geolibre-desktop/src/components/layout/HomeScreen.tsx / OK 0 warna literal: apps/geolibre-desktop/src/components/layout/mobile/mobilePrimitives.tsx / OK 0 warna literal: apps/geolibre-desktop/src/components/layout/mobile/relativeTime.ts. Ketiga berkas hanya memakai kelas semantik Tailwind (bg-background, text-primary, border, text-muted-foreground, bg-primary/10) yang dipetakan dari src/styles/tokens.css.",
+      "catatan": "Bentuk pemeriksaan sengaja dibalik dari grep -c: yang dipakai grep -q dengan cabang GAGAL saat ada kecocokan, jadi exit 0 berarti benar-benar bersih. grep -c keluar 1 saat nol kecocokan, dan exit itu bukan exit pemeriksaan."
+    },
+    {
+      "kriteria": "2. node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check exit 0",
+      "status": "selesai",
+      "perintah": "node --import tsx apps/geolibre-desktop/scripts/gen-tokens-css.mjs --check",
+      "exit": 0,
+      "keluaran": "OK      src/styles/tokens.css matches tokens.ts. Unit ini tidak mengubah token sama sekali; pemeriksaan dijalankan sebagai penjaga supaya rewrite beranda tidak menyimpangkan CSS dari tokens.ts.",
+      "catatan": ""
+    },
+    {
+      "kriteria": "3. npx eslint pada tiga berkas produk dan satu berkas uji baru: 0 masalah, exit 0",
+      "status": "selesai",
+      "perintah": "npx eslint apps/geolibre-desktop/src/components/layout/HomeScreen.tsx apps/geolibre-desktop/src/components/layout/mobile/mobilePrimitives.tsx apps/geolibre-desktop/src/components/layout/mobile/relativeTime.ts apps/geolibre-desktop/src/components/layout/mobile/relativeTime.test.ts",
+      "exit": 0,
+      "keluaran": "Bersih, tanpa keluaran apa pun, exit 0. Sebelum commit a08680a3 berkas uji menghasilkan 9 warning '@typescript-eslint/no-floating-promises': node:test melacak sendiri promise dari it(), aturan itu tidak bisa tahu. Diperbaiki dengan disable lokal beralasan, pola yang sama dipakai src/styles/tokens.test.ts, bukan dengan mengubah konfigurasi eslint.",
+      "catatan": "npm run lint penuh tidak bisa diukur di host ini: mati dengan 'FATAL ERROR: Reached heap limit' / exit 134, sama seperti receipt #89 dan #103. Yang dibuktikan lokal adalah arahnya, yaitu nol masalah pada berkas yang disentuh. Ratchet angka penuh diserahkan ke job 'Lint and type check' di CI, yang hijau 5m29s."
+    },
+    {
+      "kriteria": "4. Tangkapan layar dari aplikasi hasil build di factory/receipts/mobile/, bukan galeri src/visual",
+      "status": "selesai",
+      "perintah": "cd apps/geolibre-desktop && npx vite build (log /tmp/118-build7.log, dibaca skrip ini untuk exit dan durasi)",
+      "exit": 0,
+      "keluaran": "vite build exit 0, 'built in 1m 43s', dijalankan dari apps/geolibre-desktop pada HEAD 69c221b1. Percobaan pertama dijalankan dari akar repo dan gagal 'UNRESOLVED_ENTRY: Cannot resolve entry module index.html' karena index.html aplikasi ada di apps/geolibre-desktop; diulang dari direktori yang benar dan hijau. Empat berkas di factory/receipts/mobile/ ditulis dari build itu lewat vite preview 127.0.0.1:4173 dengan Playwright, storageState onboarding selesai, locale id-ID, di 360x800 dan 412x915, dua keadaan: beranda-360.png, beranda-412.png, beranda-kosong-360.png, beranda-kosong-412.png, plus dump pengukuran 118-ukur.json. Target sentuh diukur dari getBoundingClientRect tiap elemen interaktif di keempat keadaan: targetsBelow48 = [], verdict 'SEMUA TARGET >= 48 px'. Baris proyek 334x54 di 360 dan 386x54 di 412; kolom cari 286x48; tombol ikon 48x48.",
+      "catatan": "Keempat gambar diperiksa dengan vision: header, kartu, dan tab bawah tidak bertumpuk dan tidak terpotong. Ini aplikasi hasil build, bukan replika statis dan bukan galeri src/visual. Server vite preview dihentikan oleh batas waktu 30 menit setelah tangkapan selesai; tidak ada pekerjaan yang tertinggal di situ."
+    },
+    {
+      "kriteria": "5. Build dan uji hijau di CI",
+      "status": "selesai",
+      "perintah": "gh pr checks 121 --repo adi805/GeoApps",
+      "exit": 0,
+      "keluaran": "exit 0, 13 baris 'pass', 0 baris fail atau pending. Job kunci: 'Build and test' 6m8s (di dalamnya benar-benar jalan 'npm run build' dan 'npm run test:frontend:coverage', log mencatat '10553 modules transformed', 'built in 9.45s'), 'Lint and type check' 5m29s, 'E2E core (Playwright)' 8m28s, 'Gate pada pohon ini' 18s, 'Gate bisa menolak (uji mandiri)' 8s, 'Build website and demo' 2m2s, 'Build and publish container image' 2m38s, Python 3.11/3.12/3.13/3.14 semuanya pass. Run 39590578564, kepala 69c221b1.",
+      "catatan": "Percobaan pertama build lokal dari akar repo gagal karena cwd, bukan karena kode; itu dicatat apa adanya di kriteria 4. tsc -b lokal tidak dipakai sebagai bukti karena artefak @geolibre/embed tidak dibangun di host ini, jadi 'Lint and type check' di CI yang menjadi bukti tipe."
+    },
+    {
+      "kriteria": "6. Uji frontend tidak regresi",
+      "status": "selesai",
+      "perintah": "gh api repos/adi805/GeoApps/actions/jobs/119190218667/logs --allow-escape-sequences | grep -E '\\u2139 (tests|pass|fail|skipped|cancelled) [0-9]+' | tail -5",
+      "exit": 0,
+      "keluaran": "Log job 'Build and test' run 39590578564: tests 12714, suites 2697, pass 12711, fail 0, skipped 3, cancelled 0, duration_ms 276731. Nol gagal. Di CI artefak @geolibre/embed dibangun lebih dulu oleh prebuild, jadi dua kegagalan lingkungan yang muncul di host ini tidak ada di sana.",
+      "catatan": "Di host ini 'npm run test:frontend' dihentikan batas waktu 30 menit pada test ke-3023 dari sekitar 12700, dengan 3020 ok dan 3 not ok: tests/component-desktop-shell.test.ts dan tests/embed-api.test.ts (keduanya ERR_MODULE_NOT_FOUND '@geolibre/embed/dist/index.js', pre-existing, artefak itu tidak ada di host ini) dan '@geolibre/embed client' yang gagal 'Timed out waiting for GeoLibre' hanya di bawah beban suite penuh sementara berkasnya lulus 9/9 dua kali saat dijalankan sendiri. Angka final diambil dari CI karena suite penuh tidak selesai di host ini. Tidak ada uji dilonggarkan, timeout dinaikkan, atau skip ditambah untuk mencapai ini."
+    },
+    {
+      "kriteria": "7. Kontrak lane uji tidak pecah: baris proyek tetap button dengan nama proyek di depan, dan tetap membuka viewer",
+      "status": "selesai",
+      "perintah": "python3 -c \"import json;d=json.load(open('factory/receipts/mobile/118-ukur.json'));c=d['contract'];assert c['tag']=='button' and c['nameStartsWithProject'] is True and c['keyboardOpensViewer'] is True and d['targetsBelow48']==[];print('KONTRAK UTUH: tag=%s, nama=%r, keyboard=%s, targetsBelow48=%s' % (c['tag'], c['accessibleName'], c['keyboardOpensViewer'], d['targetsBelow48']))\"",
+      "exit": 0,
+      "keluaran": "KONTRAK UTUH: tag=button, nama='E2E Seed Project 10 bulan yang lalu Lokal', keyboard=True, targetsBelow48=[]. Nama aksesibel selalu diawali nama proyek, jadi pencocok getByRole('button', { name: new RegExp(SEED_RECENT_PROJECT.name) }) di e2e/helpers.ts:57 tetap kena. Fokus ke baris itu lalu Enter: [data-testid=\"map-canvas\"] terlihat. Kolom cari 286x48 menyaring tiga baris menjadi satu. Pil tab aktif memakai bg-primary/10, sama dengan MobileTabBar.",
+      "catatan": "Bukti silang dari CI: 'E2E core (Playwright)' hijau 31 dalam 7.0m, dan 'e2e/**' nol perubahan di branch ini. Pengukuran diambil dari aplikasi hasil build lewat vite preview 4173 sebelum server itu dihentikan batas waktu."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane ui: 10 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "git diff --stat origin/main...HEAD -- e2e/ playwright.config.ts tests/ apps/geolibre-desktop/src/visual/",
+      "exit": 0,
+      "keluaran": "BERSIH: kosong. Lane uji dan lane visual tidak disentuh."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "Bersih. Saat skrip penulis receipt berjalan, satu-satunya entri git status adalah receipt ini sendiri yang belum terlacak; setelah receipt di-commit, `git status --short` kembali kosong. Tidak ada berkas setengah jadi lain yang tertinggal: skrip probe tangkapan layar dipindahkan ke luar pohon."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/118#issuecomment-6314579664"
+}
