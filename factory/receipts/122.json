@@ -91,5 +91,6 @@
       "keluaran": "f8f5c8f6 feat(ui): palette naikkan entri plugin kebun ke grup sendiri (#122)\n9852b054 feat(ui): menu Plugins pakai preset kebun sebagai seksi utama (#122)\n64c2cc30 feat(ui): helper partisi plugin dan uji satuan preset kebun (#122) Tiga commit atomik, satu per unit logis."
     }
   ],
-  "komentar_issue": ""
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/122#issuecomment-6317421518",
+  "pr": 123
 }
