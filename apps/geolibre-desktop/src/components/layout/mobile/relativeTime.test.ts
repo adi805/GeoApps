@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { relativeOpenedAt } from "./relativeTime.ts";
+import { relativeOpenedAt } from "./relativeTime";
 
 const NOW = Date.parse("2026-10-21T12:00:00.000Z");
 
