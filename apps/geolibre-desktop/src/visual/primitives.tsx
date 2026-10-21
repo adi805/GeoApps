@@ -275,13 +275,28 @@ export function Kartu({
  * jadi latar kosong yang membuat tangkapan layar terlihat belum jadi. Daftar
  * yang mengisi sampai tepi bawah adalah pola yang benar untuk layar ponsel:
  * permukaannya berlanjut, barisnya yang berhenti.
+ *
+ * `rapat` membalik pembagian itu untuk layar yang instrumennya bukan daftar. Di
+ * layar lapangan, peta adalah alat ukurnya, jadi peta yang mengambil sisa tinggi
+ * dan daftar yang setinggi barisnya. Tanpa ini, daftar pendek menyisakan pita
+ * permukaan kosong setinggi seperempat layar di atas bilah aksi, dan tangkapan
+ * layarnya terbaca seperti gambar yang belum selesai.
  */
-export function Daftar({ children, kepala }: { children: ReactNode; kepala?: ReactNode }) {
+export function Daftar({
+  children,
+  kepala,
+  rapat = false,
+}: {
+  children: ReactNode;
+  kepala?: ReactNode;
+  /** Biarkan daftar setinggi barisnya, bukan mengisi sisa layar. */
+  rapat?: boolean;
+}) {
   const p = usePalet();
   return (
     <div
       style={{
-        flex: 1,
+        flex: rapat ? "0 1 auto" : 1,
         minHeight: 0,
         display: "flex",
         flexDirection: "column",
@@ -826,5 +841,46 @@ export function PetaLengkap({
         © OpenStreetMap
       </span>
     </Peta>
+  );
+}
+
+/**
+ * Label seksi di atas kelompok baris: huruf besar berskala kecil, bukan judul
+ * kartu.
+ *
+ * Satu layar sering punya tiga kelompok baris, dan judul kartu akan membuat
+ * ketiganya terlihat setara dengan isinya. Label seksi memisahkan kelompok
+ * tanpa memutus permukaan `Daftar` yang sedang dibaca.
+ */
+export function LabelSeksi({ children }: { children: ReactNode }) {
+  const p = usePalet();
+  return (
+    <div style={{ paddingInline: spasi.lg, paddingBlockStart: spasi.lg, paddingBlockEnd: spasi.sm }}>
+      <span style={gayaLabel(p.teksLembut)}>{children}</span>
+    </div>
+  );
+}
+
+/**
+ * Pembungkus keadaan yang mengisi sisa layar.
+ *
+ * `Kosong`, `Memuat`, `Galat`, `Offline`, dan `IzinDitolak` tingginya mengikuti
+ * isinya (batas bawah 320 px), jadi tanpa pembungkus ini keadaan berhenti di
+ * tengah layar dan sisa bawahnya jadi latar kosong yang membuat tangkapan layar
+ * terlihat belum jadi.
+ */
+export function Penuh({ children }: { children: ReactNode }) {
+  return (
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+      }}
+    >
+      {children}
+    </div>
   );
 }
