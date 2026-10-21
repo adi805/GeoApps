@@ -3,7 +3,7 @@
   "lane": "visual",
   "branch": "visual/beranda-102",
   "worktree": "~/GeoApps-visual-beranda-102",
-  "commit": "c2f567eb",
+  "commit": "964de36e",
   "status_short": [],
   "kriteria": [
     {
@@ -42,6 +42,11 @@
       "perintah": "TEMBAK_HANYA=beranda node apps/geolibre-desktop/src/visual/tangkap-layar.mjs",
       "exit": 0,
       "keluaran": "tangkapan layar: 2/2 berkas; README menulis 71 berkas di folder ini (git status bersih, PNG tidak berubah)"
+    },
+    {
+      "perintah": "node --import tsx --test tests/visual-inventaris.test.ts",
+      "exit": 0,
+      "keluaran": "pass 7 / fail 0 (sebelum 964de36e: pass 6 / fail 1, jalur tidak dikenal: beranda)"
     }
   ],
   "komentar_issue": "https://github.com/adi805/GeoApps/issues/102#issuecomment-6309544661"
