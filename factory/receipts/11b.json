@@ -75,5 +75,13 @@
       "run": 39531170024,
       "kesimpulan": "success"
     }
-  }
+  },
+  "usulan": [
+    {
+      "id": "u-offline-831ad0",
+      "ringkas": "saveProjectToBundle belum punya pemanggil: apps/geolibre-desktop/src/lib/file-io/project-files.ts dan UI tidak cocok glob lane mana pun",
+      "status": "menunggu keputusan HQ",
+      "berkas": "baris usulan disimpan di ~/.opencrabs/projects/geoapps-offline/usulan-831ad0.jsonl karena factory/usulan-offline.jsonl dimiliki lane HQ (glob factory/**) dan gate_commit_paths.py menolaknya di lane offline"
+    }
+  ]
 }
