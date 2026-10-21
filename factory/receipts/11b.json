@@ -83,5 +83,9 @@
       "status": "menunggu keputusan HQ",
       "berkas": "baris usulan disimpan di ~/.opencrabs/projects/geoapps-offline/usulan-831ad0.jsonl karena factory/usulan-offline.jsonl dimiliki lane HQ (glob factory/**) dan gate_commit_paths.py menolaknya di lane offline"
     }
+  ],
+  "komentar_issue_tambahan": [
+    "https://github.com/adi805/GeoApps/issues/11#issuecomment-6306385029",
+    "https://github.com/adi805/GeoApps/issues/11#issuecomment-6306411213"
   ]
 }
