@@ -1,0 +1,43 @@
+{
+  "issue": 102,
+  "lane": "visual",
+  "branch": "visual/beranda-102",
+  "worktree": "~/GeoApps-visual-beranda-102",
+  "commit": "d7ea1ee5",
+  "status_short": [],
+  "kriteria": [
+    {
+      "perintah": "node apps/geolibre-desktop/src/visual/cek-inventaris.mjs",
+      "exit": 0,
+      "keluaran": "komposisi: 33 / keadaan diperiksa: 165 / pemeriksaan lulus: 374 / OK"
+    },
+    {
+      "perintah": "ls factory/bahan/visual | grep -c beranda",
+      "exit": 0,
+      "keluaran": "2"
+    },
+    {
+      "perintah": "git diff --name-only origin/main -- apps/geolibre-desktop/src/components apps/geolibre-desktop/src/App.tsx apps/geolibre-desktop/src/hooks | wc -l",
+      "exit": 0,
+      "keluaran": "0"
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "NODE_OPTIONS=--max-old-space-size=2048 ../../node_modules/.bin/tsc -p /tmp/tsconfig.visual.json (cwd apps/geolibre-desktop)",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    },
+    {
+      "perintah": "./node_modules/.bin/eslint apps/geolibre-desktop/src/visual",
+      "exit": 0,
+      "keluaran": "BERSIH"
+    },
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane visual --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS lane visual: 10 path, semuanya di cakupan"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/102#issuecomment-6309544661"
+}
