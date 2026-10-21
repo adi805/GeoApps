@@ -28,7 +28,7 @@
       "perintah": "NODE_OPTIONS=--max-old-space-size=3072 npx eslint apps/geolibre-desktop/src/components/layout/HomeScreen.tsx",
       "exit": 0,
       "keluaran": "Sebelum: 1 warning, '68:29 warning Physical Tailwind class `text-left` does not mirror in right-to-left locales; use `text-start` (local/no-physical-tailwind)'. Sesudah: 0 masalah, exit 0. Warning hilang karena baris itu diganti MobileListRow, yang memakai text-start. Angka absolut ratchet tidak bisa diukur di host ini: npm run lint penuh mati dengan 'FATAL ERROR: Reached heap limit' / exit 134, sama seperti yang tercatat di receipt #89.",
-      "catatan": "Karena ratchet penuh tidak terukur lokal, bukti angka 242 diserahkan ke job 'Lint and type check' di CI. Yang bisa dibuktikan lokal adalah arahnya: warning di berkas sasaran turun dari 1 ke 0, jadi perubahan ini tidak menambah beban ratchet."
+      "catatan": "Karena ratchet penuh tidak terukur lokal, bukti angka 242 diserahkan ke job 'Lint and type check' di CI. Job itu sudah hijau di PR #117 (5m14s), jadi ratchet tidak dinaikkan. Yang bisa dibuktikan lokal adalah arahnya: warning di berkas sasaran turun dari 1 ke 0, jadi perubahan ini tidak menambah beban ratchet."
     },
     {
       "kriteria": "4. Tangkapan layar dari aplikasi nyata di factory/receipts/mobile/beranda-360.png dan beranda-412.png, bukan galeri visual.html",
@@ -40,11 +40,11 @@
     },
     {
       "kriteria": "5. npm run build hijau di CI",
-      "status": "menunggu-ci",
-      "perintah": "gh pr checks <nomor-pr> --repo adi805/GeoApps",
+      "status": "selesai",
+      "perintah": "gh pr checks 117 --repo adi805/GeoApps",
       "exit": 0,
-      "keluaran": "Belum dijalankan saat receipt ini ditulis; PR dibuka setelahnya. Di host ini 'npm run build' tidak bisa hijau karena 'tsc -b' mengembalikan 19 error lingkungan yang identik sebelum dan sesudah perubahan (diff himpunan kosong), semuanya di berkas yang tidak disentuh: src/lib/geolocation.ts (@tauri-apps/plugin-geolocation, import type yang dihapus saat emit), packages/plugins/** (@loaders.gl/i3s dinamis, deklarasi @mapbox/vector-tile, pbf PbfReader, mgrs). Nol error menyentuh HomeScreen atau components/layout.",
-      "catatan": "Dibuktikan pre-existing dengan mengukur dua kali: git stash perubahan ini, jalankan tsc -b, bandingkan himpunan 'error TS' dengan sesudahnya. Hasilnya 'IDENTIK: himpunan error sama persis', 19 baris di dua keadaan. Status sengaja ditulis menunggu-ci, bukan selesai, sampai job CI benar-benar hijau."
+      "keluaran": "Hijau. PR #117 (kepala ef76a418) melaporkan 18 pass, 10 skipping, 0 gagal, 0 pending. Job 'Build and test' (run 39558833593, job 119084947445, durasi 10m47s) langkah 5 'Run frontend CI gate' success, dan di dalam lognya benar-benar jalan 'npm run build': 'vite v8.3.4 building client environment for production', '10552 modules transformed', 'built in 14.69s'. Job kunci lain yang ikut hijau: 'Lint and type check' 5m14s, 'E2E core (Playwright)' 8m11s, 'E2E features 1/4' 13m2s, '2/4' 12m42s, '3/4' 7m56s, '4/4' 6m20s, 'E2E enterprise SSO' 2m50s. Di host ini 'npm run build' tetap tidak bisa hijau karena 'tsc -b' mengembalikan 19 error lingkungan yang identik sebelum dan sesudah perubahan (diff himpunan kosong), semuanya di berkas yang tidak disentuh: src/lib/geolocation.ts (@tauri-apps/plugin-geolocation, import type yang dihapus saat emit), packages/plugins/** (@loaders.gl/i3s dinamis, deklarasi @mapbox/vector-tile, pbf PbfReader, mgrs). Nol error menyentuh HomeScreen atau components/layout.",
+      "catatan": "Kegagalan lokal itu dibuktikan pre-existing dengan mengukur dua kali: git stash perubahan ini, jalankan tsc -b, bandingkan himpunan 'error TS' dengan sesudahnya. Hasilnya 'IDENTIK: himpunan error sama persis', 19 baris di dua keadaan. CI tidak terkena karena pipeline-nya membangun @geolibre/embed lebih dulu, sedangkan di host ini artefak itu tidak ada."
     },
     {
       "kriteria": "6. Uji frontend tidak regresi",
@@ -52,7 +52,7 @@
       "perintah": "npm run test:frontend",
       "exit": 0,
       "keluaran": "# tests 12610, # pass 12605, # fail 2, # skipped 3, # cancelled 0. Dua yang gagal: tests/component-desktop-shell.test.ts dan tests/embed-api.test.ts. Keduanya gagal di baseline juga, dengan sebab yang sama: \"Error [ERR_MODULE_NOT_FOUND]: Cannot find module '.../node_modules/@geolibre/embed/dist/index.js' imported from .../src/lib/embed-api.ts\". Itu artefak workspace yang dibuat oleh prebuild dan tidak ada di host ini. Dibuktikan dengan git stash perubahan ini lalu menjalankan kedua berkas itu lagi: 'not ok 1 component-desktop-shell', 'not ok 2 embed-api', '# fail 2' tanpa perubahan gue.",
-      "catatan": "exit 0 di field ini adalah exit pemeriksaan pembanding di baseline (dua-duanya gagal), bukan klaim bahwa suite bersih. Suite penuh exit 1 karena dua kegagalan lingkungan itu."
+      "catatan": "exit 0 di field ini adalah exit pemeriksaan pembanding di baseline (dua-duanya gagal), bukan klaim bahwa suite bersih. Suite penuh exit 1 karena dua kegagalan lingkungan itu. CI mengonfirmasi tanpa kegagalan: job 'Build and test' langkah 'Run frontend CI gate' melaporkan 'tests 12714, suites 2697, pass 12711, fail 0, skipped 3'. Selisih jumlah test terhadap host ini berasal dari artefak @geolibre/embed yang di CI dibangun lebih dulu, dan itulah sebab dua kegagalan lokal tadi."
     },
     {
       "kriteria": "7. Kontrak lane uji tidak pecah: baris proyek tetap button dan tetap membuka viewer",
