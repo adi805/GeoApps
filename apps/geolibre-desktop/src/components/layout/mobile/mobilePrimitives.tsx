@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Search } from "lucide-react";
 import { cn } from "@geolibre/ui";
 
 /**
@@ -74,6 +74,33 @@ export function MobileScreenBody({
     <div className={cn("flex min-h-0 flex-1 flex-col gap-3 overflow-auto p-3", className)}>
       {children}
     </div>
+  );
+}
+
+/**
+ * A section label above a group of rows, e.g. "Peta terakhir".
+ *
+ * The compositions draw this as an uppercase micro label rather than a heading
+ * with weight: on a phone the label is a signpost for the rows under it, and
+ * making it as loud as the project names would compete with them. It is still
+ * an `h2`, so the document outline survives for a screen reader.
+ */
+export function MobileSectionHeading({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <h2
+      className={cn(
+        "px-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground",
+        className,
+      )}
+    >
+      {children}
+    </h2>
   );
 }
 
@@ -213,28 +240,52 @@ export function MobileAction({
   );
 }
 
-/** A tappable row with a title, a context line, and a trailing value. */
+/**
+ * A tappable row: optional icon box, a title, a context line, then a badge and
+ * a trailing value.
+ *
+ * The icon box is the compositions' 36 px rounded square, and it gives the list
+ * a left edge the eye runs down: that is what makes three rows read as a list
+ * instead of three paragraphs.
+ *
+ * When the row is tappable it stays a real `<button>`: opening a project has to
+ * work from the keyboard, and its accessible name starts with the project name
+ * so `e2e/helpers.ts` can find the seeded row by name.
+ */
 export function MobileListRow({
+  icon,
   title,
   description,
+  badge,
   trailing,
   onClick,
   className,
 }: {
+  icon?: ReactNode;
   title: string;
   description?: string;
+  badge?: ReactNode;
   trailing?: ReactNode;
   onClick?: () => void;
   className?: string;
 }) {
   const content = (
     <>
+      {icon ? (
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-accent text-primary"
+        >
+          {icon}
+        </span>
+      ) : null}
       <span className="min-w-0 flex-1 text-start">
         <span className="block truncate text-sm font-medium">{title}</span>
         {description ? (
           <span className="mt-0.5 block truncate text-xs text-muted-foreground">{description}</span>
         ) : null}
       </span>
+      {badge}
       {trailing}
     </>
   );
@@ -292,6 +343,7 @@ export function MobileBadge({
  * just that something failed.
  */
 export function MobileNotice({
+  icon,
   title,
   description,
   detail,
@@ -299,6 +351,7 @@ export function MobileNotice({
   tone = "info",
   testId,
 }: {
+  icon?: ReactNode;
   title: string;
   description?: string;
   detail?: string;
@@ -318,12 +371,133 @@ export function MobileNotice({
         tone === "danger" && "border-destructive/40 bg-destructive/5",
       )}
     >
+      {icon ? (
+        <span
+          aria-hidden="true"
+          className="flex h-9 w-9 items-center justify-center rounded-md bg-background text-primary"
+        >
+          {icon}
+        </span>
+      ) : null}
       <p className="text-sm font-semibold">{title}</p>
       {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}
       {detail ? (
         <p className="font-mono text-[11px] break-all text-muted-foreground">{detail}</p>
       ) : null}
       {action}
+    </div>
+  );
+}
+
+/**
+ * A determinate progress bar: the compositions' `BilahKemajuan`.
+ *
+ * `valueText` exists because a number is not always the whole truth. The home
+ * screen's storage bar has no measured total yet, so it reports zero with
+ * "belum diukur" rather than letting a screen reader announce "0 percent" as if
+ * the measurement had been taken (issue 118).
+ */
+export function MobileProgress({
+  value,
+  label,
+  valueText,
+  className,
+}: {
+  value: number;
+  label: string;
+  valueText?: string;
+  className?: string;
+}) {
+  const percent = Math.max(0, Math.min(100, Math.round(value)));
+  return (
+    <div
+      role="progressbar"
+      aria-label={label}
+      aria-valuenow={percent}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-valuetext={valueText}
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
+    >
+      <div className="h-full rounded-full bg-primary" style={{ width: `${percent}%` }} />
+    </div>
+  );
+}
+
+/** An icon-only action in a top bar. 48x48, and it must carry an accessible name. */
+export function MobileIconButton({
+  label,
+  icon,
+  onClick,
+  expanded,
+  controls,
+  className,
+}: {
+  label: string;
+  icon: ReactNode;
+  onClick?: () => void;
+  expanded?: boolean;
+  controls?: string;
+  className?: string;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={label}
+      aria-expanded={expanded}
+      aria-controls={expanded === undefined ? undefined : controls}
+      className={cn(
+        "flex h-12 w-12 shrink-0 items-center justify-center rounded-md text-muted-foreground transition hover:bg-accent hover:text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        className,
+      )}
+    >
+      {icon}
+    </button>
+  );
+}
+
+/**
+ * A search field for filtering the rows underneath it.
+ *
+ * The input is labelled by `aria-label` rather than a visible label: it sits
+ * inside the top bar's slot on a phone, where a second text line would push the
+ * list down for a control used once per visit.
+ */
+export function MobileSearchField({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+  className,
+}: {
+  id?: string;
+  label: string;
+  placeholder?: string;
+  value: string;
+  onChange: (next: string) => void;
+  className?: string;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex min-h-12 items-center gap-2 rounded-md border bg-background px-3",
+        "focus-within:ring-2 focus-within:ring-ring",
+        className,
+      )}
+    >
+      <Search className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+      <input
+        id={id}
+        type="search"
+        aria-label={label}
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="min-h-12 w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+      />
     </div>
   );
 }
