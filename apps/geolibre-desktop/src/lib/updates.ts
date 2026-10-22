@@ -1,15 +1,24 @@
 /**
- * Shared logic for checking GeoLibre releases on GitHub. Used by both the
+ * Shared logic for checking GeoApps releases on GitHub. Used by both the
  * manual "Check for updates" flow in the About dialog and the automated
  * startup check (desktop only). Keeping the version math and the GitHub fetch
  * here means the two surfaces classify and compare releases identically.
  */
 
-/** Page that lists cross-platform installers. */
-export const UPDATE_URL = "https://geolibre.app/downloads/";
+/**
+ * Page that lists this product's releases. Points at our own repository, never
+ * at the upstream project: an update prompt that links to another product's
+ * download page offers the user a binary this app cannot install.
+ */
+export const UPDATE_URL = "https://github.com/adi805/GeoApps/releases/latest";
 
-/** GitHub REST endpoint for the latest published release. */
-export const LATEST_RELEASE_URL = "https://api.github.com/repos/opengeos/GeoLibre/releases/latest";
+/**
+ * GitHub REST endpoint for the latest published release of THIS repository.
+ * It used to point at the upstream project's repository, which made the app
+ * compare its own version against upstream's and surface upstream's release
+ * notes in the update prompt (#125).
+ */
+export const LATEST_RELEASE_URL = "https://api.github.com/repos/adi805/GeoApps/releases/latest";
 
 /**
  * The running app version, injected by Vite at build time. Guarded so the pure
