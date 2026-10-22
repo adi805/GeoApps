@@ -116,7 +116,7 @@ def baca_github_env(path):
 def siapkan_pohon(akar, identifier, paket_sumber, ada_berkas_generate=True):
     tulis(
         os.path.join(akar, CONF),
-        '{"identifier": "%s", "productName": "GeoKebun"}\n' % identifier,
+        '{"identifier": "%s", "productName": "GeoApps"}\n' % identifier,
     )
     tulis(
         os.path.join(akar, SUMBER),

@@ -40,9 +40,7 @@ import { useToolbarDialogs } from "../../hooks/toolbar/useToolbarDialogs";
 import { resolveAppName } from "../../lib/app-name";
 import { IS_MAS_BUILD } from "../../lib/build-flags";
 import { googleEarthUrl, googleMapsUrl } from "../../lib/external-map-links";
-import { isMobile } from "../../lib/is-mobile";
 import { resolveShareHost } from "../../lib/share-geolibre";
-import { isTauri } from "../../lib/tauri-io";
 import { MENU_MANAGED_PLUGIN_IDS, isMenuVisible, isPluginVisible } from "../../lib/ui-profile";
 import { FieldCollectionDialog } from "./FieldCollectionDialog";
 import { PrintLayoutDialog } from "./PrintLayoutDialog";
@@ -281,12 +279,10 @@ export function TopToolbar({
   const toolbarButtonSize = compact ? "icon" : "sm";
   const toolbarButtonClass = compact ? "h-8 w-8 shrink-0" : "shrink-0";
   const toolbarIconClassName = cn("h-3.5 w-3.5", showLabels && "sm:me-1");
-  // "GeoLibre Desktop" is the *desktop* product name. `isTauri()` alone is true
-  // on iOS and Android too — where the app is named plain "GeoLibre" (the bundle
-  // name from tauri.ios.conf.json, the home-screen icon, and the store listing),
-  // so titling it "GeoLibre Desktop" there contradicts every other surface.
-  // A deployment can replace either with its own name (GEOLIBRE_APP_NAME).
-  const appTitle = resolveAppName(isTauri() && !isMobile() ? "GeoLibre Desktop" : "GeoLibre");
+  // One product name on every surface. This fork is GeoApps, so the desktop and
+  // mobile titles no longer differ the way upstream's "GeoLibre Desktop" and
+  // "GeoLibre" did. A deployment can still replace it (GEOLIBRE_APP_NAME).
+  const appTitle = resolveAppName("GeoApps");
   const renderToolbarLabel = (label: string) =>
     showLabels ? <span className="hidden sm:inline">{label}</span> : null;
   const chrome: ToolbarChrome = {
