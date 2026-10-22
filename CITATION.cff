@@ -1,19 +1,18 @@
 cff-version: 1.2.0
-title: GeoLibre
+title: GeoApps
 message: "If you use this software, please cite it using the metadata from this file."
 type: software
-abstract: "GeoLibre is a free and open-source, lightweight, cloud-native GIS platform for visualizing, exploring, and analyzing geospatial data across web browsers, desktop applications, mobile devices, and Jupyter notebooks while keeping data local and private."
+abstract: "GeoApps is a free and open-source, lightweight, cloud-native GIS platform for visualizing, exploring, and analyzing geospatial data across web browsers, desktop applications, mobile devices, and Jupyter notebooks while keeping data local and private. GeoApps is a fork of GeoLibre (https://github.com/opengeos/GeoLibre), whose upstream release is archived at DOI 10.5281/zenodo.20785400; the authorship below refers to that upstream work."
 authors:
   - given-names: Qiusheng
     family-names: Wu
     email: giswqs@gmail.com
     affiliation: "University of Tennessee, Knoxville, USA"
     orcid: "https://orcid.org/0000-0001-5437-4073"
-version: 3.4.0
-date-released: 2026-10-11
-doi: "10.5281/zenodo.20785400"
-repository-code: "https://github.com/opengeos/GeoLibre"
-url: "https://geolibre.app"
+version: 0.1.0
+date-released: 2026-10-22
+repository-code: "https://github.com/adi805/GeoApps"
+url: "https://github.com/adi805/GeoApps"
 license: MIT
 keywords:
   - GIS

@@ -1,0 +1,67 @@
+{
+  "issue": 125,
+  "lane": "android",
+  "branch": "rilis/010",
+  "worktree": "~/GeoApps-rilis-010",
+  "commit": "1dac95cb",
+  "status_short": [],
+  "kriteria": [
+    {
+      "kriteria": "1. git grep nol baris untuk versi 3.4.0 di seluruh rantai versi (8 package.json + src-tauri/**)",
+      "status": "selesai",
+      "perintah": "test \"$(git grep -c '\"version\": \"3\\.4\\.0\"' -- package.json 'apps/*/package.json' 'packages/*/package.json' 'apps/geolibre-desktop/src-tauri/**' | wc -l)\" = 0 && echo \"NOL baris 3.4.0 di rantai versi\"",
+      "exit": 0,
+      "keluaran": "NOL baris 3.4.0 di rantai versi. Bentuk `git grep -n` tanpa pembungkus keluar 1 justru karena tidak ada yang cocok, jadi kriteria ditulis sebagai `test ... = 0` supaya exit 0 berarti lulus.",
+      "catatan": "Yang berubah: akar package.json + apps/geolibre-desktop + packages/{core,embed,map,plugins,processing,ui} + package-lock.json (akar + 8 entri packages[]) + src-tauri/Cargo.toml + entri geolibre-desktop di Cargo.lock + tauri.conf.json (versi ini yang jadi versionName/versionCode APK)."
+    },
+    {
+      "kriteria": "2. git grep nol baris untuk GeoKebun di rantai nama (tauri.android.conf.json, src/components/, README.md)",
+      "status": "selesai",
+      "perintah": "test \"$(git grep -c 'GeoKebun' -- apps/geolibre-desktop/src-tauri/tauri.android.conf.json apps/geolibre-desktop/src/components/ README.md | wc -l)\" = 0 && echo \"NOL baris GeoKebun di rantai nama\"",
+      "exit": 0,
+      "keluaran": "NOL baris GeoKebun di rantai nama.",
+      "catatan": "Termasuk fixture src-tauri/android/uji-langkah-workflow.py:119 yang menulis productName ke conf stub. identifier com.geokebun.app SENGAJA tetap: keputusan owner, id dibakar permanen pada unggahan pertama ke Play."
+    },
+    {
+      "kriteria": "3. package-lock.json: 8 kunci workspace dibaca per-key, semuanya 0.1.0",
+      "status": "selesai",
+      "perintah": "node -e 'const l=require(\"./package-lock.json\");const ws=[\"\",\"apps/geolibre-desktop\",\"packages/core\",\"packages/embed\",\"packages/map\",\"packages/plugins\",\"packages/processing\",\"packages/ui\"];console.log(ws.map(k=>(k||\"(akar)\")+\"=\"+l.packages[k].version).join(\" \"))'",
+      "exit": 0,
+      "keluaran": "(akar)=0.1.0 apps/geolibre-desktop=0.1.0 packages/core=0.1.0 packages/embed=0.1.0 packages/map=0.1.0 packages/plugins=0.1.0 packages/processing=0.1.0 packages/ui=0.1.0",
+      "catatan": "Kriteria awal \"jumlah entri packages[] yang bernilai 0.1.0 = 8\" SALAH DEFINISI: hasilnya 15 karena 7 paket pihak ketiga di node_modules memang berversi 0.1.0. Diganti jadi pemeriksaan per-kunci workspace."
+    },
+    {
+      "kriteria": "4. Build Android hijau di CI dan versionName APK = 0.1.0",
+      "status": "menunggu-CI",
+      "perintah": "gh run list --repo adi805/GeoApps --workflow android.yml --branch rilis/010 --json databaseId,status,url",
+      "exit": 0,
+      "keluaran": "Run 39706592031 di-dispatch pada 2026-10-22T01:35:46Z, status in_progress saat bukti ini ditulis (https://github.com/adi805/GeoApps/actions/runs/39706592031). Run Android terakhir di main butuh 30m29s.",
+      "catatan": "Kriteria ini TIDAK bisa lulus lokal: versionName dibaca dari APK yang dihasilkan runner. Diperiksa ulang di komentar PR setelah run selesai. Yang sudah terukur lokal: `npm run typecheck` exit 0 (`tsc -b && vite build`, built in 2m 14s), jadi frontend yang di-bundle ke APK lolos kompilasi."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane deps --lane android --lane ui --lane HQ --izin-eskalasi --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane deps+android+ui+HQ: 16 path, semuanya di cakupan"
+    },
+    {
+      "perintah": "git status --short (worktree unit, node_modules disaring karena gitignore)",
+      "exit": 0,
+      "keluaran": "BERSIH",
+      "catatan": "Nol berkas setengah jadi."
+    },
+    {
+      "perintah": "test \"$(grep -c '3\\.4\\.0' apps/geolibre-desktop/src-tauri/Cargo.lock)\" = 0 && echo 'NOL 3.4.0 di Cargo.lock'",
+      "exit": 0,
+      "keluaran": "NOL 3.4.0 di Cargo.lock",
+      "catatan": "Cargo.toml dan Cargo.lock sepasang 0.1.0; kalau tidak, `cargo --locked` merah di CI. Bentuk `grep -c` telanjang keluar 1 saat nol kecocokan, jadi dibungkus `test ... = 0`."
+    },
+    {
+      "perintah": "git rev-list --count origin/main..HEAD && git log --oneline origin/main..HEAD",
+      "exit": 0,
+      "keluaran": "2 / 1dac95cb nama: produk jadi GeoApps di label launcher Android, judul toolbar, fixture workflow, dan README (#125); ec54b478 versi: nolkan seluruh rantai ke 0.1.0, lepas angka 3.4.0 warisan rilis GeoLibre (#125)"
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/125#issuecomment-6330560926"
+}
