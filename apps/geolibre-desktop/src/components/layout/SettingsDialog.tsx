@@ -56,7 +56,7 @@ import { BROWSER_PANEL_ID } from "../../hooks/useRegisterBrowserPanel";
 import { COMMENTS_PANEL_ID } from "../../hooks/useRegisterCommentsPanel";
 import { useRightPanelState } from "../../hooks/useRightPanels";
 import type { ThemeMode } from "../../hooks/useThemeMode";
-import { isTauri } from "../../lib/is-tauri";
+import { isDesktopRuntime } from "../../lib/is-mobile";
 import { applyRightPanelVisibility } from "../../lib/persisted-right-panel";
 import { THEME_SCHEMES, type ThemeScheme } from "../../lib/theme-schemes";
 import { IS_MAS_BUILD } from "../../lib/build-flags";
@@ -269,8 +269,9 @@ export function SettingsDialog({
   // never expose gated content to a restricted profile.
   const isSectionVisible = (id: SettingsSection) => {
     // Automated update checks run in the desktop build only, so the section is
-    // hidden on the web where its controls would be inert.
-    if (id === "updates" && !isTauri()) return false;
+    // hidden on the web and in the packaged Android/iOS apps, where its
+    // controls would be inert.
+    if (id === "updates" && !isDesktopRuntime()) return false;
     // The Microsoft Store build has no in-app update flow to configure (policy
     // 10.2.5), so its settings section is dropped entirely.
     if (id === "updates" && IS_STORE_BUILD) return false;
