@@ -12,6 +12,7 @@ import { CheckCircle2, ExternalLink, Info, Map, RefreshCw } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { openExternalLink } from "../../lib/open-external";
+import { isDesktopRuntime } from "../../lib/is-mobile";
 import {
   APP_VERSION,
   compareVersions,
@@ -104,8 +105,9 @@ export function AboutDialog({
   const handleCheckForUpdates = async () => {
     // Belt-and-braces: the Store build hides every trigger for this flow; this
     // guard ensures it never reaches out to GitHub even if one slips through
-    // (policy 10.2.5).
-    if (IS_STORE_BUILD) return;
+    // (policy 10.2.5). The same applies on Android/iOS, where the release this
+    // check finds is a desktop installer the device cannot use.
+    if (IS_STORE_BUILD || !isDesktopRuntime()) return;
     abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
@@ -188,8 +190,10 @@ export function AboutDialog({
             <span className="font-mono text-foreground">v{APP_VERSION}</span>
           </div>
           {/* The Microsoft Store build omits the entire in-app update flow
-              so the app updates only through the Store (policy 10.2.5). */}
-          {!IS_STORE_BUILD && (
+              so the app updates only through the Store (policy 10.2.5), and the
+              packaged Android/iOS apps omit it because the releases it finds are
+              desktop installers the device cannot run. */}
+          {!IS_STORE_BUILD && isDesktopRuntime() && (
             <>
               <Button
                 className="w-full justify-between"

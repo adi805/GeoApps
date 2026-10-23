@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { isTauri } from "../lib/is-tauri";
+import { isDesktopRuntime } from "../lib/is-mobile";
 import {
   UPDATE_DISMISSED_VERSION_STORAGE_KEY,
   UPDATE_LAST_CHECK_STORAGE_KEY,
@@ -83,8 +83,11 @@ export function useStartupUpdateCheck() {
 
   useEffect(() => {
     // Automated startup checks are a desktop-only feature; the web build
-    // refreshes to the latest version on reload and needs no prompt.
-    if (!isTauri()) return;
+    // refreshes to the latest version on reload and needs no prompt. The
+    // packaged Android/iOS apps are also Tauri, so `isTauri()` is not enough:
+    // their update path is the store or a sideloaded APK, never the desktop
+    // installer this prompt links to.
+    if (!isDesktopRuntime()) return;
 
     // The Microsoft Store build must update only through the Store (policy
     // 10.2.5), so it never reaches out to GitHub to check for a newer release.
