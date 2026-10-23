@@ -6,7 +6,7 @@ import { act, render } from "./helpers/dom";
 // Loaded after the DOM harness so the hook's imports resolve against jsdom.
 const { useStartupUpdateCheck } =
   await import("../apps/geolibre-desktop/src/hooks/useStartupUpdateCheck");
-const { LATEST_RELEASE_URL, UPDATE_URL } = await import("../apps/geolibre-desktop/src/lib/updates");
+const { RELEASES_URL, UPDATE_URL } = await import("../apps/geolibre-desktop/src/lib/updates");
 const { UPDATE_LAST_CHECK_STORAGE_KEY, UPDATE_DISMISSED_VERSION_STORAGE_KEY } =
   await import("../apps/geolibre-desktop/src/lib/storage-keys");
 
@@ -37,13 +37,17 @@ function recordFetch(): string[] {
   globalThis.fetch = (async (input: string | URL | Request) => {
     calls.push(String(input));
     return new Response(
-      JSON.stringify({
-        tag_name: "v9.9.9",
-        name: "9.9.9",
-        html_url: "https://example.invalid/release",
-        body: "",
-        published_at: "2026-10-22T00:00:00Z",
-      }),
+      JSON.stringify([
+        {
+          tag_name: "v9.9.9",
+          name: "9.9.9",
+          html_url: "https://example.invalid/release",
+          body: "",
+          draft: false,
+          prerelease: false,
+          published_at: "2026-10-22T00:00:00Z",
+        },
+      ]),
       { status: 200, headers: { "content-type": "application/json" } },
     );
   }) as typeof fetch;
@@ -103,7 +107,7 @@ describe("startup update check is desktop only", () => {
     // semver, so no severity (and therefore no prompt) can be derived here.
     // What this asserts is the gate: the desktop shell still queries GitHub,
     // and it queries our own repository.
-    assert.deepEqual(calls, [LATEST_RELEASE_URL]);
+    assert.deepEqual(calls, [RELEASES_URL]);
   });
 
   it("stays quiet in the browser, which reloads to the latest version", async () => {
@@ -118,9 +122,12 @@ describe("startup update check is desktop only", () => {
 });
 
 describe("update endpoints point at this product", () => {
-  it("queries our own repository, never the upstream project", () => {
-    assert.match(LATEST_RELEASE_URL, /repos\/adi805\/GeoApps\/releases\/latest$/);
-    assert.doesNotMatch(LATEST_RELEASE_URL, /opengeos|GeoLibre/);
+  it("reads the release list, which includes prereleases", () => {
+    assert.match(RELEASES_URL, /repos\/adi805\/GeoApps\/releases\?per_page=100$/);
+    // `/releases/latest` answers 404 while every release is flagged prerelease,
+    // so the check must never depend on it.
+    assert.doesNotMatch(RELEASES_URL, /releases\/latest/);
+    assert.doesNotMatch(RELEASES_URL, /opengeos|GeoLibre/);
   });
 
   it("links to a download page this app's releases live on", () => {

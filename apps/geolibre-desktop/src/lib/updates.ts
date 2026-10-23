@@ -13,12 +13,19 @@
 export const UPDATE_URL = "https://github.com/adi805/GeoApps/releases/latest";
 
 /**
- * GitHub REST endpoint for the latest published release of THIS repository.
- * It used to point at the upstream project's repository, which made the app
- * compare its own version against upstream's and surface upstream's release
- * notes in the update prompt (#125).
+ * GitHub REST endpoint that lists the releases of THIS repository, newest page
+ * first. The app reads the whole list and picks the highest version itself.
+ *
+ * It used to call `/releases/latest`, which answers 404 for this repository:
+ * that endpoint only considers published non-prerelease releases, and every
+ * GeoApps release so far is flagged prerelease, so the check could never find
+ * anything. Listing the releases makes the answer depend on the tags we
+ * actually published instead of on GitHub's prerelease filter.
+ *
+ * The repository is ours, never the upstream project: an update prompt built
+ * from upstream's releases offers a binary this app cannot install (#125).
  */
-export const LATEST_RELEASE_URL = "https://api.github.com/repos/adi805/GeoApps/releases/latest";
+export const RELEASES_URL = "https://api.github.com/repos/adi805/GeoApps/releases?per_page=100";
 
 /**
  * The running app version, injected by Vite at build time. Guarded so the pure
@@ -92,22 +99,76 @@ export function parseVersion(version: string): [number, number, number] | null {
   return [Number(match[1]), Number(match[2]), Number(match[3])];
 }
 
+/** A version split into its numeric triple plus its prerelease identifiers. */
+interface ParsedVersion {
+  triple: [number, number, number];
+  prerelease: string[];
+}
+
 /**
- * Compare two version strings numerically.
+ * Parse a version into its numeric triple and prerelease identifiers.
+ *
+ * Unlike {@link parseVersion} this accepts a prerelease suffix (`1.2.3-rc1`)
+ * and ignores build metadata (`+sha`), because the suffix decides precedence:
+ * `1.2.3-rc1` sorts below `1.2.3` and above `1.2.2`. Returns `null` for
+ * anything that is not a semantic version.
+ */
+function parseVersionParts(version: string): ParsedVersion | null {
+  const match = version
+    .trim()
+    .match(/^v?(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?(?:\+[0-9A-Za-z.-]+)?$/);
+  if (!match) return null;
+
+  return {
+    triple: [Number(match[1]), Number(match[2]), Number(match[3])],
+    prerelease: match[4] ? match[4].split(".") : [],
+  };
+}
+
+/** Compare prerelease identifier lists by SemVer 2.0.0 precedence rules. */
+function comparePrerelease(current: string[], latest: string[]): number {
+  // A version without a prerelease outranks the same version carrying one.
+  if (current.length === 0 && latest.length === 0) return 0;
+  if (current.length === 0) return 1;
+  if (latest.length === 0) return -1;
+
+  const shared = Math.min(current.length, latest.length);
+  for (let index = 0; index < shared; index += 1) {
+    const left = current[index];
+    const right = latest[index];
+    if (left === right) continue;
+
+    const leftIsNumeric = /^\d+$/.test(left);
+    const rightIsNumeric = /^\d+$/.test(right);
+    if (leftIsNumeric && rightIsNumeric) return Number(left) - Number(right);
+    // Numeric identifiers rank below alphanumeric ones.
+    if (leftIsNumeric) return -1;
+    if (rightIsNumeric) return 1;
+    return left < right ? -1 : 1;
+  }
+
+  // Every shared identifier matches, so the longer list has precedence.
+  return current.length - latest.length;
+}
+
+/**
+ * Compare two versions by full SemVer precedence, prerelease suffix included.
  *
  * @returns A negative number if `currentVersion` is older than `latestVersion`,
  *   positive if newer, and `0` if equal or either is unparseable.
  */
 export function compareVersions(currentVersion: string, latestVersion: string): number {
-  const current = parseVersion(currentVersion);
-  const latest = parseVersion(latestVersion);
+  const current = parseVersionParts(currentVersion);
+  const latest = parseVersionParts(latestVersion);
   if (!current || !latest) return 0;
 
-  for (let index = 0; index < current.length; index += 1) {
-    if (current[index] !== latest[index]) return current[index] - latest[index];
+  for (let index = 0; index < current.triple.length; index += 1) {
+    if (current.triple[index] !== latest.triple[index]) {
+      return current.triple[index] - latest.triple[index];
+    }
   }
 
-  return 0;
+  return comparePrerelease(current.prerelease, latest.prerelease);
 }
 
 /**
@@ -128,16 +189,19 @@ export function releaseSeverity(
   currentVersion: string,
   latestVersion: string,
 ): ReleaseSeverity | null {
-  const current = parseVersion(currentVersion);
-  const latest = parseVersion(latestVersion);
+  const current = parseVersionParts(currentVersion);
+  const latest = parseVersionParts(latestVersion);
   if (!current || !latest) return null;
+  // A negative comparison means `latestVersion` is newer; equal or older is not
+  // an update at all. This also covers a newer prerelease of the same triple
+  // (`1.5.1-rc1` after `1.5.1-rc0`), which the triple alone cannot distinguish.
+  if (compareVersions(currentVersion, latestVersion) >= 0) return null;
 
-  if (latest[0] > current[0]) return "major";
-  if (latest[0] < current[0]) return null;
-  if (latest[1] > current[1]) return "minor";
-  if (latest[1] < current[1]) return null;
-  if (latest[2] > current[2]) return "patch";
-  return null;
+  // Newer is established above, so a differing major or minor is an increase.
+  if (latest.triple[0] !== current.triple[0]) return "major";
+  if (latest.triple[1] !== current.triple[1]) return "minor";
+  // Same major and minor: a newer patch, or a newer prerelease of one.
+  return "patch";
 }
 
 /**
@@ -157,21 +221,53 @@ interface GitHubRelease {
   tag_name?: unknown;
   body?: unknown;
   html_url?: unknown;
+  draft?: unknown;
 }
 
 /**
- * Fetch the latest GeoLibre release from GitHub.
+ * Pick the highest version from a `/releases` response.
+ *
+ * Every release is considered, prereleases included: that is the whole point of
+ * reading the list instead of `/releases/latest`. Drafts are skipped because
+ * they are not downloadable, and so is any tag that is not a semantic version,
+ * because such a tag cannot be ordered against the running version.
+ *
+ * @returns The chosen release, or `null` when the payload holds none that can
+ *   be ordered (including a payload that is not an array at all).
+ */
+function pickNewestRelease(payload: unknown): GitHubRelease | null {
+  if (!Array.isArray(payload)) return null;
+
+  let newest: GitHubRelease | null = null;
+  for (const entry of payload) {
+    if (!entry || typeof entry !== "object") continue;
+    const release = entry as GitHubRelease;
+    if (release.draft === true) continue;
+    const tag = typeof release.tag_name === "string" ? release.tag_name.trim() : "";
+    if (!parseVersionParts(tag)) continue;
+
+    if (!newest || compareVersions(String(newest.tag_name), tag) < 0) {
+      newest = release;
+    }
+  }
+
+  return newest;
+}
+
+/**
+ * Fetch the newest GeoApps release from GitHub.
  *
  * @param signal - Optional abort signal to cancel the request.
- * @returns The normalized latest release.
- * @throws {UpdateCheckError} On rate limiting, an HTTP error, a missing tag, or
- *   a network failure. An `AbortError` propagates unchanged so callers can
- *   ignore intentional cancellations.
+ * @returns The normalized newest release, prereleases included.
+ * @throws {UpdateCheckError} On rate limiting, an HTTP error, a body that is not
+ *   a release list, a list with no usable tag, or a network failure. An
+ *   `AbortError` propagates unchanged so callers can ignore intentional
+ *   cancellations.
  */
 export async function fetchLatestRelease(signal?: AbortSignal): Promise<LatestRelease> {
   let response: Response;
   try {
-    response = await fetch(LATEST_RELEASE_URL, {
+    response = await fetch(RELEASES_URL, {
       headers: {
         Accept: "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
@@ -196,15 +292,22 @@ export async function fetchLatestRelease(signal?: AbortSignal): Promise<LatestRe
     throw new UpdateCheckError("http", response.status);
   }
 
-  let release: GitHubRelease;
+  let payload: unknown;
   try {
-    release = (await response.json()) as GitHubRelease;
+    payload = await response.json();
   } catch {
     // A malformed 200 body would otherwise throw a plain SyntaxError that
     // bypasses UpdateCheckError; treat it like any other failed fetch.
     throw new UpdateCheckError("network");
   }
-  if (typeof release.tag_name !== "string" || !release.tag_name.trim()) {
+  // The list endpoint always answers an array; anything else is a response this
+  // code cannot read (an error object, a captive-portal page, a proxy).
+  if (!Array.isArray(payload)) {
+    throw new UpdateCheckError("network");
+  }
+
+  const release = pickNewestRelease(payload);
+  if (!release || typeof release.tag_name !== "string") {
     throw new UpdateCheckError("noTag");
   }
 
