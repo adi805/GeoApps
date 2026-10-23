@@ -5,7 +5,7 @@ import { GEOCODING_PROVIDERS, setGeocodingFetch } from "@geolibre/core";
  * User-Agent (or Referer) naming the application; the WebView's browser `fetch`
  * cannot set that header, but Tauri's native HTTP client can.
  */
-const GEOCODER_USER_AGENT = "GeoLibre-Desktop (+https://github.com/opengeos/GeoLibre)";
+const GEOCODER_USER_AGENT = "GeoApps (+https://github.com/adi805/GeoApps)";
 
 /**
  * Hosts of the built-in geocoding providers' default endpoints. Only these are

@@ -15,7 +15,9 @@
 import { isCredentialFieldName, isCredentialUrlParam } from "@geolibre/core";
 import type { DiagnosticRecord } from "./diagnostics";
 
-export const ISSUE_REPOSITORY_URL = "https://github.com/opengeos/GeoLibre";
+// Our repository, not upstream's: the bug-report form this link fills in has to
+// exist in the repo that receives the report (#132).
+export const ISSUE_REPOSITORY_URL = "https://github.com/adi805/GeoApps";
 export const ISSUE_TEMPLATE = "bug_report.yml";
 
 /**
@@ -154,7 +156,7 @@ function buildUrl(fields: Record<string, string>): string {
  *   general report.
  * @param context - Version, runtime, platform, and renderer.
  * @param maxLength - Upper bound for the returned URL's length.
- * @returns The `https://github.com/opengeos/GeoLibre/issues/new?...` link.
+ * @returns The `https://github.com/adi805/GeoApps/issues/new?...` link.
  */
 export function buildIssueReportUrl(
   entry: IssueReportEntry | null,
