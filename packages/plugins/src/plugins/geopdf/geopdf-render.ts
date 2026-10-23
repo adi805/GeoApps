@@ -32,6 +32,32 @@ const renderers = new Map<string, GeoPdfTileRenderer>();
 let registered = false;
 
 /**
+ * Point `pdfjs-dist` at the worker script Vite emits for it.
+ *
+ * pdf.js runs its parser in a worker and reads the script URL from
+ * `GlobalWorkerOptions.workerSrc`. Nothing sets it here, and in 6.x the getter
+ * *throws* when it is empty (`build/pdf.mjs`, `static get workerSrc`). The
+ * throw is caught by `PDFWorker.#initialize`, which then falls back to a fake
+ * worker that resolves the same getter and rejects, so `getDocument` fails with
+ * `No "GlobalWorkerOptions.workerSrc" specified.` on every browser runtime:
+ * the web build, the Tauri WebView, and Android. Node hides the bug because
+ * `isNodeJS` defaults the value to `./pdf.worker.mjs`, which is why the tile
+ * tests passed while the app could not open a GeoPDF at all.
+ *
+ * The import is dynamic so Node never evaluates it: `?url` only resolves under
+ * Vite, and the tile tests do not need a worker.
+ */
+let workerConfigured = false;
+async function configurePdfWorker(): Promise<void> {
+  if (workerConfigured) return;
+  if (!pdfjs.GlobalWorkerOptions.workerSrc) {
+    const { default: workerUrl } = await import("pdfjs-dist/build/pdf.worker.min.mjs?url");
+    pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
+  }
+  workerConfigured = true;
+}
+
+/**
  * The persistent tile cache, shared by every tile set in the session.
  *
  * Created lazily so importing this module costs nothing: the IndexedDB
@@ -300,7 +326,9 @@ function createPdfRasterizer(data: ArrayBuffer, pageIndex: number): RegionRaster
     // `getDocument` may transfer the buffer to its worker, so hand it a copy:
     // the same bytes are still needed for the hash and for a later re-register.
     if (!documentPromise) {
-      const created = pdfjs.getDocument({ data: new Uint8Array(data.slice(0)) }).promise;
+      const created = configurePdfWorker().then(() =>
+        pdfjs.getDocument({ data: new Uint8Array(data.slice(0)) }).promise,
+      );
       documentPromise = created;
       return created;
     }
