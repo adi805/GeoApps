@@ -27,11 +27,11 @@ import { UpdateInstructions } from "./UpdateInstructions";
 const LINKS = [
   {
     labelKey: "about.homePage",
-    href: "https://geolibre.app",
+    href: "https://github.com/adi805/GeoApps",
   },
   {
     labelKey: "about.githubRepository",
-    href: "https://github.com/opengeos/GeoLibre",
+    href: "https://github.com/adi805/GeoApps",
   },
 ] as const;
 

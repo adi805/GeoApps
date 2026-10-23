@@ -283,7 +283,7 @@ export function isEarthEngineAvailable(
 
 /** The message shown where Earth Engine is compiled out. */
 export const EARTH_ENGINE_UNAVAILABLE_MESSAGE =
-  "Earth Engine sign-in is not available in the App Store build of GeoLibre.";
+  "Earth Engine sign-in is not available in the App Store build of GeoApps.";
 
 async function authenticateEarthEngineViaBrowser(oauthClientId: string): Promise<void> {
   const earthEngine = await loadEarthEngine();

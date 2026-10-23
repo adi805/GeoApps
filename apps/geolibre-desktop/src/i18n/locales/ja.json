@@ -1,11 +1,11 @@
 {
   "mcpPreview": {
     "networkConsent": {
-      "previewLabel": "GeoLibre 地図プレビュー",
+      "previewLabel": "GeoApps 地図プレビュー",
       "title": "地図の接続を許可しますか？",
       "description": "接続する前に、この地図が必要とする外部サーバーを確認してください。",
       "servers_other": "{{count}} 件のサーバー",
-      "privacy": "リクエストは GeoLibre Python サーバーから送信されます。これらのサーバーにはそのマシンの IP アドレスが見えますが、ブラウザーの IP アドレスとは異なる場合があります。",
+      "privacy": "リクエストは GeoApps Python サーバーから送信されます。これらのサーバーにはそのマシンの IP アドレスが見えますが、ブラウザーの IP アドレスとは異なる場合があります。",
       "scope": "公開サーバーのみです。承認はこのプレビューにのみ適用されます。",
       "allowed": "許可",
       "blocked": "ブロック",
@@ -20,9 +20,9 @@
     "summary": "{{count}} レイヤー · ズーム {{zoom}}",
     "restore": "復元",
     "discard": "破棄",
-    "restoreError": "このスナップショットを復元できませんでした。破損しているか、このバージョンの GeoLibre と互換性がない可能性があります。",
+    "restoreError": "このスナップショットを復元できませんでした。破損しているか、このバージョンの GeoApps と互換性がない可能性があります。",
     "recoveryTitle": "保存されていない作業を復元しますか？",
-    "recoveryDescription": "GeoLibre が正常に終了しませんでした。「{{name}}」のより新しい自動保存が利用できます。",
+    "recoveryDescription": "GeoApps が正常に終了しませんでした。「{{name}}」のより新しい自動保存が利用できます。",
     "autosavePaused": "自動保存は一時停止中です: このプロジェクトは {{limit}} MB を超えているため、新しいスナップショットは保存されません。作業を失わないようにディスクに保存してください。",
     "diff": {
       "compare": "比較",
@@ -102,7 +102,7 @@
     "forgetMssqlConnection": "SQL Server 接続「{{name}}」を削除",
     "forgetPostgresConnection": "PostgreSQL 接続「{{name}}」を削除",
     "forgetPostgresConnectionFailed": "保存済み接続のストレージを利用できないため、PostgreSQL 接続を削除できませんでした。何も削除されていません。",
-    "forgetPostgresCredentialFailed": "PostgreSQL 接続は削除されましたが、システムのキーチェーンから保存済みの認証情報を削除できませんでした。GeoLibre は次回の起動時に再試行します。",
+    "forgetPostgresCredentialFailed": "PostgreSQL 接続は削除されましたが、システムのキーチェーンから保存済みの認証情報を削除できませんでした。GeoApps は次回の起動時に再試行します。",
     "loadingFolder": "読み込み中…",
     "loadingSublayers": "サブレイヤーを読み込み中…",
     "allSublayers": "すべてのレイヤー",
@@ -121,14 +121,14 @@
     "libraryImportFailed": "このレイヤーライブラリファイルを読み取れませんでした。",
     "libraryExportFailed": "レイヤーライブラリをエクスポートできませんでした。",
     "libraryLayerMissing": "その保存済みレイヤーはもう存在しません。",
-    "libraryLayerNeedsDesktop": "この保存済みレイヤーはディスク上のファイルを読み込むため、GeoLibre Desktop が必要です。ファイルを追加し直して新しいエントリーを保存してください。",
+    "libraryLayerNeedsDesktop": "この保存済みレイヤーはディスク上のファイルを読み込むため、GeoApps Desktop が必要です。ファイルを追加し直して新しいエントリーを保存してください。",
     "libraryLayerConfigNotApplied": "「{{name}}」のファイルを追加しましたが、保存されていたスタイルを単一のレイヤーに対応付けられなかったため再適用されませんでした。",
     "libraryLayerJoinsUnresolved_other": "レイヤーを追加しましたが、保存された結合 {{count}} 件を再適用できませんでした。結合先のレイヤーがこのプロジェクトにありません。"
   },
   "about": {
     "trigger": "情報",
-    "title": "GeoLibre について",
-    "description": "GeoLibreは軽量なクラウドネイティブGISプラットフォームです。",
+    "title": "GeoApps について",
+    "description": "GeoAppsは軽量なクラウドネイティブGISプラットフォームです。",
     "version": "バージョン",
     "checkForUpdates": "アップデートを確認",
     "tryAgain": "再試行",
@@ -147,7 +147,7 @@
     "steps": {
       "download": "ダウンロードページからお使いのプラットフォーム用インストーラーをダウンロードしてください。",
       "install": "インストーラーを実行します。ローカルのプロジェクト、設定、APIキーはそのまま保持されます。",
-      "reopen": "GeoLibreを再起動して更新を完了します。"
+      "reopen": "GeoAppsを再起動して更新を完了します。"
     },
     "severity": {
       "major": "メジャーリリース",
@@ -166,7 +166,7 @@
       "noTag": "最新リリースにバージョンタグが含まれていません。",
       "network": "GitHubに接続できませんでした。接続を確認して再試行してください。",
       "viewDownloads": "ダウンロードを表示",
-      "viewDownloadsHint": "ブラウザでGeoLibreのダウンロードページを開き、最新バージョンを手動で確認できます。"
+      "viewDownloadsHint": "ブラウザでGeoAppsのダウンロードページを開き、最新バージョンを手動で確認できます。"
     },
     "startup": {
       "title": "アップデートがあります",
@@ -179,7 +179,7 @@
     }
   },
   "masBuild": {
-    "unavailable": "この機能は Mac App Store 版の GeoLibre Desktop では利用できません。"
+    "unavailable": "この機能は Mac App Store 版の GeoApps Desktop では利用できません。"
   },
   "bookmark": {
     "captureStateLabel": "完全なレイヤー状態を含める(有効・無効・レイヤー順序)",
@@ -196,13 +196,13 @@
     "trust": {
       "title": "このプロジェクトからプラグインを読み込みますか?",
       "description_other": "このプロジェクトは、インストールされていないURLから{{count}}個の外部プラグインを読み込もうとしています。プラグインはアプリへの完全なアクセス権を持ってコードを実行します。",
-      "warning": "信頼できる提供元のプラグインのみを読み込んでください。読み込まれたプラグインはGeoLibre自体と同じ権限で実行されます。",
+      "warning": "信頼できる提供元のプラグインのみを読み込んでください。読み込まれたプラグインはGeoApps自体と同じ権限で実行されます。",
       "trustButton": "信頼して読み込む",
       "dismissButton": "読み込まない"
     },
     "registryTrust": {
       "title_other": "プラグインをインストールしますか?",
-      "description_other": "このリンクは、公式 GeoLibre プラグインレジストリにある未インストールのプラグイン {{count}} 件を開きます。インストールすると、プラグインに追加されて有効になります。"
+      "description_other": "このリンクは、公式 GeoApps プラグインレジストリにある未インストールのプラグイン {{count}} 件を開きます。インストールすると、プラグインに追加されて有効になります。"
     },
     "title": "プラグインの管理",
     "searchAria": "プラグインを検索",
@@ -219,7 +219,7 @@
     "openHomepageAria": "{{name}} のホームページを開く",
     "byAuthor": "作者: {{author}}",
     "updateAvailable": "更新あり",
-    "requiresVersion": "GeoLibre {{version}}+ が必要",
+    "requiresVersion": "GeoApps {{version}}+ が必要",
     "install": "インストール",
     "installAria": "{{name}} をインストール",
     "removeConfirm": "削除しますか？",
@@ -230,10 +230,10 @@
     "updateAria": "{{name}} を更新",
     "loading": "読み込み中…",
     "installed": "インストール済み",
-    "settingsIntro": "GeoLibre は常にアプリデータ内のプラグインディレクトリをスキャンします。パッケージ化されたプラグイン（.zip）をファイルからインストールするか、ローカルディレクトリを追加できます（デスクトップのみ）。マニフェスト URL（マーケットプレイス経由のインストールを含む）はネットワーク経由で読み込まれ、ここでの変更は即座に反映されます。",
+    "settingsIntro": "GeoApps は常にアプリデータ内のプラグインディレクトリをスキャンします。パッケージ化されたプラグイン（.zip）をファイルからインストールするか、ローカルディレクトリを追加できます（デスクトップのみ）。マニフェスト URL（マーケットプレイス経由のインストールを含む）はネットワーク経由で読み込まれ、ここでの変更は即座に反映されます。",
     "installFromFile": "ファイルからインストール",
     "chooseZip": ".zip を選択…",
-    "installFromFileHintDesktop": "パッケージ化されたプラグインアーカイブを GeoLibre のプラグインディレクトリにコピーします。",
+    "installFromFileHintDesktop": "パッケージ化されたプラグインアーカイブを GeoApps のプラグインディレクトリにコピーします。",
     "installFromFileHintWeb": "パッケージ化されたプラグインアーカイブを読み込みます。ブラウザに保存され、次回アクセス時に再読み込みされます。",
     "localDirectories": "ローカルディレクトリ",
     "directoryAria": "プラグインディレクトリ",
@@ -248,7 +248,7 @@
     "errorDirectoryPicker": "ディレクトリ選択ダイアログを開けませんでした。",
     "errorInstall": "プラグインをインストールできませんでした。",
     "errorUninstall": "プラグインをアンインストールできませんでした。",
-    "description": "外部の GeoLibre プラグインを閲覧、インストール、更新、削除します。プラグインは <registryLink>GeoLibre プラグインレジストリ</registryLink>に掲載されています。",
+    "description": "外部の GeoApps プラグインを閲覧、インストール、更新、削除します。プラグインは <registryLink>GeoApps プラグインレジストリ</registryLink>に掲載されています。",
     "policySideloadDisabled": "デプロイポリシーにより、プラグインのサイドロードは無効になっています。",
     "policyBlocked": "プラグイン「{{pluginId}}」はデプロイポリシーによってブロックされています。",
     "policyBlocklisted": "プラグイン「{{pluginId}}」はプラグインレジストリによってブロックされました: {{reason}}",
@@ -357,7 +357,7 @@
     "add": "追加",
     "ok": "OK",
     "done": "完了",
-    "openWebApp": "GeoLibre Webアプリを開く"
+    "openWebApp": "GeoApps Webアプリを開く"
   },
   "addData": {
     "title": "データを追加",
@@ -416,7 +416,7 @@
       },
       "gdb": {
         "label": "ファイルジオデータベースレイヤーを追加",
-        "description": "Esriファイルジオデータベース（.gdbフォルダ）からレイヤーを追加します。レイヤーはローカルのGeoLibreサーバーで読み込まれ、WGS84に再投影されます。"
+        "description": "Esriファイルジオデータベース（.gdbフォルダ）からレイヤーを追加します。レイヤーはローカルのGeoAppsサーバーで読み込まれ、WGS84に再投影されます。"
       },
       "photos": {
         "label": "位置情報付き写真を追加",
@@ -742,7 +742,7 @@
       "signInErrorTimeout": "サインインがタイムアウトしました。もう一度お試しください。",
       "signInErrorExpired": "ArcGIS セッションの有効期限が切れました。もう一度サインインしてください。",
       "signInErrorNetwork": "ArcGIS ポータルに接続できませんでした。接続を確認して、もう一度お試しください。",
-      "signInErrorRestart": "GeoLibre はまだ起動中です。しばらくしてからもう一度サインインしてください。",
+      "signInErrorRestart": "GeoApps はまだ起動中です。しばらくしてからもう一度サインインしてください。",
       "cancelSignIn": "キャンセル"
     },
     "gpx": {
@@ -772,7 +772,7 @@
       "errorUrl": "LandXMLのURLを入力してください。",
       "errorTooLarge": "リモートのLandXMLファイルが100 MBのダウンロード上限を超えています。",
       "errorSelectType": "LandXMLのオブジェクトタイプを1つ以上選択してください。",
-      "errorMissingCrs": "このLandXMLファイルは投影座標を使用しています。GeoLibreがWGS84に再投影できるよう、元のCRSを入力してください。",
+      "errorMissingCrs": "このLandXMLファイルは投影座標を使用しています。GeoAppsがWGS84に再投影できるよう、元のCRSを入力してください。",
       "errorGeographicCrsBounds": "座標が地理的な経度・緯度の範囲外です。このLandXMLファイルで使用されている投影座標系を元のCRSとして選択してください。",
       "summary": "サーフェス {{surfaces}} 件、線形 {{alignments}} 件、縦断 {{profiles}} 件、測量点 {{points}} 件",
       "objectTypes": "オブジェクトタイプ",
@@ -848,8 +848,8 @@
       "layerPlaceholder": "先にジオデータベースを選択してください",
       "readingLayers": "レイヤーを読み込んでいます...",
       "layerOption": "{{name}}（{{type}}、{{count}}フィーチャ）",
-      "help": "属性のみのテーブルは表示されません。選択したフィーチャクラスはローカルのGeoLibreサーバー経由で読み込まれ、WGS84に再投影されます。",
-      "desktopOnly": "ファイルジオデータベースレイヤーはGeoLibre Desktopでのみ利用できます。この機能はローカルの.gdbフォルダをローカルのGeoLibreサーバー経由で読み取るため、Webアプリからはアクセスできません。",
+      "help": "属性のみのテーブルは表示されません。選択したフィーチャクラスはローカルのGeoAppsサーバー経由で読み込まれ、WGS84に再投影されます。",
+      "desktopOnly": "ファイルジオデータベースレイヤーはGeoApps Desktopでのみ利用できます。この機能はローカルの.gdbフォルダをローカルのGeoAppsサーバー経由で読み取るため、Webアプリからはアクセスできません。",
       "readError": "このファイルジオデータベースを読み取れませんでした。",
       "convertError": "このフィーチャクラスを読み込めませんでした。",
       "errorNotGdb": ".gdbで終わるフォルダ（Esriファイルジオデータベース）を選択してください。",
@@ -934,12 +934,12 @@
     },
     "mssql": {
       "defaultName": "SQL Serverレイヤー",
-      "errorDesktopOnly": "SQL ServerレイヤーにはGeoLibreデスクトップ版が必要です。",
+      "errorDesktopOnly": "SQL ServerレイヤーにはGeoAppsデスクトップ版が必要です。",
       "errorConnect": "SQL Serverに接続できませんでした。",
       "errorPort": "有効なSQL Serverのポート (1–65535) を入力してください。",
       "errorConnectFirst": "先にSQL Serverに接続してください。",
       "errorSelectTable": "読み込む空間テーブルを選択してください。",
-      "desktopOnlyNotice": "SQL ServerレイヤーはGeoLibreデスクトップ版でのみ利用できます。",
+      "desktopOnlyNotice": "SQL ServerレイヤーはGeoAppsデスクトップ版でのみ利用できます。",
       "savedConnection": "保存済みの接続",
       "selectSavedConnection": "新しい接続",
       "forgetConnection": "保存済みの接続を削除",
@@ -995,7 +995,7 @@
     "postgres": {
       "defaultName": "PostgreSQLレイヤー",
       "forgetConnectionConfirm": "保存済みの PostgreSQL 接続 {{name}} を削除しますか？保存された認証情報もこのデバイスから削除されます。",
-      "errorDesktopOnly": "PostgreSQLレイヤーにはGeoLibre Desktopが必要です。",
+      "errorDesktopOnly": "PostgreSQLレイヤーにはGeoApps Desktopが必要です。",
       "errorConnectionString": "PostgreSQL接続文字列を入力してください。",
       "statusCheckingBinary": "Martinバイナリを確認しています...",
       "statusDownloaded": "Martinをダウンロードしました。ローカルサーバーを起動しています...",
@@ -1009,7 +1009,7 @@
       "errorConnectFirst": "先にPostgreSQLに接続してください。",
       "errorNoVectorLayers": "選択したMartinソースにはベクターレイヤーがありません。",
       "errorSelectSource": "追加するMartinソースを選択してください。",
-      "desktopOnlyNotice": "PostgreSQLレイヤーはGeoLibre Desktopでのみ利用できます。この機能はローカルのMartinタイルサーバーを実行しますが、Webアプリやモバイルアプリでは起動できません。",
+      "desktopOnlyNotice": "PostgreSQLレイヤーはGeoApps Desktopでのみ利用できます。この機能はローカルのMartinタイルサーバーを実行しますが、Webアプリやモバイルアプリでは起動できません。",
       "savedConnection": "保存済み接続",
       "selectSavedConnection": "保存済み接続を選択",
       "connectionString": "PostgreSQL接続文字列",
@@ -1392,7 +1392,7 @@
         "empty": "一致するカバレッジはありません。",
         "format": "カバレッジはGeoTIFF出力を提供していません。",
         "size": "1〜4096ピクセルの寸法を選択してください。ダウンロードは128 MBまでです。",
-        "metadata": "サービスが GeoLibre で読み込める量を超えるメタデータを返しました。メタデータの応答は 32 MB までです。",
+        "metadata": "サービスが GeoApps で読み込める量を超えるメタデータを返しました。メタデータの応答は 32 MB までです。",
         "response": "サービスが有効なGeoTIFFを返しませんでした。",
         "bounds": "有効な範囲を入力してください: 西/東は−180〜180、南/北は−90〜90で、西<東かつ南<北とします。",
         "url": "WCSサービスのURLを入力してください。"
@@ -1668,7 +1668,7 @@
     "nmeaConnectFailed": "レシーバーに接続できませんでした。",
     "nmeaDisconnected": "レシーバーが切断されました。",
     "nmeaUnsupportedDevice": "そのデバイスで NMEA サービスが見つかりませんでした。クラシック Bluetooth のレシーバーの可能性があります。その場合はシステム設定でペアリングし、ここではシリアルポートとして接続してください。",
-    "nmeaUnsupported": "NMEA レシーバーの読み取りには Web Serial または Web Bluetooth API が必要ですが、このブラウザーでは利用できません。Chrome や Edge などの Chromium 系ブラウザーで GeoLibre を開いてください。",
+    "nmeaUnsupported": "NMEA レシーバーの読み取りには Web Serial または Web Bluetooth API が必要ですが、このブラウザーでは利用できません。Chrome や Edge などの Chromium 系ブラウザーで GeoApps を開いてください。",
     "nmeaSerialUnsupported": "ここでは Web Serial を利用できないため、シリアルレシーバーを開けません。",
     "nmeaBluetoothUnsupported": "ここでは Web Bluetooth を利用できないため、Bluetooth Low Energy レシーバーを開けません。",
     "nmeaBluetoothHint": "ほとんどの Bluetooth GPS レシーバーはクラシック Bluetooth を使用します。システム設定でペアリングすると、ここにシリアルポートとして表示されます。「Bluetooth 接続」は Bluetooth Low Energy のレシーバーにのみ使用してください。",
@@ -1802,7 +1802,7 @@
     "step1Title": "1. APIトークンを取得",
     "step1Description": "{{shareHost}} にサインインし、設定 → APIトークンでトークンを作成してください。",
     "getToken": "APIトークンを取得",
-    "step2Title": "2. トークンをGeoLibreに追加",
+    "step2Title": "2. トークンをGeoAppsに追加",
     "step2Description": "このデバイスの設定 → 環境変数にトークンを貼り付けてください。",
     "configureToken": "ローカルトークンを設定",
     "oauthTitle": "アカウントでサインイン",
@@ -1816,13 +1816,13 @@
     "oauthFailed": "サインインに失敗しました。もう一度お試しください。",
     "oauthRefreshFailed": "セッションを更新できませんでした。接続を確認して、もう一度お試しください。",
     "oauthSetupFailed": "デスクトップのサインインを開始できませんでした。アプリを再起動し、インストール済みのアプリがリンクを開けて共有サーバーに接続できることを確認してください。貼り付けたAPIトークンは引き続き使用できます。",
-    "oauthRestartSignIn": "このサインインリンクは GeoLibre の再起動後に開かれました。ここでサインインをやり直してください。以前の認可コードは使用できません。",
+    "oauthRestartSignIn": "このサインインリンクは GeoApps の再起動後に開かれました。ここでサインインをやり直してください。以前の認可コードは使用できません。",
     "reauthBody": "{{shareHost}} のセッションの有効期限が切れました。共有を続けるには、もう一度サインインしてください。",
     "errorUnauthorized": "{{shareHost}} のAPIトークンが無効か期限切れです。設定で更新してください。",
     "reauthSignIn": "再度サインイン",
     "liveAt": "プロジェクトは次のURLで公開されています:",
     "credentialsRemoved": "{{count}} 個の認証情報フィールドは含まれていません。受信者は自分の認証情報を指定するか、ブローカー参照を使用する必要があります。",
-    "oauthSignOutIncomplete": "サインアウトしましたが、保存されたサインイン情報をシステムのキーチェーンから削除できなかったため、次回 GeoLibre の起動時に復元される可能性があります。キーチェーンが利用可能であることを確認してから、もう一度サインインしてサインアウトしてください。",
+    "oauthSignOutIncomplete": "サインアウトしましたが、保存されたサインイン情報をシステムのキーチェーンから削除できなかったため、次回 GeoApps の起動時に復元される可能性があります。キーチェーンが利用可能であることを確認してから、もう一度サインインしてサインアウトしてください。",
     "copyLink": "リンクをコピー",
     "open": "開く",
     "done": "完了",
@@ -1909,7 +1909,7 @@
   },
   "gallery": {
     "title": "プロジェクトギャラリー",
-    "description": "{{shareHost}} で共有されている公開プロジェクトを閲覧し、GeoLibreで開きます。",
+    "description": "{{shareHost}} で共有されている公開プロジェクトを閲覧し、GeoAppsで開きます。",
     "searchPlaceholder": "タイトル、作成者、タグで読み込み済みプロジェクトを絞り込む",
     "loading": "プロジェクトを読み込み中…",
     "loadingMore": "さらに読み込み中…",
@@ -2039,7 +2039,7 @@
       "groupNavigation": "方位記号と縮尺バーをグループ化",
       "footer": "フッターテキスト",
       "date": "日付",
-      "attribution": "GeoLibreのクレジットを含める",
+      "attribution": "GeoAppsのクレジットを含める",
       "pageBorder": "ページ枠線",
       "infoBlock": "情報ブロック(表題欄)",
       "colorbar": "カラーバー",
@@ -2337,9 +2337,9 @@
   },
   "auth": {
     "unavailableTitle": "サインインを利用できません",
-    "unavailableDescription": "GeoLibre はサインインサービスに接続できなかったため、サインイン済みかどうかを判断できません。通常は一時的なものです。解消しない場合は、このデプロイの認証設定を確認する必要があるかもしれません。",
+    "unavailableDescription": "GeoApps はサインインサービスに接続できなかったため、サインイン済みかどうかを判断できません。通常は一時的なものです。解消しない場合は、このデプロイの認証設定を確認する必要があるかもしれません。",
     "retry": "再試行",
-    "signInTitle": "GeoLibre にサインイン",
+    "signInTitle": "GeoApps にサインイン",
     "signInDescription": "このデプロイにはアカウントが必要です。安全なサインインページに移動し、その後ここに戻ります。",
     "signIn": "サインイン",
     "signOut": "サインアウト",
@@ -2648,7 +2648,7 @@
     "noticeDesc": "ナレッジカードを開くと、クリックした場所の座標（および開いた近隣記事のタイトル）がWikipediaの公開APIに送信され、概要と写真を取得します。これらのリクエストの際、座標はデバイスの外部に送信されます。"
   },
   "onboarding": {
-    "title": "GeoLibreへようこそ",
+    "title": "GeoAppsへようこそ",
     "description": "経験レベルを選択してインターフェースを調整します。この設定は 設定 → インターフェース からいつでも変更できます。",
     "level": {
       "beginner": {
@@ -2661,24 +2661,24 @@
       },
       "advanced": {
         "title": "上級者",
-        "description": "GeoLibreが提供するすべての機能を表示します。"
+        "description": "GeoAppsが提供するすべての機能を表示します。"
       }
     },
     "showEverything": "スキップ — すべて表示"
   },
   "startup": {
     "keychainWaitTitle": "システムのキーチェーンを待機中…",
-    "keychainWaitDetail": "GeoLibre は保存された認証情報を読み込んでいます。キーチェーンのロックを解除するためにシステムがパスワードを求めた場合は、そのプロンプトに応答して続行してください。このウィンドウの背後に表示されている場合があります。"
+    "keychainWaitDetail": "GeoApps は保存された認証情報を読み込んでいます。キーチェーンのロックを解除するためにシステムがパスワードを求めた場合は、そのプロンプトに応答して続行してください。このウィンドウの背後に表示されている場合があります。"
   },
   "settings": {
     "title": "設定",
     "description": "プロジェクトの環境設定とランタイム設定を構成します。",
     "saveButton": "設定を保存",
     "credentials": {
-      "keychain": "GeoLibre で保存したトークンと API キーは、システムのキーチェーンに保存されます。",
+      "keychain": "GeoApps で保存したトークンと API キーは、システムのキーチェーンに保存されます。",
       "projectKeychainUnavailable": "システムのキーチェーンにプロジェクトの認証情報を保存できません。新しいプロジェクトのキーはこのセッション内にのみ保持されます。ローカルプロジェクトを保存する際に、ファイルに残すか削除するかを確認します。",
       "browser": "ここで保存したトークンと API キーはこのブラウザのローカルストレージに保存され、このサイトで実行されるスクリプトから読み取ることができます。",
-      "unavailable": "システムのキーチェーンを使用できませんでした ({{error}})。新しい認証情報は GeoLibre を閉じるまでしか保持されません。以前に保存した認証情報は、移行が成功するまでブラウザのストレージに残る場合があります。"
+      "unavailable": "システムのキーチェーンを使用できませんでした ({{error}})。新しい認証情報は GeoApps を閉じるまでしか保持されません。以前に保存した認証情報は、移行が成功するまでブラウザのストレージに残る場合があります。"
     },
     "section": {
       "language": "言語",
@@ -2722,11 +2722,11 @@
         "role": "ロールの引き受け",
         "other": "その他"
       },
-      "environmentHelp": "GeoLibre の起動時の環境にある AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY、AWS_SESSION_TOKEN を使用します。",
-      "instanceHelp": "GeoLibre が実行されているマシンの IAM ロールを使用します: Web ID トークン (EKS IRSA)、ECS または EKS のコンテナ認証情報、または EC2 インスタンスプロファイル。",
+      "environmentHelp": "GeoApps の起動時の環境にある AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY、AWS_SESSION_TOKEN を使用します。",
+      "instanceHelp": "GeoApps が実行されているマシンの IAM ロールを使用します: Web ID トークン (EKS IRSA)、ECS または EKS のコンテナ認証情報、または EC2 インスタンスプロファイル。",
       "roleArn": "引き受けるロール",
       "externalId": "外部 ID",
-      "roleHelp": "任意。GeoLibre は上記の認証情報で AWS STS AssumeRole を呼び出し、このロールとしてバケットを読み取ります (例: クロスアカウントの読み取り専用ロール)。",
+      "roleHelp": "任意。GeoApps は上記の認証情報で AWS STS AssumeRole を呼び出し、このロールとしてバケットを読み取ります (例: クロスアカウントの読み取り専用ロール)。",
       "accessKeyId": "アクセスキーID",
       "secretAccessKey": "シークレットアクセスキー",
       "sessionToken": "セッショントークン",
@@ -2769,7 +2769,7 @@
     },
     "languagePack": {
       "title": "言語パック",
-      "description": "GeoLibre のすべてのインストールを大きくすることなく、Whitebox のツール名、パラメーター、ヘルプテキストの任意の翻訳を追加します。",
+      "description": "GeoApps のすべてのインストールを大きくすることなく、Whitebox のツール名、パラメーター、ヘルプテキストの任意の翻訳を追加します。",
       "manage": "言語パックを管理",
       "interfaceLanguage": "インターフェースの言語",
       "installed": "Whitebox 言語パックがインストール済みです",
@@ -2791,10 +2791,10 @@
       "privacyLocalOnly": "パックはこのデバイスにのみ保存されます。このビルドは何もダウンロードしません。代わりに言語パックファイルをインポートしてください。",
       "browse": "言語パックを閲覧",
       "errorInvalidJson": "そのファイルは有効な JSON ではありません。",
-      "errorInvalidFormat": "そのファイルは有効な GeoLibre Whitebox 言語パックではありません。",
-      "errorUnsupportedVersion": "この言語パックのバージョンは、この GeoLibre リリースではサポートされていません。",
+      "errorInvalidFormat": "そのファイルは有効な GeoApps Whitebox 言語パックではありません。",
+      "errorUnsupportedVersion": "この言語パックのバージョンは、この GeoApps リリースではサポートされていません。",
       "errorInvalidLocale": "言語パックのロケールが無効または想定外です。",
-      "errorUnsupportedLocale": "GeoLibre には、このパックが必要とする基本インターフェース言語が含まれていません。",
+      "errorUnsupportedLocale": "GeoApps には、このパックが必要とする基本インターフェース言語が含まれていません。",
       "errorTooLarge": "言語パックが 5 MB の安全上限を超えています。",
       "errorNotFound": "この言語向けの公式 Whitebox 言語パックはまだありません。",
       "errorDownload": "言語パックをダウンロードできませんでした。接続を確認するか、ローカルファイルをインポートしてください。",
@@ -2802,9 +2802,9 @@
     },
     "updates": {
       "title": "ソフトウェアアップデート",
-      "description": "デスクトップアプリ起動時のGeoLibreの新バージョン確認方法を設定します。",
+      "description": "デスクトップアプリ起動時のGeoAppsの新バージョン確認方法を設定します。",
       "checkOnStartup": "起動時にアップデートを確認",
-      "checkOnStartupHint": "有効にすると、アプリの起動ごとにGeoLibreが新しいバージョンを確認します。完全にオフラインで運用する場合はオフにしてください。",
+      "checkOnStartupHint": "有効にすると、アプリの起動ごとにGeoAppsが新しいバージョンを確認します。完全にオフラインで運用する場合はオフにしてください。",
       "notificationLevel": "通知する更新の種類",
       "notificationLevelHint": "起動時の通知対象とするリリースの種類を選択します。",
       "level": {
@@ -2815,7 +2815,7 @@
     },
     "startup": {
       "title": "起動時のプロジェクト",
-      "description": "ネイティブアプリの起動時にGeoLibreが開くワークスペースを選択します。",
+      "description": "ネイティブアプリの起動時にGeoAppsが開くワークスペースを選択します。",
       "mode": {
         "default": "既定のワークスペースを開く",
         "last": "最後のプロジェクトを再度開く",
@@ -2830,7 +2830,7 @@
       "globeByDefault": "既定で3D地球儀を有効にする",
       "globeByDefaultHint": "起動時のプロジェクトもプロジェクトリンクも指定されていない場合の、無題のワークスペースに使用されます。",
       "openS3Browser": "起動時に S3 ブラウザーを開く",
-      "openS3BrowserHint": "GeoLibre を起動するたびに S3 ブラウザーパネルを表示します。プロジェクトを開いても開いたままになります。",
+      "openS3BrowserHint": "GeoApps を起動するたびに S3 ブラウザーパネルを表示します。プロジェクトを開いても開いたままになります。",
       "defaultView": "既定の地図表示",
       "defaultViewHint": "無題のワークスペースの中心とズームを設定します。",
       "longitude": "中心の経度",
@@ -2838,14 +2838,14 @@
       "zoom": "ズームレベル",
       "useCurrentView": "現在の表示を使用",
       "layerStyles": "既定のレイヤースタイル",
-      "layerStylesHint": "レイヤースタイルファイルを選択します (プロジェクト → エクスポート → レイヤースタイルをエクスポート)。追加したレイヤーの名前がファイル内のスタイルと一致すると、自動的にスタイルが適用されます。開いたプロジェクトのレイヤーは保存済みのスタイルを維持します。GeoLibre はファイルのコピーを保持するため、ファイルを編集した後はもう一度選択してください。",
+      "layerStylesHint": "レイヤースタイルファイルを選択します (プロジェクト → エクスポート → レイヤースタイルをエクスポート)。追加したレイヤーの名前がファイル内のスタイルと一致すると、自動的にスタイルが適用されます。開いたプロジェクトのレイヤーは保存済みのスタイルを維持します。GeoApps はファイルのコピーを保持するため、ファイルを編集した後はもう一度選択してください。",
       "chooseLayerStyles": "ファイルを選択",
       "clearLayerStyles": "クリア",
       "noLayerStylesSelected": "レイヤースタイルファイルが選択されていません",
       "layerStylesSelected_other": "{{file}} ({{count}} 個のスタイル)",
       "layerStylesSelectError": "選択したレイヤースタイルファイルを読み込めませんでした: {{message}}",
       "layers": "既定のレイヤー",
-      "layersHint": "レイヤーファイルを選択します (プロジェクト → エクスポート → レイヤーをエクスポート)。そのレイヤーは、GeoLibre の起動時に開くプロジェクトと ファイル → 新規 で作成するプロジェクトのすべてに追加されます。データは URL またはファイルパスで参照されるため、常に最新の内容が表示されます。開いたプロジェクトは変更されません。",
+      "layersHint": "レイヤーファイルを選択します (プロジェクト → エクスポート → レイヤーをエクスポート)。そのレイヤーは、GeoApps の起動時に開くプロジェクトと ファイル → 新規 で作成するプロジェクトのすべてに追加されます。データは URL またはファイルパスで参照されるため、常に最新の内容が表示されます。開いたプロジェクトは変更されません。",
       "chooseLayers": "ファイルを選択",
       "clearLayers": "クリア",
       "noLayersSelected": "レイヤーファイルが選択されていません",
@@ -2854,7 +2854,7 @@
       "viewUnavailable": "現在の地図表示は利用できません。",
       "selectError": "選択したプロジェクトを読み取れませんでした。",
       "restoring": "起動時のプロジェクトを開いています…",
-      "loadWarning": "起動時のプロジェクトを利用できません。GeoLibreは代わりに既定のワークスペースを開きました。"
+      "loadWarning": "起動時のプロジェクトを利用できません。GeoAppsは代わりに既定のワークスペースを開きました。"
     },
     "map": {
       "constraintsTitle": "地図の制約",
@@ -2961,21 +2961,21 @@
       "importUrl": "URL からインポート",
       "loadUrl": "読み込む",
       "loadingUrl": "読み込み中…",
-      "fileFilter": "GeoLibre インターフェース",
+      "fileFilter": "GeoApps インターフェース",
       "exportError": "インターフェース設定をエクスポートできませんでした: {{message}}",
       "importError": "インターフェースファイルをインポートできませんでした: {{message}}",
       "imported": "インターフェース設定をインポートしました。"
     },
     "env": {
-      "oauthTitle": "Share.GeoLibre アカウント",
+      "oauthTitle": "Share.GeoApps アカウント",
       "oauthDescription": "{{shareHost}} アカウントでサインインすると、プロジェクトを共有したり、ギャラリーで自分のプロジェクトを表示したりできます。",
       "oauthConnected": "{{shareHost}} にサインインしました。",
       "oauthSignIn": "サインイン",
       "oauthSigningIn": "サインイン中…",
       "oauthSignOut": "サインアウト",
       "oauthWebLifetime": "アクセストークンはメモリ内に保持され、更新セッションはこのブラウザタブに限定されます。タブを閉じると、再度サインインが必要です。",
-      "oauthDesktopKeychain": "サインイン情報はシステムのキーチェーンに保持されるため、サインアウトするまで GeoLibre は再起動後もサインインしたままになります。",
-      "oauthDesktopSessionOnly": "このサインインをシステムのキーチェーンに保存できなかったため、GeoLibre を閉じるまでしか保持されません。",
+      "oauthDesktopKeychain": "サインイン情報はシステムのキーチェーンに保持されるため、サインアウトするまで GeoApps は再起動後もサインインしたままになります。",
+      "oauthDesktopSessionOnly": "このサインインをシステムのキーチェーンに保存できなかったため、GeoApps を閉じるまでしか保持されません。",
       "accountLoading": "アカウントを読み込み中…",
       "accountRetry": "再試行",
       "accountIdentity": "アカウント: {{account}}",
@@ -3005,7 +3005,7 @@
       "sessionRevoke": "失効",
       "sessionRevoking": "失効中…",
       "revokeSessionConfirm": "セッション「{{label}}」を失効させますか？そのデバイスはサインアウトされます。この操作は元に戻せません。",
-      "revokeCurrentConfirm": "このセッション「{{label}}」を失効させますか？GeoLibre から直ちにサインアウトされます。",
+      "revokeCurrentConfirm": "このセッション「{{label}}」を失効させますか？GeoApps から直ちにサインアウトされます。",
       "revokeTokenConfirm": "個人用APIトークン「{{label}}」を失効させますか？これを使用しているスクリプトやCIは動作しなくなります。この操作は元に戻せません。",
       "revokeSessionConfirmButton": "はい、失効させる",
       "sessionCreated": "作成日時: {{date}}",
@@ -3016,7 +3016,7 @@
       "revokeOthers": "他のすべてを失効",
       "revokeOthersConfirm": "スクリプトやCIで使用中のトークンを含め、他のすべてのセッションと個人用APIトークンを失効させますか？このプロジェクトセッションのみが残ります。この操作は元に戻せません。",
       "revokeOthersConfirmButton": "はい、他のすべてを失効",
-      "tokenTitle": "Share.GeoLibre APIトークン",
+      "tokenTitle": "Share.GeoApps APIトークン",
       "tokenDescription": "プロジェクト > 共有では、このトークンを使用して地図を{{shareHost}}にアップロードします。<tokenLink>{{shareHost}}/settings</tokenLink> を開き、設定 > APIトークン でトークンを作成して、下のフィールドに貼り付けてください。",
       "tokenStorageNote": "このデバイスにローカルで保存され、アップロードの認証のために{{shareHost}}にのみ送信されます。Webビルドでは他のサイトデータと同じブラウザストレージを共有するため、端末が侵害された場合は{{shareHost}}でトークンを失効させてください。",
       "tokenStorageNoteKeychain": "システムのキーチェーンに保存され、アップロードの認証のために {{shareHost}} にのみ送信されます。マシンが侵害された場合は {{shareHost}} で取り消してください。",
@@ -3093,7 +3093,7 @@
       "statusReady": "{{provider}} は設定済みで使用できます。",
       "statusIncomplete": "{{provider}} を有効にするには、以下の必須項目を入力してください。",
       "secretsNote": "認証情報は、共有するプロジェクトファイルではなくこのデバイスにローカル保存されるため、再起動後も保持されます。このデバイスにアクセスできる人は誰でも読み取れる可能性があります。",
-      "secretsNoteKeychain": "API キーなどのシークレットフィールドは、共有するプロジェクトファイルではなくシステムのキーチェーンに保存されるため、再起動後も保持されます。モデル名や URL などのその他のフィールドは、このデバイスの GeoLibre の設定に保存されます。",
+      "secretsNoteKeychain": "API キーなどのシークレットフィールドは、共有するプロジェクトファイルではなくシステムのキーチェーンに保存されるため、再起動後も保持されます。モデル名や URL などのその他のフィールドは、このデバイスの GeoApps の設定に保存されます。",
       "getCredentials": "{{provider}} の認証情報の取得方法",
       "showValue": "{{name}} を表示",
       "hideValue": "{{name}} を非表示",
@@ -3238,7 +3238,7 @@
         "notSet": "未設定",
         "getKey": "無料のキーを取得",
         "saveFailed": "このブラウザーにキーを保存できませんでした。",
-        "saveFailedKeychain": "キーをシステムのキーチェーンに保存できませんでした。GeoLibre を閉じるまでは使用できます。"
+        "saveFailedKeychain": "キーをシステムのキーチェーンに保存できませんでした。GeoApps を閉じるまでは使用できます。"
       }
     }
   },
@@ -3396,7 +3396,7 @@
       "smartPaste": "座標を貼り付け",
       "smartPasteInputLabel": "座標文字列",
       "smartPastePlaceholder": "例: 51.5074, -0.1278 または 51°30'26\"N, 0°07'39\"W",
-      "smartPasteInfo": "DD、DMS、DDM形式の完全な座標文字列を入力または貼り付けてから、「入力を処理」を実行します。GeoLibreが形式を検出し、下の経度・緯度フィールドに入力します。ズーム、ピッチ、ベアリングは別途調整してから移動してください。",
+      "smartPasteInfo": "DD、DMS、DDM形式の完全な座標文字列を入力または貼り付けてから、「入力を処理」を実行します。GeoAppsが形式を検出し、下の経度・緯度フィールドに入力します。ズーム、ピッチ、ベアリングは別途調整してから移動してください。",
       "smartPasteInfoLabel": "座標の貼り付けについて",
       "smartPasteInvalid": "その座標を読み取れませんでした。DD、DMS、DDM形式で経度と緯度を完全な形で入力してください（例: 51.5074, -0.1278）。一部だけの文字列や不完全な文字列は解析できません。",
       "processInput": "入力を処理",
@@ -3544,8 +3544,8 @@
     },
     "conversion": {
       "vectorToVector": "ベクターからベクターへ",
-      "zipInputBrowserError": "圧縮されたShapefileはGeoLibreデスクトップアプリでのみ変換できます。ブラウザでは、展開した.shpファイルを.dbf、.shx、.prjファイルと一緒に選択してください。",
-      "browserOutputUnsupported": "ブラウザでは、出力形式はGeoJSON、CSV、GeoParquet、GeoPackage、またはShapefile (.zip) を選択できます。「.{{extension}}」出力にはGeoLibreデスクトップアプリが必要です。",
+      "zipInputBrowserError": "圧縮されたShapefileはGeoAppsデスクトップアプリでのみ変換できます。ブラウザでは、展開した.shpファイルを.dbf、.shx、.prjファイルと一緒に選択してください。",
+      "browserOutputUnsupported": "ブラウザでは、出力形式はGeoJSON、CSV、GeoParquet、GeoPackage、またはShapefile (.zip) を選択できます。「.{{extension}}」出力にはGeoAppsデスクトップアプリが必要です。",
       "outputExtensionRequired": "出力名にファイル拡張子を追加して形式を選択してください。",
       "readingWithDuckDb": "DuckDB-WASMで{{name}}を読み込み中",
       "readFeatures": "{{name}}から{{features}}件のフィーチャを読み込みました",
@@ -3559,7 +3559,7 @@
       "vectorToPmtiles": "ベクターからPMTilesへ",
       "rasterToCog": "ラスターからCOGへ",
       "rasterToPmtiles": "ラスターからPMTilesへ",
-      "needsDesktop": "この変換にはGeoLibreデスクトップアプリまたは実行中のサイドカーが必要です。",
+      "needsDesktop": "この変換にはGeoAppsデスクトップアプリまたは実行中のサイドカーが必要です。",
       "runsInBrowserDuckDb": "変換はDuckDB-WASMを使ってブラウザ内で実行されます。",
       "runsInBrowserWriters": "変換はDuckDB-WASMと同梱のライターを使ってブラウザ内で実行されます。",
       "runsInBrowserWasm": "変換はgeolibre-wasmを使ってブラウザ内で実行されます。サイドカーは不要です。",
@@ -3567,7 +3567,7 @@
       "rasterShape": "{{width}}×{{height}}、{{bands}}バンドのラスターを読み込みました",
       "wroteCog": "オーバービュー付きのタイル化COGを書き出しました（{{compression}}）",
       "notAGeoTiff": "このファイルは読み取り可能なGeoTIFFではありません。ブラウザ版の「ラスターからCOGへ」はGeoTIFFのみ読み取れます。他の形式にはデスクトップアプリが必要です。",
-      "rasterTooLargeForBrowser": "ブラウザではラスター全体を WebAssembly でデコードしますが、WebAssembly は約4GBに制限されているため、このファイルは収まりません。GeoLibre デスクトップアプリで変換するか、gdal_translate または rio-cogeo で事前に COG を作成してください。",
+      "rasterTooLargeForBrowser": "ブラウザではラスター全体を WebAssembly でデコードしますが、WebAssembly は約4GBに制限されているため、このファイルは収まりません。GeoApps デスクトップアプリで変換するか、gdal_translate または rio-cogeo で事前に COG を作成してください。",
       "zoomRangeError": "ズームレベルは 0 ≤ 最小 ≤ 最大 ≤ {{max}} を満たす必要があります。",
       "colormap": "カラーマップ",
       "resampling": "リサンプリング",
@@ -3722,9 +3722,9 @@
       "outputFile": "出力ファイル",
       "noOutput": "まだ出力はありません。",
       "errorConnect": "サイドカーに接続できませんでした。",
-      "needsDesktopSidecar": "ラスターツールには、サイドカーが動作している GeoLibre デスクトップアプリが必要です。",
+      "needsDesktopSidecar": "ラスターツールには、サイドカーが動作している GeoApps デスクトップアプリが必要です。",
       "errorPoll": "ジョブを取得できませんでした。",
-      "errorStartSidecar": "GeoLibre サイドカーを起動できませんでした。",
+      "errorStartSidecar": "GeoApps サイドカーを起動できませんでした。",
       "errorStartTool": "ラスターツールを開始できませんでした。"
     },
     "mapControl": {
@@ -3846,7 +3846,7 @@
       "terrain": "地形",
       "remoteSensing": "リモートセンシング",
       "projection": "投影法",
-      "geolibre": "GeoLibre ツールボックス",
+      "geolibre": "GeoApps ツールボックス",
       "subGroupGeometry": "ジオメトリ",
       "subGroupOverlay": "オーバーレイ",
       "subGroupJoin": "結合",
@@ -3933,12 +3933,12 @@
         "layer-type": "{{layerType}} のレイヤータイプはサポートされていません。",
         "missing-source": "このレイヤーには読み取り可能なローカルデータソースがありません。",
         "format": "このレイヤーのデータ形式はサポートされていません。",
-        "file-geodatabase": "ファイルジオデータベース（.gdb）のソースはプロジェクトから読み込まれません。GeoLibre Desktop では、データ追加 → ファイルジオデータベース（GDB）から追加してください。",
+        "file-geodatabase": "ファイルジオデータベース（.gdb）のソースはプロジェクトから読み込まれません。GeoApps Desktop では、データ追加 → ファイルジオデータベース（GDB）から追加してください。",
         "file-geodatabase-raster": "ファイルジオデータベース（.gdb）に保存されたラスターデータセットはサポートされていません。ラスターを GeoTIFF にエクスポートし、ラスターレイヤーとして追加してください。",
         "network-path": "ネットワーク共有のパスはセキュリティ上の理由から読み込まれません。",
         "service": "プロジェクト内の ArcGIS サービスレイヤーはまだサポートされていません。",
-        "browser-local-file": "ローカルファイルが参照されていますが、ブラウザーでは ArcGIS Pro のデータパスを開き直せません。GeoLibre Desktop で読み込んでください。",
-        "map-extent": "保存された地図範囲は GeoLibre が変換できない座標系を使用しているため、地図は既定のビューで開きました。",
+        "browser-local-file": "ローカルファイルが参照されていますが、ブラウザーでは ArcGIS Pro のデータパスを開き直せません。GeoApps Desktop で読み込んでください。",
+        "map-extent": "保存された地図範囲は GeoApps が変換できない座標系を使用しているため、地図は既定のビューで開きました。",
         "nesting": "グループの入れ子が深すぎるか、プロジェクトがそのグループを含むグループを参照し返しています。"
       },
       "qgisImportComplete": "QGIS プロジェクトをインポートしました",
@@ -3951,8 +3951,8 @@
         "format": "このレイヤーのファイル形式はサポートされていません。",
         "remote-file": "リモートの QGIS ファイルソースはまだサポートされていません。",
         "network-path": "ネットワーク共有のパスはセキュリティ上の理由から読み込まれません。",
-        "browser-local-file": "ローカルファイルが参照されていますが、ブラウザーでは QGIS のデータパスを開き直せません。GeoLibre Desktop で読み込んでください。",
-        "browser-local-raster": "ラスターはローカルパスで参照されています。GeoLibre Desktop で読み込んでください。"
+        "browser-local-file": "ローカルファイルが参照されていますが、ブラウザーでは QGIS のデータパスを開き直せません。GeoApps Desktop で読み込んでください。",
+        "browser-local-raster": "ラスターはローカルパスで参照されています。GeoApps Desktop で読み込んでください。"
       },
       "openProjectFromUrlDesc": "`.geolibre.json` プロジェクトを読み込み、最近使用したプロジェクトに追加します。",
       "projectUrl": "プロジェクト URL",
@@ -3976,7 +3976,7 @@
       "embedEditedGeometryDesc": "このプロジェクトには編集済みのジオメトリが含まれています。変更を保持するにはベクターデータ（約 {{size}}）を埋め込んでください。埋め込まない場合、参照レイヤーは元のジオメトリで再度開かれ、ローカルデータは利用できなくなる場合があります。",
       "embedVectorDesc": "このプロジェクトには、お使いのコンピューターから読み込まれたローカルのベクターレイヤーが {{count}} 個あります。プロジェクトを再度開いたときにブラウザがこれらを再読み込みすることはできないため、復元するにはデータをプロジェクトファイルに埋め込む必要があります。埋め込むとファイルサイズが約 {{size}} 増加します。",
       "embedVectorDescDesktop": "このプロジェクトには、お使いのコンピューターから読み込まれたローカルのベクターレイヤーが {{count}} 個あります。データを埋め込んでプロジェクトを自己完結型にする（約 {{size}} 増加）か、プロジェクトを再度開いたときにディスクから再読み込みされるファイル参照として保存できます。参照はファイルサイズを小さく保ちますが、元のファイルが後で移動または削除されると読み込めなくなります。",
-      "embedVectorDescMas": "このプロジェクトには、お使いのコンピューターから読み込まれたローカルベクターレイヤーが {{count}} 個あります。Mac App Store のサンドボックスでは GeoLibre の終了後もこれらのファイルへのアクセスを保持できないため、復元するにはデータをプロジェクトファイルに埋め込む必要があります。埋め込むとファイルサイズが約 {{size}} 増加します。",
+      "embedVectorDescMas": "このプロジェクトには、お使いのコンピューターから読み込まれたローカルベクターレイヤーが {{count}} 個あります。Mac App Store のサンドボックスでは GeoApps の終了後もこれらのファイルへのアクセスを保持できないため、復元するにはデータをプロジェクトファイルに埋め込む必要があります。埋め込むとファイルサイズが約 {{size}} 増加します。",
       "embedVectorLargeWarning": "約 {{size}} を埋め込むと、プロジェクトファイルが非常に大きくなります。すべてのフィーチャを一度に解析してメモリに保持する必要があるため、再度開くときに時間がかかったり、失敗したりすることがあります。このサイズのデータは、レイヤーを PMTiles または FlatGeobuf に変換し、埋め込む代わりにリモートレイヤーとして追加してください。",
       "embedVectorEmbedButton": "データを埋め込む",
       "embedVectorReferenceButton": "ファイル参照を保存",
@@ -3992,13 +3992,13 @@
       "exportLayerStylesAsDesc": "ファイル名を入力してください。「保存」をクリックすると、スタイルファイルがブラウザのダウンロードフォルダにダウンロードされます。",
       "exportLayerStylesFileName": "ファイル名",
       "exportLayerStylesFileNamePlaceholder": "my-map-styles.json",
-      "layerStylesFile": "GeoLibre レイヤースタイル",
+      "layerStylesFile": "GeoApps レイヤースタイル",
       "exportLayersEllipsis": "レイヤーをエクスポート…",
       "exportLayersAsTitle": "レイヤーをエクスポート",
       "exportLayersAsDesc": "ファイル名を入力してください。保存をクリックすると、レイヤーファイルがブラウザーのダウンロードフォルダーにダウンロードされます。",
       "exportLayersFileName": "ファイル名",
       "exportLayersFileNamePlaceholder": "my-map-layers.json",
-      "layersFile": "GeoLibre レイヤー",
+      "layersFile": "GeoApps レイヤー",
       "layersExportSkipped_other": "データがこのプロジェクト内にしか存在しないため、{{count}} 個のレイヤーを除外しました: {{names}}",
       "layersExportRedacted_other": "エクスポートしたレイヤーから {{count}} 件の認証情報を削除しました。",
       "layerStylesImported": "レイヤースタイルをインポートしました",
@@ -4122,11 +4122,11 @@
     },
     "windowClose": {
       "savePromptTitle": "閉じる前に変更を保存しますか?",
-      "savePromptDescription": "現在のプロジェクトには未保存の変更があります。GeoLibre を閉じる前に保存しますか?"
+      "savePromptDescription": "現在のプロジェクトには未保存の変更があります。GeoApps を閉じる前に保存しますか?"
     },
     "error": {
       "couldNotOpenProject": "プロジェクトを開けませんでした。",
-      "multipleProjectDrop": "他のファイルを含めず、GeoLibre プロジェクトを一度に1つだけドロップしてください。",
+      "multipleProjectDrop": "他のファイルを含めず、GeoApps プロジェクトを一度に1つだけドロップしてください。",
       "projectDropNotAllowed": "このデプロイではプロジェクトを切り替えられません。",
       "couldNotImportQgisProject": "QGIS プロジェクトをインポートできませんでした。",
       "couldNotImportArcgisProject": "ArcGIS Pro プロジェクトをインポートできませんでした。",
@@ -4264,7 +4264,7 @@
     "filterSummary": "レイヤーフィルターを適用しました: {{total}}件中{{matched}}件のフィーチャが一致。",
     "evaluationErrors": "{{count}}件のフィーチャは評価できなかったため一致しませんでした。",
     "unevaluableDisjoint": "{{count}}件のフィーチャはジオメトリを評価できなかったため除外されました。",
-    "tooManyPairs": "この比較には{{pairs}}回のフィーチャペア判定が必要です（上限{{limit}}）。代わりにプロセッシング → GeoLibre → ベクター → 空間検索で選択をサイドカーエンジンで実行してください。",
+    "tooManyPairs": "この比較には{{pairs}}回のフィーチャペア判定が必要です（上限{{limit}}）。代わりにプロセッシング → GeoApps → ベクター → 空間検索で選択をサイドカーエンジンで実行してください。",
     "exportedLayerName": "{{name}}（選択）"
   },
   "loadEditorFeatures": {
@@ -4837,11 +4837,11 @@
     "addIcechunkFailed": "この Icechunk リポジトリを開けませんでした",
     "zarrProblemGroup": "このアセットは描画可能な 1 つの配列ではなく、配列のグループを指しています",
     "zarrProblemMissing": "このストアにはその変数がありません",
-    "zarrProblemUnauthorized": "この Zarr ストアには、GeoLibre がまだ提供できない認証情報が必要です",
+    "zarrProblemUnauthorized": "この Zarr ストアには、GeoApps がまだ提供できない認証情報が必要です",
     "zarrProblemUnsupportedUrl": "この Zarr ストアのアドレスはキー単位で読み取ることができません",
     "zarrProblemUnavailable": "この Zarr ストアを開けませんでした",
     "chooseTarget": "追加するものを選択",
-    "cogUnsupported": "この GeoLibre ホストはリモートの GeoTIFF アセットを表示できません",
+    "cogUnsupported": "この GeoApps ホストはリモートの GeoTIFF アセットを表示できません",
     "formatCog": "COG",
     "formatGeoJson": "GeoJSON",
     "formatPmtiles": "PMTiles",
@@ -4873,7 +4873,7 @@
     "filterWebMap": "Webマップ",
     "webMapAdded_other": "このWebマップから{{count}}件のレイヤーを追加しました。",
     "webMapAddedPartial": "このWebマップの{{total}}件中{{added}}件のレイヤーを追加しました。残りには接続できませんでした。",
-    "webMapEmpty": "このWebマップには GeoLibre が表示できるレイヤーがありません。",
+    "webMapEmpty": "このWebマップには GeoApps が表示できるレイヤーがありません。",
     "add": "追加",
     "adding": "追加中…",
     "remove": "削除",
@@ -4991,7 +4991,7 @@
     "downloadTitle": "このファイルをダウンロード",
     "copyUrlTitle": "このファイルのURLをコピー",
     "openProductTitle": "このプロダクトのページを source.coop で開く",
-    "unsupportedTitle": "GeoLibre はこの形式を表示できません。代わりにダウンロードしてください",
+    "unsupportedTitle": "GeoApps はこの形式を表示できません。代わりにダウンロードしてください",
     "addError": "このファイルを追加できませんでした: {{message}}",
     "largeFileWarning": "このファイルは {{size}} です。ソースからストリーミングするため、表示中の部分だけが読み込まれます。",
     "streamHint": "このファイルは {{size}} です。「追加」はメモリにコピーし、「ストリーム」は表示中の部分だけを読み込みます。",
@@ -5035,7 +5035,7 @@
     "downloadTitle": "このファイルをダウンロード",
     "copyUrlTitle": "このファイルのURLをコピー",
     "openDatasetTitle": "このデータセットのページを huggingface.co で開く",
-    "unsupportedTitle": "GeoLibre はこの形式を表示できません。代わりにダウンロードしてください",
+    "unsupportedTitle": "GeoApps はこの形式を表示できません。代わりにダウンロードしてください",
     "addError": "このファイルを追加できませんでした: {{message}}",
     "notRasterIndex": "このJSONファイルはラスターをインデックスしていないため、地図に表示できるものがありません。MosaicJSON と STAC コレクションに対応しています。",
     "largeFileWarning": "このファイルは {{size}} です。ソースからストリーミングするため、表示中の部分だけが読み込まれます。",
@@ -5078,7 +5078,7 @@
     "clearSelection": "クリア",
     "selectedFiles_other": "{{count}}件のファイルを選択中 ({{size}})。",
     "commitMessageLabel": "コミットメッセージ (任意)",
-    "commitMessagePlaceholder": "GeoLibre からアップロード",
+    "commitMessagePlaceholder": "GeoApps からアップロード",
     "upload": "アップロード",
     "uploadPreparing": "アップロードを準備しています…",
     "uploadHashing": "{{name}} のハッシュを計算しています ({{index}}/{{total}})…",
@@ -5618,7 +5618,7 @@
       "importedLog": "{{nodes}} 個のノードを持つモデルをインポートしました。",
       "importFailed": "インポートに失敗しました",
       "importInvalid": "このファイルにはモデルグラフが含まれていません。",
-      "importUnsupported": "このファイルは GeoLibre のモデルではありません。",
+      "importUnsupported": "このファイルは GeoApps のモデルではありません。",
       "rasterOutputUnsupported": "「{{name}}」はラスター結果のため、このビルドでは地図に追加できません。",
       "portNeedsVector": "「{{port}}」にはベクターデータが必要ですが、ラスターが渡されました。",
       "toolNoOutput": "「{{tool}}」は出力を生成しませんでした。",
@@ -5675,7 +5675,7 @@
       "filterByCategory": "カテゴリで絞り込む",
       "layerFor": "{{name}} のレイヤー",
       "allSources": "すべてのソース",
-      "geolibreTools": "GeoLibreツール",
+      "geolibreTools": "GeoAppsツール",
       "whiteboxTools": "Whiteboxツール",
       "toolbox": "Whitebox ツールボックス",
       "checkingRuntime": "ランタイムを確認しています。",
@@ -5729,8 +5729,8 @@
       "errorConnect": "サイドカーに接続できませんでした。",
       "errorPoll": "ジョブを取得できませんでした。",
       "errorStartTool": "Whitebox ツールを開始できませんでした。",
-      "errorStartSidecar": "GeoLibre サイドカーを起動できませんでした。",
-      "errorStopSidecar": "GeoLibre サイドカーを停止できませんでした。",
+      "errorStartSidecar": "GeoApps サイドカーを起動できませんでした。",
+      "errorStopSidecar": "GeoApps サイドカーを停止できませんでした。",
       "noToolsFound": "ツールが見つかりません。",
       "searchToolsByMeaning": "ツールを検索、または作業内容を入力",
       "searchingByMeaning": "意味でカタログを検索しています",
@@ -5763,9 +5763,9 @@
       "runLocallyButton": "ローカルで実行 (WASM)",
       "troubleshootingTitle": "それでもサーバーを使用しますか?",
       "stepStartServerDesktop": "ツール一覧パネルの「サーバーを起動」をクリックして起動し、数秒待ってオンラインになるのを確認してください。",
-      "stepStartServerBrowser": "サーバーはGeoLibreデスクトップアプリからのみ起動できます。ブラウザでは代わりに「ローカルで実行 (WASM)」を有効のままにしてください。",
+      "stepStartServerBrowser": "サーバーはGeoAppsデスクトップアプリからのみ起動できます。ブラウザでは代わりに「ローカルで実行 (WASM)」を有効のままにしてください。",
       "stepCheckPort": "ファイアウォール、ウイルス対策ソフト、またはネットワークポリシーがローカルポート{{port}}をブロックしていないか確認してください。",
-      "stepRestart": "サーバーが予期せず停止した場合は、GeoLibreデスクトップアプリを再起動し、このダイアログを開き直してください。"
+      "stepRestart": "サーバーが予期せず停止した場合は、GeoAppsデスクトップアプリを再起動し、このダイアログを開き直してください。"
     },
     "vectorTools": {
       "title": "ベクターツール",
@@ -7380,13 +7380,13 @@
     "segment": "セグメント化",
     "status": {
       "checking": "AIセグメンテーションサービスを確認中…",
-      "unavailableDesktop": "AIセグメンテーションサービスがまだ起動していません。segment-geospatialを有効にしてGeoLibreサーバーを起動してください。",
-      "unavailableWeb": "AIセグメンテーションはブラウザでは利用できません。実行するにはGeoLibreデスクトップアプリを使用してください。"
+      "unavailableDesktop": "AIセグメンテーションサービスがまだ起動していません。segment-geospatialを有効にしてGeoAppsサーバーを起動してください。",
+      "unavailableWeb": "AIセグメンテーションはブラウザでは利用できません。実行するにはGeoAppsデスクトップアプリを使用してください。"
     },
     "error": {
       "chooseImage": "セグメント化する画像 (GeoTIFF) を選択してください。",
       "enterPrompt": "「樹木」や「建物」などのテキストプロンプトを入力してください。",
-      "startServer": "GeoLibreサイドカーを起動できませんでした。",
+      "startServer": "GeoAppsサイドカーを起動できませんでした。",
       "failed": "セグメンテーションに失敗しました。"
     },
     "noObjects": "オブジェクトが見つかりませんでした。",
@@ -7397,7 +7397,7 @@
       "title": "AIセグメンテーションサーバーを起動できませんでした。",
       "intro": "AIセグメンテーションは、segment-geospatialのSAM3モデルをホストするローカルヘルパーサーバー ({{sidecarUrl}}) で実行されます。アプリとは別にバックグラウンドでPythonを実行するもので、ブラウザ版には含まれません。",
       "troubleshootingTitle": "サーバーを起動する方法",
-      "stepInstall": "セグメンテーションモデルを利用できるように、segment-geospatialバックエンドを有効にしてGeoLibreサーバーがインストールされていることを確認してください。",
+      "stepInstall": "セグメンテーションモデルを利用できるように、segment-geospatialバックエンドを有効にしてGeoAppsサーバーがインストールされていることを確認してください。",
       "stepStartServerDesktop": "上部の「サーバーを起動」をクリックして起動し、モデルがオンラインになるまで数秒お待ちください。"
     }
   },
@@ -7499,7 +7499,7 @@
       "felzenszwalb": "Felzenszwalb グラフ（デスクトップ、ネイティブ）",
       "note": "デスクトップアプリの処理サーバー上で scikit-image を使用し、最大 {{max}} ピクセルまでネイティブに実行します。オブジェクトの計測もそこで行います。",
       "offer": "ブラウザーで扱えないほど大きな画像は、デスクトップアプリで scikit-image（SLIC または Felzenszwalb）を使ってネイティブにセグメント化することもできます。",
-      "needsDesktop": "ネイティブ手法には GeoLibre の処理サーバーが必要です。デスクトップアプリを使用してください。",
+      "needsDesktop": "ネイティブ手法には GeoApps の処理サーバーが必要です。デスクトップアプリを使用してください。",
       "unavailable": "デスクトップアプリのネイティブ OBIA ランタイム（scikit-image）を利用できません。処理サーバーを確認してください。",
       "needsLocalFile": "ネイティブ手法は画像をファイルから読み込みます。ローカルの GeoTIFF から追加してください。",
       "slicSize": "オブジェクトサイズ（ピクセル）",
@@ -7800,7 +7800,7 @@
       "imageSize": "{{width}} × {{height}} ピクセル、バンド {{bands}}",
       "area": "横 {{x0}}～{{x1}}、縦 {{y0}}～{{y1}} ピクセル、フル解像度（1 ピクセルあたり {{size}}）",
       "areaOverview": "横 {{x0}}～{{x1}}、縦 {{y0}}～{{y1}} ピクセル（フル解像度グリッド）、オーバービュー {{level}} から読み込み（1 ピクセルあたり {{size}}）",
-      "env": "geolibre-wasm {{engine}}、GeoLibre {{app}}",
+      "env": "geolibre-wasm {{engine}}、GeoApps {{app}}",
       "labelsPending": "ラベルラスターは読み込まれていません。ステップで必要になったときに、これらの設定から再構築されます。",
       "splits": "取り分けによる分割",
       "level": "レベル {{level}}: レベル {{from}} をスケール {{scale}} で統合",
@@ -8025,7 +8025,7 @@
     "import": "インポート…",
     "export": "エクスポート…",
     "importFilterName": "スタイルライブラリ / QML / SLD",
-    "exportFilterName": "GeoLibre スタイルライブラリ",
+    "exportFilterName": "GeoApps スタイルライブラリ",
     "applied": "「{{name}}」を {{layer}} に適用しました。",
     "appliedRampHint": "「{{name}}」を適用しました。ランプを表示するには、レイヤーを段階または分類スタイルに切り替えてください。",
     "saved": "「{{name}}」をライブラリに保存しました。",
@@ -8752,7 +8752,7 @@
     "exportCopc": "COPC（クラウド最適化）",
     "extractSubset": "サブセットを抽出…",
     "stylesMenu": "スタイル",
-    "exportGeoLibreStyle": "GeoLibre URLスタイルをエクスポート",
+    "exportGeoLibreStyle": "GeoApps URLスタイルをエクスポート",
     "exportGeoLibreStyleHint": "塗りつぶしパターンを含むシンボロジーを ?data= および ?style= URL 用にエクスポートします。フィーチャデータは含まれず、カスタムのポイントマーカーは保持されません。",
     "exportMapboxStyle": "Mapbox GLスタイルとしてエクスポート",
     "exportSldStyle": "OGC SLDとしてエクスポート",
@@ -8761,9 +8761,9 @@
     "exportStyleDataNotReady": "レイヤーデータの準備がまだ完了していません。しばらくしてから再試行してください。",
     "exportStyleNeedsFeatures": "スタイルのエクスポートにはフィーチャを含むベクターレイヤーが必要です。",
     "exportStyleError": "このレイヤーのスタイルをエクスポートできませんでした。",
-    "importStyle": "スタイルをインポート (GeoLibre URL / Mapbox GL / SLD / QML)…",
+    "importStyle": "スタイルをインポート (GeoApps URL / Mapbox GL / SLD / QML)…",
     "importStyleFromText": "テキストからスタイルをインポート…",
-    "importStyleFromTextDescription": "GeoLibre、Mapbox GL、SLD、またはQMLのスタイルを貼り付けてください。形式はテキストから判別されます。",
+    "importStyleFromTextDescription": "GeoApps、Mapbox GL、SLD、またはQMLのスタイルを貼り付けてください。形式はテキストから判別されます。",
     "importStyleFromTextPlaceholder": "{ \"version\": 8, \"layers\": [ … ] }",
     "importStyleFromTextApply": "インポート",
     "openStyleManager": "保存済みスタイル(スタイルマネージャー)…",
@@ -9254,10 +9254,10 @@
   },
   "errorBoundary": {
     "title": "問題が発生しました",
-    "description": "GeoLibre で予期しないエラーが発生し、続行できませんでした。作業が保存されていない可能性があります — 再読み込みの前に復元をお試しください。",
+    "description": "GeoApps で予期しないエラーが発生し、続行できませんでした。作業が保存されていない可能性があります — 再読み込みの前に復元をお試しください。",
     "tryAgain": "再試行",
     "reload": "アプリを再読み込み",
-    "sectionFailed": "{{label}} を表示できませんでした。GeoLibre の他の部分は引き続き利用できます。"
+    "sectionFailed": "{{label}} を表示できませんでした。GeoApps の他の部分は引き続き利用できます。"
   },
   "commandPalette": {
     "title": "コマンドパレット",
@@ -9327,7 +9327,7 @@
     "windowCloseGuardFailed": "ウィンドウを閉じるとき、未保存の変更の保存を確認しません。閉じる前に作業内容を保存してください。",
     "windowCloseSaveFailed": "閉じる前にプロジェクトを保存できませんでした。",
     "windowCloseFailed": "ウィンドウを閉じられませんでした。",
-    "nativeProjectPathFailed": "GeoLibreに渡されたプロジェクトファイルを開けませんでした。",
+    "nativeProjectPathFailed": "GeoAppsに渡されたプロジェクトファイルを開けませんでした。",
     "kmlSuperOverlayReadFailed": "KML Super-Overlay「{{name}}」を再度読み取れなかったため、タイルが空白です。",
     "projectControlFailed": "プロジェクトの「{{control}}」設定を適用できませんでした。",
     "pluginSnapshotFailed": "一部のプラグイン設定は新しいレンダラーに引き継がれない可能性があります。",
@@ -9336,10 +9336,10 @@
     "panelRenderFailed": "パネル「{{name}}」を開けませんでした。",
     "sharedSettingsFailed": "リンクから共有設定を読み込めなかったため、ご自身の設定を使用しています。",
     "sharedLanguageFailed": "共有設定が指定する言語に切り替えられませんでした。",
-    "languageCatalogFailed": "{{language}}の翻訳を読み込めなかったため、GeoLibreは英語で表示されています。"
+    "languageCatalogFailed": "{{language}}の翻訳を読み込めなかったため、GeoAppsは英語で表示されています。"
   },
   "shell": {
-    "workspaceTitle": "GeoLibre マップワークスペース",
+    "workspaceTitle": "GeoApps マップワークスペース",
     "webglContextLost": {
       "message": "地図のグラフィックスコンテキストが失われました",
       "description": "グラフィックスドライバーがリセットされたか GPU のメモリが不足したため、地図が固まっているか空白になっている可能性があります。再読み込みして復元してください。可能であれば先にプロジェクトを保存してください。最近の自動保存がプロジェクト履歴にある場合もあります。",
@@ -9618,7 +9618,7 @@
     "navigationButton": "1. ソースを読み込んでナビゲーションを描画",
     "navigationButtonAgain": "別のナビゲーションレイヤーを描画",
     "exportButton": "描画結果をGeoJSONにエクスポート",
-    "addLayersButton": "描画結果をGeoLibreのレイヤーに追加",
+    "addLayersButton": "描画結果をGeoAppsのレイヤーに追加",
     "clearButton": "NLDIの結果をクリア",
     "noComid": "この地点に対するCOMIDは返されませんでした。",
     "requestingBasin": "上流域を要求しています…",
@@ -9870,7 +9870,7 @@
       "downloadParquet": "Parquet",
       "downloadParquetTitle": "このタイルのGeoParquetファイル全体をダウンロード",
       "dataset": "データセット",
-      "browseOnly": "このデータセットの検索はGeoLibreではまだサポートされていません。上のリンクから提供元で入手してください。",
+      "browseOnly": "このデータセットの検索はGeoAppsではまだサポートされていません。上のリンクから提供元で入手してください。",
       "searchArea": "検索範囲",
       "modeView": "地図表示",
       "modeDraw": "ボックスを描画",
@@ -9906,7 +9906,7 @@
       "searchDone": "{{tile}} の {{count}} 個のシーンを {{seconds}} 秒で読み込みました（範囲読み取り {{gets}} 回、{{kib}} KiB）。API は不要で、静的な GeoParquet のみを使用します。",
       "searchFailed": "検索に失敗しました: {{error}}",
       "displayTci": "トゥルーカラー（TCI）",
-      "noCog": "この GeoLibre ビルドでは COG レイヤーを追加できません。",
+      "noCog": "この GeoApps ビルドでは COG レイヤーを追加できません。",
       "adding": "{{name}} を追加中…",
       "added": "{{name}} を追加しました。",
       "addFailed": "{{name}} を追加できませんでした: {{error}}",
@@ -10106,7 +10106,7 @@
       "catalogLink": "データカタログ",
       "aboutSummary": "dynamical.org について",
       "aboutText": "dynamical.org は、NOAA、ECMWF、DWD、ECCC、NASA の気象予報と解析データを、無料のクラウド最適化 Icechunk（Zarr）アーカイブとして公開しており、各モデルの実行結果が届くたびに更新しています。",
-      "aboutAccess": "GeoLibre はアーカイブをクラウドストレージから直接、地図のスライス単位で読み込み、低遅延の仮想データセットは提供元のオリジナルの GRIB2 ファイルからデコードします。解析データとアンサンブルは各チャンクに長い時系列を格納しているため、地図をズームインした後に地域単位で描画されます。",
+      "aboutAccess": "GeoApps はアーカイブをクラウドストレージから直接、地図のスライス単位で読み込み、低遅延の仮想データセットは提供元のオリジナルの GRIB2 ファイルからデコードします。解析データとアンサンブルは各チャンクに長い時系列を格納しているため、地図をズームインした後に地域単位で描画されます。",
       "variable": "変数",
       "auto": "自動",
       "min": "最小",
@@ -10270,7 +10270,7 @@
       "liftSelected": "{{layer}} の {{polygons}} 個のポリゴン内にある {{count}} 個のポイントを選択しました。",
       "liftInstances": "{{layer}} から {{name}} のインスタンスを {{objects}} 個作成しました ({{count}} ポイント)。",
       "fullFile": "ラベル付きの完全なファイル",
-      "fullFileNote": "ここで読み込んだポイントだけでなく、保存されたすべてのラベルを適用したこのポイントクラウドのローカルコピーを書き出します。GeoLibre サーバーで実行されます。",
+      "fullFileNote": "ここで読み込んだポイントだけでなく、保存されたすべてのラベルを適用したこのポイントクラウドのローカルコピーを書き出します。GeoApps サーバーで実行されます。",
       "fullFileInput": "ローカルコピー (.las、.laz、.copc.laz)",
       "fullFileOutput": "出力ファイル (.las または .laz)",
       "fullFileWrite": "ファイルを書き出す",
@@ -10362,7 +10362,7 @@
       "unitsTitle": "単位: {{units}}"
     },
     "earth-engine-auth": {
-      "unavailable": "App Store 版の GeoLibre では Earth Engine のサインインを利用できません。",
+      "unavailable": "App Store 版の GeoApps では Earth Engine のサインインを利用できません。",
       "noAccessToken": "Earth Engine のサインインでアクセストークンが返されませんでした。",
       "popupUnavailable": "Earth Engine のポップアップ認証を利用できません。",
       "oauthUnavailable": "Earth Engine の OAuth 認証を利用できません。",

@@ -1,11 +1,11 @@
 {
   "mcpPreview": {
     "networkConsent": {
-      "previewLabel": "Bản xem trước bản đồ GeoLibre",
+      "previewLabel": "Bản xem trước bản đồ GeoApps",
       "title": "Cho phép kết nối bản đồ?",
       "description": "Xem lại các máy chủ bên ngoài mà bản đồ này cần trước khi kết nối.",
       "servers_other": "{{count}} máy chủ",
-      "privacy": "Các yêu cầu được gửi từ máy chủ Python GeoLibre của bạn. Các máy chủ này thấy địa chỉ IP của máy đó, có thể khác với địa chỉ IP của trình duyệt bạn.",
+      "privacy": "Các yêu cầu được gửi từ máy chủ Python GeoApps của bạn. Các máy chủ này thấy địa chỉ IP của máy đó, có thể khác với địa chỉ IP của trình duyệt bạn.",
       "scope": "Chỉ máy chủ công khai. Sự chấp thuận chỉ áp dụng cho bản xem trước này.",
       "allowed": "Đã cho phép",
       "blocked": "Đã chặn",
@@ -20,9 +20,9 @@
     "summary": "{{count}} lớp · thu phóng {{zoom}}",
     "restore": "Khôi phục",
     "discard": "Loại bỏ",
-    "restoreError": "Không thể khôi phục ảnh chụp nhanh này. Nó có thể bị hỏng hoặc không tương thích với phiên bản GeoLibre này.",
+    "restoreError": "Không thể khôi phục ảnh chụp nhanh này. Nó có thể bị hỏng hoặc không tương thích với phiên bản GeoApps này.",
     "recoveryTitle": "Khôi phục công việc chưa được lưu?",
-    "recoveryDescription": "GeoLibre không đóng sạch sẽ. Đã có bản tự động lưu mới hơn của “{{name}}”.",
+    "recoveryDescription": "GeoApps không đóng sạch sẽ. Đã có bản tự động lưu mới hơn của “{{name}}”.",
     "autosavePaused": "Tự động lưu đang tạm dừng: dự án này lớn hơn {{limit}} MB nên không có ảnh chụp nhanh mới nào được lưu giữ. Hãy lưu dự án vào ổ đĩa để giữ công việc của bạn.",
     "diff": {
       "compare": "So sánh",
@@ -102,7 +102,7 @@
     "forgetMssqlConnection": "Quên kết nối SQL Server “{{name}}”",
     "forgetPostgresConnection": "Quên kết nối PostgreSQL “{{name}}”",
     "forgetPostgresConnectionFailed": "Không thể quên kết nối PostgreSQL vì kho lưu trữ kết nối đã lưu không khả dụng. Không có gì bị xóa.",
-    "forgetPostgresCredentialFailed": "Kết nối PostgreSQL đã bị xóa, nhưng chuỗi khóa hệ thống không xóa được thông tin xác thực đã lưu của nó. GeoLibre sẽ thử lại vào lần khởi động tiếp theo.",
+    "forgetPostgresCredentialFailed": "Kết nối PostgreSQL đã bị xóa, nhưng chuỗi khóa hệ thống không xóa được thông tin xác thực đã lưu của nó. GeoApps sẽ thử lại vào lần khởi động tiếp theo.",
     "loadingFolder": "Đang tải…",
     "loadingSublayers": "Đang tải các lớp con…",
     "allSublayers": "Tất cả các lớp",
@@ -121,14 +121,14 @@
     "libraryImportFailed": "Không thể đọc tệp thư viện lớp này.",
     "libraryExportFailed": "Không thể xuất thư viện lớp.",
     "libraryLayerMissing": "Lớp đã lưu đó không còn tồn tại.",
-    "libraryLayerNeedsDesktop": "Lớp đã lưu này đọc một tệp từ ổ đĩa nên cần GeoLibre Desktop. Hãy thêm lại tệp đó để lưu một mục mới.",
+    "libraryLayerNeedsDesktop": "Lớp đã lưu này đọc một tệp từ ổ đĩa nên cần GeoApps Desktop. Hãy thêm lại tệp đó để lưu một mục mới.",
     "libraryLayerConfigNotApplied": "Đã thêm tệp cho “{{name}}”, nhưng kiểu đã lưu của nó không thể khớp với một lớp duy nhất nên nó không được áp dụng lại.",
     "libraryLayerJoinsUnresolved_other": "Đã thêm lớp nhưng không thể áp dụng lại các liên kết đã lưu {{count}}: các lớp mà chúng tham gia không có trong dự án này."
   },
   "about": {
     "trigger": "Về",
-    "title": "Giới thiệu về GeoLibre",
-    "description": "GeoLibre là một nền tảng GIS dựa trên nền tảng đám mây nhẹ.",
+    "title": "Giới thiệu về GeoApps",
+    "description": "GeoApps là một nền tảng GIS dựa trên nền tảng đám mây nhẹ.",
     "version": "Phiên bản",
     "checkForUpdates": "Kiểm tra các bản cập nhật",
     "tryAgain": "Thử lại",
@@ -147,7 +147,7 @@
     "steps": {
       "download": "Tải xuống trình cài đặt cho nền tảng của bạn từ trang tải xuống.",
       "install": "Chạy trình cài đặt. Các dự án, cài đặt và khóa API cục bộ của bạn sẽ được lưu giữ.",
-      "reopen": "Mở lại GeoLibre để hoàn tất cập nhật."
+      "reopen": "Mở lại GeoApps để hoàn tất cập nhật."
     },
     "severity": {
       "major": "Bản phát hành chính",
@@ -166,7 +166,7 @@
       "noTag": "Bản phát hành mới nhất không bao gồm thẻ phiên bản.",
       "network": "Không thể truy cập GitHub. Hãy kiểm tra kết nối của bạn và thử lại.",
       "viewDownloads": "Xem nội dung tải xuống",
-      "viewDownloadsHint": "Mở trang tải xuống GeoLibre trong trình duyệt của bạn để bạn có thể kiểm tra phiên bản mới nhất theo cách thủ công."
+      "viewDownloadsHint": "Mở trang tải xuống GeoApps trong trình duyệt của bạn để bạn có thể kiểm tra phiên bản mới nhất theo cách thủ công."
     },
     "startup": {
       "title": "Đã có bản cập nhật",
@@ -179,7 +179,7 @@
     }
   },
   "masBuild": {
-    "unavailable": "Tính năng này không có trong phiên bản GeoLibre Desktop trên Mac App Store."
+    "unavailable": "Tính năng này không có trong phiên bản GeoApps Desktop trên Mac App Store."
   },
   "bookmark": {
     "captureStateLabel": "Bao gồm trạng thái lớp hoàn chỉnh (hoạt động, không hoạt động và thứ tự lớp)",
@@ -196,13 +196,13 @@
     "trust": {
       "title": "Tải plugin từ dự án này?",
       "description_other": "Dự án này muốn tải {{count}} plugin bên ngoài từ các URL bạn chưa cài đặt. Các plugin chạy mã có toàn quyền truy cập vào ứng dụng.",
-      "warning": "Chỉ tải plugin từ các nguồn bạn tin cậy. Các plugin đã tải sẽ chạy với các đặc quyền giống như chính GeoLibre.",
+      "warning": "Chỉ tải plugin từ các nguồn bạn tin cậy. Các plugin đã tải sẽ chạy với các đặc quyền giống như chính GeoApps.",
       "trustButton": "Tin tưởng và tải",
       "dismissButton": "Không tải"
     },
     "registryTrust": {
       "title_other": "Cài đặt plugin?",
-      "description_other": "Liên kết này mở {{count}} plugin chưa được cài đặt từ sổ đăng ký plugin chính thức của GeoLibre. Khi cài đặt, chúng sẽ được thêm vào danh sách plugin của bạn và được kích hoạt."
+      "description_other": "Liên kết này mở {{count}} plugin chưa được cài đặt từ sổ đăng ký plugin chính thức của GeoApps. Khi cài đặt, chúng sẽ được thêm vào danh sách plugin của bạn và được kích hoạt."
     },
     "title": "Quản lý plugin",
     "searchAria": "Tìm kiếm plugin",
@@ -219,7 +219,7 @@
     "openHomepageAria": "Mở trang chủ {{name}}",
     "byAuthor": "bởi {{author}}",
     "updateAvailable": "cập nhật có sẵn",
-    "requiresVersion": "yêu cầu GeoLibre {{version}}+",
+    "requiresVersion": "yêu cầu GeoApps {{version}}+",
     "install": "Cài đặt",
     "installAria": "Cài đặt {{name}}",
     "removeConfirm": "Di dời?",
@@ -230,10 +230,10 @@
     "updateAria": "Cập nhật {{name}}",
     "loading": "Đang tải…",
     "installed": "Đã cài đặt",
-    "settingsIntro": "GeoLibre luôn quét thư mục plugin dữ liệu ứng dụng của nó. Cài đặt plugin đóng gói (.zip) từ một tệp hoặc thêm các thư mục cục bộ bổ sung (chỉ dành cho máy tính để bàn). URL kê khai (bao gồm cả lượt cài đặt trên thị trường) được tải qua mạng; những thay đổi ở đây sẽ được áp dụng ngay lập tức.",
+    "settingsIntro": "GeoApps luôn quét thư mục plugin dữ liệu ứng dụng của nó. Cài đặt plugin đóng gói (.zip) từ một tệp hoặc thêm các thư mục cục bộ bổ sung (chỉ dành cho máy tính để bàn). URL kê khai (bao gồm cả lượt cài đặt trên thị trường) được tải qua mạng; những thay đổi ở đây sẽ được áp dụng ngay lập tức.",
     "installFromFile": "Cài đặt từ tập tin",
     "chooseZip": "Chọn .zip…",
-    "installFromFileHintDesktop": "Sao chép kho lưu trữ plugin đã đóng gói vào thư mục plugin của GeoLibre.",
+    "installFromFileHintDesktop": "Sao chép kho lưu trữ plugin đã đóng gói vào thư mục plugin của GeoApps.",
     "installFromFileHintWeb": "Tải kho lưu trữ plugin đóng gói; nó được lưu trữ trong trình duyệt của bạn và tải lại vào lần truy cập tiếp theo.",
     "localDirectories": "Thư mục cục bộ",
     "directoryAria": "Thư mục plugin",
@@ -248,7 +248,7 @@
     "errorDirectoryPicker": "Không thể mở bộ chọn thư mục.",
     "errorInstall": "Không thể cài đặt plugin.",
     "errorUninstall": "Không thể gỡ cài đặt plugin.",
-    "description": "Duyệt, cài đặt, cập nhật và xóa các plugin GeoLibre bên ngoài. Các plugin được liệt kê trong sổ đăng ký plugin <registryLink>GeoLibre</registryLink>.",
+    "description": "Duyệt, cài đặt, cập nhật và xóa các plugin GeoApps bên ngoài. Các plugin được liệt kê trong sổ đăng ký plugin <registryLink>GeoApps</registryLink>.",
     "policySideloadDisabled": "Việc cài đặt plugin thủ công (sideload) đã bị tắt theo chính sách triển khai.",
     "policyBlocked": "Plugin “{{pluginId}}” bị chặn theo chính sách triển khai.",
     "policyBlocklisted": "Plugin “{{pluginId}}” đã bị sổ đăng ký plugin chặn: {{reason}}",
@@ -259,7 +259,7 @@
   },
   "terrainMeasure": {
     "title": "Địa hình (3D)",
-    "surfaceDistance": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84.",
+    "surfaceDistance": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84.",
     "surfaceArea": "Diện tích bề mặt",
     "elevationGainLoss": "Được/lỗ",
     "elevationRange": "Độ cao tối thiểu / tối đa",
@@ -292,7 +292,7 @@
   "fileNamePrompt": {
     "title": "Lưu tập tin dưới dạng",
     "description": "Nhập tên tập tin. Tệp tải xuống thư mục tải xuống của trình duyệt của bạn.",
-    "label": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84."
+    "label": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84."
   },
   "newProject": {
     "doNotSave": "Không lưu",
@@ -338,7 +338,7 @@
     "venus": "sao Kim",
     "moon": "Mặt trăng",
     "mars": "Sao Hỏa",
-    "io": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84.",
+    "io": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84.",
     "europa": "Bản đồ nguyên mẫu",
     "ganymede": "Ganymede",
     "callisto": "Callisto",
@@ -354,7 +354,7 @@
     "add": "Thêm",
     "ok": "OK",
     "done": "Xong",
-    "openWebApp": "Mở ứng dụng web GeoLibre",
+    "openWebApp": "Mở ứng dụng web GeoApps",
     "pickColorFromScreen": "Chọn màu từ màn hình",
     "save": "Lưu",
     "cancel": "Hủy"
@@ -364,7 +364,7 @@
     "kind": {
       "xyz": {
         "label": "Thêm lớp XYZ",
-        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84."
+        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84."
       },
       "wms": {
         "label": "Mặt Trăng",
@@ -388,7 +388,7 @@
       },
       "ogcVectorTiles": {
         "label": "Thêm các ô vector OGC",
-        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84."
+        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84."
       },
       "gpx": {
         "label": "Thêm lớp GPX",
@@ -415,7 +415,7 @@
         "description": "Thêm bản vẽ AutoCAD DXF hoặc DWG dưới dạng lớp vectơ, chọn lớp nào sẽ tải và hệ quy chiếu tọa độ để chiếu lớp đó."
       },
       "gdb": {
-        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84.",
+        "description": "Thêm một lớp từ Cơ sở dữ liệu địa lý tệp Esri (thư mục .gdb). Lớp này được đọc bằng máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84.",
         "label": "Thêm lớp cơ sở dữ liệu địa lý tệp"
       },
       "photos": {
@@ -742,7 +742,7 @@
       "signInErrorTimeout": "Đăng nhập đã hết thời gian chờ. Hãy thử lại.",
       "signInErrorExpired": "Phiên ArcGIS đã hết hạn. Hãy đăng nhập lại.",
       "signInErrorNetwork": "Không thể kết nối tới cổng thông tin ArcGIS. Kiểm tra kết nối và thử lại.",
-      "signInErrorRestart": "GeoLibre vẫn đang khởi động. Hãy thử đăng nhập lại sau giây lát.",
+      "signInErrorRestart": "GeoApps vẫn đang khởi động. Hãy thử đăng nhập lại sau giây lát.",
       "cancelSignIn": "Hủy"
     },
     "gpx": {
@@ -772,7 +772,7 @@
       "errorUrl": "Nhập URL LandXML.",
       "errorTooLarge": "Tệp LandXML từ xa vượt quá giới hạn tải xuống 100 MB.",
       "errorSelectType": "Chọn ít nhất một loại đối tượng LandXML.",
-      "errorMissingCrs": "Tệp LandXML này dùng tọa độ phẳng (đã chiếu). Hãy nhập CRS nguồn để GeoLibre có thể chiếu lại sang WGS84.",
+      "errorMissingCrs": "Tệp LandXML này dùng tọa độ phẳng (đã chiếu). Hãy nhập CRS nguồn để GeoApps có thể chiếu lại sang WGS84.",
       "errorGeographicCrsBounds": "Các tọa độ nằm ngoài phạm vi kinh độ và vĩ độ địa lý. Hãy chọn CRS nguồn dạng chiếu mà tệp LandXML này sử dụng.",
       "summary": "{{surfaces}} bề mặt, {{alignments}} tuyến, {{profiles}} trắc dọc, {{points}} điểm đo đạc",
       "objectTypes": "Loại đối tượng",
@@ -856,8 +856,8 @@
       "layerPlaceholder": "Chọn cơ sở dữ liệu địa lý trước",
       "readingLayers": "Đọc các lớp...",
       "layerOption": "{{name}} ({{type}}, {{count}} tính năng)",
-      "help": "Các bảng chỉ thuộc tính không được liệt kê. Lớp tính năng đã chọn sẽ được tải thông qua máy chủ GeoLibre cục bộ và được chuyển hướng sang WGS84.",
-      "desktopOnly": "Các lớp Cơ sở dữ liệu địa lý tệp chỉ có sẵn trong GeoLibre Desktop. Tính năng này đọc thư mục .gdb cục bộ thông qua máy chủ GeoLibre cục bộ mà ứng dụng web không thể truy cập.",
+      "help": "Các bảng chỉ thuộc tính không được liệt kê. Lớp tính năng đã chọn sẽ được tải thông qua máy chủ GeoApps cục bộ và được chuyển hướng sang WGS84.",
+      "desktopOnly": "Các lớp Cơ sở dữ liệu địa lý tệp chỉ có sẵn trong GeoApps Desktop. Tính năng này đọc thư mục .gdb cục bộ thông qua máy chủ GeoApps cục bộ mà ứng dụng web không thể truy cập.",
       "readError": "Không thể đọc Cơ sở dữ liệu địa lý tệp này.",
       "convertError": "Không thể tải lớp tính năng này.",
       "defaultName": "Lớp cơ sở dữ liệu địa lý"
@@ -934,12 +934,12 @@
     },
     "mssql": {
       "defaultName": "Lớp SQL Server",
-      "errorDesktopOnly": "Lớp SQL Server yêu cầu GeoLibre Desktop.",
+      "errorDesktopOnly": "Lớp SQL Server yêu cầu GeoApps Desktop.",
       "errorConnect": "Không thể kết nối với SQL Server.",
       "errorPort": "Nhập cổng SQL Server hợp lệ (1–65535).",
       "errorConnectFirst": "Hãy kết nối với SQL Server trước.",
       "errorSelectTable": "Chọn một bảng không gian để tải.",
-      "desktopOnlyNotice": "Lớp SQL Server chỉ có trong GeoLibre Desktop.",
+      "desktopOnlyNotice": "Lớp SQL Server chỉ có trong GeoApps Desktop.",
       "savedConnection": "Kết nối đã lưu",
       "selectSavedConnection": "Kết nối mới",
       "forgetConnection": "Quên kết nối đã lưu",
@@ -995,7 +995,7 @@
     "postgres": {
       "defaultName": "Lớp PostgreSQL",
       "forgetConnectionConfirm": "Quên kết nối PostgreSQL đã lưu {{name}}? Thông tin xác thực đã lưu của nó cũng sẽ bị xóa khỏi thiết bị này.",
-      "errorDesktopOnly": "Các lớp PostgreSQL yêu cầu GeoLibre Desktop.",
+      "errorDesktopOnly": "Các lớp PostgreSQL yêu cầu GeoApps Desktop.",
       "errorConnectionString": "Nhập chuỗi kết nối PostgreSQL.",
       "stop": "Dừng lại",
       "martinSource": "Nguồn Martin",
@@ -1009,7 +1009,7 @@
       "errorConnectFirst": "Trước tiên hãy kết nối với PostgreSQL.",
       "errorNoVectorLayers": "Nguồn Martin đã chọn không có lớp vectơ.",
       "errorSelectSource": "Đọc danh mục Martin...",
-      "desktopOnlyNotice": "Các lớp PostgreSQL chỉ có sẵn trong GeoLibre Desktop. Tính năng này chạy một máy chủ ô Martin cục bộ mà ứng dụng web và di động không thể khởi chạy.",
+      "desktopOnlyNotice": "Các lớp PostgreSQL chỉ có sẵn trong GeoApps Desktop. Tính năng này chạy một máy chủ ô Martin cục bộ mà ứng dụng web và di động không thể khởi chạy.",
       "savedConnection": "Kết nối đã lưu",
       "selectSavedConnection": "Chọn kết nối đã lưu",
       "connectionString": "Chuỗi kết nối PostgreSQL",
@@ -1392,7 +1392,7 @@
         "empty": "Không có vùng phủ phù hợp.",
         "format": "Vùng phủ không công bố đầu ra GeoTIFF.",
         "size": "Chọn kích thước từ 1 đến 4096 pixel. Giới hạn tải xuống là 128 MB.",
-        "metadata": "Dịch vụ trả về nhiều siêu dữ liệu hơn mức GeoLibre có thể tải. Giới hạn phản hồi siêu dữ liệu là 32 MB.",
+        "metadata": "Dịch vụ trả về nhiều siêu dữ liệu hơn mức GeoApps có thể tải. Giới hạn phản hồi siêu dữ liệu là 32 MB.",
         "response": "Dịch vụ không trả về GeoTIFF hợp lệ.",
         "bounds": "Nhập một ô hợp lệ: tây/đông trong khoảng -180 đến 180, nam/bắc trong khoảng -90 đến 90, với tây < đông và nam < bắc.",
         "url": "Nhập URL dịch vụ WCS."
@@ -1645,7 +1645,7 @@
       "rtk-fixed": "Đã sửa lỗi RTK",
       "rtk-float": "Phao RTK",
       "estimated": "Tính toán chết",
-      "manual": "Việc đọc bộ thu NMEA cần có API Web Serial hoặc Web Bluetooth mà trình duyệt này không cung cấp. Mở GeoLibre trong trình duyệt Chrome như Chrome hoặc Edge.",
+      "manual": "Việc đọc bộ thu NMEA cần có API Web Serial hoặc Web Bluetooth mà trình duyệt này không cung cấp. Mở GeoApps trong trình duyệt Chrome như Chrome hoặc Edge.",
       "simulation": "mô phỏng",
       "invalid": "Không sửa chữa",
       "gps": "sửa chữa GPS",
@@ -1679,7 +1679,7 @@
     "nmeaConnectFailed": "Không thể kết nối với máy thu.",
     "nmeaDisconnected": "Máy thu bị ngắt kết nối.",
     "nmeaUnsupportedDevice": "Không tìm thấy dịch vụ NMEA trên thiết bị đó. Nó có thể là một bộ thu Bluetooth cổ điển, phải được ghép nối trong cài đặt hệ thống của bạn và sau đó được kết nối ở đây dưới dạng cổng nối tiếp.",
-    "nmeaUnsupported": "Việc đọc bộ thu NMEA cần có API Web Serial hoặc Web Bluetooth mà trình duyệt này không cung cấp. Mở GeoLibre trong trình duyệt Chrome như Chrome hoặc Edge.",
+    "nmeaUnsupported": "Việc đọc bộ thu NMEA cần có API Web Serial hoặc Web Bluetooth mà trình duyệt này không cung cấp. Mở GeoApps trong trình duyệt Chrome như Chrome hoặc Edge.",
     "nmeaSerialUnsupported": "Web Serial không có ở đây nên không thể mở được bộ thu nối tiếp.",
     "nmeaBluetoothUnsupported": "Web Bluetooth không có ở đây nên không thể mở được bộ thu Bluetooth Low Energy.",
     "nmeaBluetoothHint": "Hầu hết các bộ thu GPS Bluetooth đều sử dụng Bluetooth cổ điển: ghép nối một bộ trong cài đặt hệ thống của bạn và nó xuất hiện ở đây dưới dạng cổng nối tiếp. Chỉ sử dụng Kết nối Bluetooth cho các bộ thu Bluetooth Low Energy."
@@ -1812,7 +1812,7 @@
     "readinessReasonUnchecked": "Không thể kiểm tra được.",
     "readinessAdviceCredential": "Công khai dịch vụ hoặc yêu cầu người nhận cung cấp thông tin xác thực của riêng họ.",
     "getToken": "Đặt tên cho dự án của bạn",
-    "step2Title": "2. Thêm mã thông báo vào GeoLibre",
+    "step2Title": "2. Thêm mã thông báo vào GeoApps",
     "step2Description": "Dán mã thông báo vào Cài đặt → Biến môi trường trên thiết bị này.",
     "configureToken": "Định cấu hình mã thông báo cục bộ",
     "oauthTitle": "Đăng nhập bằng tài khoản của bạn",
@@ -1826,13 +1826,13 @@
     "oauthFailed": "Đăng nhập không thành công. Vui lòng thử lại.",
     "oauthRefreshFailed": "Không thể làm mới phiên của bạn. Hãy kiểm tra kết nối và thử lại.",
     "oauthSetupFailed": "Không thể bắt đầu đăng nhập trên máy tính. Hãy khởi động lại ứng dụng và kiểm tra xem ứng dụng đã cài đặt có thể mở liên kết và kết nối tới máy chủ chia sẻ hay không. Mã thông báo API được dán vào vẫn có thể sử dụng.",
-    "oauthRestartSignIn": "Liên kết đăng nhập này được mở sau khi GeoLibre khởi động lại. Hãy bắt đầu đăng nhập lại tại đây; mã ủy quyền trước đó không thể sử dụng được.",
+    "oauthRestartSignIn": "Liên kết đăng nhập này được mở sau khi GeoApps khởi động lại. Hãy bắt đầu đăng nhập lại tại đây; mã ủy quyền trước đó không thể sử dụng được.",
     "reauthBody": "Phiên {{shareHost}} của bạn đã hết hạn. Hãy đăng nhập lại để tiếp tục chia sẻ.",
     "errorUnauthorized": "Mã thông báo API {{shareHost}} của bạn không hợp lệ hoặc đã hết hạn. Hãy cập nhật trong Cài đặt.",
     "reauthSignIn": "Đăng nhập lại",
     "liveAt": "Dự án của bạn đang hoạt động tại:",
     "credentialsRemoved": "{{count}} trường thông tin xác thực không được bao gồm. Người nhận phải cung cấp thông tin xác thực của riêng họ hoặc sử dụng tài liệu tham khảo được môi giới.",
-    "oauthSignOutIncomplete": "Bạn đã đăng xuất, nhưng không thể xóa thông tin đăng nhập đã lưu khỏi chuỗi khóa hệ thống, nên nó có thể được khôi phục vào lần tới GeoLibre khởi động. Hãy kiểm tra chuỗi khóa có khả dụng không, rồi đăng nhập và đăng xuất lại.",
+    "oauthSignOutIncomplete": "Bạn đã đăng xuất, nhưng không thể xóa thông tin đăng nhập đã lưu khỏi chuỗi khóa hệ thống, nên nó có thể được khôi phục vào lần tới GeoApps khởi động. Hãy kiểm tra chuỗi khóa có khả dụng không, rồi đăng nhập và đăng xuất lại.",
     "copyLink": "Sao chép liên kết",
     "open": "Chỉ nguồn __PH0__ được kiểm tra.",
     "done": "Xong",
@@ -2057,7 +2057,7 @@
       "groupNavigation": "Nhóm mũi tên hướng bắc và thanh tỷ lệ",
       "footer": "Văn bản chân trang",
       "date": "Ngày",
-      "attribution": "Bao gồm thuộc tính GeoLibre",
+      "attribution": "Bao gồm thuộc tính GeoApps",
       "pageBorder": "Đường viền trang",
       "infoBlock": "Khối thông tin (khối tiêu đề)",
       "colorbar": "Thanh màu",
@@ -2337,13 +2337,13 @@
   },
   "auth": {
     "retry": "Thử lại",
-    "signInTitle": "Đăng nhập vào GeoLibre",
+    "signInTitle": "Đăng nhập vào GeoApps",
     "signInDescription": "Việc triển khai này yêu cầu phải có tài khoản. Bạn sẽ được đưa đến trang đăng nhập an toàn và quay lại đây.",
     "signIn": "Đăng nhập",
     "signOut": "Đăng xuất",
     "account": "Tài khoản",
     "unavailableTitle": "Đăng nhập không khả dụng",
-    "unavailableDescription": "GeoLibre không thể truy cập dịch vụ đăng nhập nên không thể biết bạn đã đăng nhập hay chưa. Việc này thường là tạm thời; nếu tình trạng này vẫn tiếp diễn thì có thể cần chú ý đến cài đặt xác thực của triển khai này."
+    "unavailableDescription": "GeoApps không thể truy cập dịch vụ đăng nhập nên không thể biết bạn đã đăng nhập hay chưa. Việc này thường là tạm thời; nếu tình trạng này vẫn tiếp diễn thì có thể cần chú ý đến cài đặt xác thực của triển khai này."
   },
   "basemapExtract": {
     "confirmDelete": "Xóa bỏ?",
@@ -2660,25 +2660,25 @@
       },
       "advanced": {
         "title": "chỉ 2D",
-        "description": "Hiển thị mọi thứ GeoLibre cung cấp."
+        "description": "Hiển thị mọi thứ GeoApps cung cấp."
       }
     },
     "showEverything": "Bỏ qua - hiển thị mọi thứ",
-    "title": "Chào mừng đến với GeoLibre"
+    "title": "Chào mừng đến với GeoApps"
   },
   "startup": {
     "keychainWaitTitle": "Đang chờ chuỗi khóa hệ thống…",
-    "keychainWaitDetail": "GeoLibre đang tải thông tin xác thực đã lưu của bạn. Nếu hệ thống yêu cầu mật khẩu để mở khóa chuỗi khóa, hãy trả lời lời nhắc đó để tiếp tục. Lời nhắc có thể nằm phía sau cửa sổ này."
+    "keychainWaitDetail": "GeoApps đang tải thông tin xác thực đã lưu của bạn. Nếu hệ thống yêu cầu mật khẩu để mở khóa chuỗi khóa, hãy trả lời lời nhắc đó để tiếp tục. Lời nhắc có thể nằm phía sau cửa sổ này."
   },
   "settings": {
     "title": "Cài đặt",
     "description": "Thẻ kiến ​​thức sử dụng Wikipedia",
     "saveButton": "Lưu cài đặt",
     "credentials": {
-      "keychain": "Mã thông báo và khóa API bạn lưu trong GeoLibre được lưu trong chuỗi khóa hệ thống.",
+      "keychain": "Mã thông báo và khóa API bạn lưu trong GeoApps được lưu trong chuỗi khóa hệ thống.",
       "projectKeychainUnavailable": "Không thể dùng kho thông tin xác thực dự án trong chuỗi khóa hệ thống. Khóa dự án mới chỉ được giữ trong phiên này; khi lưu dự án cục bộ, bạn sẽ được hỏi giữ chúng trong tệp hay loại bỏ.",
       "browser": "Mã thông báo và khóa API bạn lưu ở đây được lưu trong bộ nhớ cục bộ của trình duyệt này, nơi các tập lệnh chạy trên trang này có thể đọc được.",
-      "unavailable": "Không thể dùng chuỗi khóa hệ thống ({{error}}). Thông tin xác thực mới chỉ tồn tại đến khi đóng GeoLibre; thông tin xác thực đã lưu trước đó có thể vẫn nằm trong bộ nhớ trình duyệt cho đến khi di chuyển thành công."
+      "unavailable": "Không thể dùng chuỗi khóa hệ thống ({{error}}). Thông tin xác thực mới chỉ tồn tại đến khi đóng GeoApps; thông tin xác thực đã lưu trước đó có thể vẫn nằm trong bộ nhớ trình duyệt cho đến khi di chuyển thành công."
     },
     "section": {
       "language": "Ngôn ngữ",
@@ -2722,11 +2722,11 @@
         "role": "đảm nhận vai trò",
         "other": "khác"
       },
-      "environmentHelp": "Dùng AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY và AWS_SESSION_TOKEN từ môi trường mà GeoLibre được khởi động.",
-      "instanceHelp": "Dùng vai trò IAM của máy đang chạy GeoLibre: mã thông báo danh tính web (EKS IRSA), thông tin xác thực vùng chứa ECS hoặc EKS, hoặc hồ sơ phiên bản EC2.",
+      "environmentHelp": "Dùng AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY và AWS_SESSION_TOKEN từ môi trường mà GeoApps được khởi động.",
+      "instanceHelp": "Dùng vai trò IAM của máy đang chạy GeoApps: mã thông báo danh tính web (EKS IRSA), thông tin xác thực vùng chứa ECS hoặc EKS, hoặc hồ sơ phiên bản EC2.",
       "roleArn": "Vai trò cần đảm nhận",
       "externalId": "ID bên ngoài",
-      "roleHelp": "Tùy chọn. GeoLibre gọi AWS STS AssumeRole bằng thông tin xác thực ở trên và đọc các bucket với vai trò này, ví dụ một vai trò chỉ đọc liên tài khoản.",
+      "roleHelp": "Tùy chọn. GeoApps gọi AWS STS AssumeRole bằng thông tin xác thực ở trên và đọc các bucket với vai trò này, ví dụ một vai trò chỉ đọc liên tài khoản.",
       "accessKeyId": "ID khóa truy cập",
       "secretAccessKey": "Khóa truy cập bí mật",
       "sessionToken": "Mã thông báo phiên",
@@ -2769,7 +2769,7 @@
     },
     "languagePack": {
       "title": "Gói ngôn ngữ",
-      "description": "Thêm bản dịch tùy chọn cho tên công cụ, tham số và văn bản trợ giúp của Whitebox mà không làm tăng dung lượng của mọi bản cài đặt GeoLibre.",
+      "description": "Thêm bản dịch tùy chọn cho tên công cụ, tham số và văn bản trợ giúp của Whitebox mà không làm tăng dung lượng của mọi bản cài đặt GeoApps.",
       "manage": "Quản lý gói ngôn ngữ",
       "interfaceLanguage": "Ngôn ngữ giao diện",
       "installed": "Đã cài đặt gói ngôn ngữ Whitebox",
@@ -2791,10 +2791,10 @@
       "privacyLocalOnly": "Các gói chỉ được lưu trên thiết bị này. Bản dựng này không tải xuống thứ gì: hãy nhập một tệp gói ngôn ngữ thay thế.",
       "browse": "Duyệt các gói ngôn ngữ",
       "errorInvalidJson": "Tệp đó không phải là JSON hợp lệ.",
-      "errorInvalidFormat": "Tệp đó không phải là gói ngôn ngữ Whitebox hợp lệ của GeoLibre.",
-      "errorUnsupportedVersion": "Bản phát hành GeoLibre này không hỗ trợ phiên bản gói ngôn ngữ đó.",
+      "errorInvalidFormat": "Tệp đó không phải là gói ngôn ngữ Whitebox hợp lệ của GeoApps.",
+      "errorUnsupportedVersion": "Bản phát hành GeoApps này không hỗ trợ phiên bản gói ngôn ngữ đó.",
       "errorInvalidLocale": "Gói ngôn ngữ có mã ngôn ngữ không hợp lệ hoặc không mong đợi.",
-      "errorUnsupportedLocale": "GeoLibre không bao gồm ngôn ngữ giao diện cơ sở mà gói này yêu cầu.",
+      "errorUnsupportedLocale": "GeoApps không bao gồm ngôn ngữ giao diện cơ sở mà gói này yêu cầu.",
       "errorTooLarge": "Gói ngôn ngữ vượt quá giới hạn an toàn 5 MB.",
       "errorNotFound": "Chưa có gói ngôn ngữ Whitebox chính thức nào cho ngôn ngữ này.",
       "errorDownload": "Không thể tải gói ngôn ngữ xuống. Hãy kiểm tra kết nối của bạn hoặc nhập một tệp cục bộ.",
@@ -2802,9 +2802,9 @@
     },
     "updates": {
       "title": "Cập nhật phần mềm",
-      "description": "Kiểm soát cách GeoLibre kiểm tra các phiên bản mới khi ứng dụng máy tính để bàn khởi động.",
+      "description": "Kiểm soát cách GeoApps kiểm tra các phiên bản mới khi ứng dụng máy tính để bàn khởi động.",
       "checkOnStartup": "Kiểm tra cập nhật khi khởi động",
-      "checkOnStartupHint": "Khi được bật, GeoLibre sẽ kiểm tra phiên bản mới hơn mỗi khi ứng dụng khởi động. Tắt tính năng này để có quy trình làm việc hoàn toàn ngoại tuyến.",
+      "checkOnStartupHint": "Khi được bật, GeoApps sẽ kiểm tra phiên bản mới hơn mỗi khi ứng dụng khởi động. Tắt tính năng này để có quy trình làm việc hoàn toàn ngoại tuyến.",
       "notificationLevel": "Thông báo cho tôi về",
       "notificationLevelHint": "Chọn loại bản phát hành sẽ kích hoạt thông báo khởi động.",
       "level": {
@@ -2815,7 +2815,7 @@
     },
     "startup": {
       "title": "Dự án khởi động",
-      "description": "Chọn không gian làm việc GeoLibre mở ra khi ứng dụng gốc khởi động.",
+      "description": "Chọn không gian làm việc GeoApps mở ra khi ứng dụng gốc khởi động.",
       "mode": {
         "default": "Mở không gian làm việc mặc định",
         "last": "Mở lại dự án cuối cùng",
@@ -2830,7 +2830,7 @@
       "globeByDefault": "Bật khối cầu 3D theo mặc định",
       "globeByDefaultHint": "Được dùng cho không gian làm việc chưa đặt tên khi không có dự án khởi động hoặc liên kết dự án.",
       "openS3Browser": "Mở Trình duyệt S3 khi khởi động",
-      "openS3BrowserHint": "Hiển thị bảng Trình duyệt S3 mỗi khi GeoLibre khởi động. Bảng vẫn mở khi bạn mở một dự án.",
+      "openS3BrowserHint": "Hiển thị bảng Trình duyệt S3 mỗi khi GeoApps khởi động. Bảng vẫn mở khi bạn mở một dự án.",
       "defaultView": "Chế độ xem bản đồ mặc định",
       "defaultViewHint": "Đặt tâm và mức thu phóng cho không gian làm việc chưa đặt tên.",
       "longitude": "Kinh độ tâm",
@@ -2838,14 +2838,14 @@
       "zoom": "Mức thu phóng",
       "useCurrentView": "Dùng chế độ xem hiện tại",
       "layerStyles": "Kiểu lớp mặc định",
-      "layerStylesHint": "Chọn một tệp kiểu lớp (Dự án → Xuất → Xuất kiểu lớp). Mỗi lớp bạn thêm có tên khớp với một kiểu trong tệp sẽ được tạo kiểu tự động. Các lớp trong dự án đã mở giữ nguyên kiểu đã lưu. GeoLibre giữ một bản sao của tệp, vì vậy hãy chọn lại sau khi chỉnh sửa tệp.",
+      "layerStylesHint": "Chọn một tệp kiểu lớp (Dự án → Xuất → Xuất kiểu lớp). Mỗi lớp bạn thêm có tên khớp với một kiểu trong tệp sẽ được tạo kiểu tự động. Các lớp trong dự án đã mở giữ nguyên kiểu đã lưu. GeoApps giữ một bản sao của tệp, vì vậy hãy chọn lại sau khi chỉnh sửa tệp.",
       "chooseLayerStyles": "Chọn tệp",
       "clearLayerStyles": "Xóa",
       "noLayerStylesSelected": "Chưa chọn tệp kiểu lớp",
       "layerStylesSelected_other": "{{file}} ({{count}} kiểu)",
       "layerStylesSelectError": "Không thể đọc tệp kiểu lớp đã chọn: {{message}}",
       "layers": "Lớp mặc định",
-      "layersHint": "Chọn một tệp lớp (Dự án → Xuất → Xuất lớp). Các lớp của nó được thêm vào mọi dự án mới: dự án GeoLibre mở khi khởi động và mỗi lần Tệp → Mới. Chúng tham chiếu dữ liệu qua URL hoặc đường dẫn tệp, nên luôn hiển thị nội dung hiện tại. Các dự án được mở không bị thay đổi.",
+      "layersHint": "Chọn một tệp lớp (Dự án → Xuất → Xuất lớp). Các lớp của nó được thêm vào mọi dự án mới: dự án GeoApps mở khi khởi động và mỗi lần Tệp → Mới. Chúng tham chiếu dữ liệu qua URL hoặc đường dẫn tệp, nên luôn hiển thị nội dung hiện tại. Các dự án được mở không bị thay đổi.",
       "chooseLayers": "Chọn tệp",
       "clearLayers": "Xóa",
       "noLayersSelected": "Chưa chọn tệp lớp",
@@ -2854,7 +2854,7 @@
       "viewUnavailable": "Chế độ xem bản đồ hiện tại không khả dụng.",
       "selectError": "Không thể đọc được dự án đã chọn.",
       "restoring": "Đang mở dự án khởi động của bạn…",
-      "loadWarning": "Dự án khởi động không có sẵn. Thay vào đó, GeoLibre đã mở không gian làm việc mặc định."
+      "loadWarning": "Dự án khởi động không có sẵn. Thay vào đó, GeoApps đã mở không gian làm việc mặc định."
     },
     "map": {
       "constraintsTitle": "Hạn chế về bản đồ",
@@ -2961,21 +2961,21 @@
       "importUrl": "Nhập từ URL",
       "loadUrl": "Tải",
       "loadingUrl": "Đang tải…",
-      "fileFilter": "Giao diện GeoLibre",
+      "fileFilter": "Giao diện GeoApps",
       "exportError": "Không thể xuất cài đặt giao diện: {{message}}",
       "importError": "Không thể nhập tệp giao diện: {{message}}",
       "imported": "Đã nhập cài đặt giao diện."
     },
     "env": {
-      "oauthTitle": "Tài khoản Share.GeoLibre",
+      "oauthTitle": "Tài khoản Share.GeoApps",
       "oauthDescription": "Đăng nhập bằng tài khoản {{shareHost}} để chia sẻ dự án và xem các dự án của riêng bạn trong thư viện.",
       "oauthConnected": "Đã đăng nhập vào {{shareHost}}.",
       "oauthSignIn": "Đăng nhập",
       "oauthSigningIn": "Đang đăng nhập…",
       "oauthSignOut": "Đăng xuất",
       "oauthWebLifetime": "Mã thông báo truy cập được giữ trong bộ nhớ; phiên làm mới chỉ giới hạn trong thẻ trình duyệt này. Đóng thẻ sẽ yêu cầu đăng nhập lại.",
-      "oauthDesktopKeychain": "Thông tin đăng nhập được giữ trong chuỗi khóa hệ thống, nên GeoLibre vẫn đăng nhập sau khi khởi động lại cho đến khi bạn đăng xuất.",
-      "oauthDesktopSessionOnly": "Không thể lưu thông tin đăng nhập này vào chuỗi khóa hệ thống, nên nó chỉ tồn tại đến khi đóng GeoLibre.",
+      "oauthDesktopKeychain": "Thông tin đăng nhập được giữ trong chuỗi khóa hệ thống, nên GeoApps vẫn đăng nhập sau khi khởi động lại cho đến khi bạn đăng xuất.",
+      "oauthDesktopSessionOnly": "Không thể lưu thông tin đăng nhập này vào chuỗi khóa hệ thống, nên nó chỉ tồn tại đến khi đóng GeoApps.",
       "accountLoading": "Đang tải tài khoản của bạn…",
       "accountRetry": "Thử lại",
       "accountIdentity": "Tài khoản: {{account}}",
@@ -3005,7 +3005,7 @@
       "sessionRevoke": "Thu hồi",
       "sessionRevoking": "Đang thu hồi…",
       "revokeSessionConfirm": "Thu hồi phiên “{{label}}”? Thiết bị đó sẽ bị đăng xuất. Không thể hoàn tác thao tác này.",
-      "revokeCurrentConfirm": "Thu hồi phiên này “{{label}}”? Bạn sẽ bị đăng xuất khỏi GeoLibre ngay lập tức.",
+      "revokeCurrentConfirm": "Thu hồi phiên này “{{label}}”? Bạn sẽ bị đăng xuất khỏi GeoApps ngay lập tức.",
       "revokeTokenConfirm": "Thu hồi mã thông báo API cá nhân “{{label}}”? Các tập lệnh và CI đang dùng nó sẽ ngừng hoạt động. Không thể hoàn tác thao tác này.",
       "revokeSessionConfirmButton": "Có, thu hồi",
       "sessionCreated": "Ngày tạo: {{date}}",
@@ -3093,7 +3093,7 @@
       "statusReady": "Nhà cung cấp: {{provider}}",
       "statusIncomplete": "Điền vào các trường bắt buộc bên dưới để bật {{provider}}.",
       "secretsNote": "Thông tin xác thực được lưu cục bộ trên thiết bị này chứ không phải trong tệp dự án mà bạn chia sẻ, vì vậy chúng vẫn tồn tại trong suốt quá trình khởi động lại. Bất cứ ai có quyền truy cập vào thiết bị này đều có thể đọc chúng.",
-      "secretsNoteKeychain": "Khóa API và các trường bí mật khác được lưu trong chuỗi khóa hệ thống, không phải trong tệp dự án bạn chia sẻ, nên chúng được giữ lại sau khi khởi động lại. Các trường khác, như tên mô hình và URL, được lưu trong cài đặt GeoLibre trên thiết bị này.",
+      "secretsNoteKeychain": "Khóa API và các trường bí mật khác được lưu trong chuỗi khóa hệ thống, không phải trong tệp dự án bạn chia sẻ, nên chúng được giữ lại sau khi khởi động lại. Các trường khác, như tên mô hình và URL, được lưu trong cài đặt GeoApps trên thiết bị này.",
       "getCredentials": "Nơi nhận thông tin xác thực {{provider}}",
       "showValue": "Hiển thị {{name}}",
       "hideValue": "Ẩn {{name}}",
@@ -3238,7 +3238,7 @@
         "notSet": "Chưa đặt",
         "getKey": "Nhận khóa miễn phí",
         "saveFailed": "Không thể lưu khóa trong trình duyệt này.",
-        "saveFailedKeychain": "Không thể lưu khóa vào chuỗi khóa hệ thống. Khóa vẫn hoạt động cho đến khi đóng GeoLibre."
+        "saveFailedKeychain": "Không thể lưu khóa vào chuỗi khóa hệ thống. Khóa vẫn hoạt động cho đến khi đóng GeoApps."
       }
     }
   },
@@ -3406,7 +3406,7 @@
       "longitude": "Kinh độ",
       "smartPasteInputLabel": "Chuỗi tọa độ",
       "smartPastePlaceholder": "ví dụ. 51.5074, -0.1278 hoặc 51°30'26\"B, 0°07'39\"W",
-      "smartPasteInfo": "Nhập hoặc dán chuỗi tọa độ đầy đủ trong DD, DMS hoặc DDM, sau đó chạy Nhập quy trình. GeoLibre phát hiện định dạng và điền vào các trường kinh độ và vĩ độ bên dưới. Điều chỉnh thu phóng, cao độ và phương vị riêng biệt trước khi đi.",
+      "smartPasteInfo": "Nhập hoặc dán chuỗi tọa độ đầy đủ trong DD, DMS hoặc DDM, sau đó chạy Nhập quy trình. GeoApps phát hiện định dạng và điền vào các trường kinh độ và vĩ độ bên dưới. Điều chỉnh thu phóng, cao độ và phương vị riêng biệt trước khi đi.",
       "smartPasteInfoLabel": "Về việc dán tọa độ",
       "smartPasteInvalid": "Không thể đọc được tọa độ đó. Nhập kinh độ và vĩ độ đầy đủ trong DD, DMS hoặc DDM, ví dụ: 51,5074, -0,1278. Không thể phân tích cú pháp một chuỗi hoặc chuỗi không đầy đủ.",
       "processInput": "Xử lý đầu vào",
@@ -3544,8 +3544,8 @@
     },
     "conversion": {
       "vectorToVector": "Vectơ sang Vectơ",
-      "zipInputBrowserError": "Shapefiles đã nén chỉ có thể được chuyển đổi trong ứng dụng máy tính để bàn GeoLibre. Trong trình duyệt, chọn tệp .shp đã giải nén cùng với các tệp .dbf, .shx và .prj của nó.",
-      "browserOutputUnsupported": "Trong trình duyệt, đầu ra có thể là GeoJSON, CSV, GeoParquet, GeoPackage, FlatGeobuf hoặc Shapefile (.zip). Đầu ra \".{{extension}}\" cần có ứng dụng máy tính để bàn GeoLibre.",
+      "zipInputBrowserError": "Shapefiles đã nén chỉ có thể được chuyển đổi trong ứng dụng máy tính để bàn GeoApps. Trong trình duyệt, chọn tệp .shp đã giải nén cùng với các tệp .dbf, .shx và .prj của nó.",
+      "browserOutputUnsupported": "Trong trình duyệt, đầu ra có thể là GeoJSON, CSV, GeoParquet, GeoPackage, FlatGeobuf hoặc Shapefile (.zip). Đầu ra \".{{extension}}\" cần có ứng dụng máy tính để bàn GeoApps.",
       "outputExtensionRequired": "Thêm phần mở rộng tệp vào tên đầu ra để chọn định dạng.",
       "readingWithDuckDb": "Đọc {{name}} với DuckDB-WASM",
       "readFeatures": "Đọc các tính năng {{features}} từ {{name}}",
@@ -3586,7 +3586,7 @@
       "rasterShape": "Đọc raster {{width}}×{{height}} với băng tần {{bands}}",
       "wroteCog": "Đã viết một COG xếp kề với các phần tổng quan ({{compression}})",
       "notAGeoTiff": "Tệp này không phải là GeoTIFF có thể đọc được. Trong trình duyệt, Raster to COG chỉ đọc GeoTIFF; các định dạng khác cần có ứng dụng dành cho máy tính để bàn.",
-      "rasterTooLargeForBrowser": "Trong trình duyệt, điều này giải mã toàn bộ raster trong WebAssembly, bị giới hạn ở khoảng 4 GB, vì vậy cái này không phù hợp. Chuyển đổi nó bằng ứng dụng GeoLibre dành cho máy tính để bàn hoặc tạo trước COG bằng gdal_translate hoặc rio-cogeo.",
+      "rasterTooLargeForBrowser": "Trong trình duyệt, điều này giải mã toàn bộ raster trong WebAssembly, bị giới hạn ở khoảng 4 GB, vì vậy cái này không phù hợp. Chuyển đổi nó bằng ứng dụng GeoApps dành cho máy tính để bàn hoặc tạo trước COG bằng gdal_translate hoặc rio-cogeo.",
       "zoomRangeError": "Mức thu phóng phải thỏa mãn 0 ≤ tối thiểu ≤ tối đa ≤ {{max}}.",
       "colormap": "Bản đồ màu",
       "resampling": "Ban nhạc",
@@ -3608,7 +3608,7 @@
       "vectorToPmtiles": "Vectơ sang PMTiles",
       "rasterToCog": "Raster sang COG",
       "rasterToPmtiles": "Raster sang PMTiles",
-      "needsDesktop": "Việc chuyển đổi này cần có ứng dụng máy tính để bàn GeoLibre hoặc một chiếc sidecar đang chạy.",
+      "needsDesktop": "Việc chuyển đổi này cần có ứng dụng máy tính để bàn GeoApps hoặc một chiếc sidecar đang chạy.",
       "vectorToFlatgeobufDesc": "Chuyển đổi tập dữ liệu vectơ thành FlatGeobuf được sắp xếp theo Hilbert với chỉ mục không gian được đóng gói để truy cập nhanh chóng trên nền tảng đám mây.",
       "vectorToFlatgeobufInputLabel": "Tệp vectơ đầu vào",
       "vectorToFlatgeobufOutputLabel": "Xuất ra tệp FlatGeobuf",
@@ -3713,9 +3713,9 @@
       "outputFile": "Tệp đầu ra",
       "noOutput": "Chưa có đầu ra.",
       "errorConnect": "Không thể kết nối với sidecar.",
-      "needsDesktopSidecar": "Các công cụ raster cần có ứng dụng máy tính để bàn GeoLibre với một sidecar đang chạy.",
+      "needsDesktopSidecar": "Các công cụ raster cần có ứng dụng máy tính để bàn GeoApps với một sidecar đang chạy.",
       "errorPoll": "Không thể thăm dò công việc.",
-      "errorStartSidecar": "Không thể khởi động sidecar GeoLibre.",
+      "errorStartSidecar": "Không thể khởi động sidecar GeoApps.",
       "useAddedLayerPlaceholder": "Không thể chạy công cụ raster.",
       "loadingLayer": "Đang tải lớp…",
       "layerLoadError": "Không thể tải lớp đã chọn.",
@@ -3846,7 +3846,7 @@
       "terrain": "Địa hình",
       "remoteSensing": "Viễn thám",
       "projection": "Phép chiếu",
-      "geolibre": "Hộp công cụ GeoLibre",
+      "geolibre": "Hộp công cụ GeoApps",
       "subGroupGeometry": "Hình học",
       "subGroupOverlay": "Lớp phủ",
       "subGroupJoin": "Nối",
@@ -3933,12 +3933,12 @@
         "layer-type": "Loại lớp {{layerType}} không được hỗ trợ.",
         "missing-source": "Lớp này không có nguồn dữ liệu cục bộ có thể đọc được.",
         "format": "Định dạng dữ liệu của lớp không được hỗ trợ.",
-        "file-geodatabase": "Nguồn File Geodatabase (.gdb) không được tải từ dự án. Trong GeoLibre Desktop, hãy thêm chúng bằng Thêm dữ liệu → Cơ sở dữ liệu địa lý tệp (GDB).",
+        "file-geodatabase": "Nguồn File Geodatabase (.gdb) không được tải từ dự án. Trong GeoApps Desktop, hãy thêm chúng bằng Thêm dữ liệu → Cơ sở dữ liệu địa lý tệp (GDB).",
         "file-geodatabase-raster": "Bộ dữ liệu raster lưu trong File Geodatabase (.gdb) không được hỗ trợ. Hãy xuất raster sang GeoTIFF rồi thêm dưới dạng lớp raster.",
         "network-path": "Đường dẫn chia sẻ mạng không được tải vì lý do bảo mật.",
         "service": "Các lớp dịch vụ ArcGIS trong các dự án chưa được hỗ trợ.",
-        "browser-local-file": "Tệp cục bộ được tham chiếu nhưng trình duyệt không thể mở lại đường dẫn dữ liệu ArcGIS Pro. Sử dụng GeoLibre Desktop để tải nó.",
-        "map-extent": "Phạm vi bản đồ đã lưu sử dụng hệ tọa độ GeoLibre không thể chuyển đổi, do đó bản đồ được mở ở chế độ xem mặc định.",
+        "browser-local-file": "Tệp cục bộ được tham chiếu nhưng trình duyệt không thể mở lại đường dẫn dữ liệu ArcGIS Pro. Sử dụng GeoApps Desktop để tải nó.",
+        "map-extent": "Phạm vi bản đồ đã lưu sử dụng hệ tọa độ GeoApps không thể chuyển đổi, do đó bản đồ được mở ở chế độ xem mặc định.",
         "nesting": "Nhóm được lồng quá sâu hoặc dự án sẽ quay lại một nhóm đã chứa nó."
       },
       "qgisImportComplete": "Dự án QGIS đã được nhập khẩu",
@@ -3946,8 +3946,8 @@
       "qgisUnknownProvider": "không rõ",
       "qgisImportReason": {
         "network-path": "Đường dẫn chia sẻ mạng không được tải vì lý do bảo mật.",
-        "browser-local-file": "Tệp cục bộ được tham chiếu nhưng trình duyệt không thể mở lại đường dẫn dữ liệu QGIS. Sử dụng GeoLibre Desktop để tải nó.",
-        "browser-local-raster": "Raster được tham chiếu bởi một đường dẫn cục bộ. Sử dụng GeoLibre Desktop để tải nó.",
+        "browser-local-file": "Tệp cục bộ được tham chiếu nhưng trình duyệt không thể mở lại đường dẫn dữ liệu QGIS. Sử dụng GeoApps Desktop để tải nó.",
+        "browser-local-raster": "Raster được tham chiếu bởi một đường dẫn cục bộ. Sử dụng GeoApps Desktop để tải nó.",
         "non-vector": "Phiên bản đầu tiên này chỉ hỗ trợ các lớp vectơ dựa trên tệp.",
         "provider": "Nhà cung cấp dữ liệu {{provider}} không được hỗ trợ.",
         "missing-source": "Lớp này không có nguồn dữ liệu có thể đọc được.",
@@ -3976,7 +3976,7 @@
       "embedEditedGeometryDesc": "Dự án này chứa các hình học đã chỉnh sửa. Nhúng dữ liệu vectơ (khoảng {{size}}) để giữ lại các thay đổi. Nếu không nhúng, các lớp tham chiếu sẽ mở lại với hình học gốc và dữ liệu cục bộ có thể không khả dụng.",
       "embedVectorDesc": "Dự án này có {{count}} lớp vectơ cục bộ được tải từ máy tính của bạn. Trình duyệt không thể đọc lại chúng khi dự án được mở lại, do đó dữ liệu của chúng phải được nhúng vào tệp dự án để được khôi phục. Việc nhúng sẽ thêm khoảng {{size}} vào tệp.",
       "embedVectorDescDesktop": "Dự án này có {{count}} lớp vectơ cục bộ được tải từ máy tính của bạn. Nhúng dữ liệu của họ để làm cho dự án trở nên độc lập (thêm khoảng {{size}}) hoặc lưu các tham chiếu tệp sẽ tải lại từ đĩa khi dự án được mở lại. Các tham chiếu giữ cho tệp có kích thước nhỏ nhưng sẽ bị hỏng nếu tệp nguồn sau đó bị di chuyển hoặc xóa.",
-      "embedVectorDescMas": "Dự án này có {{count}} lớp vectơ cục bộ được tải từ máy tính của bạn. Hộp cát Mac App Store không thể duy trì quyền truy cập vào các tệp đó sau khi GeoLibre đóng, vì vậy dữ liệu phải được nhúng vào tệp dự án để có thể khôi phục. Việc nhúng sẽ thêm khoảng {{size}} vào tệp.",
+      "embedVectorDescMas": "Dự án này có {{count}} lớp vectơ cục bộ được tải từ máy tính của bạn. Hộp cát Mac App Store không thể duy trì quyền truy cập vào các tệp đó sau khi GeoApps đóng, vì vậy dữ liệu phải được nhúng vào tệp dự án để có thể khôi phục. Việc nhúng sẽ thêm khoảng {{size}} vào tệp.",
       "embedVectorLargeWarning": "Việc nhúng {{size}} sẽ tạo ra một tệp dự án rất lớn. Việc mở lại nó có thể chậm hoặc thất bại hoàn toàn vì mọi tính năng phải được phân tích cú pháp và lưu trong bộ nhớ cùng một lúc. Đối với dữ liệu có kích thước này, hãy chuyển đổi các lớp thành PMTiles hoặc FlatGeobuf và thêm chúng dưới dạng các lớp từ xa thay vì nhúng chúng.",
       "embedVectorEmbedButton": "Nhúng dữ liệu",
       "embedVectorReferenceButton": "Lưu tài liệu tham khảo tập tin",
@@ -3992,13 +3992,13 @@
       "exportLayerStylesAsDesc": "Nhập tên tệp. Tệp kiểu sẽ được tải xuống thư mục tải xuống của trình duyệt khi bạn nhấp Lưu.",
       "exportLayerStylesFileName": "Tên tệp",
       "exportLayerStylesFileNamePlaceholder": "my-map-styles.json",
-      "layerStylesFile": "Kiểu lớp GeoLibre",
+      "layerStylesFile": "Kiểu lớp GeoApps",
       "exportLayersEllipsis": "Xuất lớp…",
       "exportLayersAsTitle": "Xuất lớp",
       "exportLayersAsDesc": "Nhập tên tệp. Tệp lớp sẽ được tải xuống thư mục tải xuống của trình duyệt khi bạn nhấp Lưu.",
       "exportLayersFileName": "Tên tệp",
       "exportLayersFileNamePlaceholder": "my-map-layers.json",
-      "layersFile": "Lớp GeoLibre",
+      "layersFile": "Lớp GeoApps",
       "layersExportSkipped_other": "{{count}} lớp đã bị bỏ qua vì dữ liệu của chúng chỉ tồn tại trong dự án này: {{names}}",
       "layersExportRedacted_other": "Đã xóa {{count}} thông tin xác thực khỏi các lớp được xuất.",
       "layerStylesImported": "Đã nhập kiểu lớp",
@@ -4122,7 +4122,7 @@
     },
     "windowClose": {
       "savePromptTitle": "Lưu thay đổi trước khi đóng?",
-      "savePromptDescription": "Dự án hiện tại có thay đổi chưa được lưu. Lưu trước khi đóng GeoLibre?"
+      "savePromptDescription": "Dự án hiện tại có thay đổi chưa được lưu. Lưu trước khi đóng GeoApps?"
     },
     "error": {
       "couldNotOpenOsmPbf": "Không thể mở tệp OSM PBF.",
@@ -4133,7 +4133,7 @@
       "scenegraphOutOfRange": "Kinh độ phải nằm trong khoảng từ -180 đến 180 và vĩ độ nằm trong khoảng từ -90 đến 90.",
       "scenegraphNoPointFeatures": "GeoJSON không có tính năng điểm nào để đặt mô hình.",
       "couldNotOpenProject": "Không thể mở dự án.",
-      "multipleProjectDrop": "Chỉ thả một dự án GeoLibre mỗi lần, không kèm tệp khác.",
+      "multipleProjectDrop": "Chỉ thả một dự án GeoApps mỗi lần, không kèm tệp khác.",
       "projectDropNotAllowed": "Bản triển khai này không cho phép chuyển đổi dự án.",
       "couldNotImportQgisProject": "Không thể nhập dự án QGIS.",
       "couldNotImportArcgisProject": "Không thể nhập dự án ArcGIS Pro.",
@@ -4240,7 +4240,7 @@
     "filterSummary": "Đã áp dụng bộ lọc lớp: {{matched}} trong số {{total}} đối tượng khớp.",
     "evaluationErrors": "{{count}} tính năng không thể được đánh giá và không khớp.",
     "unevaluableDisjoint": "{{count}} đặc điểm đã bị loại trừ vì không thể đánh giá hình học của chúng.",
-    "tooManyPairs": "Sự so sánh này cần {{pairs}} thử nghiệm cặp tính năng (giới hạn {{limit}}). Thay vào đó, hãy sử dụng Xử lý → GeoLibre → Vector → Chọn theo vị trí bằng công cụ Sidecar.",
+    "tooManyPairs": "Sự so sánh này cần {{pairs}} thử nghiệm cặp tính năng (giới hạn {{limit}}). Thay vào đó, hãy sử dụng Xử lý → GeoApps → Vector → Chọn theo vị trí bằng công cụ Sidecar.",
     "exportedLayerName": "{{name}} (lựa chọn)",
     "modeAdd": "Thêm vào lựa chọn hiện tại",
     "modeRemove": "Xóa khỏi lựa chọn hiện tại",
@@ -4837,11 +4837,11 @@
     "addIcechunkFailed": "Không thể mở kho Icechunk này",
     "zarrProblemGroup": "Tài sản này chỉ đến một nhóm mảng, không phải một mảng có thể vẽ được",
     "zarrProblemMissing": "Kho này không chứa biến đó",
-    "zarrProblemUnauthorized": "Kho Zarr này cần thông tin xác thực mà GeoLibre chưa thể cung cấp",
+    "zarrProblemUnauthorized": "Kho Zarr này cần thông tin xác thực mà GeoApps chưa thể cung cấp",
     "zarrProblemUnsupportedUrl": "Địa chỉ của kho Zarr này không thể đọc theo từng khóa",
     "zarrProblemUnavailable": "Không thể mở kho Zarr này",
     "chooseTarget": "Chọn nội dung cần thêm",
-    "cogUnsupported": "Máy chủ GeoLibre này không thể hiển thị nội dung GeoTIFF từ xa",
+    "cogUnsupported": "Máy chủ GeoApps này không thể hiển thị nội dung GeoTIFF từ xa",
     "formatCog": "COG",
     "formatGeoJson": "GeoJSON",
     "formatPmtiles": "PMTiles",
@@ -4873,7 +4873,7 @@
     "filterWebMap": "Bản đồ web",
     "webMapAdded_other": "Đã thêm lớp {{count}} từ bản đồ web này.",
     "webMapAddedPartial": "Đã thêm {{added}} trong số {{total}} lớp từ bản đồ web này; phần còn lại không thể đạt được.",
-    "webMapEmpty": "bản đồ web này không có lớp nào mà GeoLibre có thể hiển thị.",
+    "webMapEmpty": "bản đồ web này không có lớp nào mà GeoApps có thể hiển thị.",
     "add": "Thêm vào",
     "adding": "Đang thêm…",
     "remove": "Di dời",
@@ -4992,7 +4992,7 @@
     "downloadTitle": "Tải tập tin này",
     "copyUrlTitle": "Sao chép URL của tập tin này",
     "openProductTitle": "Mở trang của sản phẩm này trên source.coop",
-    "unsupportedTitle": "GeoLibre không thể hiển thị định dạng này - thay vào đó hãy tải xuống",
+    "unsupportedTitle": "GeoApps không thể hiển thị định dạng này - thay vào đó hãy tải xuống",
     "addError": "Không thể thêm tệp này: {{message}}",
     "largeFileWarning": "Tệp này là {{size}}. Nó truyền phát từ nguồn nên chỉ những phần trong chế độ xem mới được đọc.",
     "streamHint": "Tệp này là {{size}}. Thêm bản sao vào bộ nhớ; Luồng chỉ đọc các phần trong chế độ xem."
@@ -5067,7 +5067,7 @@
     "downloadTitle": "Tải tập tin này",
     "copyUrlTitle": "Sao chép URL của tập tin này",
     "openDatasetTitle": "dữ liệu địa lý của tôi",
-    "unsupportedTitle": "GeoLibre không thể hiển thị định dạng này - thay vào đó hãy tải xuống",
+    "unsupportedTitle": "GeoApps không thể hiển thị định dạng này - thay vào đó hãy tải xuống",
     "chooseLayer": "Chọn lớp",
     "chooseLayerTitle": "Tải các đặc điểm của lớp bản đồ lên dưới dạng tệp GeoJSON",
     "layerPickerHeading": "Tải lên một lớp dưới dạng GeoJSON",
@@ -5079,7 +5079,7 @@
     "clearSelection": "Thông thoáng",
     "selectedFiles_other": "Đã chọn {{count}} tệp ({{size}}).",
     "commitMessageLabel": "Thông báo cam kết (tùy chọn)",
-    "commitMessagePlaceholder": "Tải lên bằng GeoLibre",
+    "commitMessagePlaceholder": "Tải lên bằng GeoApps",
     "upload": "Tải lên",
     "uploadPreparing": "Đang chuẩn bị tải lên…",
     "uploadHashing": "Đang băm {{name}} ({{index}}/{{total}})…",
@@ -5618,7 +5618,7 @@
       "importedLog": "Đã nhập một mô hình có {{nodes}} nút.",
       "importFailed": "Nhập thất bại",
       "importInvalid": "Tệp đó không chứa đồ thị mô hình.",
-      "importUnsupported": "Tệp đó không phải là mô hình GeoLibre.",
+      "importUnsupported": "Tệp đó không phải là mô hình GeoApps.",
       "rasterOutputUnsupported": "\"{{name}}\" là kết quả raster mà bản dựng này không thể thêm vào bản đồ.",
       "portNeedsVector": "\"{{port}}\" cần dữ liệu vector, nhưng lại nhận được raster.",
       "toolNoOutput": "\"{{tool}}\" không tạo ra kết quả nào.",
@@ -5675,7 +5675,7 @@
       "filterByCategory": "Lọc theo danh mục",
       "layerFor": "Lớp cho {{name}}",
       "allSources": "Tất cả các nguồn",
-      "geolibreTools": "Công cụ GeoLibre",
+      "geolibreTools": "Công cụ GeoApps",
       "whiteboxTools": "Công cụ Whitebox",
       "toolbox": "Hộp công cụ Whitebox",
       "checkingRuntime": "Kiểm tra thời gian chạy.",
@@ -5729,8 +5729,8 @@
       "errorConnect": "Không thể kết nối tới sidecar.",
       "errorPoll": "Không thể thăm dò công việc.",
       "errorStartTool": "Không thể khởi động công cụ Whitebox.",
-      "errorStartSidecar": "Không thể khởi động sidecar GeoLibre.",
-      "errorStopSidecar": "Không thể dừng sidecar GeoLibre.",
+      "errorStartSidecar": "Không thể khởi động sidecar GeoApps.",
+      "errorStopSidecar": "Không thể dừng sidecar GeoApps.",
       "noToolsFound": "Không tìm thấy công cụ nào.",
       "searchToolsByMeaning": "Tìm công cụ hoặc mô tả một tác vụ",
       "searchingByMeaning": "Đang tìm trong danh mục theo ngữ nghĩa",
@@ -5757,9 +5757,9 @@
       "runLocallyButton": "Chạy cục bộ (WASM)",
       "troubleshootingTitle": "Bạn vẫn muốn sử dụng máy chủ?",
       "stepStartServerDesktop": "Nhấp vào \"Khởi động máy chủ\" trong bảng danh sách công cụ để khởi chạy nó, sau đó đợi vài giây để nó trực tuyến.",
-      "stepStartServerBrowser": "Máy chủ chỉ có thể được khởi động từ ứng dụng máy tính để bàn GeoLibre. Trong trình duyệt, thay vào đó hãy bật \"Chạy cục bộ (WASM)\".",
+      "stepStartServerBrowser": "Máy chủ chỉ có thể được khởi động từ ứng dụng máy tính để bàn GeoApps. Trong trình duyệt, thay vào đó hãy bật \"Chạy cục bộ (WASM)\".",
       "stepCheckPort": "Đảm bảo chính sách tường lửa, chống vi-rút hoặc mạng không chặn cổng cục bộ {{port}}.",
-      "stepRestart": "Nếu máy chủ dừng đột ngột, hãy khởi động lại ứng dụng GeoLibre trên máy tính để bàn và mở lại hộp thoại này.",
+      "stepRestart": "Nếu máy chủ dừng đột ngột, hãy khởi động lại ứng dụng GeoApps trên máy tính để bàn và mở lại hộp thoại này.",
       "unavailableTitle": "Máy chủ xử lý không có sẵn.",
       "showHelp": "Cho biết điều này có nghĩa là gì và cách khắc phục",
       "hideHelp": "Ẩn chi tiết",
@@ -7382,7 +7382,7 @@
       "title": "Kích thước tối thiểu %",
       "intro": "Phân đoạn AI chạy trong máy chủ trợ giúp cục bộ ({{sidecarUrl}}) lưu trữ mô hình SAM3 từ phân đoạn không gian địa lý. Nó chạy Python ở chế độ nền, tách biệt với ứng dụng và không phải là một phần của bản dựng trình duyệt.",
       "troubleshootingTitle": "Làm thế nào để máy chủ chạy",
-      "stepInstall": "Đảm bảo máy chủ GeoLibre được cài đặt với phần phụ trợ không gian địa lý phân đoạn được bật để mô hình phân đoạn có sẵn.",
+      "stepInstall": "Đảm bảo máy chủ GeoApps được cài đặt với phần phụ trợ không gian địa lý phân đoạn được bật để mô hình phân đoạn có sẵn.",
       "stepStartServerDesktop": "Nhấp vào \"Khởi động máy chủ\" ở trên để khởi chạy, sau đó đợi vài giây để mô hình trực tuyến."
     },
     "title": "Phân đoạn AI",
@@ -7391,13 +7391,13 @@
     "segment": "Phân đoạn",
     "status": {
       "checking": "Đang kiểm tra dịch vụ phân đoạn AI…",
-      "unavailableDesktop": "Dịch vụ phân đoạn AI chưa chạy. Khởi động máy chủ GeoLibre với kích hoạt phân đoạn không gian địa lý để sử dụng nó.",
-      "unavailableWeb": "Phân đoạn AI không có sẵn trong trình duyệt. Sử dụng ứng dụng máy tính để bàn GeoLibre để chạy nó."
+      "unavailableDesktop": "Dịch vụ phân đoạn AI chưa chạy. Khởi động máy chủ GeoApps với kích hoạt phân đoạn không gian địa lý để sử dụng nó.",
+      "unavailableWeb": "Phân đoạn AI không có sẵn trong trình duyệt. Sử dụng ứng dụng máy tính để bàn GeoApps để chạy nó."
     },
     "error": {
       "chooseImage": "Chọn một hình ảnh (GeoTIFF) để phân đoạn.",
       "enterPrompt": "Nhập lời nhắc văn bản, ví dụ: “cây” hoặc “tòa nhà”.",
-      "startServer": "Không thể khởi động sidecar GeoLibre.",
+      "startServer": "Không thể khởi động sidecar GeoApps.",
       "failed": "Phân đoạn không thành công."
     }
   },
@@ -7499,7 +7499,7 @@
       "felzenszwalb": "Đồ thị Felzenszwalb (máy tính, gốc)",
       "note": "Chạy trực tiếp trong máy chủ xử lý của ứng dụng máy tính bằng scikit-image, trên tối đa {{max}} pixel, và cũng đo các đối tượng ở đó.",
       "offer": "Với ảnh quá lớn cho trình duyệt, ứng dụng máy tính cũng có thể phân đoạn trực tiếp bằng scikit-image (SLIC hoặc Felzenszwalb).",
-      "needsDesktop": "Các phương pháp gốc cần máy chủ xử lý của GeoLibre: hãy dùng ứng dụng máy tính.",
+      "needsDesktop": "Các phương pháp gốc cần máy chủ xử lý của GeoApps: hãy dùng ứng dụng máy tính.",
       "unavailable": "Môi trường chạy OBIA gốc (scikit-image) của ứng dụng máy tính không khả dụng. Hãy kiểm tra máy chủ xử lý.",
       "needsLocalFile": "Các phương pháp gốc đọc ảnh từ tệp của nó: hãy thêm ảnh từ một GeoTIFF cục bộ.",
       "slicSize": "Kích thước đối tượng (pixel)",
@@ -7800,7 +7800,7 @@
       "imageSize": "{{width}} × {{height}} pixel, kênh {{bands}}",
       "area": "Pixel {{x0}} đến {{x1}} theo chiều ngang và {{y0}} đến {{y1}} theo chiều dọc, ở độ phân giải đầy đủ ({{size}} mỗi pixel)",
       "areaOverview": "Pixel {{x0}} đến {{x1}} theo chiều ngang và {{y0}} đến {{y1}} theo chiều dọc (lưới độ phân giải đầy đủ), đọc từ ảnh tổng quan {{level}} ({{size}} mỗi pixel)",
-      "env": "geolibre-wasm {{engine}}, GeoLibre {{app}}",
+      "env": "geolibre-wasm {{engine}}, GeoApps {{app}}",
       "labelsPending": "Raster nhãn chưa được tải; nó được dựng lại từ các cài đặt này khi một bước cần đến.",
       "splits": "Các lần tách giữ lại",
       "level": "Cấp {{level}}: cấp {{from}} được gộp ở tỷ lệ {{scale}}",
@@ -8004,7 +8004,7 @@
     "import": "Nhập khẩu…",
     "export": "Xuất khẩu…",
     "importFilterName": "Thư viện kiểu/QML/SLD",
-    "exportFilterName": "Thư viện phong cách GeoLibre",
+    "exportFilterName": "Thư viện phong cách GeoApps",
     "applied": "Đã áp dụng \"{{name}}\" cho {{layer}}.",
     "appliedRampHint": "Đã áp dụng \"{{name}}\". Chuyển lớp sang kiểu chia độ hoặc phân loại để xem đoạn đường nối.",
     "saved": "Đã lưu \"{{name}}\" vào thư viện.",
@@ -8752,7 +8752,7 @@
     "exportCopc": "COPC (tối ưu cho đám mây)",
     "extractSubset": "Trích xuất tập hợp con…",
     "stylesMenu": "Kiểu dáng",
-    "exportGeoLibreStyle": "Xuất kiểu URL GeoLibre",
+    "exportGeoLibreStyle": "Xuất kiểu URL GeoApps",
     "exportGeoLibreStyleHint": "Xuất ký hiệu, bao gồm mẫu tô, cho các URL ?data= và ?style=. Không bao gồm dữ liệu đối tượng; điểm đánh dấu tùy chỉnh không được giữ lại.",
     "exportMapboxStyle": "Xuất dưới dạng kiểu Mapbox GL",
     "exportSldStyle": "Xuất dưới dạng OGC SLD",
@@ -8761,9 +8761,9 @@
     "exportStyleDataNotReady": "Dữ liệu lớp chưa sẵn sàng. Hãy thử lại sau giây lát.",
     "exportStyleNeedsFeatures": "Dán kiểu từ \"__PH0__\"",
     "exportStyleError": "Không thể xuất kiểu của lớp này.",
-    "importStyle": "Kiểu nhập (URL GeoLibre / Mapbox GL / SLD / QML)…",
+    "importStyle": "Kiểu nhập (URL GeoApps / Mapbox GL / SLD / QML)…",
     "importStyleFromText": "Nhập kiểu từ văn bản…",
-    "importStyleFromTextDescription": "Dán kiểu GeoLibre, Mapbox GL, SLD hoặc QML. Định dạng được nhận biết từ văn bản.",
+    "importStyleFromTextDescription": "Dán kiểu GeoApps, Mapbox GL, SLD hoặc QML. Định dạng được nhận biết từ văn bản.",
     "importStyleFromTextPlaceholder": "{ \"version\": 8, \"layers\": [ … ] }",
     "importStyleFromTextApply": "Nhập",
     "openStyleManager": "Kiểu đã lưu (Trình quản lý kiểu)…",
@@ -9254,10 +9254,10 @@
   },
   "errorBoundary": {
     "title": "Đã xảy ra lỗi",
-    "description": "GeoLibre gặp phải lỗi không mong muốn và không thể tiếp tục. Tác phẩm của bạn có thể chưa được lưu — hãy thử khôi phục trước khi tải lại.",
+    "description": "GeoApps gặp phải lỗi không mong muốn và không thể tiếp tục. Tác phẩm của bạn có thể chưa được lưu — hãy thử khôi phục trước khi tải lại.",
     "tryAgain": "Thử lại",
     "reload": "Tải lại ứng dụng",
-    "sectionFailed": "{{label}} không hiển thị được. Phần còn lại của GeoLibre vẫn có sẵn."
+    "sectionFailed": "{{label}} không hiển thị được. Phần còn lại của GeoApps vẫn có sẵn."
   },
   "commandPalette": {
     "title": "Bảng lệnh",
@@ -9327,7 +9327,7 @@
     "windowCloseGuardFailed": "Đóng cửa sổ sẽ không hỏi lưu các thay đổi chưa lưu. Hãy lưu công việc trước khi đóng.",
     "windowCloseSaveFailed": "Không thể lưu dự án trước khi đóng.",
     "windowCloseFailed": "Không thể đóng cửa sổ.",
-    "nativeProjectPathFailed": "Không thể mở tệp dự án được chuyển cho GeoLibre.",
+    "nativeProjectPathFailed": "Không thể mở tệp dự án được chuyển cho GeoApps.",
     "kmlSuperOverlayReadFailed": "Không thể đọc lại KML Super-Overlay \"{{name}}\", nên các ô của nó bị trống.",
     "projectControlFailed": "Không thể áp dụng cài đặt \"{{control}}\" của dự án.",
     "pluginSnapshotFailed": "Một số cài đặt plugin có thể không được chuyển sang trình kết xuất mới.",
@@ -9336,7 +9336,7 @@
     "panelRenderFailed": "Không thể mở bảng \"{{name}}\".",
     "sharedSettingsFailed": "Không thể tải cài đặt được chia sẻ từ liên kết, nên đang dùng cài đặt của bạn.",
     "sharedLanguageFailed": "Không thể chuyển sang ngôn ngữ mà cài đặt được chia sẻ yêu cầu.",
-    "languageCatalogFailed": "Không thể tải bản dịch {{language}}, nên GeoLibre đang hiển thị tiếng Anh."
+    "languageCatalogFailed": "Không thể tải bản dịch {{language}}, nên GeoApps đang hiển thị tiếng Anh."
   },
   "shell": {
     "section": {
@@ -9366,7 +9366,7 @@
       "modelBuilder": "Trình dựng mô hình",
       "obiaWorkbench": "Phân tích hướng đối tượng"
     },
-    "workspaceTitle": "Không gian làm việc của bản đồ GeoLibre",
+    "workspaceTitle": "Không gian làm việc của bản đồ GeoApps",
     "webglContextLost": {
       "message": "Bản đồ đã mất ngữ cảnh đồ họa",
       "description": "Trình điều khiển đồ họa đã khởi động lại hoặc GPU hết bộ nhớ, nên bản đồ có thể bị đứng hoặc trống. Hãy tải lại để khôi phục. Lưu dự án trước nếu có thể; một bản tự động lưu gần đây cũng có thể có trong lịch sử dự án.",
@@ -9618,7 +9618,7 @@
     "navigationButton": "1. Nạp nguồn và vẽ dẫn hướng",
     "navigationButtonAgain": "Vẽ thêm một lớp dẫn hướng",
     "exportButton": "Xuất kết quả đã vẽ sang GeoJSON",
-    "addLayersButton": "Thêm kết quả đã vẽ vào Lớp của GeoLibre",
+    "addLayersButton": "Thêm kết quả đã vẽ vào Lớp của GeoApps",
     "clearButton": "Xóa kết quả NLDI",
     "noComid": "Không có COMID nào được trả về cho điểm này.",
     "requestingBasin": "Đang yêu cầu lưu vực thượng lưu…",
@@ -9870,7 +9870,7 @@
       "downloadParquet": "Parquet",
       "downloadParquetTitle": "Tải xuống toàn bộ tệp GeoParquet của ô này",
       "dataset": "Tập dữ liệu",
-      "browseOnly": "GeoLibre chưa hỗ trợ tìm kiếm tập dữ liệu này. Hãy dùng các liên kết ở trên để lấy từ nguồn.",
+      "browseOnly": "GeoApps chưa hỗ trợ tìm kiếm tập dữ liệu này. Hãy dùng các liên kết ở trên để lấy từ nguồn.",
       "searchArea": "Vùng tìm kiếm",
       "modeView": "Chế độ xem bản đồ",
       "modeDraw": "Vẽ hộp",
@@ -9906,7 +9906,7 @@
       "searchDone": "Đã đọc {{count}} cảnh của {{tile}} trong {{seconds}} giây ({{gets}} lần đọc theo phạm vi, {{kib}} KiB). Không cần API, chỉ là GeoParquet tĩnh.",
       "searchFailed": "Tìm kiếm thất bại: {{error}}",
       "displayTci": "Màu thật (TCI)",
-      "noCog": "Bản dựng GeoLibre này không thể thêm lớp COG.",
+      "noCog": "Bản dựng GeoApps này không thể thêm lớp COG.",
       "adding": "Đang thêm {{name}}…",
       "added": "Đã thêm {{name}}.",
       "addFailed": "Không thể thêm {{name}}: {{error}}",
@@ -10106,7 +10106,7 @@
       "catalogLink": "Danh mục dữ liệu",
       "aboutSummary": "Giới thiệu dynamical.org",
       "aboutText": "dynamical.org công bố dự báo và phân tích thời tiết từ NOAA, ECMWF, DWD, ECCC và NASA dưới dạng kho lưu trữ Icechunk (Zarr) miễn phí, tối ưu cho đám mây, được cập nhật khi mỗi lần chạy mô hình hoàn tất.",
-      "aboutAccess": "GeoLibre đọc kho lưu trữ trực tiếp từ bộ nhớ đám mây, mỗi lần một lát cắt bản đồ, và giải mã các bộ dữ liệu ảo độ trễ thấp từ tệp GRIB2 gốc của nhà cung cấp. Dữ liệu phân tích và tổ hợp lưu một chuỗi thời gian dài trong mỗi khối, nên chúng được vẽ theo từng vùng một khi bản đồ được phóng to.",
+      "aboutAccess": "GeoApps đọc kho lưu trữ trực tiếp từ bộ nhớ đám mây, mỗi lần một lát cắt bản đồ, và giải mã các bộ dữ liệu ảo độ trễ thấp từ tệp GRIB2 gốc của nhà cung cấp. Dữ liệu phân tích và tổ hợp lưu một chuỗi thời gian dài trong mỗi khối, nên chúng được vẽ theo từng vùng một khi bản đồ được phóng to.",
       "variable": "Biến",
       "auto": "Tự động",
       "min": "Nhỏ nhất",
@@ -10270,7 +10270,7 @@
       "liftSelected": "Đã chọn {{count}} điểm bên trong {{polygons}} đa giác của {{layer}}.",
       "liftInstances": "Đã tạo {{objects}} thực thể {{name}} từ {{layer}} ({{count}} điểm).",
       "fullFile": "Tệp đầy đủ kèm nhãn",
-      "fullFileNote": "Ghi một bản sao cục bộ của đám mây điểm này với mọi nhãn đã lưu được áp dụng, không chỉ các điểm đã tải ở đây. Chạy trên máy chủ GeoLibre.",
+      "fullFileNote": "Ghi một bản sao cục bộ của đám mây điểm này với mọi nhãn đã lưu được áp dụng, không chỉ các điểm đã tải ở đây. Chạy trên máy chủ GeoApps.",
       "fullFileInput": "Bản sao cục bộ (.las, .laz hoặc .copc.laz)",
       "fullFileOutput": "Tệp đầu ra (.las hoặc .laz)",
       "fullFileWrite": "Ghi tệp",
@@ -10362,7 +10362,7 @@
       "unitsTitle": "Đơn vị: {{units}}"
     },
     "earth-engine-auth": {
-      "unavailable": "Đăng nhập Earth Engine không khả dụng trong bản dựng App Store của GeoLibre.",
+      "unavailable": "Đăng nhập Earth Engine không khả dụng trong bản dựng App Store của GeoApps.",
       "noAccessToken": "Đăng nhập Earth Engine không trả về mã thông báo truy cập.",
       "popupUnavailable": "Xác thực Earth Engine bằng cửa sổ bật lên không khả dụng.",
       "oauthUnavailable": "Xác thực OAuth của Earth Engine không khả dụng.",
