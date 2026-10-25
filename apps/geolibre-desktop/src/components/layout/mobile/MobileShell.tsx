@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent, type ReactNode } from "react";
-import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save } from "lucide-react";
+import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldStatusReveal, FieldStatusStrip } from "./FieldStatusStrip";
 import { MobileSheet } from "./MobileSheet";
@@ -51,6 +51,8 @@ export interface MobileShellProps {
   onTakePhoto: () => void;
   /** Opens the existing GPS Tracking dialog. */
   onStartTrack: () => void;
+  /** Opens the geofence panel: boundaries, monitoring, and the alert journal. */
+  onOpenGeofence: () => void;
   onSaveProject: () => void;
   onOpenProject: () => void;
   onNewProject: () => void;
@@ -81,6 +83,7 @@ export function MobileShell({
   onDropPoint,
   onTakePhoto,
   onStartTrack,
+  onOpenGeofence,
   onSaveProject,
   onOpenProject,
   onNewProject,
@@ -94,7 +97,11 @@ export function MobileShell({
     const file = event.target.files?.[0];
     // Reset first: choosing the same file twice must fire a change event again.
     event.target.value = "";
-    if (file) onImportFile(file);
+    if (!file) return;
+    // The sheet closes so the map the file becomes is what the user sees next;
+    // the shell fits the view to the new sheet's extent.
+    onSelectTab("map");
+    onImportFile(file);
   };
 
   const runAndClose = (action: () => void) => () => {
@@ -124,12 +131,21 @@ export function MobileShell({
           testId="mobile-project-sheet"
         >
           <div className="flex flex-col gap-2 p-2">
+            {/* Avenza's first action is "import a map", so it leads the sheet
+                and carries the primary weight. Everything else here is work
+                done *on* a map, which presupposes this one. */}
+            <SheetAction
+              icon={FileUp}
+              label={t("mobile.action.importPdf", "Impor peta PDF")}
+              onClick={() => fileInputRef.current?.click()}
+              testId="mobile-action-import-file"
+              primary
+            />
             <SheetAction
               icon={MapPin}
               label={t("mobile.action.dropPoint", "Taruh titik di sini")}
               onClick={runAndClose(onDropPoint)}
               testId="mobile-action-drop-point"
-              primary
             />
             <SheetAction
               icon={Crosshair}
@@ -144,10 +160,10 @@ export function MobileShell({
               testId="mobile-action-start-track"
             />
             <SheetAction
-              icon={FileUp}
-              label={t("mobile.action.importPdf", "Impor PDF / GeoTIFF")}
-              onClick={() => fileInputRef.current?.click()}
-              testId="mobile-action-import-file"
+              icon={ShieldCheck}
+              label={t("mobile.action.geofence", "Geofence zona")}
+              onClick={runAndClose(onOpenGeofence)}
+              testId="mobile-action-geofence"
             />
             <SheetAction
               icon={Save}
@@ -186,7 +202,7 @@ export function MobileShell({
               tabIndex={-1}
               aria-hidden="true"
               data-testid="mobile-import-input"
-              accept=".pdf,.tif,.tiff,.geotiff,.png,.jpg,.jpeg"
+              accept=".pdf,.geotiff,.tif,.tiff,.png,.jpg,.jpeg"
               className="hidden"
               onChange={handleFileChosen}
             />

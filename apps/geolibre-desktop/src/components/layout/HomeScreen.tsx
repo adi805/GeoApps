@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { HardDrive, Layers, Map as MapIcon, Plus, Search } from "lucide-react";
 import { cn } from "@geolibre/ui";
@@ -24,6 +24,15 @@ export interface HomeScreenProps {
   onOpenProject: (entry: RecentProjectEntry) => void;
   /** Fired when the user taps "add map" — shell can open AddData flow. */
   onAddProject?: () => void;
+  /**
+   * Fired with the map file the user picked straight from "Tambah Peta".
+   *
+   * Avenza's first action is "import a map": the button opens the OS file
+   * picker in the same tap, and the map the user chose is what the viewer
+   * shows. When this is provided, "Tambah Peta" opens the picker itself
+   * instead of asking the shell to mount an empty viewer first.
+   */
+  onAddMapFile?: (file: File) => void;
 }
 
 type HomeTab = "maps" | "layers";
@@ -69,8 +78,9 @@ function matchesQuery(entry: RecentProjectEntry, query: string): boolean {
  * The full GIS shell (DesktopShell) stays mounted as the "viewer" — this
  * component only renders above/behind it at the app-router level.
  */
-export function HomeScreen({ onOpenProject, onAddProject }: HomeScreenProps) {
+export function HomeScreen({ onOpenProject, onAddProject, onAddMapFile }: HomeScreenProps) {
   const { t, i18n } = useTranslation();
+  const addMapInputRef = useRef<HTMLInputElement | null>(null);
   const [tab, setTab] = useState<HomeTab>("maps");
   const [recentProjects] = useState<RecentProjectEntry[]>(() => loadRecentProjects());
   const [searchOpen, setSearchOpen] = useState(false);
@@ -91,11 +101,18 @@ export function HomeScreen({ onOpenProject, onAddProject }: HomeScreenProps) {
           count: recentProjects.length,
         });
 
-  const addAction = onAddProject ? (
+  const addAction = onAddProject || onAddMapFile ? (
     <MobileAction
       label={t("home.addMap", "Tambah Peta")}
       icon={<Plus className="h-4 w-4" aria-hidden="true" />}
-      onClick={onAddProject}
+      testId="home-add-map"
+      onClick={() => {
+        // The picker opens inside this click, so the browser still counts it as
+        // a user gesture. Opening it from an effect after the viewer mounts
+        // would be blocked on mobile Safari and Chrome.
+        if (onAddMapFile) addMapInputRef.current?.click();
+        else onAddProject?.();
+      }}
     />
   ) : null;
 
@@ -257,6 +274,28 @@ export function HomeScreen({ onOpenProject, onAddProject }: HomeScreenProps) {
           {t("home.tabLayers", "Layer")}
         </button>
       </nav>
+
+      {/* One tap, PDF first: the map the user is about to work on is a
+          georeferenced PDF in almost every case, so it leads the list and the
+          other raster formats follow. Kept out of the tab order: the visible
+          button is the accessible control. */}
+      {onAddMapFile ? (
+        <input
+          ref={addMapInputRef}
+          type="file"
+          tabIndex={-1}
+          aria-hidden="true"
+          data-testid="home-add-map-input"
+          accept=".pdf,.geotiff,.tif,.tiff,.png,.jpg,.jpeg"
+          className="hidden"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            // Reset first: picking the same file twice must fire again.
+            event.target.value = "";
+            if (file) onAddMapFile(file);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

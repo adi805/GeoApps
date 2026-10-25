@@ -185,6 +185,12 @@ interface DesktopShellProps {
   layoutOptions: LayoutOptions;
   /** Auto-open the raster layer panel (file picker) once the map is ready. */
   autoOpenRaster?: boolean;
+  /**
+   * A map file the user already chose on "My Maps", imported as soon as the
+   * map controller is ready. Avenza's first run is "pick a map, then see it",
+   * so the picker happens on the home screen and the import happens here.
+   */
+  pendingImport?: File;
   projectUrlLoadState?: ProjectUrlLoadState;
   dataUrlLoadState?: DataUrlLoadState;
   mapAppAPI: ReturnType<typeof createAppAPI> | null;
@@ -196,6 +202,7 @@ interface DesktopShellProps {
 export function DesktopShell({
   layoutOptions,
   autoOpenRaster,
+  pendingImport,
   projectUrlLoadState,
   dataUrlLoadState,
   mapAppAPI,
@@ -381,13 +388,26 @@ export function DesktopShell({
   const handleMobileImportFile = useCallback(
     async (file: File) => {
       try {
+        setDropMessage(t("mobile.import.running", "Menambahkan {{name}}…", { name: file.name }));
         await addRasterToMap(createAppAPI(mapControllerRef), file, { name: file.name });
+        setDropMessage(t("mobile.import.done", "{{name}} ditambahkan", { name: file.name }));
+        clearDropMessageLater();
       } catch (error) {
         setDropError(error instanceof Error ? error.message : t("browser.addFileFailed"));
       }
     },
-    [setDropError, t],
+    [clearDropMessageLater, setDropError, setDropMessage, t],
   );
+  // The file chosen on "My Maps" is imported the moment the controller exists.
+  // Guarded by identity rather than by the effect's deps alone: `mapReadyGeneration`
+  // bumps on every basemap swap, and a second run would add the sheet twice.
+  const importedPendingRef = useRef<File | null>(null);
+  useEffect(() => {
+    if (!pendingImport || mapReadyGeneration === 0) return;
+    if (importedPendingRef.current === pendingImport) return;
+    importedPendingRef.current = pendingImport;
+    void handleMobileImportFile(pendingImport);
+  }, [pendingImport, mapReadyGeneration, handleMobileImportFile]);
   useUrlLoadErrorNotices(projectUrlLoadState?.error, dataUrlLoadState?.error);
   const mapAreaRef = useRef<HTMLElement>(null);
   useWebglContextLossNotice(mapAreaRef);
@@ -659,6 +679,7 @@ export function DesktopShell({
         // the same surface at the same place rather than a second one.
         onTakePhoto={() => openFieldTool("fieldCollection")}
         onStartTrack={() => openFieldTool("gpsTracking")}
+        onOpenGeofence={() => openFieldTool("geofence")}
         onSaveProject={projectFiles.handleSave}
         onOpenProject={() => void projectFiles.handleOpenFromFile()}
         onNewProject={openNewProjectDialog}
