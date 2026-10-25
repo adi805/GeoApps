@@ -10785,5 +10785,16 @@
     "updated": "Saved related record {{id}}.",
     "unchanged": "Nothing changed, so nothing was sent.",
     "deleted": "Deleted related record {{id}}."
+  },
+  "geofence": {
+    "title": "Geofence",
+    "none": "No boundaries yet",
+    "create": "Create geofence",
+    "createHint": "New boundary, not saved yet",
+    "alerts": "Alerts",
+    "alertCount": "{{count}} alerts recorded",
+    "exported": "Log exported to {{path}}",
+    "exportCancelled": "Export cancelled",
+    "exportFailed": "Export failed; no file was written"
   }
 }

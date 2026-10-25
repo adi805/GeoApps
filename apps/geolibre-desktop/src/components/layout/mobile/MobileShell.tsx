@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent, type ReactNode } from "react";
-import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save } from "lucide-react";
+import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldStatusReveal, FieldStatusStrip } from "./FieldStatusStrip";
 import { MobileSheet } from "./MobileSheet";
@@ -51,6 +51,8 @@ export interface MobileShellProps {
   onTakePhoto: () => void;
   /** Opens the existing GPS Tracking dialog. */
   onStartTrack: () => void;
+  /** Opens the geofence panel: boundaries, monitoring, and the alert journal. */
+  onOpenGeofence: () => void;
   onSaveProject: () => void;
   onOpenProject: () => void;
   onNewProject: () => void;
@@ -81,6 +83,7 @@ export function MobileShell({
   onDropPoint,
   onTakePhoto,
   onStartTrack,
+  onOpenGeofence,
   onSaveProject,
   onOpenProject,
   onNewProject,
@@ -155,6 +158,12 @@ export function MobileShell({
               label={t("mobile.action.startTrack", "Mulai jejak")}
               onClick={runAndClose(onStartTrack)}
               testId="mobile-action-start-track"
+            />
+            <SheetAction
+              icon={ShieldCheck}
+              label={t("mobile.action.geofence", "Geofence zona")}
+              onClick={runAndClose(onOpenGeofence)}
+              testId="mobile-action-geofence"
             />
             <SheetAction
               icon={Save}

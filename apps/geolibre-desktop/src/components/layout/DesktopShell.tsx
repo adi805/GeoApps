@@ -679,6 +679,7 @@ export function DesktopShell({
         // the same surface at the same place rather than a second one.
         onTakePhoto={() => openFieldTool("fieldCollection")}
         onStartTrack={() => openFieldTool("gpsTracking")}
+        onOpenGeofence={() => openFieldTool("geofence")}
         onSaveProject={projectFiles.handleSave}
         onOpenProject={() => void projectFiles.handleOpenFromFile()}
         onNewProject={openNewProjectDialog}
