@@ -57,7 +57,14 @@ export default function App() {
   // is not read on this path: a deep link names a URL, not an entry in the
   // recent list, and the loader reports its own outcome.
   const [screen, setScreen] = useState<
-    { kind: "home" } | { kind: "viewer"; project?: RecentProjectEntry; autoOpenRaster?: boolean }
+    | { kind: "home" }
+    | {
+        kind: "viewer";
+        project?: RecentProjectEntry;
+        autoOpenRaster?: boolean;
+        /** A map file chosen on the home screen, imported once the map is ready. */
+        pendingImport?: File;
+      }
   >(() => (hasExplicitLaunchPayload() ? { kind: "viewer" } : { kind: "home" }));
   const handleMapReady = useCallback((api: ReturnType<typeof createAppAPI>) => {
     setMapAppAPI((current) => current ?? api);
@@ -99,11 +106,22 @@ export default function App() {
             <HomeScreen
               onOpenProject={(entry) => setScreen({ kind: "viewer", project: entry })}
               onAddProject={() => setScreen({ kind: "viewer", project: { path: "add", name: "Tambah Peta", openedAt: new Date().toISOString() }, autoOpenRaster: true })}
+              // Avenza parity: the file the user picked on "My Maps" travels
+              // with the viewer mount, so the map they chose is the map they
+              // land on instead of an empty canvas plus a second prompt.
+              onAddMapFile={(file) =>
+                setScreen({
+                  kind: "viewer",
+                  project: { path: "add", name: file.name, openedAt: new Date().toISOString() },
+                  pendingImport: file,
+                })
+              }
             />
           ) : (
             <DesktopShell
               layoutOptions={layoutOptions}
               autoOpenRaster={screen.kind === "viewer" ? screen.autoOpenRaster : undefined}
+              pendingImport={screen.kind === "viewer" ? screen.pendingImport : undefined}
               projectUrlLoadState={projectUrlLoadState}
               dataUrlLoadState={dataUrlLoadState}
               mapAppAPI={mapAppAPI}
