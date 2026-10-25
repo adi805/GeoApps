@@ -9621,6 +9621,37 @@
       "statusBar": "Status bar"
     }
   },
+  "mobile": {
+    "navLabel": "Main navigation",
+    "sheet": {
+      "project": "Project and field"
+    },
+    "action": {
+      "commandPalette": "Search commands",
+      "importPdf": "Import PDF / GeoTIFF",
+      "dropPoint": "Drop a point here",
+      "takePhoto": "Take photo",
+      "startTrack": "Start track",
+      "geofence": "Geofence zones",
+      "saveProject": "Save project",
+      "openProject": "Open project",
+      "newProject": "New project",
+      "contrastOn": "Turn on high contrast",
+      "contrastOff": "Turn off high contrast"
+    },
+    "status": {
+      "online": "Connected",
+      "offline": "Offline",
+      "accuracy": "GPS accuracy",
+      "storage": "Free storage",
+      "show": "Show field status",
+      "hide": "Hide field status"
+    },
+    "import": {
+      "running": "Adding {{name}}…",
+      "done": "{{name}} added"
+    }
+  },
   "attributeStats": {
     "title": "Field statistics",
     "description": "Summary statistics for a field in \"{{layer}}\".",

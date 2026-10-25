@@ -11,6 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { type Command, filterCommands, formatShortcut, isMacPlatform } from "../../lib/commands";
 import { groupRankedCommands, paletteRows } from "../../lib/palette-rows";
+import { useIsMobileViewport } from "../../hooks/useIsMobileViewport";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -27,6 +28,10 @@ interface CommandPaletteProps {
 /** Estimated heights (px) before the virtualizer measures a row. */
 const GROUP_ROW_HEIGHT = 28;
 const COMMAND_ROW_HEIGHT = 32;
+
+/** The same rows, but sized for a thumb: anything tappable on a phone is >= 48 px. */
+const TOUCH_GROUP_ROW_HEIGHT = 32;
+const TOUCH_COMMAND_ROW_HEIGHT = 48;
 
 const NO_COMMANDS: Command[] = [];
 
@@ -49,6 +54,15 @@ export function CommandPalette({
   const [activeIndex, setActiveIndex] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
   const isMac = useMemo(() => isMacPlatform(), []);
+  /*
+   * The palette is one component used by both shells, so it sizes itself from
+   * the viewport instead of taking a prop the desktop shell would also have to
+   * pass. On a phone the rows grow to a 48 px target and the dialog almost
+   * fills the width.
+   */
+  const touchRows = useIsMobileViewport();
+  const groupRowHeight = touchRows ? TOUCH_GROUP_ROW_HEIGHT : GROUP_ROW_HEIGHT;
+  const commandRowHeight = touchRows ? TOUCH_COMMAND_ROW_HEIGHT : COMMAND_ROW_HEIGHT;
   const listboxId = "command-palette-listbox";
   const optionId = (command: Command) => `command-option-${command.id}`;
 
@@ -66,7 +80,7 @@ export function CommandPalette({
   const virtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => listRef.current,
-    estimateSize: (index) => (rows[index].kind === "group" ? GROUP_ROW_HEIGHT : COMMAND_ROW_HEIGHT),
+    estimateSize: (index) => (rows[index].kind === "group" ? groupRowHeight : commandRowHeight),
     getItemKey: (index) => {
       const row = rows[index];
       return row.kind === "group" ? `group:${row.index}` : row.command.id;
@@ -139,7 +153,7 @@ export function CommandPalette({
       <DialogContent
         aria-describedby={undefined}
         bodyClassName="p-0 gap-0"
-        className="top-[15%] max-w-xl translate-y-0"
+        className={`top-[15%] translate-y-0 ${touchRows ? "max-w-[calc(100vw-1.5rem)]" : "max-w-xl"}`}
       >
         <DialogTitle className="sr-only">{t("commandPalette.title")}</DialogTitle>
         <div className="flex items-center gap-2 border-b px-3 pe-10">
@@ -153,7 +167,7 @@ export function CommandPalette({
             aria-activedescendant={
               activeCommand && activeMounted ? optionId(activeCommand) : undefined
             }
-            className="h-11 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            className={`w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground ${touchRows ? "h-12" : "h-11"}`}
             placeholder={t("commandPalette.searchPlaceholder")}
             value={query}
             onChange={(event) => {
@@ -198,6 +212,7 @@ export function CommandPalette({
                         isMac={isMac}
                         onHover={() => setActiveIndex(row.index)}
                         onRun={() => runCommand(row.command)}
+                        touch={touchRows}
                       />
                     )}
                   </div>
@@ -218,10 +233,12 @@ interface CommandRowProps {
   isMac: boolean;
   onHover: () => void;
   onRun: () => void;
+  /** Phone layout: taller row, bigger icon, wider hit area. */
+  touch: boolean;
 }
 
 /** One selectable palette option. */
-function CommandRow({ command, id, active, isMac, onHover, onRun }: CommandRowProps) {
+function CommandRow({ command, id, active, isMac, onHover, onRun, touch }: CommandRowProps) {
   const Icon = command.icon;
   return (
     <button
@@ -231,13 +248,19 @@ function CommandRow({ command, id, active, isMac, onHover, onRun }: CommandRowPr
       aria-selected={active}
       aria-disabled={Boolean(command.disabledReason)}
       data-active={active}
-      className={`flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-start text-sm ${
-        active ? "bg-accent text-accent-foreground" : "text-foreground"
-      } ${command.disabledReason ? "opacity-50" : ""}`}
+      className={`flex w-full items-center gap-2 rounded-sm text-start text-sm ${
+        touch ? "min-h-12 px-3 py-2" : "px-2 py-1.5"
+      } ${active ? "bg-accent text-accent-foreground" : "text-foreground"} ${
+        command.disabledReason ? "opacity-50" : ""
+      }`}
       onMouseMove={onHover}
       onClick={onRun}
     >
-      {Icon ? <Icon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" /> : null}
+      {Icon ? (
+        <Icon
+          className={`shrink-0 text-muted-foreground ${touch ? "h-5 w-5" : "h-3.5 w-3.5"}`}
+        />
+      ) : null}
       <span className="min-w-0 flex-1 truncate">{command.title}</span>
       {command.disabledReason ? (
         <span className="text-xs text-muted-foreground">{command.disabledReason}</span>

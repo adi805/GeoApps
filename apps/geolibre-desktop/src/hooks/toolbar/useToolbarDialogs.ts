@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { onSpaceborneLidarGranuleRequest } from "../../lib/spaceborne-lidar-handoff";
 import {
+  onCommandPaletteRequest,
   onFieldToolRequest,
   onNewProjectRequest,
   type FieldToolId,
@@ -62,6 +63,9 @@ export function useToolbarDialogs() {
   // Same route for the New Project dialog, which the mobile project sheet also
   // needs but which lives here with the other toolbar-owned dialogs.
   useEffect(() => onNewProjectRequest(() => setNewProjectDialogOpen(true)), []);
+  // And the command palette, whose only other entry point is a keyboard
+  // shortcut and a toolbar menu, neither of which a phone has.
+  useEffect(() => onCommandPaletteRequest(() => setCommandPaletteOpen(true)), []);
   // AboutDialog runs one update check per increment, and only while open, so
   // every increment must come with opening it.
   const [checkForUpdatesRequest, setCheckForUpdatesRequest] = useState(0);
