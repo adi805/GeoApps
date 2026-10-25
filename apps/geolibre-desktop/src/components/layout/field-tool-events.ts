@@ -84,3 +84,35 @@ export function onFieldToolRequest(onRequest: (tool: FieldToolId) => void): () =
   window.addEventListener(OPEN_FIELD_TOOL_EVENT, listener);
   return () => window.removeEventListener(OPEN_FIELD_TOOL_EVENT, listener);
 }
+
+/** Window event letting any surface open the command palette. */
+export const OPEN_COMMAND_PALETTE_EVENT = "geolibre:open-command-palette";
+
+/**
+ * Ask the shell to open the command palette.
+ *
+ * A phone has no Cmd/Ctrl-K and the menu that opens the palette lives in the
+ * desktop toolbar, so the mobile project sheet asks for it over an event like
+ * the field tools above. The palette's open state stays in
+ * `useToolbarDialogs`: one owner, two ways in. A no-op outside the browser,
+ * matching {@link openFieldTool}.
+ */
+export function openCommandPalette(): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent(OPEN_COMMAND_PALETTE_EVENT));
+}
+
+/**
+ * Subscribe to command-palette requests.
+ *
+ * Args:
+ *   onRequest: Called when the palette is requested.
+ *
+ * Returns:
+ *   An unsubscribe function.
+ */
+export function onCommandPaletteRequest(onRequest: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(OPEN_COMMAND_PALETTE_EVENT, onRequest);
+  return () => window.removeEventListener(OPEN_COMMAND_PALETTE_EVENT, onRequest);
+}
