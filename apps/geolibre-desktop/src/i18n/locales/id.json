@@ -9373,6 +9373,37 @@
       "obiaWorkbench": "Analisis Berbasis Objek"
     }
   },
+  "mobile": {
+    "navLabel": "Navigasi utama",
+    "sheet": {
+      "project": "Proyek dan lapangan"
+    },
+    "action": {
+      "commandPalette": "Cari perintah",
+      "importPdf": "Impor PDF / GeoTIFF",
+      "dropPoint": "Taruh titik di sini",
+      "takePhoto": "Ambil foto",
+      "startTrack": "Mulai jejak",
+      "geofence": "Zona geofence",
+      "saveProject": "Simpan proyek",
+      "openProject": "Buka proyek",
+      "newProject": "Proyek baru",
+      "contrastOn": "Nyalakan kontras tinggi",
+      "contrastOff": "Matikan kontras tinggi"
+    },
+    "status": {
+      "online": "Tersambung",
+      "offline": "Offline",
+      "accuracy": "Akurasi GPS",
+      "storage": "Sisa penyimpanan",
+      "show": "Tampilkan status lapangan",
+      "hide": "Sembunyikan status lapangan"
+    },
+    "import": {
+      "running": "Menambahkan {{name}}…",
+      "done": "{{name}} ditambahkan"
+    }
+  },
   "attributeStats": {
     "title": "Statistik bidang",
     "description": "Statistik ringkasan untuk sebuah bidang di \"{{layer}}\".",
