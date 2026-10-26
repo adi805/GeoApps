@@ -35,7 +35,7 @@ jobs:
     name: Gate bisa menolak (uji mandiri)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Versi Python
         run: python3 --version
       - name: Uji mandiri gate factory
@@ -45,7 +45,7 @@ jobs:
     name: Gate pada pohon ini
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
