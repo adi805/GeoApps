@@ -18,7 +18,7 @@ describe("offerAppUpdate", () => {
 
     offerAppUpdate({
       showInfo: (message, options) => shown.push({ message, options }),
-      message: "A new version of GeoLibre is available.",
+      message: "A new version of GeoApps is available.",
       reloadLabel: "Reload",
       reload: () => {
         reloads += 1;
@@ -26,7 +26,7 @@ describe("offerAppUpdate", () => {
     });
 
     assert.equal(shown.length, 1);
-    assert.equal(shown[0].message, "A new version of GeoLibre is available.");
+    assert.equal(shown[0].message, "A new version of GeoApps is available.");
     // The reload is the user's call, so the notice must not time out on its own.
     assert.equal(shown[0].options?.durationMs, null);
     assert.equal(shown[0].options?.dedupeKey, APP_UPDATE_DEDUPE_KEY);

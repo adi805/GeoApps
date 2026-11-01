@@ -1,11 +1,11 @@
 {
   "mcpPreview": {
     "networkConsent": {
-      "previewLabel": "GeoLibre 地图预览",
+      "previewLabel": "GeoApps 地图预览",
       "title": "允许地图连接？",
       "description": "连接前请检查此地图所需的外部服务器。",
       "servers_other": "{{count}} 个服务器",
-      "privacy": "请求来自您的 GeoLibre Python 服务器。这些服务器会看到该计算机的 IP 地址，它可能与您浏览器的 IP 地址不同。",
+      "privacy": "请求来自您的 GeoApps Python 服务器。这些服务器会看到该计算机的 IP 地址，它可能与您浏览器的 IP 地址不同。",
       "scope": "仅限公共服务器。批准仅适用于此预览。",
       "allowed": "已允许",
       "blocked": "已阻止",
@@ -20,9 +20,9 @@
     "summary": "{{count}} 个图层 · 缩放级别 {{zoom}}",
     "restore": "恢复",
     "discard": "放弃",
-    "restoreError": "无法恢复此快照。它可能已损坏，或与当前 GeoLibre 版本不兼容。",
+    "restoreError": "无法恢复此快照。它可能已损坏，或与当前 GeoApps 版本不兼容。",
     "recoveryTitle": "恢复未保存的工作？",
-    "recoveryDescription": "GeoLibre 未正常关闭。有一份更新的“{{name}}”自动保存可用。",
+    "recoveryDescription": "GeoApps 未正常关闭。有一份更新的“{{name}}”自动保存可用。",
     "autosavePaused": "自动保存已暂停：此项目超过 {{limit}} MB，因此不再保留新的快照。请将其保存到磁盘以保留您的工作。",
     "diff": {
       "compare": "比较",
@@ -102,7 +102,7 @@
     "forgetMssqlConnection": "忘记 SQL Server 连接“{{name}}”",
     "forgetPostgresConnection": "忘记 PostgreSQL 连接“{{name}}”",
     "forgetPostgresConnectionFailed": "无法忘记该 PostgreSQL 连接，因为已保存连接的存储不可用。未移除任何内容。",
-    "forgetPostgresCredentialFailed": "PostgreSQL 连接已移除，但系统钥匙串未删除其已保存的凭据。GeoLibre 将在下次启动时重试。",
+    "forgetPostgresCredentialFailed": "PostgreSQL 连接已移除，但系统钥匙串未删除其已保存的凭据。GeoApps 将在下次启动时重试。",
     "loadingFolder": "正在加载…",
     "loadingSublayers": "正在加载子图层…",
     "allSublayers": "所有图层",
@@ -121,14 +121,14 @@
     "libraryImportFailed": "无法读取此图层库文件。",
     "libraryExportFailed": "无法导出图层库。",
     "libraryLayerMissing": "该已保存的图层已不存在。",
-    "libraryLayerNeedsDesktop": "此已保存图层需要从磁盘读取文件，因此需要 GeoLibre Desktop。请重新添加该文件以保存新条目。",
+    "libraryLayerNeedsDesktop": "此已保存图层需要从磁盘读取文件，因此需要 GeoApps Desktop。请重新添加该文件以保存新条目。",
     "libraryLayerConfigNotApplied": "已添加“{{name}}”的文件，但其保存的样式无法匹配到单个图层，因此未重新应用。",
     "libraryLayerJoinsUnresolved_other": "图层已添加，但有 {{count}} 个已保存的连接无法重新应用：它们所连接的图层不在此项目中。"
   },
   "about": {
     "trigger": "关于",
-    "title": "关于 GeoLibre",
-    "description": "GeoLibre 是一款轻量级的云原生 GIS 平台。",
+    "title": "关于 GeoApps",
+    "description": "GeoApps 是一款轻量级的云原生 GIS 平台。",
     "version": "版本",
     "checkForUpdates": "检查更新",
     "tryAgain": "重试",
@@ -147,7 +147,7 @@
     "steps": {
       "download": "从下载页面下载适用于您平台的安装程序。",
       "install": "运行安装程序。您的本地项目、设置和 API 密钥将被保留。",
-      "reopen": "重新打开 GeoLibre 以完成更新。"
+      "reopen": "重新打开 GeoApps 以完成更新。"
     },
     "severity": {
       "major": "主要版本",
@@ -166,7 +166,7 @@
       "noTag": "最新发行版未包含版本标签。",
       "network": "无法连接到 GitHub。请检查您的网络连接并重试。",
       "viewDownloads": "查看下载页面",
-      "viewDownloadsHint": "在浏览器中打开 GeoLibre 下载页面，以便手动检查最新版本。"
+      "viewDownloadsHint": "在浏览器中打开 GeoApps 下载页面，以便手动检查最新版本。"
     },
     "startup": {
       "title": "有可用更新",
@@ -179,7 +179,7 @@
     }
   },
   "masBuild": {
-    "unavailable": "此功能在 Mac App Store 版本的 GeoLibre Desktop 中不可用。"
+    "unavailable": "此功能在 Mac App Store 版本的 GeoApps Desktop 中不可用。"
   },
   "bookmark": {
     "captureStateLabel": "包含完整图层状态（激活、未激活及图层顺序）",
@@ -196,13 +196,13 @@
     "trust": {
       "title": "是否加载此项目中的插件？",
       "description_other": "此项目希望从您尚未安装的 URL 加载 {{count}} 个外部插件。插件运行的代码可完全访问本应用。",
-      "warning": "请仅加载来自可信来源的插件。已加载的插件将以与 GeoLibre 本身相同的权限运行。",
+      "warning": "请仅加载来自可信来源的插件。已加载的插件将以与 GeoApps 本身相同的权限运行。",
       "trustButton": "信任并加载",
       "dismissButton": "不加载"
     },
     "registryTrust": {
       "title_other": "安装插件？",
-      "description_other": "此链接将打开官方 GeoLibre 插件注册表中 {{count}} 个尚未安装的插件。安装后会将其添加到您的插件中并激活。"
+      "description_other": "此链接将打开官方 GeoApps 插件注册表中 {{count}} 个尚未安装的插件。安装后会将其添加到您的插件中并激活。"
     },
     "title": "管理插件",
     "searchAria": "搜索插件",
@@ -219,7 +219,7 @@
     "openHomepageAria": "打开 {{name}} 的主页",
     "byAuthor": "作者：{{author}}",
     "updateAvailable": "有可用更新",
-    "requiresVersion": "需要 GeoLibre {{version}}+",
+    "requiresVersion": "需要 GeoApps {{version}}+",
     "install": "安装",
     "installAria": "安装 {{name}}",
     "removeConfirm": "移除？",
@@ -230,10 +230,10 @@
     "updateAria": "更新 {{name}}",
     "loading": "加载中…",
     "installed": "已安装",
-    "settingsIntro": "GeoLibre 始终会扫描其应用数据中的插件目录。可从文件安装打包好的插件（.zip），或添加额外的本地目录（仅桌面版）。清单 URL（包括市场安装）通过网络加载；此处的更改立即生效。",
+    "settingsIntro": "GeoApps 始终会扫描其应用数据中的插件目录。可从文件安装打包好的插件（.zip），或添加额外的本地目录（仅桌面版）。清单 URL（包括市场安装）通过网络加载；此处的更改立即生效。",
     "installFromFile": "从文件安装",
     "chooseZip": "选择 .zip…",
-    "installFromFileHintDesktop": "将打包好的插件归档复制到 GeoLibre 的插件目录。",
+    "installFromFileHintDesktop": "将打包好的插件归档复制到 GeoApps 的插件目录。",
     "installFromFileHintWeb": "加载打包好的插件归档；它将保存在您的浏览器中，并在下次访问时重新加载。",
     "localDirectories": "本地目录",
     "directoryAria": "插件目录",
@@ -248,7 +248,7 @@
     "errorDirectoryPicker": "无法打开目录选择器。",
     "errorInstall": "无法安装该插件。",
     "errorUninstall": "无法卸载该插件。",
-    "description": "浏览、安装、更新和移除外部 GeoLibre 插件。插件列于 <registryLink>GeoLibre 插件注册表</registryLink>。",
+    "description": "浏览、安装、更新和移除外部 GeoApps 插件。插件列于 <registryLink>GeoApps 插件注册表</registryLink>。",
     "policySideloadDisabled": "部署策略已禁用插件侧载。",
     "policyBlocked": "插件“{{pluginId}}”已被部署策略阻止。",
     "policyBlocklisted": "插件“{{pluginId}}”已被插件注册表阻止：{{reason}}",
@@ -357,7 +357,7 @@
     "add": "添加",
     "ok": "确定",
     "done": "完成",
-    "openWebApp": "打开 GeoLibre 网页应用"
+    "openWebApp": "打开 GeoApps 网页应用"
   },
   "addData": {
     "title": "添加数据",
@@ -416,7 +416,7 @@
       },
       "gdb": {
         "label": "添加文件地理数据库图层",
-        "description": "从 Esri 文件地理数据库（.gdb 文件夹）添加图层。图层通过本地 GeoLibre 服务器读取并重投影至 WGS84。"
+        "description": "从 Esri 文件地理数据库（.gdb 文件夹）添加图层。图层通过本地 GeoApps 服务器读取并重投影至 WGS84。"
       },
       "photos": {
         "label": "添加带地理标记的照片",
@@ -734,7 +734,7 @@
       "signInErrorTimeout": "登录超时。请重试。",
       "signInErrorExpired": "ArcGIS 会话已过期。请重新登录。",
       "signInErrorNetwork": "无法连接到 ArcGIS 门户。请检查连接，然后重试。",
-      "signInErrorRestart": "GeoLibre 仍在启动中。请稍后重新登录。",
+      "signInErrorRestart": "GeoApps 仍在启动中。请稍后重新登录。",
       "cancelSignIn": "取消",
       "rasterFunction": "栅格函数",
       "serviceDefaultRasterFunction": "服务默认",
@@ -772,7 +772,7 @@
       "errorUrl": "请输入 LandXML URL。",
       "errorTooLarge": "远程 LandXML 文件超过了 100 MB 的下载上限。",
       "errorSelectType": "请至少选择一种 LandXML 对象类型。",
-      "errorMissingCrs": "此 LandXML 文件使用投影坐标。请输入其源坐标参考系，以便 GeoLibre 将其重投影到 WGS84。",
+      "errorMissingCrs": "此 LandXML 文件使用投影坐标。请输入其源坐标参考系，以便 GeoApps 将其重投影到 WGS84。",
       "errorGeographicCrsBounds": "坐标超出了地理经纬度范围。请选择此 LandXML 文件所用的投影源坐标参考系。",
       "summary": "{{surfaces}} 个曲面、{{alignments}} 条线形、{{profiles}} 个纵断面、{{points}} 个测量点",
       "objectTypes": "对象类型",
@@ -848,8 +848,8 @@
       "layerPlaceholder": "请先选择地理数据库",
       "readingLayers": "正在读取图层...",
       "layerOption": "{{name}}（{{type}}，{{count}} 个要素）",
-      "help": "仅含属性的表不会列出。所选要素类通过本地 GeoLibre 服务器加载并重投影至 WGS84。",
-      "desktopOnly": "文件地理数据库图层仅在 GeoLibre 桌面版中可用。此功能需要通过本地 GeoLibre 服务器读取本地 .gdb 文件夹，而网页应用无法访问。",
+      "help": "仅含属性的表不会列出。所选要素类通过本地 GeoApps 服务器加载并重投影至 WGS84。",
+      "desktopOnly": "文件地理数据库图层仅在 GeoApps 桌面版中可用。此功能需要通过本地 GeoApps 服务器读取本地 .gdb 文件夹，而网页应用无法访问。",
       "readError": "无法读取此文件地理数据库。",
       "convertError": "无法加载此要素类。",
       "errorNotGdb": "请选择以 .gdb 结尾的文件夹（Esri 文件地理数据库）。",
@@ -934,12 +934,12 @@
     },
     "mssql": {
       "defaultName": "SQL Server 图层",
-      "errorDesktopOnly": "SQL Server 图层需要 GeoLibre 桌面版。",
+      "errorDesktopOnly": "SQL Server 图层需要 GeoApps 桌面版。",
       "errorConnect": "无法连接到 SQL Server。",
       "errorPort": "请输入有效的 SQL Server 端口 (1–65535)。",
       "errorConnectFirst": "请先连接到 SQL Server。",
       "errorSelectTable": "请选择要加载的空间表。",
-      "desktopOnlyNotice": "SQL Server 图层仅在 GeoLibre 桌面版中可用。",
+      "desktopOnlyNotice": "SQL Server 图层仅在 GeoApps 桌面版中可用。",
       "savedConnection": "已保存的连接",
       "selectSavedConnection": "新建连接",
       "forgetConnection": "忘记已保存的连接",
@@ -995,7 +995,7 @@
     "postgres": {
       "defaultName": "PostgreSQL 图层",
       "forgetConnectionConfirm": "要忘记已保存的 PostgreSQL 连接 {{name}} 吗？其已保存的凭据也将从此设备中移除。",
-      "errorDesktopOnly": "PostgreSQL 图层需要使用 GeoLibre 桌面版。",
+      "errorDesktopOnly": "PostgreSQL 图层需要使用 GeoApps 桌面版。",
       "errorConnectionString": "请输入 PostgreSQL 连接字符串。",
       "statusCheckingBinary": "正在检查 Martin 可执行文件...",
       "statusDownloaded": "Martin 已下载完成。正在启动本地服务器...",
@@ -1009,7 +1009,7 @@
       "errorConnectFirst": "请先连接到 PostgreSQL。",
       "errorNoVectorLayers": "所选的 Martin 数据源没有矢量图层。",
       "errorSelectSource": "请选择要添加的 Martin 数据源。",
-      "desktopOnlyNotice": "PostgreSQL 图层仅在 GeoLibre 桌面版中可用。此功能需要运行本地 Martin 瓦片服务器，而网页版和移动版应用无法启动它。",
+      "desktopOnlyNotice": "PostgreSQL 图层仅在 GeoApps 桌面版中可用。此功能需要运行本地 Martin 瓦片服务器，而网页版和移动版应用无法启动它。",
       "savedConnection": "已保存的连接",
       "selectSavedConnection": "选择已保存的连接",
       "connectionString": "PostgreSQL 连接字符串",
@@ -1392,7 +1392,7 @@
         "empty": "没有可用的匹配覆盖数据。",
         "format": "覆盖数据未声明支持 GeoTIFF 输出。",
         "size": "请选择 1 到 4096 像素的尺寸。下载大小限制为 128 MB。",
-        "metadata": "服务返回的元数据超出 GeoLibre 可加载的大小。元数据响应限制为 32 MB。",
+        "metadata": "服务返回的元数据超出 GeoApps 可加载的大小。元数据响应限制为 32 MB。",
         "response": "服务未返回有效的 GeoTIFF。",
         "bounds": "请输入有效的边界框：东西经度在 -180 到 180 之间，南北纬度在 -90 到 90 之间，且西 < 东、南 < 北。",
         "url": "请输入 WCS 服务 URL。"
@@ -1668,7 +1668,7 @@
     "nmeaConnectFailed": "无法连接到接收机。",
     "nmeaDisconnected": "接收机已断开连接。",
     "nmeaUnsupportedDevice": "在该设备上未找到 NMEA 服务。它可能是经典蓝牙接收机，需要先在系统设置中配对，然后在此处作为串口连接。",
-    "nmeaUnsupported": "读取 NMEA 接收机需要 Web Serial 或 Web Bluetooth API，而此浏览器不提供这些接口。请在 Chrome 或 Edge 等 Chromium 浏览器中打开 GeoLibre。",
+    "nmeaUnsupported": "读取 NMEA 接收机需要 Web Serial 或 Web Bluetooth API，而此浏览器不提供这些接口。请在 Chrome 或 Edge 等 Chromium 浏览器中打开 GeoApps。",
     "nmeaSerialUnsupported": "此处无法使用 Web Serial，因此无法打开串口接收机。",
     "nmeaBluetoothUnsupported": "此处无法使用 Web Bluetooth，因此无法打开低功耗蓝牙接收机。",
     "nmeaBluetoothHint": "大多数蓝牙 GPS 接收机使用经典蓝牙：在系统设置中配对后，它会在此处显示为串口。仅在使用低功耗蓝牙接收机时才使用“连接蓝牙”。",
@@ -1802,7 +1802,7 @@
     "step1Title": "1. 获取 API 令牌",
     "step1Description": "登录 {{shareHost}}，然后在“设置 → API 令牌”下创建一个令牌。",
     "getToken": "获取 API 令牌",
-    "step2Title": "2. 将令牌添加到 GeoLibre",
+    "step2Title": "2. 将令牌添加到 GeoApps",
     "step2Description": "将令牌粘贴到本设备上的“设置 → 环境变量”中。",
     "configureToken": "配置本地令牌",
     "oauthTitle": "使用您的账户登录",
@@ -1816,13 +1816,13 @@
     "oauthFailed": "登录失败。请重试。",
     "oauthRefreshFailed": "无法刷新您的会话。请检查您的网络连接，然后重试。",
     "oauthSetupFailed": "无法启动桌面登录。请重启应用，并确认已安装的应用可以打开链接并访问共享服务器。粘贴的 API 令牌仍然可用。",
-    "oauthRestartSignIn": "此登录链接是在 GeoLibre 重启后打开的。请在此处重新开始登录；之前的授权码无法使用。",
+    "oauthRestartSignIn": "此登录链接是在 GeoApps 重启后打开的。请在此处重新开始登录；之前的授权码无法使用。",
     "reauthBody": "您的 {{shareHost}} 会话已过期。请重新登录以继续共享。",
     "errorUnauthorized": "您的 {{shareHost}} API 令牌无效或已过期。请在设置中更新它。",
     "reauthSignIn": "重新登录",
     "liveAt": "您的项目已发布在：",
     "credentialsRemoved": "未包含 {{count}} 个凭据字段。接收者需要提供自己的凭据或使用代理引用。",
-    "oauthSignOutIncomplete": "您已退出登录，但无法从系统钥匙串中移除已保存的登录信息，因此下次启动 GeoLibre 时可能会被恢复。请检查钥匙串是否可用，然后重新登录并再次退出登录。",
+    "oauthSignOutIncomplete": "您已退出登录，但无法从系统钥匙串中移除已保存的登录信息，因此下次启动 GeoApps 时可能会被恢复。请检查钥匙串是否可用，然后重新登录并再次退出登录。",
     "copyLink": "复制链接",
     "open": "打开",
     "done": "完成",
@@ -1909,7 +1909,7 @@
   },
   "gallery": {
     "title": "项目图库",
-    "description": "浏览在 {{shareHost}} 上共享的公开项目，并在 GeoLibre 中打开其中一个。",
+    "description": "浏览在 {{shareHost}} 上共享的公开项目，并在 GeoApps 中打开其中一个。",
     "searchPlaceholder": "按标题、作者或标签筛选已加载的项目",
     "loading": "正在加载项目…",
     "loadingMore": "正在加载更多…",
@@ -2039,7 +2039,7 @@
       "groupNavigation": "将指北针与比例尺编组",
       "footer": "页脚文本",
       "date": "日期",
-      "attribution": "包含 GeoLibre 归属信息",
+      "attribution": "包含 GeoApps 归属信息",
       "pageBorder": "页面边框",
       "infoBlock": "信息块（标题栏）",
       "colorbar": "色带",
@@ -2337,9 +2337,9 @@
   },
   "auth": {
     "unavailableTitle": "登录不可用",
-    "unavailableDescription": "GeoLibre 无法访问登录服务，因此无法判断您是否已登录。这通常是暂时的；如果持续出现，可能需要检查此部署的身份验证设置。",
+    "unavailableDescription": "GeoApps 无法访问登录服务，因此无法判断您是否已登录。这通常是暂时的；如果持续出现，可能需要检查此部署的身份验证设置。",
     "retry": "重试",
-    "signInTitle": "登录 GeoLibre",
+    "signInTitle": "登录 GeoApps",
     "signInDescription": "此部署需要账户。系统会将您带到安全的登录页面，然后返回此处。",
     "signIn": "登录",
     "signOut": "退出登录",
@@ -2648,7 +2648,7 @@
     "noticeDesc": "打开知识卡片会将您点击地点的坐标（以及您打开的附近条目标题）发送到维基百科公共 API 以获取摘要和照片 — 您的坐标会离开您的设备用于这些请求。"
   },
   "onboarding": {
-    "title": "欢迎使用 GeoLibre",
+    "title": "欢迎使用 GeoApps",
     "description": "选择您的经验水平以定制界面。您可以随时在“设置 → 界面”中更改此设置。",
     "level": {
       "beginner": {
@@ -2661,24 +2661,24 @@
       },
       "advanced": {
         "title": "高级",
-        "description": "显示 GeoLibre 提供的所有功能。"
+        "description": "显示 GeoApps 提供的所有功能。"
       }
     },
     "showEverything": "跳过 — 显示全部内容"
   },
   "startup": {
     "keychainWaitTitle": "正在等待系统钥匙串…",
-    "keychainWaitDetail": "GeoLibre 正在加载您已保存的凭据。如果系统要求输入密码以解锁钥匙串，请响应该提示以继续。该提示可能位于此窗口后面。"
+    "keychainWaitDetail": "GeoApps 正在加载您已保存的凭据。如果系统要求输入密码以解锁钥匙串，请响应该提示以继续。该提示可能位于此窗口后面。"
   },
   "settings": {
     "title": "设置",
     "description": "配置项目首选项和运行时设置。",
     "saveButton": "保存设置",
     "credentials": {
-      "keychain": "您在 GeoLibre 中保存的令牌和 API 密钥存储在系统钥匙串中。",
+      "keychain": "您在 GeoApps 中保存的令牌和 API 密钥存储在系统钥匙串中。",
       "projectKeychainUnavailable": "系统钥匙串中的项目凭据存储不可用。新的项目密钥仅保留在本次会话中；保存本地项目时会询问是将其保留在文件中还是移除。",
       "browser": "您在此处保存的令牌和 API 密钥存储在此浏览器的本地存储中，在此站点上运行的脚本可以读取它们。",
-      "unavailable": "无法使用您的系统钥匙串（{{error}}）。新凭据仅保留到 GeoLibre 关闭为止；之前保存的凭据可能会保留在浏览器存储中，直到迁移成功。"
+      "unavailable": "无法使用您的系统钥匙串（{{error}}）。新凭据仅保留到 GeoApps 关闭为止；之前保存的凭据可能会保留在浏览器存储中，直到迁移成功。"
     },
     "section": {
       "language": "语言",
@@ -2722,11 +2722,11 @@
         "role": "代入角色",
         "other": "其他"
       },
-      "environmentHelp": "使用启动 GeoLibre 时环境中的 AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY 和 AWS_SESSION_TOKEN。",
-      "instanceHelp": "使用运行 GeoLibre 的计算机的 IAM 角色：Web 身份令牌（EKS IRSA）、ECS 或 EKS 容器凭据，或 EC2 实例配置文件。",
+      "environmentHelp": "使用启动 GeoApps 时环境中的 AWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEY 和 AWS_SESSION_TOKEN。",
+      "instanceHelp": "使用运行 GeoApps 的计算机的 IAM 角色：Web 身份令牌（EKS IRSA）、ECS 或 EKS 容器凭据，或 EC2 实例配置文件。",
       "roleArn": "要代入的角色",
       "externalId": "外部 ID",
-      "roleHelp": "可选。GeoLibre 使用上述凭据调用 AWS STS AssumeRole，并以此角色读取存储桶，例如跨账户只读角色。",
+      "roleHelp": "可选。GeoApps 使用上述凭据调用 AWS STS AssumeRole，并以此角色读取存储桶，例如跨账户只读角色。",
       "accessKeyId": "访问密钥 ID",
       "secretAccessKey": "秘密访问密钥",
       "sessionToken": "会话令牌",
@@ -2769,7 +2769,7 @@
     },
     "languagePack": {
       "title": "语言包",
-      "description": "按需添加 Whitebox 工具名称、参数和帮助文本翻译，而不会增大每个 GeoLibre 安装包。",
+      "description": "按需添加 Whitebox 工具名称、参数和帮助文本翻译，而不会增大每个 GeoApps 安装包。",
       "manage": "管理语言包",
       "interfaceLanguage": "界面语言",
       "installed": "已安装 Whitebox 语言包",
@@ -2791,10 +2791,10 @@
       "privacyLocalOnly": "语言包仅存储在此设备上。此版本不会下载任何内容：请改为导入语言包文件。",
       "browse": "浏览语言包",
       "errorInvalidJson": "该文件不是有效的 JSON。",
-      "errorInvalidFormat": "该文件不是有效的 GeoLibre Whitebox 语言包。",
-      "errorUnsupportedVersion": "当前 GeoLibre 版本不支持此语言包版本。",
+      "errorInvalidFormat": "该文件不是有效的 GeoApps Whitebox 语言包。",
+      "errorUnsupportedVersion": "当前 GeoApps 版本不支持此语言包版本。",
       "errorInvalidLocale": "语言包的语言代码无效或与预期不符。",
-      "errorUnsupportedLocale": "GeoLibre 未包含此语言包所需的基础界面语言。",
+      "errorUnsupportedLocale": "GeoApps 未包含此语言包所需的基础界面语言。",
       "errorTooLarge": "语言包超过 5 MB 安全限制。",
       "errorNotFound": "此语言目前尚无官方 Whitebox 语言包。",
       "errorDownload": "无法下载语言包。请检查网络连接或导入本地文件。",
@@ -2802,9 +2802,9 @@
     },
     "updates": {
       "title": "软件更新",
-      "description": "控制 GeoLibre 桌面应用启动时如何检查新版本。",
+      "description": "控制 GeoApps 桌面应用启动时如何检查新版本。",
       "checkOnStartup": "启动时检查更新",
-      "checkOnStartupHint": "启用后，GeoLibre 每次启动时都会检查是否有新版本。若要实现完全离线的工作流程，请关闭此选项。",
+      "checkOnStartupHint": "启用后，GeoApps 每次启动时都会检查是否有新版本。若要实现完全离线的工作流程，请关闭此选项。",
       "notificationLevel": "通知我关于",
       "notificationLevelHint": "选择哪些类型的发行版会触发启动通知。",
       "level": {
@@ -2815,7 +2815,7 @@
     },
     "startup": {
       "title": "启动项目",
-      "description": "选择原生应用启动时 GeoLibre 打开的工作区。",
+      "description": "选择原生应用启动时 GeoApps 打开的工作区。",
       "mode": {
         "default": "打开默认工作区",
         "last": "重新打开上一个项目",
@@ -2830,7 +2830,7 @@
       "globeByDefault": "默认启用 3D 地球",
       "globeByDefaultHint": "在未提供启动项目或项目链接时，用于未命名的工作区。",
       "openS3Browser": "启动时打开 S3 浏览器",
-      "openS3BrowserHint": "每次启动 GeoLibre 时显示 S3 浏览器面板。打开项目时它会保持打开。",
+      "openS3BrowserHint": "每次启动 GeoApps 时显示 S3 浏览器面板。打开项目时它会保持打开。",
       "defaultView": "默认地图视图",
       "defaultViewHint": "为未命名的工作区设置中心点和缩放级别。",
       "longitude": "中心经度",
@@ -2838,14 +2838,14 @@
       "zoom": "缩放级别",
       "useCurrentView": "使用当前视图",
       "layerStyles": "默认图层样式",
-      "layerStylesHint": "选择一个图层样式文件（项目 → 导出 → 导出图层样式）。添加的图层若名称与文件中的某个样式匹配，将自动应用该样式。已打开项目中的图层保留其已保存的样式。GeoLibre 会保留该文件的副本，因此编辑文件后请重新选择。",
+      "layerStylesHint": "选择一个图层样式文件（项目 → 导出 → 导出图层样式）。添加的图层若名称与文件中的某个样式匹配，将自动应用该样式。已打开项目中的图层保留其已保存的样式。GeoApps 会保留该文件的副本，因此编辑文件后请重新选择。",
       "chooseLayerStyles": "选择文件",
       "clearLayerStyles": "清除",
       "noLayerStylesSelected": "未选择图层样式文件",
       "layerStylesSelected_other": "{{file}}（{{count}} 个样式）",
       "layerStylesSelectError": "无法读取所选的图层样式文件：{{message}}",
       "layers": "默认图层",
-      "layersHint": "选择一个图层文件（项目 → 导出 → 导出图层）。其中的图层会添加到每个新项目：即 GeoLibre 启动时打开的项目以及每次“文件 → 新建”。这些图层通过 URL 或文件路径引用数据，因此始终显示数据的当前内容。已打开的项目不会被更改。",
+      "layersHint": "选择一个图层文件（项目 → 导出 → 导出图层）。其中的图层会添加到每个新项目：即 GeoApps 启动时打开的项目以及每次“文件 → 新建”。这些图层通过 URL 或文件路径引用数据，因此始终显示数据的当前内容。已打开的项目不会被更改。",
       "chooseLayers": "选择文件",
       "clearLayers": "清除",
       "noLayersSelected": "未选择图层文件",
@@ -2854,7 +2854,7 @@
       "viewUnavailable": "当前地图视图不可用。",
       "selectError": "无法读取所选项目。",
       "restoring": "正在打开启动项目…",
-      "loadWarning": "启动项目不可用。GeoLibre 已改为打开默认工作区。"
+      "loadWarning": "启动项目不可用。GeoApps 已改为打开默认工作区。"
     },
     "map": {
       "constraintsTitle": "地图约束",
@@ -2961,21 +2961,21 @@
       "importUrl": "从 URL 导入",
       "loadUrl": "加载",
       "loadingUrl": "正在加载…",
-      "fileFilter": "GeoLibre 界面",
+      "fileFilter": "GeoApps 界面",
       "exportError": "无法导出界面设置：{{message}}",
       "importError": "无法导入界面文件：{{message}}",
       "imported": "界面设置已导入。"
     },
     "env": {
-      "oauthTitle": "Share.GeoLibre 账户",
+      "oauthTitle": "Share.GeoApps 账户",
       "oauthDescription": "使用您的 {{shareHost}} 账户登录，以共享项目并在图库中查看您自己的项目。",
       "oauthConnected": "已登录 {{shareHost}}。",
       "oauthSignIn": "登录",
       "oauthSigningIn": "正在登录…",
       "oauthSignOut": "退出登录",
       "oauthWebLifetime": "访问令牌保存在内存中；刷新会话仅限于此浏览器标签页。关闭标签页后需要重新登录。",
-      "oauthDesktopKeychain": "您的登录信息保存在系统钥匙串中，因此重启后 GeoLibre 仍保持登录状态，直到您退出登录。",
-      "oauthDesktopSessionOnly": "此登录信息无法保存到您的系统钥匙串中，因此仅在 GeoLibre 关闭前有效。",
+      "oauthDesktopKeychain": "您的登录信息保存在系统钥匙串中，因此重启后 GeoApps 仍保持登录状态，直到您退出登录。",
+      "oauthDesktopSessionOnly": "此登录信息无法保存到您的系统钥匙串中，因此仅在 GeoApps 关闭前有效。",
       "accountLoading": "正在加载您的账户…",
       "accountRetry": "重试",
       "accountIdentity": "账户：{{account}}",
@@ -3005,7 +3005,7 @@
       "sessionRevoke": "撤销",
       "sessionRevoking": "正在撤销…",
       "revokeSessionConfirm": "撤销会话“{{label}}”？该设备将退出登录。此操作无法撤消。",
-      "revokeCurrentConfirm": "撤销当前会话“{{label}}”？您将立即退出 GeoLibre。",
+      "revokeCurrentConfirm": "撤销当前会话“{{label}}”？您将立即退出 GeoApps。",
       "revokeTokenConfirm": "撤销个人 API 令牌“{{label}}”？使用它的脚本和 CI 将停止工作。此操作无法撤消。",
       "revokeSessionConfirmButton": "是，撤销",
       "sessionCreated": "创建时间：{{date}}",
@@ -3016,7 +3016,7 @@
       "revokeOthers": "撤销其他所有项",
       "revokeOthersConfirm": "撤销所有其他会话以及所有个人 API 令牌（包括脚本和 CI 使用的令牌）？只会保留当前项目会话。此操作无法撤消。",
       "revokeOthersConfirmButton": "是，撤销其他所有项",
-      "tokenTitle": "Share.GeoLibre API 令牌",
+      "tokenTitle": "Share.GeoApps API 令牌",
       "tokenDescription": "“项目 > 共享”使用此令牌将您的地图上传到 {{shareHost}}。请打开 <tokenLink>{{shareHost}}/settings</tokenLink>，在“设置 > API 令牌”下创建一个令牌，然后将其粘贴到下方字段中。",
       "tokenStorageNote": "仅存储在本设备上，并且仅发送到 {{shareHost}} 用于验证上传。在 Web 版本中，它与其他站点数据共用同一浏览器存储，因此如果您的设备遭到入侵，请在 {{shareHost}} 上撤销该令牌。",
       "tokenStorageNoteKeychain": "存储在您的系统钥匙串中，且仅发送给 {{shareHost}} 以验证上传。如果您的计算机遭到入侵，请在 {{shareHost}} 上撤销它。",
@@ -3093,7 +3093,7 @@
       "statusReady": "{{provider}} 已配置完成，可以使用。",
       "statusIncomplete": "请填写以下必填字段以启用 {{provider}}。",
       "secretsNote": "凭据保存在此设备本地，不在您共享的项目文件中，因此会在重启后保留。任何有权访问此设备的人都可以读取它们。",
-      "secretsNoteKeychain": "API 密钥和其他机密字段存储在系统钥匙串中，而不是您共享的项目文件中，因此重启后仍会保留。其他字段（如模型名称和 URL）保存在此设备上的 GeoLibre 设置中。",
+      "secretsNoteKeychain": "API 密钥和其他机密字段存储在系统钥匙串中，而不是您共享的项目文件中，因此重启后仍会保留。其他字段（如模型名称和 URL）保存在此设备上的 GeoApps 设置中。",
       "getCredentials": "在哪里获取 {{provider}} 凭据",
       "showValue": "显示 {{name}}",
       "hideValue": "隐藏 {{name}}",
@@ -3238,7 +3238,7 @@
         "notSet": "未设置",
         "getKey": "获取免费密钥",
         "saveFailed": "无法在此浏览器中保存该密钥。",
-        "saveFailedKeychain": "无法将密钥保存到系统钥匙串。该密钥在 GeoLibre 关闭前仍可使用。"
+        "saveFailedKeychain": "无法将密钥保存到系统钥匙串。该密钥在 GeoApps 关闭前仍可使用。"
       }
     }
   },
@@ -3396,7 +3396,7 @@
       "smartPaste": "粘贴坐标",
       "smartPasteInputLabel": "坐标字符串",
       "smartPastePlaceholder": "例如 51.5074, -0.1278 或 51°30'26\"N, 0°07'39\"W",
-      "smartPasteInfo": "以 DD、DMS 或 DDM 格式键入或粘贴完整的坐标字符串，然后运行“处理输入”。GeoLibre 会检测格式并填充下方的经度和纬度字段。请在前往目标位置前分别调整缩放、倾斜角和方位角。",
+      "smartPasteInfo": "以 DD、DMS 或 DDM 格式键入或粘贴完整的坐标字符串，然后运行“处理输入”。GeoApps 会检测格式并填充下方的经度和纬度字段。请在前往目标位置前分别调整缩放、倾斜角和方位角。",
       "smartPasteInfoLabel": "关于粘贴坐标",
       "smartPasteInvalid": "无法读取这些坐标。请以 DD、DMS 或 DDM 格式输入完整的经纬度，例如 51.5074, -0.1278。部分或不完整的字符串无法解析。",
       "processInput": "处理输入",
@@ -3544,8 +3544,8 @@
     },
     "conversion": {
       "vectorToVector": "矢量转矢量",
-      "zipInputBrowserError": "压缩的 Shapefile 只能在 GeoLibre 桌面应用中转换。在浏览器中，请选择解压后的 .shp 文件及其对应的 .dbf、.shx 和 .prj 文件。",
-      "browserOutputUnsupported": "在浏览器中，输出格式可以是 GeoJSON、CSV、GeoParquet、GeoPackage 或 Shapefile (.zip)。“.{{extension}}”输出需要使用 GeoLibre 桌面应用。",
+      "zipInputBrowserError": "压缩的 Shapefile 只能在 GeoApps 桌面应用中转换。在浏览器中，请选择解压后的 .shp 文件及其对应的 .dbf、.shx 和 .prj 文件。",
+      "browserOutputUnsupported": "在浏览器中，输出格式可以是 GeoJSON、CSV、GeoParquet、GeoPackage 或 Shapefile (.zip)。“.{{extension}}”输出需要使用 GeoApps 桌面应用。",
       "outputExtensionRequired": "请为输出文件名添加扩展名以选择格式。",
       "readingWithDuckDb": "正在使用 DuckDB-WASM 读取 {{name}}",
       "readFeatures": "已从 {{name}} 读取 {{features}} 个要素",
@@ -3559,7 +3559,7 @@
       "vectorToPmtiles": "矢量转 PMTiles",
       "rasterToCog": "栅格转 COG",
       "rasterToPmtiles": "栅格转 PMTiles",
-      "needsDesktop": "此转换需要 GeoLibre 桌面应用或运行中的 sidecar。",
+      "needsDesktop": "此转换需要 GeoApps 桌面应用或运行中的 sidecar。",
       "runsInBrowserDuckDb": "转换在浏览器中使用 DuckDB-WASM 运行。",
       "runsInBrowserWriters": "转换在浏览器中使用 DuckDB-WASM 和内置写入器运行。",
       "runsInBrowserWasm": "转换在浏览器中使用 geolibre-wasm 运行。无需 sidecar。",
@@ -3567,7 +3567,7 @@
       "rasterShape": "读取 {{width}}×{{height}} 栅格，{{bands}} 个波段",
       "wroteCog": "已写入带概览的分块 COG（{{compression}}）",
       "notAGeoTiff": "此文件不是可读的 GeoTIFF。在浏览器中，栅格转 COG 仅读取 GeoTIFF；其他格式需要桌面应用。",
-      "rasterTooLargeForBrowser": "在浏览器中，此操作会在 WebAssembly 中解码整个栅格，而 WebAssembly 的上限约为 4 GB，因此该文件放不下。请使用 GeoLibre 桌面应用进行转换，或先用 gdal_translate 或 rio-cogeo 构建 COG。",
+      "rasterTooLargeForBrowser": "在浏览器中，此操作会在 WebAssembly 中解码整个栅格，而 WebAssembly 的上限约为 4 GB，因此该文件放不下。请使用 GeoApps 桌面应用进行转换，或先用 gdal_translate 或 rio-cogeo 构建 COG。",
       "zoomRangeError": "缩放级别必须满足 0 ≤ 最小 ≤ 最大 ≤ {{max}}。",
       "colormap": "颜色映射",
       "resampling": "重采样",
@@ -3722,9 +3722,9 @@
       "outputFile": "输出文件",
       "noOutput": "暂无输出。",
       "errorConnect": "无法连接到 sidecar。",
-      "needsDesktopSidecar": "栅格工具需要 GeoLibre 桌面应用并运行 sidecar。",
+      "needsDesktopSidecar": "栅格工具需要 GeoApps 桌面应用并运行 sidecar。",
       "errorPoll": "无法查询作业状态。",
-      "errorStartSidecar": "无法启动 GeoLibre sidecar。",
+      "errorStartSidecar": "无法启动 GeoApps sidecar。",
       "errorStartTool": "无法启动栅格工具。"
     },
     "mapControl": {
@@ -3846,7 +3846,7 @@
       "terrain": "地形",
       "remoteSensing": "遥感",
       "projection": "投影",
-      "geolibre": "GeoLibre 工具箱",
+      "geolibre": "GeoApps 工具箱",
       "subGroupGeometry": "几何",
       "subGroupOverlay": "叠加",
       "subGroupJoin": "连接",
@@ -3932,12 +3932,12 @@
         "layer-type": "不支持 {{layerType}} 图层类型。",
         "missing-source": "该图层没有可读取的本地数据源。",
         "format": "不支持该图层的数据格式。",
-        "file-geodatabase": "项目中的文件地理数据库（.gdb）数据源不会被加载。请在 GeoLibre Desktop 中通过添加数据 → 文件地理数据库（GDB）添加。",
+        "file-geodatabase": "项目中的文件地理数据库（.gdb）数据源不会被加载。请在 GeoApps Desktop 中通过添加数据 → 文件地理数据库（GDB）添加。",
         "file-geodatabase-raster": "存储在文件地理数据库（.gdb）中的栅格数据集不受支持。请将栅格导出为 GeoTIFF，再作为栅格图层添加。",
         "network-path": "出于安全原因，不加载网络共享路径。",
         "service": "暂不支持项目中的 ArcGIS 服务图层。",
-        "browser-local-file": "已引用该本地文件，但浏览器无法重新打开 ArcGIS Pro 数据路径。请使用 GeoLibre Desktop 加载。",
-        "map-extent": "保存的地图范围使用了 GeoLibre 无法转换的坐标系，因此地图以默认视图打开。",
+        "browser-local-file": "已引用该本地文件，但浏览器无法重新打开 ArcGIS Pro 数据路径。请使用 GeoApps Desktop 加载。",
+        "map-extent": "保存的地图范围使用了 GeoApps 无法转换的坐标系，因此地图以默认视图打开。",
         "nesting": "该分组嵌套层级过深，或项目又引用了已包含它的分组。"
       },
       "qgisImportComplete": "QGIS 项目已导入",
@@ -3950,8 +3950,8 @@
         "format": "不支持该图层的文件格式。",
         "remote-file": "暂不支持远程 QGIS 文件数据源。",
         "network-path": "出于安全原因，不加载网络共享路径。",
-        "browser-local-file": "已引用该本地文件，但浏览器无法重新打开 QGIS 数据路径。请使用 GeoLibre Desktop 加载。",
-        "browser-local-raster": "该栅格通过本地路径引用。请使用 GeoLibre Desktop 加载。"
+        "browser-local-file": "已引用该本地文件，但浏览器无法重新打开 QGIS 数据路径。请使用 GeoApps Desktop 加载。",
+        "browser-local-raster": "该栅格通过本地路径引用。请使用 GeoApps Desktop 加载。"
       },
       "openProjectFromUrlDesc": "加载 `.geolibre.json` 项目并将其添加到最近项目。",
       "projectUrl": "项目 URL",
@@ -3975,7 +3975,7 @@
       "embedEditedGeometryDesc": "此项目包含已编辑的几何图形。嵌入矢量数据（约 {{size}}）以保留更改。如果不嵌入，引用的图层将恢复原始几何图形，本地数据可能无法使用。",
       "embedVectorDesc": "此项目包含 {{count}} 个从您计算机加载的本地矢量图层。项目重新打开时浏览器无法重新读取这些文件，因此必须将其数据嵌入项目文件中才能恢复。嵌入会为文件增加约 {{size}} 的大小。",
       "embedVectorDescDesktop": "此项目包含 {{count}} 个从您计算机加载的本地矢量图层。您可以嵌入它们的数据以使项目自包含（增加约 {{size}}），也可以保存文件引用，在项目重新打开时从磁盘重新加载。引用可保持文件较小，但若源文件之后被移动或删除则会失效。",
-      "embedVectorDescMas": "此项目包含 {{count}} 个从您计算机加载的本地矢量图层。Mac App Store 沙盒无法在 GeoLibre 关闭后保留对这些文件的访问权限，因此必须将其数据嵌入项目文件中才能恢复。嵌入会为文件增加约 {{size}} 的大小。",
+      "embedVectorDescMas": "此项目包含 {{count}} 个从您计算机加载的本地矢量图层。Mac App Store 沙盒无法在 GeoApps 关闭后保留对这些文件的访问权限，因此必须将其数据嵌入项目文件中才能恢复。嵌入会为文件增加约 {{size}} 的大小。",
       "embedVectorLargeWarning": "嵌入约 {{size}} 会生成非常大的项目文件。由于必须一次性解析并在内存中保留全部要素，重新打开时可能很慢，甚至直接失败。对于这种大小的数据，请将图层转换为 PMTiles 或 FlatGeobuf，并以远程图层的方式添加，而不要嵌入。",
       "embedVectorEmbedButton": "嵌入数据",
       "embedVectorReferenceButton": "保存文件引用",
@@ -3991,13 +3991,13 @@
       "exportLayerStylesAsDesc": "请输入文件名。点击“保存”后，样式文件将下载到您浏览器的下载文件夹。",
       "exportLayerStylesFileName": "文件名",
       "exportLayerStylesFileNamePlaceholder": "my-map-styles.json",
-      "layerStylesFile": "GeoLibre 图层样式",
+      "layerStylesFile": "GeoApps 图层样式",
       "exportLayersEllipsis": "导出图层…",
       "exportLayersAsTitle": "导出图层",
       "exportLayersAsDesc": "请输入文件名。点击“保存”后，图层文件将下载到浏览器的下载文件夹。",
       "exportLayersFileName": "文件名",
       "exportLayersFileNamePlaceholder": "my-map-layers.json",
-      "layersFile": "GeoLibre 图层",
+      "layersFile": "GeoApps 图层",
       "layersExportSkipped_other": "{{count}} 个图层未导出，因为其数据仅存在于此项目中：{{names}}",
       "layersExportRedacted_other": "已从导出的图层中移除 {{count}} 个凭据。",
       "layerStylesImported": "已导入图层样式",
@@ -4122,11 +4122,11 @@
     },
     "windowClose": {
       "savePromptTitle": "关闭前保存更改？",
-      "savePromptDescription": "当前项目有未保存的更改。是否在关闭 GeoLibre 前保存？"
+      "savePromptDescription": "当前项目有未保存的更改。是否在关闭 GeoApps 前保存？"
     },
     "error": {
       "couldNotOpenProject": "无法打开项目。",
-      "multipleProjectDrop": "请一次只拖放一个 GeoLibre 项目，不要同时拖放其他文件。",
+      "multipleProjectDrop": "请一次只拖放一个 GeoApps 项目，不要同时拖放其他文件。",
       "projectDropNotAllowed": "此部署不允许切换项目。",
       "couldNotImportQgisProject": "无法导入 QGIS 项目。",
       "couldNotImportArcgisProject": "无法导入 ArcGIS Pro 项目。",
@@ -4264,7 +4264,7 @@
     "filterSummary": "已应用图层筛选：{{total}} 个要素中有 {{matched}} 个匹配。",
     "evaluationErrors": "{{count}} 个要素无法求值，未被匹配。",
     "unevaluableDisjoint": "{{count}} 个要素因几何无法求值而被排除。",
-    "tooManyPairs": "此比较需要 {{pairs}} 次要素对测试（上限 {{limit}}）。请改用“处理 → GeoLibre → 矢量 → 按位置选择”并选择 Sidecar 引擎。",
+    "tooManyPairs": "此比较需要 {{pairs}} 次要素对测试（上限 {{limit}}）。请改用“处理 → GeoApps → 矢量 → 按位置选择”并选择 Sidecar 引擎。",
     "exportedLayerName": "{{name}}（选择集）"
   },
   "loadEditorFeatures": {
@@ -4833,7 +4833,7 @@
     "addUnsupported": "只有 GeoTIFF/COG、GeoJSON、GeoParquet 和 PMTiles 资源可以添加到地图",
     "addFailed": "无法添加资源",
     "addNoSourceLayers": "此归档未列出可绘制的图层",
-    "cogUnsupported": "此 GeoLibre 主机无法可视化远程 GeoTIFF 资源",
+    "cogUnsupported": "此 GeoApps 主机无法可视化远程 GeoTIFF 资源",
     "formatCog": "COG",
     "formatGeoJson": "GeoJSON",
     "formatPmtiles": "PMTiles",
@@ -4842,7 +4842,7 @@
     "notAddable": "无法添加",
     "addNoTarget": "此资产未列出可绘制的内容",
     "zarrProblemGroup": "此资产指向一组数组，而不是可绘制的单个数组",
-    "zarrProblemUnauthorized": "此 Zarr 存储需要凭据，GeoLibre 目前尚无法提供",
+    "zarrProblemUnauthorized": "此 Zarr 存储需要凭据，GeoApps 目前尚无法提供",
     "zarrProblemUnsupportedUrl": "此 Zarr 存储的地址无法按键逐个读取",
     "zarrProblemUnavailable": "无法打开此 Zarr 存储",
     "chooseTarget": "选择要添加的内容",
@@ -4873,7 +4873,7 @@
     "filterWebMap": "Web 地图",
     "webMapAdded_other": "已从此 Web 地图添加 {{count}} 个图层。",
     "webMapAddedPartial": "已从此 Web 地图添加 {{total}} 个图层中的 {{added}} 个；其余无法访问。",
-    "webMapEmpty": "此 Web 地图没有 GeoLibre 可渲染的图层。",
+    "webMapEmpty": "此 Web 地图没有 GeoApps 可渲染的图层。",
     "add": "添加",
     "adding": "添加中…",
     "remove": "移除",
@@ -4991,7 +4991,7 @@
     "downloadTitle": "下载此文件",
     "copyUrlTitle": "复制此文件的 URL",
     "openProductTitle": "在 source.coop 上打开此产品",
-    "unsupportedTitle": "GeoLibre 无法渲染此格式 — 请改为下载。",
+    "unsupportedTitle": "GeoApps 无法渲染此格式 — 请改为下载。",
     "addError": "无法添加此文件：{{message}}",
     "largeFileWarning": "文件大小为 {{size}}。系统会从源端流式读取，仅加载视图内的部分。",
     "streamHint": "文件大小为 {{size}}。“添加”会将其完整复制到内存；“流式加载”仅读取视图内的部分。",
@@ -5035,7 +5035,7 @@
     "downloadTitle": "下载此文件",
     "copyUrlTitle": "复制此文件的 URL",
     "openDatasetTitle": "在 huggingface.co 上打开此数据集页面",
-    "unsupportedTitle": "GeoLibre 无法渲染此格式 — 请改为下载。",
+    "unsupportedTitle": "GeoApps 无法渲染此格式 — 请改为下载。",
     "addError": "无法添加此文件：{{message}}",
     "notRasterIndex": "此 JSON 文件未索引任何栅格，因此没有可放到地图上的内容。支持 MosaicJSON 和 STAC 集合。",
     "largeFileWarning": "文件大小为 {{size}}。系统会从源端流式读取，仅加载视图内的部分。",
@@ -5078,7 +5078,7 @@
     "clearSelection": "清空",
     "selectedFiles_other": "已选择 {{count}} 个文件（{{size}}）。",
     "commitMessageLabel": "提交信息（可选）",
-    "commitMessagePlaceholder": "通过 GeoLibre 上传",
+    "commitMessagePlaceholder": "通过 GeoApps 上传",
     "upload": "上传",
     "uploadPreparing": "正在准备上传…",
     "uploadHashing": "正在计算 {{name}} 的哈希（{{index}}/{{total}}）…",
@@ -5618,7 +5618,7 @@
       "importedLog": "已导入包含 {{nodes}} 个节点的模型。",
       "importFailed": "导入失败",
       "importInvalid": "该文件不包含模型图。",
-      "importUnsupported": "该文件不是 GeoLibre 模型。",
+      "importUnsupported": "该文件不是 GeoApps 模型。",
       "rasterOutputUnsupported": "“{{name}}”是栅格结果，此版本无法将其添加到地图。",
       "portNeedsVector": "“{{port}}”需要矢量数据，但收到的是栅格。",
       "toolNoOutput": "“{{tool}}”没有产生输出。",
@@ -5675,7 +5675,7 @@
       "filterByCategory": "按类别筛选",
       "layerFor": "{{name}} 的图层",
       "allSources": "所有来源",
-      "geolibreTools": "GeoLibre 工具",
+      "geolibreTools": "GeoApps 工具",
       "whiteboxTools": "Whitebox 工具",
       "toolbox": "Whitebox 工具箱",
       "checkingRuntime": "正在检查运行时。",
@@ -5729,8 +5729,8 @@
       "errorConnect": "无法连接到 sidecar。",
       "errorPoll": "无法查询作业状态。",
       "errorStartTool": "无法启动 Whitebox 工具。",
-      "errorStartSidecar": "无法启动 GeoLibre sidecar。",
-      "errorStopSidecar": "无法停止 GeoLibre sidecar。",
+      "errorStartSidecar": "无法启动 GeoApps sidecar。",
+      "errorStopSidecar": "无法停止 GeoApps sidecar。",
       "noToolsFound": "未找到工具。",
       "searchToolsByMeaning": "搜索工具或描述任务",
       "searchingByMeaning": "正在按语义搜索工具目录",
@@ -5763,9 +5763,9 @@
       "runLocallyButton": "本地运行 (WASM)",
       "troubleshootingTitle": "仍想使用服务器？",
       "stepStartServerDesktop": "在工具列表面板中点击“启动服务器”以启动它，然后等待几秒钟使其上线。",
-      "stepStartServerBrowser": "服务器只能从 GeoLibre 桌面应用启动。在浏览器中，请继续启用“本地运行 (WASM)”。",
+      "stepStartServerBrowser": "服务器只能从 GeoApps 桌面应用启动。在浏览器中，请继续启用“本地运行 (WASM)”。",
       "stepCheckPort": "请确保防火墙、杀毒软件或网络策略未阻止本地端口 {{port}}。",
-      "stepRestart": "如果服务器意外停止，请重启 GeoLibre 桌面应用并重新打开此对话框。"
+      "stepRestart": "如果服务器意外停止，请重启 GeoApps 桌面应用并重新打开此对话框。"
     },
     "vectorTools": {
       "title": "矢量工具",
@@ -7380,13 +7380,13 @@
     "segment": "分割",
     "status": {
       "checking": "正在检查 AI 分割服务…",
-      "unavailableDesktop": "AI 分割服务尚未运行。请启动已启用 segment-geospatial 的 GeoLibre 服务器以使用此功能。",
-      "unavailableWeb": "AI 分割在浏览器中不可用。请使用 GeoLibre 桌面应用运行此功能。"
+      "unavailableDesktop": "AI 分割服务尚未运行。请启动已启用 segment-geospatial 的 GeoApps 服务器以使用此功能。",
+      "unavailableWeb": "AI 分割在浏览器中不可用。请使用 GeoApps 桌面应用运行此功能。"
     },
     "error": {
       "chooseImage": "请选择要分割的图像 (GeoTIFF)。",
       "enterPrompt": "请输入文本提示，例如“树木”或“建筑物”。",
-      "startServer": "无法启动 GeoLibre Sidecar。",
+      "startServer": "无法启动 GeoApps Sidecar。",
       "failed": "分割失败。"
     },
     "noObjects": "未找到任何对象。",
@@ -7397,7 +7397,7 @@
       "title": "无法启动 AI 分割服务器。",
       "intro": "AI 分割在本地辅助服务器（{{sidecarUrl}}）中运行，该服务器承载来自 segment-geospatial 的 SAM3 模型。它在后台运行 Python，与应用本身分离，且不属于浏览器构建版本。",
       "troubleshootingTitle": "如何启动服务器",
-      "stepInstall": "请确保 GeoLibre 服务器已安装并启用 segment-geospatial 后端，以便分割模型可用。",
+      "stepInstall": "请确保 GeoApps 服务器已安装并启用 segment-geospatial 后端，以便分割模型可用。",
       "stepStartServerDesktop": "点击上方的“启动服务器”以启动它，然后等待几秒钟使模型上线。"
     }
   },
@@ -7499,7 +7499,7 @@
       "felzenszwalb": "Felzenszwalb 图方法（桌面版，原生）",
       "note": "使用 scikit-image 在桌面应用的处理服务器中原生运行，最多处理 {{max}} 像素，并在该处测量对象。",
       "offer": "对于浏览器无法处理的大影像，桌面应用还可使用 scikit-image（SLIC 或 Felzenszwalb）进行原生分割。",
-      "needsDesktop": "原生方法需要 GeoLibre 的处理服务器：请使用桌面应用。",
+      "needsDesktop": "原生方法需要 GeoApps 的处理服务器：请使用桌面应用。",
       "unavailable": "桌面应用的原生 OBIA 运行时（scikit-image）不可用。请检查处理服务器。",
       "needsLocalFile": "原生方法从文件中读取影像：请从本地 GeoTIFF 添加影像。",
       "slicSize": "对象大小（像素）",
@@ -7800,7 +7800,7 @@
       "imageSize": "{{width}} × {{height}} 像素，波段 {{bands}}",
       "area": "横向像素 {{x0}} 至 {{x1}}，纵向像素 {{y0}} 至 {{y1}}，全分辨率（每像素 {{size}}）",
       "areaOverview": "横向像素 {{x0}} 至 {{x1}}，纵向像素 {{y0}} 至 {{y1}}（全分辨率格网），读取自概视图 {{level}}（每像素 {{size}}）",
-      "env": "geolibre-wasm {{engine}}，GeoLibre {{app}}",
+      "env": "geolibre-wasm {{engine}}，GeoApps {{app}}",
       "labelsPending": "标签栅格未加载；当某个步骤需要时，会根据这些设置重新构建。",
       "splits": "保留拆分",
       "level": "层级 {{level}}：由层级 {{from}} 以尺度 {{scale}} 合并",
@@ -8025,7 +8025,7 @@
     "import": "导入…",
     "export": "导出…",
     "importFilterName": "样式库 / QML / SLD",
-    "exportFilterName": "GeoLibre 样式库",
+    "exportFilterName": "GeoApps 样式库",
     "applied": "已将“{{name}}”应用到 {{layer}}。",
     "appliedRampHint": "已应用“{{name}}”。请将图层切换为分级或分类样式以查看色带。",
     "saved": "已将“{{name}}”保存到库中。",
@@ -8752,7 +8752,7 @@
     "exportCopc": "COPC（云优化）",
     "extractSubset": "提取子集…",
     "stylesMenu": "样式",
-    "exportGeoLibreStyle": "导出 GeoLibre URL 样式",
+    "exportGeoLibreStyle": "导出 GeoApps URL 样式",
     "exportGeoLibreStyleHint": "导出符号样式（包括填充图案），用于 ?data= 和 ?style= URL 参数。不包含要素数据，不保留自定义点标记。",
     "exportMapboxStyle": "导出为 Mapbox GL 样式",
     "exportSldStyle": "导出为 OGC SLD",
@@ -8761,9 +8761,9 @@
     "exportStyleDataNotReady": "图层数据尚未准备就绪。请稍后重试。",
     "exportStyleNeedsFeatures": "样式导出需要包含要素的矢量图层。",
     "exportStyleError": "无法导出此图层的样式。",
-    "importStyle": "导入样式（GeoLibre URL / Mapbox GL / SLD / QML）…",
+    "importStyle": "导入样式（GeoApps URL / Mapbox GL / SLD / QML）…",
     "importStyleFromText": "从文本导入样式…",
-    "importStyleFromTextDescription": "粘贴 GeoLibre、Mapbox GL、SLD 或 QML 样式。格式将根据文本自动识别。",
+    "importStyleFromTextDescription": "粘贴 GeoApps、Mapbox GL、SLD 或 QML 样式。格式将根据文本自动识别。",
     "importStyleFromTextPlaceholder": "{ \"version\": 8, \"layers\": [ … ] }",
     "importStyleFromTextApply": "导入",
     "openStyleManager": "已保存的样式（样式管理器）…",
@@ -9254,10 +9254,10 @@
   },
   "errorBoundary": {
     "title": "出错了",
-    "description": "GeoLibre 遇到意外错误，无法继续。您的工作可能尚未保存 — 请先尝试恢复，再重新加载。",
+    "description": "GeoApps 遇到意外错误，无法继续。您的工作可能尚未保存 — 请先尝试恢复，再重新加载。",
     "tryAgain": "重试",
     "reload": "重新加载应用",
-    "sectionFailed": "{{label}} 渲染失败。GeoLibre 的其余部分仍可使用。"
+    "sectionFailed": "{{label}} 渲染失败。GeoApps 的其余部分仍可使用。"
   },
   "commandPalette": {
     "title": "命令面板",
@@ -9327,7 +9327,7 @@
     "windowCloseGuardFailed": "关闭窗口时不会提示保存未保存的更改。请在关闭前保存您的工作。",
     "windowCloseSaveFailed": "关闭前无法保存项目。",
     "windowCloseFailed": "无法关闭窗口。",
-    "nativeProjectPathFailed": "无法打开传递给 GeoLibre 的项目文件。",
+    "nativeProjectPathFailed": "无法打开传递给 GeoApps 的项目文件。",
     "kmlSuperOverlayReadFailed": "无法再次读取 KML Super-Overlay“{{name}}”，因此其瓦片为空白。",
     "projectControlFailed": "无法应用项目的“{{control}}”设置。",
     "pluginSnapshotFailed": "部分插件设置可能无法带到新的渲染器。",
@@ -9336,10 +9336,10 @@
     "panelRenderFailed": "面板“{{name}}”打开失败。",
     "sharedSettingsFailed": "无法从链接加载共享设置，因此将使用您自己的设置。",
     "sharedLanguageFailed": "无法切换到共享设置所要求的语言。",
-    "languageCatalogFailed": "无法加载{{language}}翻译，因此 GeoLibre 将显示英文。"
+    "languageCatalogFailed": "无法加载{{language}}翻译，因此 GeoApps 将显示英文。"
   },
   "shell": {
-    "workspaceTitle": "GeoLibre 地图工作区",
+    "workspaceTitle": "GeoApps 地图工作区",
     "webglContextLost": {
       "message": "地图丢失了图形上下文",
       "description": "图形驱动程序已重置或 GPU 内存不足，因此地图可能已冻结或空白。请重新加载以恢复。如有可能，请先保存项目；项目历史中也可能有最近的自动保存。",
@@ -9618,7 +9618,7 @@
     "navigationButton": "1. 加载数据源并绘制导航",
     "navigationButtonAgain": "绘制另一个导航图层",
     "exportButton": "将绘制结果导出为 GeoJSON",
-    "addLayersButton": "将绘制结果添加到 GeoLibre 图层",
+    "addLayersButton": "将绘制结果添加到 GeoApps 图层",
     "clearButton": "清除 NLDI 结果",
     "noComid": "该点未返回 COMID。",
     "requestingBasin": "正在请求上游流域…",
@@ -9870,7 +9870,7 @@
       "downloadParquet": "Parquet",
       "downloadParquetTitle": "下载此瓦片的完整 GeoParquet 文件",
       "dataset": "数据集",
-      "browseOnly": "GeoLibre 尚不支持搜索此数据集。请使用上方链接从其来源获取。",
+      "browseOnly": "GeoApps 尚不支持搜索此数据集。请使用上方链接从其来源获取。",
       "searchArea": "搜索区域",
       "modeView": "地图视图",
       "modeDraw": "绘制框",
@@ -9906,7 +9906,7 @@
       "searchDone": "已在 {{seconds}} 秒内读取 {{tile}} 的 {{count}} 个场景（{{gets}} 次范围读取，{{kib}} KiB）。无需 API，仅使用静态 GeoParquet。",
       "searchFailed": "搜索失败：{{error}}",
       "displayTci": "真彩色（TCI）",
-      "noCog": "此 GeoLibre 版本无法添加 COG 图层。",
+      "noCog": "此 GeoApps 版本无法添加 COG 图层。",
       "adding": "正在添加 {{name}}…",
       "added": "已添加 {{name}}。",
       "addFailed": "无法添加 {{name}}：{{error}}",
@@ -10106,7 +10106,7 @@
       "catalogLink": "数据目录",
       "aboutSummary": "关于 dynamical.org",
       "aboutText": "dynamical.org 以免费、云优化的 Icechunk（Zarr）存档形式发布来自 NOAA、ECMWF、DWD、ECCC 和 NASA 的天气预报与分析数据，并在每次模式运行完成后更新。",
-      "aboutAccess": "GeoLibre 直接从云存储中读取这些存档，每次读取一个地图切片，并从生产方的原始 GRIB2 文件中解码低延迟虚拟数据集。分析和集合数据在每个数据块中存储较长的时间序列，因此在地图放大后按区域逐块绘制。",
+      "aboutAccess": "GeoApps 直接从云存储中读取这些存档，每次读取一个地图切片，并从生产方的原始 GRIB2 文件中解码低延迟虚拟数据集。分析和集合数据在每个数据块中存储较长的时间序列，因此在地图放大后按区域逐块绘制。",
       "variable": "变量",
       "auto": "自动",
       "min": "最小值",
@@ -10270,7 +10270,7 @@
       "liftSelected": "已选择 {{layer}} 中 {{polygons}} 个多边形内的 {{count}} 个点。",
       "liftInstances": "已从 {{layer}} 创建 {{objects}} 个 {{name}} 实例（{{count}} 个点）。",
       "fullFile": "带标签的完整文件",
-      "fullFileNote": "写入此点云的本地副本，并应用所有已保存的标签，而不仅限于此处加载的点。在 GeoLibre 服务器中运行。",
+      "fullFileNote": "写入此点云的本地副本，并应用所有已保存的标签，而不仅限于此处加载的点。在 GeoApps 服务器中运行。",
       "fullFileInput": "本地副本（.las、.laz 或 .copc.laz）",
       "fullFileOutput": "输出文件（.las 或 .laz）",
       "fullFileWrite": "写入文件",
@@ -10362,7 +10362,7 @@
       "unitsTitle": "单位：{{units}}"
     },
     "earth-engine-auth": {
-      "unavailable": "GeoLibre 的 App Store 版本不支持 Earth Engine 登录。",
+      "unavailable": "GeoApps 的 App Store 版本不支持 Earth Engine 登录。",
       "noAccessToken": "Earth Engine 登录未返回访问令牌。",
       "popupUnavailable": "Earth Engine 弹出窗口身份验证不可用。",
       "oauthUnavailable": "Earth Engine OAuth 身份验证不可用。",
