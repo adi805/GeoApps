@@ -5,6 +5,7 @@ import {
   DIRECTIONS_PLUGIN_ID,
   EFFECTS_PLUGIN_ID,
   GRATICULE_PLUGIN_ID,
+  isKebunPlugin,
   isPluginEngineSupported,
   openRightPanel,
   PRECIPITATION_PLUGIN_ID,
@@ -44,6 +45,7 @@ type HookSuppliedContext =
   | "paletteExcludedPluginIds"
   | "effectsPluginId"
   | "isPluginEngineSupported"
+  | "isKebunPlugin"
   | "openRightPanel"
   | "earthEngineAvailable"
   | "onSimplifyInterface"
@@ -120,6 +122,7 @@ export function useToolbarCommands(options: UseToolbarCommandsOptions): Command[
     paletteExcludedPluginIds: PALETTE_EXCLUDED_PLUGIN_IDS,
     effectsPluginId: EFFECTS_PLUGIN_ID,
     isPluginEngineSupported,
+    isKebunPlugin,
     openRightPanel,
     earthEngineAvailable: EARTH_ENGINE_AVAILABLE,
     onSimplifyInterface: openSimplifyInterface,
