@@ -20,13 +20,13 @@
  * engine, so the class and the inline height are read as strings and the
  * arithmetic is done here.
  */
-import { render, screen } from "../../../../../tests/helpers/dom";
+import { render, screen } from "./helpers/dom";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { createElement, Fragment } from "react";
 
-const { NotificationRegion } = await import("./NotificationRegion");
-const { MobileTabBar, MOBILE_TAB_BAR_HEIGHT_PX } = await import("./mobile/MobileTabBar");
+const { NotificationRegion } = await import("../apps/geolibre-desktop/src/components/layout/NotificationRegion");
+const { MobileTabBar, MOBILE_TAB_BAR_HEIGHT_PX } = await import("../apps/geolibre-desktop/src/components/layout/mobile/MobileTabBar");
 
 /** Space kept between the toast's bottom edge and the top of the tab bar. */
 const GAP_PX = 16;
