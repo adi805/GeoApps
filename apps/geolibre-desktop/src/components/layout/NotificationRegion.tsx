@@ -139,7 +139,13 @@ export function NotificationRegion() {
       ref={regionRef}
       aria-label={t("notifications.regionLabel")}
       data-testid="notification-region"
-      className="pointer-events-none fixed bottom-10 end-4 z-[60] flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2"
+      // `bottom-10` (40 px) cukup di desktop, tempat status bar yang setinggi
+      // itu berada di bawah peta. Di lebar HP 40 px itu jatuh TEPAT di tab bar
+      // (56 px + safe area), jadi toast menutupi ikon tab dan tab tidak bisa
+      // diketuk selama toast tampil. Di bawah `md` region diangkat ke atas tab
+      // bar: tinggi tab bar + inset safe-area + 16 px jarak, sehingga tab tetap
+      // bisa diketuk dan toast tidak menempel di tepi layar berponi.
+      className="pointer-events-none fixed bottom-10 end-4 z-[60] flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-2 max-md:bottom-[calc(env(safe-area-inset-bottom,0px)+4.5rem)]"
       onMouseEnter={() => {
         hoveredRef.current = true;
         syncPaused();
