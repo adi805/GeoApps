@@ -16,13 +16,13 @@
  * test pins both halves of that: absent at 390 px, still there at 1280 px, so a
  * future "always render, hide with a media query" shortcut fails here.
  */
-import { render, screen } from "../../../../../tests/helpers/dom";
+import { render, screen } from "./helpers/dom";
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { createElement } from "react";
-import type { LayoutOptions } from "../../hooks/useLayoutOptions";
+import type { LayoutOptions } from "../apps/geolibre-desktop/src/hooks/useLayoutOptions";
 
-const { DesktopShell } = await import("./DesktopShell");
+const { DesktopShell } = await import("../apps/geolibre-desktop/src/components/layout/DesktopShell");
 
 /** The layout App.tsx passes for a plain window with every panel on. */
 const layoutOptions: LayoutOptions = {
