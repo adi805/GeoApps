@@ -2453,7 +2453,8 @@
     "successAddedSaveFailed": "Added to the map, but saving to disk failed: {{error}}",
     "successBasemapSaved": "Saved to {{path}} and set as the basemap.",
     "successBasemapApplied": "Set as the basemap (the file was not saved).",
-    "successBasemapSaveFailed": "Set as the basemap, but saving to disk failed: {{error}}"
+    "successBasemapSaveFailed": "Set as the basemap, but saving to disk failed: {{error}}",
+    "warnArchiveNotPersisted": "The basemap is active, but its archive could not be stored on this device. After the app closes, you will need to pick the .pmtiles file again."
   },
   "rasterSubset": {
     "title": "Extract subset",
@@ -9581,6 +9582,7 @@
     "pluginSnapshotFailed": "Some plugin settings may not carry over to the new renderer.",
     "lidarRestoreFailed": "Could not restore the project's saved point clouds.",
     "splattingRestoreFailed": "Could not restore the project's saved splats and 3D models.",
+    "offlineBasemapRestoreFailed": "Could not restore the offline basemap: its archive is not on this device. Pick the .pmtiles file again from the saved basemaps list.",
     "panelRenderFailed": "The panel \"{{name}}\" failed to open.",
     "sharedSettingsFailed": "Could not load the shared settings from the link, so your own settings are in use.",
     "sharedLanguageFailed": "Could not switch to the language the shared settings ask for.",

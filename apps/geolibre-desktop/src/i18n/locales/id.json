@@ -2396,7 +2396,8 @@
     "successAddedSaveFailed": "Ditambahkan ke peta, tetapi penyimpanan ke disk gagal: {{error}}",
     "successBasemapSaved": "Tersimpan ke {{path}} dan diatur sebagai peta dasar.",
     "successBasemapApplied": "Diatur sebagai peta dasar (file tidak disimpan).",
-    "successBasemapSaveFailed": "Diatur sebagai peta dasar, tetapi penyimpanan ke disk gagal: {{error}}"
+    "successBasemapSaveFailed": "Diatur sebagai peta dasar, tetapi penyimpanan ke disk gagal: {{error}}",
+    "warnArchiveNotPersisted": "Peta dasar ini tetap aktif, tetapi arsipnya gagal disimpan di perangkat. Setelah app ditutup, kamu perlu memilih ulang berkas .pmtiles."
   },
   "rasterSubset": {
     "title": "Ekstrak subset",
@@ -9333,6 +9334,7 @@
     "pluginSnapshotFailed": "Beberapa pengaturan plugin mungkin tidak terbawa ke renderer baru.",
     "lidarRestoreFailed": "Tidak dapat memulihkan point cloud yang tersimpan di proyek.",
     "splattingRestoreFailed": "Tidak dapat memulihkan splat dan model 3D yang tersimpan di proyek.",
+    "offlineBasemapRestoreFailed": "Peta dasar offline tidak bisa dipulihkan: arsipnya tidak ada di perangkat ini. Pilih lagi berkas .pmtiles dari daftar peta dasar tersimpan.",
     "panelRenderFailed": "Panel \"{{name}}\" gagal dibuka.",
     "sharedSettingsFailed": "Tidak dapat memuat pengaturan bersama dari tautan, jadi pengaturan Anda sendiri yang digunakan.",
     "sharedLanguageFailed": "Tidak dapat beralih ke bahasa yang diminta pengaturan bersama.",

@@ -158,6 +158,7 @@ export {
   buildProtomapsBasemapStyle,
   registerOfflineBasemapStyle,
   evictOfflineBasemapStyle,
+  getOfflineBasemapStyle,
   isOfflineBasemapSentinel,
   OFFLINE_BASEMAP_SENTINEL_PREFIX,
   PROTOMAPS_FLAVORS,
