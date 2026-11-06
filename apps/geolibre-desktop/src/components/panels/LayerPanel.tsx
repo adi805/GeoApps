@@ -112,6 +112,16 @@ interface LayerPanelProps {
    * by the host) lists the Layers entry instead of two adjacent rails.
    */
   hideOwnRail?: boolean;
+  /**
+   * Render as a sheet body instead of a side panel.
+   *
+   * The phone's "Daftar" tab shows the layer list in a `MobileSheet`, which is
+   * an overlay with its own scrolling box. The standalone panel pins itself
+   * `max-md:absolute` and clamps its height to 42dvh so it can hang over the
+   * map; inside a sheet both would fight the sheet's own box, so this mode drops
+   * the absolute placement and the height clamp and lets the sheet size it.
+   */
+  embeddedInSheet?: boolean;
 }
 
 export function LayerPanel({
@@ -131,6 +141,7 @@ export function LayerPanel({
   collapsed: controlledCollapsed,
   onCollapsedChange,
   hideOwnRail = false,
+  embeddedInSheet = false,
 }: LayerPanelProps) {
   const { i18n, t } = useTranslation();
   const isBeginnerProfile = useDesktopSettingsStore(
@@ -264,7 +275,12 @@ export function LayerPanel({
   // "Bind to Time Slider" as soon as one appears.
   useSyncExternalStore(subscribeTemporalLayers, getTemporalLayersVersion, getTemporalLayersVersion);
   const { isActive: isPluginActive, toggle: togglePlugin } = usePluginRegistry();
-  const [internalCollapsed, setInternalCollapsed] = useState(getIsMobileViewport);
+  const [internalCollapsed, setInternalCollapsed] = useState(
+    // Inside the phone's "Daftar" sheet the list is the whole reason the sheet
+    // opened, so it starts expanded; the standalone panel keeps starting as a
+    // rail on a phone viewport, where it overlays the map.
+    () => (embeddedInSheet ? false : getIsMobileViewport()),
+  );
   // In the shared left-sidebar mode the parent owns collapse (controlled);
   // otherwise the panel manages it locally. `setIsCollapsed` routes to whichever
   // owner applies so every existing call site keeps working.
@@ -520,7 +536,13 @@ export function LayerPanel({
     <aside
       aria-label={t("sharedRail.layers")}
       data-testid="layer-panel"
-      className="relative grid max-h-[min(24rem,42vh)] supports-[max-height:1dvh]:max-h-[min(24rem,42dvh)] w-full shrink-0 grid-rows-[auto_minmax(0,1fr)] border-b bg-card max-md:absolute max-md:inset-x-0 max-md:top-0 max-md:z-30 max-md:shadow-xl md:max-h-none md:w-[var(--layer-panel-width)] md:border-b-0 md:border-e"
+      className={
+        embeddedInSheet
+          ? // Sheet body: the sheet owns the height and the scroll box, so the
+            // panel must not pin itself over the map or clamp its own height.
+            "relative grid h-full min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] bg-card"
+          : "relative grid max-h-[min(24rem,42vh)] supports-[max-height:1dvh]:max-h-[min(24rem,42dvh)] w-full shrink-0 grid-rows-[auto_minmax(0,1fr)] border-b bg-card max-md:absolute max-md:inset-x-0 max-md:top-0 max-md:z-30 max-md:shadow-xl md:max-h-none md:w-[var(--layer-panel-width)] md:border-b-0 md:border-e"
+      }
     >
       <div
         role="separator"

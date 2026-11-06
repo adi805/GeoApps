@@ -31,7 +31,6 @@ import { AddCommentDialog } from "../comments/AddCommentDialog";
 import { openRightPanel } from "@geolibre/plugins";
 import { getIsMobileViewport, useIsMobileViewport } from "../../hooks/useIsMobileViewport";
 import { useHighContrast } from "../../hooks/useHighContrast";
-import { useDesktopSettingsStore } from "../../hooks/useDesktopSettings";
 import { MobileShell } from "./mobile/MobileShell";
 import type { MobileTab } from "./mobile/MobileTabBar";
 import { openFieldTool, openNewProjectDialog } from "./field-tool-events";
@@ -302,7 +301,6 @@ export function DesktopShell({
   const [mobileTab, setMobileTab] = useState<MobileTab>("map");
   const [mobileStatusVisible, setMobileStatusVisible] = useState(true);
   const { highContrast, setHighContrast } = useHighContrast();
-  const setDesktopSettings = useDesktopSettingsStore((s) => s.setDesktopSettings);
 
   // The mobile tab bar replaces the toolbar's menus, so each destination either
   // opens a sheet here or asks the surface the toolbar would have opened. No
@@ -310,14 +308,13 @@ export function DesktopShell({
   const handleMobileTab = useCallback(
     (tab: MobileTab) => {
       if (tab === "layers") {
-        // Same persisted setting the toolbar's Layers toggle flips, so the
-        // phone and the desktop cannot disagree about whether it is open.
-        const settings = useDesktopSettingsStore.getState().desktopSettings;
-        setDesktopSettings({
-          ...settings,
-          layout: { ...settings.layout, layerPanelVisible: !settings.layout.layerPanelVisible },
-        });
-        setMobileTab("map");
+        // The layer list is the phone's own sheet (`MobileShell`), not the
+        // desktop side-dock. Flipping `layerPanelVisible` here used to do
+        // nothing visible: on a phone the left dock is the shared rail with
+        // Browser expanded, so Layers mounts `collapsed` + `hideOwnRail` and
+        // renders nothing, and its expand opt-in is local to `SharedSidebar`
+        // (`builtinOptedIn`), which no settings change can reach.
+        setMobileTab("layers");
         return;
       }
       if (tab === "measure") {
@@ -334,7 +331,7 @@ export function DesktopShell({
       }
       setMobileTab(tab);
     },
-    [setDesktopSettings],
+    [],
   );
 
   const notebookOpen = useAppStore((s) => s.ui.notebookOpen);
@@ -684,6 +681,29 @@ export function DesktopShell({
         onOpenProject={() => void projectFiles.handleOpenFromFile()}
         onNewProject={openNewProjectDialog}
         onImportFile={(file) => void handleMobileImportFile(file)}
+        // The phone's layer list is the desktop panel itself, so the two cannot
+        // drift: same rows, groups, reorder, and per-layer actions. Built only
+        // on a phone-width viewport (the sheet unmounts when closed), so the
+        // desktop does not pay for a second panel tree.
+        layersPanel={
+          isMobileViewport ? (
+            <LayerPanel
+              refresh={layerRefresh}
+              themeMode={themeMode}
+              mapControllerRef={mapControllerRef}
+              collaborationApi={collaboration}
+              onResizeStart={startLayerPanelResize}
+              geometryEditLayerId={geometryEditLayerId}
+              onToggleGeometryEdit={handleToggleGeometryEdit}
+              onCancelGeometryEdit={handleCancelGeometryEdit}
+              onMaterializeDuckDBLayer={handleMaterializeDuckDBLayer}
+              onOpenRasterStylePanel={() => openRasterLayerPanel(createAppAPI(mapControllerRef))}
+              onOpenStylePanel={layoutOptions.stylePanelVisible ? openStylePanel : undefined}
+              onOpenRasterSubset={setRasterSubsetLayer}
+              embeddedInSheet
+            />
+          ) : undefined
+        }
       >
       {/* Kept mounted on a phone (so the dialogs it owns keep working) but out
           of the layout: `display: contents` on desktop leaves the toolbar
