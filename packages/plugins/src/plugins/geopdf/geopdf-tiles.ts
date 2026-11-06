@@ -230,9 +230,29 @@ export interface TileRendererOptions {
   pageHeight: number;
   /** Page points → Web Mercator, from {@link pageToMercatorAffine}. */
   pageAffine: Affine6;
-  rasterize: RegionRasterizer;
-  createCanvas: CanvasFactory;
-  encode: CanvasEncoder;
+  /**
+   * Jalur dua-langkah di main thread: rasterisasi ke scratch, lalu gambar ke
+   * kanvas tile dan encode. Ketiganya wajib ada kalau `renderTile` tidak diisi.
+   */
+  rasterize?: RegionRasterizer;
+  createCanvas?: CanvasFactory;
+  encode?: CanvasEncoder;
+  /**
+   * Jalur satu-langkah: ubah rencana tile langsung jadi PNG, di luar main
+   * thread. Kalau ada, `rasterize`/`createCanvas`/`encode` tidak dipakai, dan
+   * tidak ada kanvas di main thread sama sekali.
+   *
+   * Ini yang menghilangkan biaya terbesar pada pengukuran di HP: rasterisasi
+   * pdf.js plus downscale lembar A1 ke 512 px. Kalau keduanya dikerjakan di
+   * main thread, biayanya muncul sebagai `toBlob` 4.229 ms per tile.
+   */
+  renderTile?: (plan: TilePlan, signal?: AbortSignal) => Promise<ArrayBuffer>;
+  /**
+   * Lepas sumber daya jalur worker (worker + dokumen pdf di dalamnya).
+   * Dipanggil dari {@link GeoPdfTileRenderer.clear}, jadi melepas layer juga
+   * menutup worker: satu dokumen PDF tidak perlu dua salinan byte di memori.
+   */
+  releaseTile?: () => void;
   /**
    * Persistent tiles for this page, keyed by zoom and index. Absent keeps the
    * renderer memory-only, which is what the geometry tests use.
@@ -319,11 +339,12 @@ export class GeoPdfTileRenderer {
     return this.runExclusive(() => this.renderUncached(key, z, x, y, signal));
   }
 
-  /** Drop every cached tile. */
+  /** Drop every cached tile, and the worker when one is in use. */
   clear(): void {
     this.cache.clear();
     this.scratch = null;
     this.emptyTile = null;
+    this.options.releaseTile?.();
   }
 
   private runExclusive<T>(task: () => Promise<T>): Promise<T> {
@@ -355,8 +376,29 @@ export class GeoPdfTileRenderer {
     // error for every tile the bounds rectangle covers but the sheet does not.
     if (!plan) return this.transparentTile();
 
+    const { renderTile, rasterize, createCanvas, encode } = this.options;
+
+    // Jalur worker: tidak ada kanvas, tidak ada encode di thread ini. Yang
+    // dikembalikan worker sudah PNG jadi, jadi simpan lalu selesai.
+    if (renderTile) {
+      const encodedByWorker = await renderTile(plan, signal);
+      if (signal?.aborted) throw abortError();
+      this.remember(key, encodedByWorker);
+      this.counters.rendered += 1;
+      await this.persist(z, x, y, encodedByWorker);
+      return encodedByWorker;
+    }
+
+    // Sampai di sini berarti tidak ada jalur worker, jadi ketiga seam itu
+    // harus lengkap; renderer yang setengah diisi adalah bug pemanggil.
+    if (!rasterize || !createCanvas || !encode) {
+      throw new Error(
+        "GeoPdfTileRenderer butuh `renderTile`, atau `rasterize` + `createCanvas` + `encode`.",
+      );
+    }
+
     const scratch = this.scratchCanvas(plan.renderWidth, plan.renderHeight);
-    await this.options.rasterize({
+    await rasterize({
       pageRect: plan.pageRect,
       scale: plan.scale,
       canvas: scratch,
@@ -364,7 +406,7 @@ export class GeoPdfTileRenderer {
     });
     if (signal?.aborted) throw abortError();
 
-    const tile = this.trackCanvas(this.options.createCanvas(TILE_SIZE, TILE_SIZE));
+    const tile = this.trackCanvas(createCanvas(TILE_SIZE, TILE_SIZE));
     try {
       const context = tile.getContext("2d");
       if (!context) throw new Error("Could not get a 2D context for a GeoPDF tile.");
@@ -378,7 +420,7 @@ export class GeoPdfTileRenderer {
         plan.pageRect.width,
         plan.pageRect.height,
       );
-      const encoded = await this.options.encode(tile);
+      const encoded = await encode(tile);
       this.remember(key, encoded);
       this.counters.rendered += 1;
       // Await the write before answering: a project closed right after a tile
@@ -397,7 +439,9 @@ export class GeoPdfTileRenderer {
       return this.scratch;
     }
     if (this.scratch) this.releaseCanvas(this.scratch);
-    this.scratch = this.trackCanvas(this.options.createCanvas(width, height));
+    const createCanvas = this.options.createCanvas;
+    if (!createCanvas) throw new Error("GeoPdfTileRenderer tanpa `createCanvas` tidak bisa membuat scratch canvas.");
+    this.scratch = this.trackCanvas(createCanvas(width, height));
     return this.scratch;
   }
 
@@ -453,10 +497,20 @@ export class GeoPdfTileRenderer {
   }
 
   private transparentTile(): Promise<ArrayBuffer> {
+    // Tile di luar lembar tetap harus berupa PNG, juga saat render memakai
+    // worker. Ia dibuat sekali lalu dipakai ulang, jadi biayanya nol setelah
+    // tile pertama dan main thread tidak pernah menyentuh isi halaman.
+    const createCanvas = this.options.createCanvas;
+    const encode = this.options.encode;
     this.emptyTile ??= (async () => {
-      const canvas = this.trackCanvas(this.options.createCanvas(TILE_SIZE, TILE_SIZE));
+      if (!createCanvas || !encode) {
+        throw new Error(
+          "GeoPdfTileRenderer tanpa `createCanvas`/`encode` tidak bisa membuat tile kosong.",
+        );
+      }
+      const canvas = this.trackCanvas(createCanvas(TILE_SIZE, TILE_SIZE));
       try {
-        return await this.options.encode(canvas);
+        return await encode(canvas);
       } finally {
         this.releaseCanvas(canvas);
       }

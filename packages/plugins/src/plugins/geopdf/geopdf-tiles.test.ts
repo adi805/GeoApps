@@ -263,4 +263,47 @@ void describe("geopdf tile renderer memory budget", () => {
     assert.equal(rasterized, 0);
     assert.equal(renderer.stats.rendered, 0);
   });
+
+  void it("renders through the worker pathway without creating a canvas on the main thread", async () => {
+    const { factory, log } = trackingCanvasFactory();
+    const affine = pageToMercatorAffine(A1_AFFINE, A1_WIDTH, A1_HEIGHT);
+    assert.ok(affine);
+    let workerRenders = 0;
+    let released = 0;
+    const renderer = new GeoPdfTileRenderer({
+      pageWidth: A1_WIDTH,
+      pageHeight: A1_HEIGHT,
+      pageAffine: affine,
+      createCanvas: factory,
+      encode: async () => new ArrayBuffer(4),
+      renderTile: async (plan) => {
+        workerRenders += 1;
+        assert.ok(plan.renderWidth <= 1024);
+        return new Uint8Array([1, 2, 3, 4]).buffer;
+      },
+      releaseTile: () => {
+        released += 1;
+      },
+    });
+
+    const [firstCover] = tileCover(12);
+    assert.ok(firstCover);
+    const tile = await renderer.render(12, firstCover.x, firstCover.y);
+    assert.equal(tile.byteLength, 4);
+    assert.equal(workerRenders, 1);
+    // Jalur worker tidak menyentuh `createCanvas` untuk tile di dalam lembar:
+    assert.equal(log.created, 0);
+    assert.equal(renderer.stats.peakLiveCanvases, 0);
+    assert.equal(renderer.stats.rendered, 1);
+
+    // Hit cache kedua tidak memanggil worker lagi
+    const repeated = await renderer.render(12, firstCover.x, firstCover.y);
+    assert.equal(repeated.byteLength, 4);
+    assert.equal(workerRenders, 1);
+    assert.equal(renderer.stats.cacheHits, 1);
+
+    // .clear() memanggil releaseTile
+    renderer.clear();
+    assert.equal(released, 1);
+  });
 });

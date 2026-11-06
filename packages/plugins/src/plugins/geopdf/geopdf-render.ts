@@ -23,6 +23,7 @@ import {
   type CanvasEncoder,
   type RegionRasterizer,
 } from "./geopdf-tiles";
+import { createTileWorker } from "./geopdf-tile-worker-client";
 
 /** MapLibre protocol scheme for GeoPDF tiles. */
 export const GEOPDF_PROTOCOL = "geopdf";
@@ -296,6 +297,37 @@ function createRenderer(
   if (!affineWgs84) throw new Error("The GeoPDF page carries no WGS84 georeference.");
   const affine = pageToMercatorAffine(affineWgs84, page.width, page.height);
   if (!affine) throw new Error("The GeoPDF georeference is degenerate and cannot be tiled.");
+  // Jalur utama: rasterisasi dan encode dikerjakan worker, jadi main thread
+  // tidak pernah membuat kanvas untuk tile. Ini yang menghilangkan 33.236 ms
+  // blocked time setelah impor GeoPDF di HP (lihat `geopdf-tile.worker.ts`).
+  const worker = createTileWorker({
+    data,
+    pageNumber: page.index + 1,
+    pageAffine: affine,
+    pageWidth: page.width,
+    pageHeight: page.height,
+  });
+  if (worker) {
+    return new GeoPdfTileRenderer({
+      pageWidth: page.width,
+      pageHeight: page.height,
+      pageAffine: affine,
+      renderTile: (plan, signal) => worker.render(plan, signal),
+      releaseTile: () => worker.dispose(),
+      // Hanya dipakai untuk tile kosong di luar lembar (`transparentTile`).
+      createCanvas: (width, height) => {
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        return canvas;
+      },
+      encode: encodePng,
+      cache: sharedTileCache().scope(hash),
+    });
+  }
+
+  // Tanpa module worker (WebView lama): pakai jalur lama, tetap berfungsi
+  // walau tile-nya masih membebani main thread.
   return new GeoPdfTileRenderer({
     pageWidth: page.width,
     pageHeight: page.height,
