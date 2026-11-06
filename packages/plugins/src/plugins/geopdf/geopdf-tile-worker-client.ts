@@ -5,8 +5,11 @@
 // pernah menerima dua `render()` bersamaan. Semua kerja mahal (rasterisasi +
 // encode PNG) terjadi di sisi worker; di sini tidak ada kanvas sama sekali.
 import type { Affine6 } from "./geopdf-affine";
-import type { TilePlan } from "./geopdf-tiles";
-import type { TileWorkerRequest, TileWorkerResponse } from "./geopdf-tile.worker";
+import { TILE_SIZE, type TilePlan } from "./geopdf-tiles";
+import type {
+  TileWorkerRequest,
+  TileWorkerResponse,
+} from "./geopdf-tile.worker";
 
 /** Halaman yang dibuka di worker; semuanya tetap sama untuk seluruh tile. */
 export interface TileWorkerPage {
@@ -28,7 +31,7 @@ export interface TileWorkerClient {
 }
 
 interface Waiter {
-  resolve(message: Extract<TileWorkerResponse, { type: "tile" }>): void;
+  resolve(message: TileWorkerResponse): void;
   reject(error: Error): void;
 }
 
@@ -39,13 +42,38 @@ function abortNamed(): Error {
 }
 
 /**
+ * PNG transparan sekali-buat, untuk jawaban `empty`.
+ *
+ * Worker menjawab `empty` kalau rencana tile-nya kosong (di luar lembar).
+ * Jalur main thread sudah menjawab kasus itu dengan `transparentTile()` sebelum
+ * memanggil worker, jadi cabang ini praktis tak terjangkau; kontrak `render()`
+ * tetap harus mengembalikan PNG, bukan menolak.
+ */
+let emptyTilePng: Promise<ArrayBuffer> | null = null;
+function transparentTilePng(): Promise<ArrayBuffer> {
+  emptyTilePng ??= (async () => {
+    if (typeof OffscreenCanvas === "undefined") {
+      throw new Error(
+        "OffscreenCanvas tidak tersedia untuk tile kosong GeoPDF"
+      );
+    }
+    const canvas = new OffscreenCanvas(TILE_SIZE, TILE_SIZE);
+    const blob = await canvas.convertToBlob({ type: "image/png" });
+    return blob.arrayBuffer();
+  })();
+  return emptyTilePng;
+}
+
+/**
  * Buat client worker untuk satu dokumen PDF.
  *
  * @returns `null` kalau lingkungan ini tidak bisa membuat module worker
  *   (WebView lama, atau `Worker` tidak ada). Pemanggil lalu memakai jalur
  *   main thread yang sudah ada, jadi GeoPDF tetap jalan tanpa worker.
  */
-export function createTileWorker(page: TileWorkerPage): TileWorkerClient | null {
+export function createTileWorker(
+  page: TileWorkerPage
+): TileWorkerClient | null {
   if (typeof Worker === "undefined") return null;
   let worker: Worker;
   try {
@@ -71,27 +99,38 @@ export function createTileWorker(page: TileWorkerPage): TileWorkerClient | null 
     waiters.clear();
   };
 
-  worker.addEventListener("message", (event: MessageEvent<TileWorkerResponse>) => {
-    const message = event.data;
-    const waiter = waiters.get(message.id);
-    if (!waiter) return;
-    waiters.delete(message.id);
-    if (message.type === "error") {
-      waiter.reject(new Error(message.message));
-      return;
+  worker.addEventListener(
+    "message",
+    (event: MessageEvent<TileWorkerResponse>) => {
+      const message = event.data;
+      const waiter = waiters.get(message.id);
+      if (!waiter) return;
+      waiters.delete(message.id);
+      if (message.type === "error") {
+        waiter.reject(new Error(message.message));
+        return;
+      }
+      // `closed` cuma balasan `close`, dan `dispose` sudah menolak semua waiter
+      // yang mungkin masih menunggu; kalau sampai ke sini pemanggilnya pergi.
+      if (message.type === "closed") {
+        waiter.reject(new Error("GeoPDF tile worker sudah ditutup"));
+        return;
+      }
+      // Setiap jawaban yang sah harus resolve, bukan cuma `tile`: `ready` adalah
+      // jawaban `open`. Menyaring `type !== "tile"` membuat dokumen yang BERHASIL
+      // dibuka justru ditolak, jadi `render()` gagal sebelum pernah mengirim satu
+      // permintaan tile. Itu yang bikin layer GeoPDF "gagal dimuat" tanpa satu pun
+      // tile diminta ke worker (#14).
+      waiter.resolve(message);
     }
-    // `empty` dan `closed` bukan jalur tile: keduanya dijawab terpisah di
-    // pemanggilnya, jadi kalau sampai ke sini artinya pemanggil sudah pergi.
-    if (message.type !== "tile") waiter.reject(new Error(`balasan ${message.type} tidak terduga`));
-    else waiter.resolve(message);
-  });
+  );
   worker.addEventListener("error", (event: ErrorEvent) => {
     fail(event.message || "GeoPDF tile worker gagal dimuat");
   });
 
   const send = (
     request: TileWorkerRequest,
-    transfer: Transferable[] = [],
+    transfer: Transferable[] = []
   ): Promise<TileWorkerResponse> =>
     new Promise<TileWorkerResponse>((resolve, reject) => {
       if (disposed) {
@@ -141,12 +180,20 @@ export function createTileWorker(page: TileWorkerPage): TileWorkerClient | null 
           y: plan.y,
         });
         if (signal?.aborted) throw abortNamed();
-        if (response.type !== "tile") throw new Error("worker tidak mengembalikan tile");
+        // Tile di luar lembar: worker tidak menggambar apa pun. Kontrak
+        // `render()` tetap PNG, jadi jawab dengan tile transparan yang sama
+        // seperti jalur main thread.
+        if (response.type === "empty") return transparentTilePng();
+        if (response.type !== "tile") {
+          throw new Error(
+            `worker tidak mengembalikan tile (balasan ${response.type})`
+          );
+        }
         return response.png;
       });
       queue = task.then(
         () => undefined,
-        () => undefined,
+        () => undefined
       );
       return task;
     },
@@ -154,7 +201,10 @@ export function createTileWorker(page: TileWorkerPage): TileWorkerClient | null 
       if (disposed) return;
       disposed = true;
       fail("GeoPDF tile worker sudah ditutup");
-      worker.postMessage({ type: "close", id: nextId++ } satisfies TileWorkerRequest);
+      worker.postMessage({
+        type: "close",
+        id: nextId++,
+      } satisfies TileWorkerRequest);
       worker.terminate();
     },
   };
