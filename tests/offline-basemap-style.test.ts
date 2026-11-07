@@ -70,4 +70,26 @@ describe("offline-basemap style registry", () => {
     assert.equal(getOfflineBasemapStyle(undefined), null);
     assert.equal(getOfflineBasemapStyle("not-a-sentinel"), null);
   });
+
+  it("never re-mints the sentinel a reopened project already carries", () => {
+    const style = buildProtomapsBasemapStyle({
+      sourceUrl: "pmtiles://reload.pmtiles",
+      flavor: "light",
+    });
+    const scope = globalThis as typeof globalThis & {
+      __geolibreOfflineBasemapSeq?: number;
+    };
+    const current = scope.__geolibreOfflineBasemapSeq;
+    try {
+      // A fresh process (app restart): the counter is gone but the project file
+      // still holds the sentinel an earlier session minted. Minting that same
+      // URL again is invisible to the map, which only applies a style when the
+      // URL changed, so the restored basemap never reached the screen.
+      delete scope.__geolibreOfflineBasemapSeq;
+      const sentinel = registerOfflineBasemapStyle("id-reload", style);
+      assert.ok(!/\/1$/.test(sentinel), `sentinel must not restart the numbering: ${sentinel}`);
+    } finally {
+      scope.__geolibreOfflineBasemapSeq = current;
+    }
+  });
 });

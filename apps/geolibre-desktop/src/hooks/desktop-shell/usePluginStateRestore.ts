@@ -28,7 +28,6 @@ import {
 import i18next from "i18next";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { notify } from "../../lib/notify";
-import { restoreStartupOfflineBasemap } from "../../lib/offline-basemap-startup";
 import { restoreLocalFileLayers } from "../../lib/restore-local-layers";
 import { hasReverseGeocodeConsent } from "../../lib/reverse-geocode-consent";
 import { createAppAPI, getPluginManager } from "../usePlugins";
@@ -220,10 +219,6 @@ export function usePluginStateRestore({
       // needs restoring (opengeos/GeoLibre#2261).
       if (engine.capabilities.nativeZarr) restoreArcgisZarrLayers();
       void restoreLocalFileLayers();
-      // A project stores the offline basemap as a sentinel, and the style
-      // registry behind it is memory-only. Without this the map falls back to
-      // the default basemap on every reopen.
-      void restoreStartupOfflineBasemap();
       // Same cleanup as the native path: this branch also starts an async
       // handleUrlParameters above, so an older completion must not publish its
       // generation after a newer restore has started.
@@ -253,10 +248,6 @@ export function usePluginStateRestore({
     // Re-read drag-dropped / Add Data local-file GeoJSON layers from disk
     // (their data was saved as a path, not embedded).
     void restoreLocalFileLayers();
-    // Same query for the project's offline basemap, on the path that has a
-    // native map instance: the sentinel in `basemapStyleUrl` only resolves once
-    // its style is registered again from the archive on this device.
-    void restoreStartupOfflineBasemap();
     // Let layer-sync push the store-derived beforeId into the control that owns
     // each deck.gl COG raster so it interleaves with vector layers instead of
     // always drawing on top. Two controls render such layers: the raster

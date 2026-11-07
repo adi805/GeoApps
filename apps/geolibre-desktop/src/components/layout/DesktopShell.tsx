@@ -169,6 +169,7 @@ import { useMapFullscreenAttribute } from "../../hooks/desktop-shell/useMapFulls
 import { useNativeProjectOpenListener } from "../../hooks/desktop-shell/useNativeProjectOpenListener";
 import { usePanelResize } from "../../hooks/desktop-shell/usePanelResize";
 import { usePluginStateRestore } from "../../hooks/desktop-shell/usePluginStateRestore";
+import { useOfflineBasemapRestore } from "../../hooks/desktop-shell/useOfflineBasemapRestore";
 import { useStartupPanels } from "../../hooks/desktop-shell/useStartupPanels";
 import { fetchPluginRegistry } from "../../lib/plugin-registry";
 import { usePluginDeepLink } from "../../hooks/desktop-shell/usePluginDeepLink";
@@ -529,6 +530,10 @@ export function DesktopShell({
     mapReadyGeneration,
     projectGeneration,
   });
+  // Sentuhan pemulihan basemap offline dipisah dari usePluginStateRestore:
+  // sentinel `basemapStyleUrl` baru masuk store setelah proyek selesai dimuat,
+  // dan dulu di sana cuma dicoba sekali sehingga kalah balapan lalu menyerah.
+  useOfflineBasemapRestore();
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.geolibreProjectGeneration = String(projectGeneration);

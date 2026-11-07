@@ -15,7 +15,7 @@
  * "basemap offline-nya hilang", padahal arsipnya masih ada di perangkat.
  */
 
-import { useAppStore } from "@geolibre/core";
+import { DEFAULT_BASEMAP, useAppStore } from "@geolibre/core";
 import {
   buildProtomapsBasemapStyle,
   getOfflineBasemapStyle,
@@ -82,9 +82,15 @@ export async function restoreStartupOfflineBasemap(): Promise<boolean> {
       flavor: outcome.entry.flavor as ProtomapsFlavor,
       assetsBaseUrl: basemapAssetsBase(),
     });
+    // Bukan editan pengguna: proyek yang baru dibuka tidak boleh langsung
+    // bertanda "belum disimpan" hanya karena basemap-nya dipulihkan. Bendera
+    // kotor dikembalikan di turn yang sama, sebelum subscriber autosave mana
+    // pun membacanya (pola yang sama di `startup-layers.ts`).
+    const wasDirty = useAppStore.getState().isDirty;
     useAppStore.getState().setBasemapStyleUrl(
       registerOfflineBasemapStyle(outcome.entry.id, style),
     );
+    if (!wasDirty) useAppStore.setState({ isDirty: false });
     return true;
   }
 
@@ -96,6 +102,18 @@ export async function restoreStartupOfflineBasemap(): Promise<boolean> {
     notify.warning(i18next.t("notifications.offlineBasemapRestoreFailed"), {
       dedupeKey: "offline-basemap-restore",
     });
+  }
+
+  // Kontroler peta sengaja tidak menurunkan sentinel offline yang belum
+  // terdaftar ke basemap default (itu yang dulu mengunduh ulang gaya liberty
+  // sebelum gayanya sempat dipulihkan). Konsekuensinya, keputusan akhirnya ada
+  // di sini: setelah dipastikan tidak ada yang bisa dipulihkan, pindahkan store
+  // ke basemap default supaya pengguna tidak tertahan di sentinel yang tidak
+  // akan pernah ter-resolve.
+  if (outcome.kind !== "not-offline") {
+    const wasDirty = useAppStore.getState().isDirty;
+    useAppStore.getState().setBasemapStyleUrl(DEFAULT_BASEMAP);
+    if (!wasDirty) useAppStore.setState({ isDirty: false });
   }
 
   // `not-offline`: proyek memakai basemap biasa.
