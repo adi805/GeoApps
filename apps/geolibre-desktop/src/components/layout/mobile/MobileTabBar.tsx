@@ -11,6 +11,17 @@ interface MobileTabBarProps {
 }
 
 /**
+ * Tinggi tab bar HP dalam CSS px, tanpa `env(safe-area-inset-bottom)`.
+ *
+ * Dipakai `NotificationRegion` untuk menaruh toast di atas tab bar: angka ini
+ * yang membuat kedua komponen tidak bisa berbeda pendapat soal di mana tab bar
+ * berakhir. Isinya pt-1 (4 px) + tombol min-h-12 (48 px) + pb 4 px = 56 px;
+ * perubahannya harus lewat sini, bukan dengan menggeser padding tab bar
+ * sendirian, karena toast akan kembali menutupi ikon tab kalau angkanya basi.
+ */
+export const MOBILE_TAB_BAR_HEIGHT_PX = 56;
+
+/**
  * Order matters: the map is the resting state and sits leftmost, and the two
  * field actions (measure, track) stay inside thumb reach on the right half of a
  * one-handed grip. Every target is at least 48x48 CSS px with an 8 px gutter
@@ -38,6 +49,9 @@ export function MobileTabBar({ activeTab, onSelect }: MobileTabBarProps) {
     <nav
       data-testid="mobile-tab-bar"
       aria-label={t("mobile.navLabel", "Navigasi utama")}
+      // Angka yang sama dipakai `NotificationRegion` untuk mengangkat toast di
+      // atas tab bar, jadi tinggi ini satu sumber, bukan tebakan di dua tempat.
+      style={{ minHeight: MOBILE_TAB_BAR_HEIGHT_PX }}
       className="flex shrink-0 items-stretch justify-between gap-2 border-t bg-background px-2 pt-1 pb-[max(0.25rem,env(safe-area-inset-bottom))]"
     >
       {TABS.map(({ id, icon: Icon, labelKey, fallback }) => {

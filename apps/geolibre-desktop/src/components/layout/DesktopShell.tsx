@@ -298,6 +298,14 @@ export function DesktopShell({
   // `MobileShell` renders nothing but its children, so this costs one
   // matchMedia listener and no layout change.
   const isMobileViewport = useIsMobileViewport();
+  // Di lebar HP rail samping tidak punya tempat. `SharedSidebar` merender
+  // `w-full` di bawah `md` (bukan `w-11`), jadi rail BROWSER+LAYER dan
+  // COMMENTS+STYLE jatuh sebagai dua baris 28 px di atas peta dan tombolnya
+  // jauh di bawah lantai 48 px proyek ini. Peta HP dilayani tab bar dan sheet
+  // `MobileShell`, jadi seluruh dock desktop dilewati dari render, bukan
+  // disembunyikan lewat CSS: elemen 28 px yang tetap ada di DOM masih bisa
+  // diketuk dan masih dibacakan pembaca layar.
+  const showSideDocks = !isMobileViewport;
   const [mobileTab, setMobileTab] = useState<MobileTab>("map");
   const [mobileStatusVisible, setMobileStatusVisible] = useState(true);
   const { highContrast, setHighContrast } = useHighContrast();
@@ -736,28 +744,30 @@ export function DesktopShell({
       ) : null}
       </div>
       <div data-workspace-row="" className="relative flex min-h-0 flex-1 flex-col md:flex-row">
-        <RightDockPortals
-          activePanelId={activePanelId}
-          layoutOptions={layoutOptions}
-          mapControllerRef={mapControllerRef}
-          hosts={{ browser: browserContentEl, comments: commentsContentEl, obia: obiaContentEl }}
-          browser={{
-            onOpenRecentProject: projectFiles.handleOpenRecent,
-            onAddFilePath: addFilePath,
-          }}
-          comments={{
-            collaboration,
-            onActivateCommentTool: commentTool.toggleTool,
-            isCommentToolActive: commentTool.isActive,
-            onShowResolvedChange: setShowResolvedComments,
-            selectedCommentId,
-            onClearSelectedComment: () => setSelectedCommentId(null),
-          }}
-        />
+        {showSideDocks ? (
+          <RightDockPortals
+            activePanelId={activePanelId}
+            layoutOptions={layoutOptions}
+            mapControllerRef={mapControllerRef}
+            hosts={{ browser: browserContentEl, comments: commentsContentEl, obia: obiaContentEl }}
+            browser={{
+              onOpenRecentProject: projectFiles.handleOpenRecent,
+              onAddFilePath: addFilePath,
+            }}
+            comments={{
+              collaboration,
+              onActivateCommentTool: commentTool.toggleTool,
+              isCommentToolActive: commentTool.isActive,
+              onShowResolvedChange: setShowResolvedComments,
+              selectedCommentId,
+              onClearSelectedComment: () => setSelectedCommentId(null),
+            }}
+          />
+        ) : null}
         {/* Map-only / hidden-panels embeds show nothing but the map: skip the
             whole left side-dock (Layers, plugin panels, and the shared rail that
             hosts the Browser entry), not just the built-in Layers panel. */}
-        {layoutOptions.panelsHidden ? null : (
+        {layoutOptions.panelsHidden || !showSideDocks ? null : (
           <>
             {/* The positional plugin docks flank whichever middle surface the
                 Layers side shows (the shared rail or the standalone Layers
@@ -1134,7 +1144,7 @@ export function DesktopShell({
         </main>
         {/* Same as the left dock: a map-only / hidden-panels embed skips the
             entire right side-dock (Style, plugin panels, and their shared rail). */}
-        {layoutOptions.panelsHidden || layoutOptions.viewer ? null : (
+        {layoutOptions.panelsHidden || layoutOptions.viewer || !showSideDocks ? null : (
           <>
             {/* Shared-rail panels such as Comments must not remove the ordinary
                 positional docks: enabled Web Services panels still live in

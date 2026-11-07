@@ -269,6 +269,26 @@ html:lang(fa) {
   filter: invert(1);
 }
 
+/* Lantai 48 px untuk kontrol peta di lebar HP.
+
+   MapLibre memasang tombol ctrl-group 29x29 px dan grid kontrol komponen
+   (kunci pas) juga 29x29 px. Diukur di viewport 390x844 semuanya jatuh di
+   bawah lantai 48 px yang dipakai tab bar dan tombol tutup dialog, padahal
+   kontrol ini yang diketuk jempol saat memegang ponsel dengan satu tangan
+   di lapangan. Batasnya sama dengan `md` dan `useIsMobileViewport`
+   (max-width: 767px), jadi CSS dan JS memutuskan "HP" pada lebar yang sama.
+
+   Yang dibesarkan kotak ketuknya, bukan ikon: ikon MapLibre digambar
+   background-image dengan ukuran aslinya di tengah tombol, jadi glyph tetap
+   sebesar aslinya sementara area ketuk naik ke 48 px. Atribusi, skala, dan
+   logo tidak ikut karena bukan target ketuk. */
+@media (max-width: 767px) {
+  .maplibregl-map .maplibregl-ctrl-group button {
+    height: 48px;
+    width: 48px;
+  }
+}
+
 /* Shared popup frame covers native Inspect/NLDI popups too. Content-specific
    rules below retain their layouts; inline authored content retains its colors. */
 .maplibregl-map .maplibregl-popup {
@@ -1298,6 +1318,22 @@ body,
   svg {
   height: 16px;
   width: 16px;
+}
+
+/* Sisi HP dari lantai 48 px di atas (lihat blok `@media` di bagian kontrol
+   MapLibre). Rule vendor mengunci 29x29 dengan `!important`, jadi satu-satunya
+   cara menimpanya adalah `!important` juga, dan letaknya harus SETELAH rule itu
+   supaya menang saat spesifisitasnya sama. Yang dinaikkan kotaknya saja; ikon
+   kunci pas tetap 16 px di tengah. */
+@media (max-width: 767px) {
+  .geolibre-components-control.maplibre-gl-control-grid--collapsed,
+  .geolibre-components-control.maplibre-gl-control-grid--collapsed
+    .maplibre-gl-control-grid-header,
+  .geolibre-components-control.maplibre-gl-control-grid--collapsed
+    .maplibre-gl-control-grid-wrench {
+    height: 48px !important;
+    width: 48px !important;
+  }
 }
 
 .geolibre-components-control .maplibre-gl-control-grid-content > * {
