@@ -2855,7 +2855,9 @@
       "viewUnavailable": "Tampilan peta saat ini tidak tersedia.",
       "selectError": "Proyek yang dipilih tidak dapat dibaca.",
       "restoring": "Membuka proyek saat memulai Anda…",
-      "loadWarning": "Proyek saat memulai tidak tersedia. GeoLibre membuka ruang kerja bawaan sebagai gantinya."
+      "loadWarning": "Proyek saat memulai tidak tersedia. GeoLibre membuka ruang kerja bawaan sebagai gantinya.",
+      "loadingProjectUrl": "Membuka peta dari tautan Anda…",
+      "preparingOfflineBasemap": "Memulihkan basemap offline…"
     },
     "map": {
       "constraintsTitle": "Batasan peta",
