@@ -24,6 +24,14 @@ interface MobileSheetProps {
   title: string;
   children: ReactNode;
   testId?: string;
+  /**
+   * Open at the taller snap point instead of `peek`.
+   *
+   * Only the layer list asks for this: its own header, toolbar and search
+   * already fill 25 vh, so opening at that height showed not a single row.
+   * Sheets that are just a form keep the default so the map stays visible.
+   */
+  defaultExpanded?: boolean;
 }
 
 /**
@@ -42,20 +50,22 @@ interface MobileSheetProps {
  *   children: Sheet body.
  *   testId: Optional `data-testid` for the sheet surface.
  */
-export function MobileSheet({ open, onClose, title, children, testId }: MobileSheetProps) {
+export function MobileSheet({ open, onClose, title, children, testId, defaultExpanded = false }: MobileSheetProps) {
   const { t } = useTranslation();
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState(defaultExpanded);
   const [dragPx, setDragPx] = useState(0);
   const dragStart = useRef<number | null>(null);
 
   // A fresh open always starts at the resting height, so the map is never
-  // hidden by a height the user picked for a previous panel.
+  // hidden by a height the user picked for a previous panel. A sheet that
+  // declares `defaultExpanded` rests at the taller point instead: its list is
+  // the whole reason it was opened.
   useEffect(() => {
     if (open) {
-      setExpanded(false);
+      setExpanded(defaultExpanded);
       setDragPx(0);
     }
-  }, [open]);
+  }, [open, defaultExpanded]);
 
   const heightVh = (expanded ? SNAP_HALF_VH : SNAP_PEEK_VH) + (dragPx / window.innerHeight) * 100;
 

@@ -64,6 +64,11 @@ export const CommandPalette = lazy(() =>
     import("../../command/CommandPalette").then((m) => m.CommandPalette),
   ),
 );
+export const GeofenceDialog = lazy(() =>
+  loadLazyDialog("GeofenceDialog", () =>
+    import("../GeofenceDialog").then((m) => m.GeofenceDialog),
+  ),
+);
 export const GeoreferencerDialog = lazy(() =>
   loadLazyDialog("GeoreferencerDialog", () =>
     import("../GeoreferencerDialog").then((m) => m.GeoreferencerDialog),

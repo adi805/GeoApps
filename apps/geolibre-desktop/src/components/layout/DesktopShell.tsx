@@ -31,7 +31,6 @@ import { AddCommentDialog } from "../comments/AddCommentDialog";
 import { openRightPanel } from "@geolibre/plugins";
 import { getIsMobileViewport, useIsMobileViewport } from "../../hooks/useIsMobileViewport";
 import { useHighContrast } from "../../hooks/useHighContrast";
-import { useDesktopSettingsStore } from "../../hooks/useDesktopSettings";
 import { MobileShell } from "./mobile/MobileShell";
 import type { MobileTab } from "./mobile/MobileTabBar";
 import { openFieldTool, openNewProjectDialog } from "./field-tool-events";
@@ -185,6 +184,12 @@ interface DesktopShellProps {
   layoutOptions: LayoutOptions;
   /** Auto-open the raster layer panel (file picker) once the map is ready. */
   autoOpenRaster?: boolean;
+  /**
+   * A map file the user already chose on "My Maps", imported as soon as the
+   * map controller is ready. Avenza's first run is "pick a map, then see it",
+   * so the picker happens on the home screen and the import happens here.
+   */
+  pendingImport?: File;
   projectUrlLoadState?: ProjectUrlLoadState;
   dataUrlLoadState?: DataUrlLoadState;
   mapAppAPI: ReturnType<typeof createAppAPI> | null;
@@ -196,6 +201,7 @@ interface DesktopShellProps {
 export function DesktopShell({
   layoutOptions,
   autoOpenRaster,
+  pendingImport,
   projectUrlLoadState,
   dataUrlLoadState,
   mapAppAPI,
@@ -292,10 +298,17 @@ export function DesktopShell({
   // `MobileShell` renders nothing but its children, so this costs one
   // matchMedia listener and no layout change.
   const isMobileViewport = useIsMobileViewport();
+  // Di lebar HP rail samping tidak punya tempat. `SharedSidebar` merender
+  // `w-full` di bawah `md` (bukan `w-11`), jadi rail BROWSER+LAYER dan
+  // COMMENTS+STYLE jatuh sebagai dua baris 28 px di atas peta dan tombolnya
+  // jauh di bawah lantai 48 px proyek ini. Peta HP dilayani tab bar dan sheet
+  // `MobileShell`, jadi seluruh dock desktop dilewati dari render, bukan
+  // disembunyikan lewat CSS: elemen 28 px yang tetap ada di DOM masih bisa
+  // diketuk dan masih dibacakan pembaca layar.
+  const showSideDocks = !isMobileViewport;
   const [mobileTab, setMobileTab] = useState<MobileTab>("map");
   const [mobileStatusVisible, setMobileStatusVisible] = useState(true);
   const { highContrast, setHighContrast } = useHighContrast();
-  const setDesktopSettings = useDesktopSettingsStore((s) => s.setDesktopSettings);
 
   // The mobile tab bar replaces the toolbar's menus, so each destination either
   // opens a sheet here or asks the surface the toolbar would have opened. No
@@ -303,14 +316,13 @@ export function DesktopShell({
   const handleMobileTab = useCallback(
     (tab: MobileTab) => {
       if (tab === "layers") {
-        // Same persisted setting the toolbar's Layers toggle flips, so the
-        // phone and the desktop cannot disagree about whether it is open.
-        const settings = useDesktopSettingsStore.getState().desktopSettings;
-        setDesktopSettings({
-          ...settings,
-          layout: { ...settings.layout, layerPanelVisible: !settings.layout.layerPanelVisible },
-        });
-        setMobileTab("map");
+        // The layer list is the phone's own sheet (`MobileShell`), not the
+        // desktop side-dock. Flipping `layerPanelVisible` here used to do
+        // nothing visible: on a phone the left dock is the shared rail with
+        // Browser expanded, so Layers mounts `collapsed` + `hideOwnRail` and
+        // renders nothing, and its expand opt-in is local to `SharedSidebar`
+        // (`builtinOptedIn`), which no settings change can reach.
+        setMobileTab("layers");
         return;
       }
       if (tab === "measure") {
@@ -327,7 +339,7 @@ export function DesktopShell({
       }
       setMobileTab(tab);
     },
-    [setDesktopSettings],
+    [],
   );
 
   const notebookOpen = useAppStore((s) => s.ui.notebookOpen);
@@ -381,13 +393,26 @@ export function DesktopShell({
   const handleMobileImportFile = useCallback(
     async (file: File) => {
       try {
+        setDropMessage(t("mobile.import.running", "Menambahkan {{name}}…", { name: file.name }));
         await addRasterToMap(createAppAPI(mapControllerRef), file, { name: file.name });
+        setDropMessage(t("mobile.import.done", "{{name}} ditambahkan", { name: file.name }));
+        clearDropMessageLater();
       } catch (error) {
         setDropError(error instanceof Error ? error.message : t("browser.addFileFailed"));
       }
     },
-    [setDropError, t],
+    [clearDropMessageLater, setDropError, setDropMessage, t],
   );
+  // The file chosen on "My Maps" is imported the moment the controller exists.
+  // Guarded by identity rather than by the effect's deps alone: `mapReadyGeneration`
+  // bumps on every basemap swap, and a second run would add the sheet twice.
+  const importedPendingRef = useRef<File | null>(null);
+  useEffect(() => {
+    if (!pendingImport || mapReadyGeneration === 0) return;
+    if (importedPendingRef.current === pendingImport) return;
+    importedPendingRef.current = pendingImport;
+    void handleMobileImportFile(pendingImport);
+  }, [pendingImport, mapReadyGeneration, handleMobileImportFile]);
   useUrlLoadErrorNotices(projectUrlLoadState?.error, dataUrlLoadState?.error);
   const mapAreaRef = useRef<HTMLElement>(null);
   useWebglContextLossNotice(mapAreaRef);
@@ -659,10 +684,34 @@ export function DesktopShell({
         // the same surface at the same place rather than a second one.
         onTakePhoto={() => openFieldTool("fieldCollection")}
         onStartTrack={() => openFieldTool("gpsTracking")}
+        onOpenGeofence={() => openFieldTool("geofence")}
         onSaveProject={projectFiles.handleSave}
         onOpenProject={() => void projectFiles.handleOpenFromFile()}
         onNewProject={openNewProjectDialog}
         onImportFile={(file) => void handleMobileImportFile(file)}
+        // The phone's layer list is the desktop panel itself, so the two cannot
+        // drift: same rows, groups, reorder, and per-layer actions. Built only
+        // on a phone-width viewport (the sheet unmounts when closed), so the
+        // desktop does not pay for a second panel tree.
+        layersPanel={
+          isMobileViewport ? (
+            <LayerPanel
+              refresh={layerRefresh}
+              themeMode={themeMode}
+              mapControllerRef={mapControllerRef}
+              collaborationApi={collaboration}
+              onResizeStart={startLayerPanelResize}
+              geometryEditLayerId={geometryEditLayerId}
+              onToggleGeometryEdit={handleToggleGeometryEdit}
+              onCancelGeometryEdit={handleCancelGeometryEdit}
+              onMaterializeDuckDBLayer={handleMaterializeDuckDBLayer}
+              onOpenRasterStylePanel={() => openRasterLayerPanel(createAppAPI(mapControllerRef))}
+              onOpenStylePanel={layoutOptions.stylePanelVisible ? openStylePanel : undefined}
+              onOpenRasterSubset={setRasterSubsetLayer}
+              embeddedInSheet
+            />
+          ) : undefined
+        }
       >
       {/* Kept mounted on a phone (so the dialogs it owns keep working) but out
           of the layout: `display: contents` on desktop leaves the toolbar
@@ -695,28 +744,30 @@ export function DesktopShell({
       ) : null}
       </div>
       <div data-workspace-row="" className="relative flex min-h-0 flex-1 flex-col md:flex-row">
-        <RightDockPortals
-          activePanelId={activePanelId}
-          layoutOptions={layoutOptions}
-          mapControllerRef={mapControllerRef}
-          hosts={{ browser: browserContentEl, comments: commentsContentEl, obia: obiaContentEl }}
-          browser={{
-            onOpenRecentProject: projectFiles.handleOpenRecent,
-            onAddFilePath: addFilePath,
-          }}
-          comments={{
-            collaboration,
-            onActivateCommentTool: commentTool.toggleTool,
-            isCommentToolActive: commentTool.isActive,
-            onShowResolvedChange: setShowResolvedComments,
-            selectedCommentId,
-            onClearSelectedComment: () => setSelectedCommentId(null),
-          }}
-        />
+        {showSideDocks ? (
+          <RightDockPortals
+            activePanelId={activePanelId}
+            layoutOptions={layoutOptions}
+            mapControllerRef={mapControllerRef}
+            hosts={{ browser: browserContentEl, comments: commentsContentEl, obia: obiaContentEl }}
+            browser={{
+              onOpenRecentProject: projectFiles.handleOpenRecent,
+              onAddFilePath: addFilePath,
+            }}
+            comments={{
+              collaboration,
+              onActivateCommentTool: commentTool.toggleTool,
+              isCommentToolActive: commentTool.isActive,
+              onShowResolvedChange: setShowResolvedComments,
+              selectedCommentId,
+              onClearSelectedComment: () => setSelectedCommentId(null),
+            }}
+          />
+        ) : null}
         {/* Map-only / hidden-panels embeds show nothing but the map: skip the
             whole left side-dock (Layers, plugin panels, and the shared rail that
             hosts the Browser entry), not just the built-in Layers panel. */}
-        {layoutOptions.panelsHidden ? null : (
+        {layoutOptions.panelsHidden || !showSideDocks ? null : (
           <>
             {/* The positional plugin docks flank whichever middle surface the
                 Layers side shows (the shared rail or the standalone Layers
@@ -1093,7 +1144,7 @@ export function DesktopShell({
         </main>
         {/* Same as the left dock: a map-only / hidden-panels embed skips the
             entire right side-dock (Style, plugin panels, and their shared rail). */}
-        {layoutOptions.panelsHidden || layoutOptions.viewer ? null : (
+        {layoutOptions.panelsHidden || layoutOptions.viewer || !showSideDocks ? null : (
           <>
             {/* Shared-rail panels such as Comments must not remove the ordinary
                 positional docks: enabled Web Services panels still live in

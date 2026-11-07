@@ -44,6 +44,7 @@ export function useToolbarDialogs() {
   const [recordTourOpen, setRecordTourOpen] = useState(false);
   const [recordVideoOpen, setRecordVideoOpen] = useState(false);
   const [georeferencerOpen, setGeoreferencerOpen] = useState(false);
+  const [geofenceOpen, setGeofenceOpen] = useState(false);
   const [setViewOpen, setSetViewOpen] = useState(false);
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -55,6 +56,7 @@ export function useToolbarDialogs() {
       onFieldToolRequest((tool: FieldToolId) => {
         if (tool === "fieldCollection") setFieldCollectionOpen(true);
         else if (tool === "gpsTracking") setGpsTrackingOpen(true);
+        else if (tool === "geofence") setGeofenceOpen(true);
         else setGeoreferencerOpen(true);
       }),
     [],
@@ -96,6 +98,8 @@ export function useToolbarDialogs() {
     setRecordVideoOpen,
     georeferencerOpen,
     setGeoreferencerOpen,
+    geofenceOpen,
+    setGeofenceOpen,
     setViewOpen,
     setSetViewOpen,
     commandPaletteOpen,

@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent, type ReactNode } from "react";
-import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save } from "lucide-react";
+import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldStatusReveal, FieldStatusStrip } from "./FieldStatusStrip";
 import { MobileSheet } from "./MobileSheet";
@@ -51,11 +51,22 @@ export interface MobileShellProps {
   onTakePhoto: () => void;
   /** Opens the existing GPS Tracking dialog. */
   onStartTrack: () => void;
+  /** Opens the geofence panel: boundaries, monitoring, and the alert journal. */
+  onOpenGeofence: () => void;
   onSaveProject: () => void;
   onOpenProject: () => void;
   onNewProject: () => void;
   /** Handed the chosen file; the shell adds it through the normal raster path. */
   onImportFile: (file: File) => void;
+  /**
+   * The Layers panel, rendered inside the "Daftar" sheet.
+   *
+   * The panel is built by the desktop shell (it owns the map controller, the
+   * refresh settings, and the style/subset openers) and handed in as a node so
+   * this file keeps owning no data logic. Optional: the sheet is only mounted
+   * when a caller provides it.
+   */
+  layersPanel?: ReactNode;
   children: ReactNode;
 }
 
@@ -81,10 +92,12 @@ export function MobileShell({
   onDropPoint,
   onTakePhoto,
   onStartTrack,
+  onOpenGeofence,
   onSaveProject,
   onOpenProject,
   onNewProject,
   onImportFile,
+  layersPanel,
   children,
 }: MobileShellProps) {
   const { t } = useTranslation();
@@ -94,7 +107,11 @@ export function MobileShell({
     const file = event.target.files?.[0];
     // Reset first: choosing the same file twice must fire a change event again.
     event.target.value = "";
-    if (file) onImportFile(file);
+    if (!file) return;
+    // The sheet closes so the map the file becomes is what the user sees next;
+    // the shell fits the view to the new sheet's extent.
+    onSelectTab("map");
+    onImportFile(file);
   };
 
   const runAndClose = (action: () => void) => () => {
@@ -124,12 +141,21 @@ export function MobileShell({
           testId="mobile-project-sheet"
         >
           <div className="flex flex-col gap-2 p-2">
+            {/* Avenza's first action is "import a map", so it leads the sheet
+                and carries the primary weight. Everything else here is work
+                done *on* a map, which presupposes this one. */}
+            <SheetAction
+              icon={FileUp}
+              label={t("mobile.action.importPdf", "Impor peta PDF")}
+              onClick={() => fileInputRef.current?.click()}
+              testId="mobile-action-import-file"
+              primary
+            />
             <SheetAction
               icon={MapPin}
               label={t("mobile.action.dropPoint", "Taruh titik di sini")}
               onClick={runAndClose(onDropPoint)}
               testId="mobile-action-drop-point"
-              primary
             />
             <SheetAction
               icon={Crosshair}
@@ -144,10 +170,10 @@ export function MobileShell({
               testId="mobile-action-start-track"
             />
             <SheetAction
-              icon={FileUp}
-              label={t("mobile.action.importPdf", "Impor PDF / GeoTIFF")}
-              onClick={() => fileInputRef.current?.click()}
-              testId="mobile-action-import-file"
+              icon={ShieldCheck}
+              label={t("mobile.action.geofence", "Geofence zona")}
+              onClick={runAndClose(onOpenGeofence)}
+              testId="mobile-action-geofence"
             />
             <SheetAction
               icon={Save}
@@ -186,12 +212,31 @@ export function MobileShell({
               tabIndex={-1}
               aria-hidden="true"
               data-testid="mobile-import-input"
-              accept=".pdf,.tif,.tiff,.geotiff,.png,.jpg,.jpeg"
+              accept=".pdf,.geotiff,.tif,.tiff,.png,.jpg,.jpeg"
               className="hidden"
               onChange={handleFileChosen}
             />
           </div>
         </MobileSheet>
+        {/* The "Daftar" tab: on a phone the desktop's left side-dock starts as a
+            collapsed rail (Browser takes that surface and Layers is a collapsed
+            entry in it), so the tab had nothing to reveal. This sheet is the
+            phone's own layer list. It is the same `LayerPanel` the desktop
+            mounts, so rows, groups, and reordering cannot drift between them. */}
+        {layersPanel ? (
+          <MobileSheet
+            open={activeTab === "layers"}
+            onClose={() => onSelectTab("map")}
+            title={t("mobile.tab.layers", "Daftar")}
+            testId="mobile-layers-sheet"
+            // The panel's own header, toolbar and search already fill the peek
+            // height, so opening at 25 vh showed not one row. The list is the
+            // reason this sheet exists, so it opens at the taller snap point.
+            defaultExpanded
+          >
+            <div className="flex h-full min-h-0 flex-col">{layersPanel}</div>
+          </MobileSheet>
+        ) : null}
       </div>
       <MobileTabBar activeTab={activeTab} onSelect={onSelectTab} />
     </div>

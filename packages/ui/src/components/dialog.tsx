@@ -48,7 +48,12 @@ export const DialogContent = React.forwardRef<
       {/* ring-offset matches the popover surface this sits on, not --background.
           Inert today (no ring-offset width utility is applied, so the offset
           colour never paints) but wrong the moment one is added. */}
-      <DialogPrimitive.Close className="absolute end-4 top-4 rounded-sm opacity-70 ring-offset-popover transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
+      {/* Hit area 48x48 (h-12 w-12) with a -m-4 offset so the 16 px glyph keeps
+          the exact corner position it had at 16 px. The bare icon was a 16 px
+          target, which a gloved thumb cannot hit in the field; the negative
+          margin grows the box without moving anything or overlapping the title.
+          `place-items-center` keeps the glyph centred in the larger box. */}
+      <DialogPrimitive.Close className="absolute end-4 top-4 -m-4 grid h-12 w-12 place-items-center rounded-sm opacity-70 ring-offset-popover transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
