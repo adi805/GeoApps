@@ -43,6 +43,13 @@ import { useTranslation } from "react-i18next";
 import { MobileCard } from "./mobile/mobilePrimitives";
 import { screenOverlayCovers, useExtentScreenOverlay } from "../../hooks/useExtentScreenOverlay";
 import { clamp } from "../../lib/clamp";
+import { basemapAssetsBase } from "../../lib/basemap-assets";
+import { notify } from "../../lib/notify";
+import {
+  deleteOfflineArchiveBytes,
+  persistOfflineArchiveIfNeeded,
+  resolveOfflineBasemapArchive,
+} from "../../lib/offline-basemap-archive";
 import {
   deleteOfflineBasemap,
   loadOfflineBasemaps,
@@ -180,15 +187,11 @@ function isProtomapsCompatible(sourceLayers: string[]): boolean {
   return PROTOMAPS_SCHEMA_LAYERS.filter((l) => set.has(l)).length >= 2;
 }
 
-/** Bundled Protomaps glyphs/sprites live under the app's public dir. Resolve
- * them against the deployment base (BASE_URL — "/", "/geolibre/", or a relative
- * "./" for the embed/demo build) AND to a fully-qualified absolute URL:
- * MapLibre rejects non-absolute sprite/glyph URLs ("must be absolute"), so a
- * bare "./basemaps-assets" from a relative base would break labels and icons,
- * while a bare "/basemaps-assets" would 404 under a sub-path. `document.baseURI`
- * turns the base-relative path into an absolute one that honours both. */
-const BASEMAP_ASSETS_BASE = new URL(`${import.meta.env.BASE_URL}basemaps-assets`, document.baseURI)
-  .href;
+/** Bundled Protomaps glyphs/sprites live under the app's public dir. The URL
+ * rule (deployment base + absolute form MapLibre demands) lives in
+ * `lib/basemap-assets` because startup restore builds the same style and the
+ * two paths must not drift. */
+const BASEMAP_ASSETS_BASE = basemapAssetsBase();
 
 // Tracks the in-memory archive (and style-registry id) backing the currently
 // applied styled offline basemap. A styled basemap is not a GeoLibreLayer, so
@@ -690,6 +693,22 @@ export function BasemapExtractPanel({
         );
       }
 
+      // Byte arsip dijaga di storage perangkat untuk platform yang tidak punya
+      // path yang tahan restart: di web `savedPath` selalu null, dan di Android
+      // URI `content://` grant-nya mati bersama proses. Disimpan SEBELUM katalog
+      // mencatat entri supaya tidak pernah ada entri tercatat tanpa byte yang
+      // bisa dipulihkan. Kegagalan di sini tidak membatalkan ekstraksi yang
+      // sudah berhasil: basemap tetap terpakai sampai app ditutup, dan pengguna
+      // diberi tahu bahwa arsipnya tidak bertahan.
+      try {
+        await persistOfflineArchiveIfNeeded({ id: layerId, savedPath }, archive);
+      } catch (persistErr) {
+        console.warn("[offline-basemap] arsip gagal disimpan ke storage perangkat", persistErr);
+        notify.warning(t("basemapExtract.warnArchiveNotPersisted"), {
+          dedupeKey: "offline-basemap-persist",
+        });
+      }
+
       // Record it in the device-local catalogue so the Saved basemaps list can
       // rename, delete, and re-apply it.
       upsertOfflineBasemap({
@@ -760,10 +779,18 @@ export function BasemapExtractPanel({
       try {
         const key = `${entry.id}.pmtiles`;
         if (!hasPMTilesArchive(key)) {
-          let bytes: Uint8Array | null = null;
-          if (entry.savedPath && isTauri()) {
-            bytes = await readLocalFileBytes(entry.savedPath);
-          } else {
+          // Arsip mungkin sudah disalin ke storage perangkat saat diekstrak
+          // (web dan Android: tidak ada path yang tahan restart). Coba itu dulu,
+          // sebelum menyuruh pengguna mencari berkas yang byte-nya sudah ada.
+          const restored = await resolveOfflineBasemapArchive(entry, {
+            isRegistered: hasPMTilesArchive,
+            register: registerPMTilesArchive,
+            ...(isTauri() ? { readFile: readLocalFileBytes } : {}),
+          });
+          if (restored.kind === "missing") {
+            // Jalan terakhir: pengguna memilih .pmtiles sendiri. Satu-satunya
+            // pilihan untuk arsip lama yang byte-nya tidak pernah tersimpan
+            // (ekstrak sebelum arsip disalin ke perangkat).
             const picked = await openLocalDataFileWithFallback({
               filters: [{ name: "PMTiles", extensions: ["pmtiles"] }],
               accept: ".pmtiles",
@@ -771,9 +798,8 @@ export function BasemapExtractPanel({
             });
             // Cancelled the picker: nothing to apply, no error.
             if (!picked?.data) return;
-            bytes = new Uint8Array(picked.data);
+            registerPMTilesArchive(key, new Uint8Array(picked.data));
           }
-          registerPMTilesArchive(key, bytes);
         }
         const style = buildProtomapsBasemapStyle({
           sourceUrl: `pmtiles://${key}`,
@@ -1341,6 +1367,14 @@ export function BasemapExtractPanel({
                                 // Free its in-memory archive/style if it's the
                                 // one currently applied, so nothing lingers.
                                 forgetStyledBasemap(entry.id);
+                                // Byte arsip ikut dibuang. Katalog dan tabel byte
+                                // dua tempat berbeda, dan tombol ini satu-satunya
+                                // titik di mana pengguna menyatakan basemap ini
+                                // tidak dipakai lagi; tanpa sapuan di sini storage
+                                // tumbuh diam-diam sampai kuota habis.
+                                void deleteOfflineArchiveBytes(entry.id).catch((error: unknown) => {
+                                  console.warn("[offline-basemap] byte arsip gagal dihapus", error);
+                                });
                                 setConfirmDeleteId(null);
                               }}
                               title={t("basemapExtract.delete")}

@@ -21,7 +21,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { BundleFileTable } from "./project-bundle-web";
+import type { BundleFileTable } from "../apps/geolibre-desktop/src/lib/project-bundle-web";
 import {
   OFFLINE_ARCHIVE_KEY_PREFIX,
   deleteOfflineArchiveBytes,
@@ -34,7 +34,7 @@ import {
   resolveOfflineBasemapArchive,
   shouldStoreOfflineArchive,
   storeOfflineArchiveBytes,
-} from "./offline-basemap-archive";
+} from "../apps/geolibre-desktop/src/lib/offline-basemap-archive";
 
 /** Tabel Map biasa: aturan modul diuji tanpa IndexedDB ikut campur. */
 function memoryTable(): BundleFileTable & { raw: Map<string, Uint8Array> } {

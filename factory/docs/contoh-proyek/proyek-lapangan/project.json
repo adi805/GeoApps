@@ -1,0 +1,22 @@
+{
+  "versiManifes": "1",
+  "idProyek": "contoh-lapangan-001",
+  "nama": "Contoh Proyek Lapangan",
+  "dibuatPada": 1794000000000,
+  "sumberPeta": [
+    {
+      "id": "peta-1",
+      "jenis": "pdf",
+      "jalurBerkas": "peta/proyek.pdf",
+      "ukuranByte": 0
+    }
+  ],
+  "koleksi": [
+    {
+      "id": "titik-1",
+      "lintang": -6.9175,
+      "bujur": 107.6191,
+      "catatan": "titik uji"
+    }
+  ]
+}
