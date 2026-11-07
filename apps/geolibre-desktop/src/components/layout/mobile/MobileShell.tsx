@@ -58,6 +58,15 @@ export interface MobileShellProps {
   onNewProject: () => void;
   /** Handed the chosen file; the shell adds it through the normal raster path. */
   onImportFile: (file: File) => void;
+  /**
+   * The Layers panel, rendered inside the "Daftar" sheet.
+   *
+   * The panel is built by the desktop shell (it owns the map controller, the
+   * refresh settings, and the style/subset openers) and handed in as a node so
+   * this file keeps owning no data logic. Optional: the sheet is only mounted
+   * when a caller provides it.
+   */
+  layersPanel?: ReactNode;
   children: ReactNode;
 }
 
@@ -88,6 +97,7 @@ export function MobileShell({
   onOpenProject,
   onNewProject,
   onImportFile,
+  layersPanel,
   children,
 }: MobileShellProps) {
   const { t } = useTranslation();
@@ -208,6 +218,25 @@ export function MobileShell({
             />
           </div>
         </MobileSheet>
+        {/* The "Daftar" tab: on a phone the desktop's left side-dock starts as a
+            collapsed rail (Browser takes that surface and Layers is a collapsed
+            entry in it), so the tab had nothing to reveal. This sheet is the
+            phone's own layer list. It is the same `LayerPanel` the desktop
+            mounts, so rows, groups, and reordering cannot drift between them. */}
+        {layersPanel ? (
+          <MobileSheet
+            open={activeTab === "layers"}
+            onClose={() => onSelectTab("map")}
+            title={t("mobile.tab.layers", "Daftar")}
+            testId="mobile-layers-sheet"
+            // The panel's own header, toolbar and search already fill the peek
+            // height, so opening at 25 vh showed not one row. The list is the
+            // reason this sheet exists, so it opens at the taller snap point.
+            defaultExpanded
+          >
+            <div className="flex h-full min-h-0 flex-col">{layersPanel}</div>
+          </MobileSheet>
+        ) : null}
       </div>
       <MobileTabBar activeTab={activeTab} onSelect={onSelectTab} />
     </div>
