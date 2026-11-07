@@ -88,6 +88,7 @@ import {
   isGeoLibreSentinelStyleUrl,
   resolveMapStyle,
 } from "./basemap-style";
+import { getOfflineBasemapStyle, isOfflineBasemapSentinel } from "./protomaps-basemap";
 // Moved to ./basemap-style; re-exported so existing importers keep working.
 export { defaultBlankBackgroundColor };
 import { ResetBearingControl } from "./reset-bearing-control";
@@ -851,6 +852,18 @@ export class MapController implements MapEngine {
 
   setStyle(url: string): void {
     if (!this.map) return;
+    // Sentinel offline yang gayanya belum terdaftar bukan basemap rusak,
+    // melainkan pemulihan arsip yang belum selesai: registri gaya hidup di
+    // memori, sedangkan arsipnya baru dibaca dari IndexedDB sesudah proyek
+    // dimuat. Kalau diteruskan, resolveMapStyle jatuh ke basemap default dan
+    // mengunduh gaya liberty yang beberapa milidetik kemudian dibuang lagi saat
+    // pemulihan memasang gayanya. Jadi transisi ini diserahkan ke pemulihan,
+    // yang selalu berakhir dengan sentinel terdaftar atau basemap default yang
+    // dipasang eksplisit (lihat `restoreStartupOfflineBasemap`).
+    if (isOfflineBasemapSentinel(url) && !getOfflineBasemapStyle(url)) {
+      this.basemapStyleUrl = url;
+      return;
+    }
     this.basemapStyleUrl = url;
     this.applyStyleToMap(url);
     // Switching to/from a planetary basemap changes the active body (the store's

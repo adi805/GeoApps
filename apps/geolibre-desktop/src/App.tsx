@@ -25,6 +25,7 @@ import { useTemplateLibraryPersistence } from "./hooks/useTemplateLibraryPersist
 import { useRuntimeEnvironmentVariables } from "./hooks/useRuntimeEnvironmentVariables";
 import { useStartupUpdateCheck } from "./hooks/useStartupUpdateCheck";
 import { hasExplicitLaunchPayload, useStartupProject } from "./hooks/useStartupProject";
+import { useOfflineBasemapPrewarm } from "./hooks/useOfflineBasemapPrewarm";
 import { useThemeMode } from "./hooks/useThemeMode";
 import { useThemeScheme } from "./hooks/useThemeScheme";
 import { useUiProfileBootstrap } from "./hooks/useUiProfileBootstrap";
@@ -70,6 +71,14 @@ export default function App() {
     setMapAppAPI((current) => current ?? api);
   }, []);
   const projectUrlLoadState = useProjectUrlLoader();
+  // Peta dibuat sekali saat shell mount dengan `basemapStyleUrl` yang ada di
+  // store saat itu. Proyek yang membawa sentinel basemap offline belum punya
+  // gaya terdaftar, jadi peta akan meminta basemap default ke jaringan lebih
+  // dulu: peta kosong di lapangan tanpa sinyal, dan basemap default sempat
+  // menimpa peta offline pengguna. `mapAppAPI === null` berarti peta belum
+  // pernah siap, jadi masih aman menahan shell; sesudah itu pemulihan
+  // mengganti gaya di tempat lewat `useOfflineBasemapRestore`.
+  const holdingForOfflineBasemap = useOfflineBasemapPrewarm(mapAppAPI === null);
   const dataUrlLoadState = useDataUrlLoader(mapAppAPI);
   useStacUrlLoader(mapAppAPI, layoutOptions.viewer);
   const { showOnboarding, dismissOnboarding } = useUiProfileBootstrap();
@@ -88,17 +97,22 @@ export default function App() {
   useWhiteboxToolUrl();
   return (
     <DirectionProvider dir={languageDirection(i18n.language)}>
-      {restoringStartupProject ? (
+      {restoringStartupProject || projectUrlLoadState.holding || holdingForOfflineBasemap ? (
         // The shell is deliberately unmounted while the startup project loads
         // (see `useStartupProject`), so say what the window is waiting on rather
-        // than leaving it blank. `useStartupProject` bounds this state, so it
-        // cannot become a permanent splash screen.
+        // than leaving it blank. Both gates are bounded (10 s for the project
+        // URL, 8 s for the offline basemap), so this cannot become a permanent
+        // splash screen.
         <div
           role="status"
           className="flex h-screen w-screen items-center justify-center gap-3 bg-background text-sm text-muted-foreground"
         >
           <Loader2 className="h-4 w-4 animate-spin" />
-          {t("settings.startup.restoring")}
+          {holdingForOfflineBasemap
+            ? t("settings.startup.preparingOfflineBasemap")
+            : restoringStartupProject
+              ? t("settings.startup.restoring")
+              : t("settings.startup.loadingProjectUrl")}
         </div>
       ) : (
         <>

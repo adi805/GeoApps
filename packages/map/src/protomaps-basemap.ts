@@ -109,7 +109,13 @@ const SEQ_KEY = "__geolibreOfflineBasemapSeq";
 
 function nextOfflineBasemapSeq(): number {
   const scope = globalThis as typeof globalThis & { [SEQ_KEY]?: number };
-  scope[SEQ_KEY] = (scope[SEQ_KEY] ?? 0) + 1;
+  // Starts from the wall clock, not from 0: this number is persisted inside the
+  // project file, so a counter restarting at 0 in a new process mints the exact
+  // URL the project already carries (`.../<id>/1`). MapCanvas skips applying a
+  // style whose URL did not change, so the re-registered style never reached
+  // the map and every reopen fell back to the default basemap. A time-based
+  // seed keeps this session's sentinels distinct from any saved one.
+  scope[SEQ_KEY] = (scope[SEQ_KEY] ?? Date.now()) + 1;
   return scope[SEQ_KEY];
 }
 
