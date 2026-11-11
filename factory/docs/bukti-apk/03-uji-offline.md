@@ -92,3 +92,30 @@ perintah yang mendukungnya.
   belum punya pemanggil, jadi arsip hanya dibatasi 96 MB per PDF dan tidak
   dibersihkan otomatis.
 - **Kualitas hasil kompres foto.** S7 membuktikan ukuran, bukan ketajaman.
+
+## 6. Berkas APK yang sudah diverifikasi di laptop
+
+Artifact run 42978727740 diunduh ke `~/g98/apk-out/` pada 2026-11-11 14:50 WIB.
+Pemeriksaan di bawah dijalankan di laptop, bukan di HP: ini membuktikan berkasnya
+utuh dan benar-benar hasil build `94e1d519`, belum membuktikan perilaku di perangkat.
+
+| Perintah | Keluaran |
+|---|---|
+| `gh run view 42978727740 --json conclusion,headSha` | `conclusion=success`, `headSha=94e1d51937891c3a73873e3e8c0d7efa2961817e` |
+| `gh run view 42978727740 --json jobs` | `Build Android APK (release) => success`, `Measure app startup (emulator) => success` |
+| `python3 -c "zipfile.ZipFile(...).testzip()"` | `zip_ok True`, 703 entri, `AndroidManifest.xml` + `.dex` ada |
+| `aapt dump badging` | `com.geokebun.app`, `versionCode=1000`, `versionName=0.1.0`, `sdkVersion=24`, `targetSdkVersion=37` |
+| `apksigner verify --print-certs` | `CN=GeoApps, O=Geokebun, L=Indonesia, C=ID`, SHA-256 `eb73ac3b059c18a3646474db58a8b45e3042f36ad19e60f8d00405311ef2c8e6` |
+
+| Berkas | Ukuran | SHA-256 |
+|---|---|---|
+| `geolibre-android-arm64.apk` | 54.906.940 B | `d960210dca510310f7a56dce6560bafe665d9d1ac1ea901a98d5514ec35a4e72` |
+| `geolibre-android-arm.apk` | 49 MB | `fb67eadf62f2e846bcc537c96a12ee3275ddccccf7d350df0fc6bdb4263c8793` |
+| `geolibre-android-x86_64.apk` | 54 MB | `ad793e888acabea917f98337784c6131a552e77007ace3464cc515a049969905` |
+| `geolibre-android-x86.apk` | 54 MB | `c3cbfb470972f42805e01a26fdabdd75914e5baa3ac1d72a0e0f906887e73a9e` |
+
+Untuk HP Adi (Tecno Pova 6, arm64): `geolibre-android-arm64.apk`.
+
+Per 2026-11-11 14:52 WIB `adb devices -l` **kosong** (nol perangkat) dan
+`tailscale status` menampilkan `tecno-pova-6` (100.99.233.81) `offline, last seen
+6d ago`. Karena itu S1-S8 belum bisa dijalankan dan tabel bagian 4 tetap kosong.
