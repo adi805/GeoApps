@@ -49,9 +49,11 @@ selama mati, jalur emulator ditutup dan tidak dicoba lagi.
 Repo ini sudah punya seluruh bahannya: `playwright.config.ts` menyajikan build
 `dist` lewat `vite preview` (jadi nol rebuild, nol risiko OOM `tsc`), helper
 `openViewer`/`enterViewer`, dan helper hitung cache tile GeoPDF. Yang ditambahkan
-hanya dua berkas:
+hanya empat berkas:
 
-- `e2e/mobile-offline-field.spec.ts` — bukti otomatis arsip GeoPDF lintas restart proses.
+- `e2e/mobile-offline-field.spec.ts` — bukti otomatis arsip GeoPDF lintas restart proses (G1).
+- `e2e/mobile-wake-lock.spec.ts` — bukti wake lock diminta/dilepas saat merekam (G2).
+- `e2e/mobile-photo-downscale.spec.ts` — bukti foto kamera dikecilkan sebelum disimpan (G3).
 - `factory/scripts/mobile-web.sh` — wrapper tipis (`serve|field|watch|smoke|all`).
 
 ### Model "mode pesawat" yang dipakai, dan kenapa bukan `setOffline(true)`
@@ -96,14 +98,100 @@ Angka itu artinya:
 Kontrol negatif itu penting: tanpa dia, `archiveAfter=1` tidak membedakan
 "perbaikan bekerja" dari "probe selalu bilang ada".
 
+### G2: wake lock saat merekam jejak
+
+Dua klaim dipisah, dan pemisahan itu bukan formalitas.
+
+**Klaim 1 — wiring.** `navigator.wakeLock` diganti stub yang mencatat
+`request`/`release`. Ini membuktikan app memanggil API di saat yang benar dan
+melepasnya, BUKAN bahwa layar menyala.
+
+**Klaim 2 — ketahanan saat platform menolak.** API ASLI dipakai, dibungkus untuk
+mencatat hasilnya. Diukur lebih dulu sebelum menulis assertion apa pun:
+
+```
+$ node -e '…navigator.wakeLock.request("screen")…'   # chromium headless, :4173
+{"supported":true,"result":"error:NotAllowedError","visibility":"visible"}
+```
+
+Jadi mesin ini justru menguji jalur GAGAL: `requestScreenWakeLock` berjanji tidak
+pernah melempar, dan dialog harus tetap merekam. Itu yang di-assert.
+
+Hasil (build `dist` di `:4173`, 2026-11-11 20:35 WIB):
+
+```
+{"phase":"idle","requests":[],"releases":0}
+  ✓ dialog terbuka tanpa merekam: kunci belum diminta
+{"phase":"wiring","requests":["screen","screen"],"releases":2}
+  ✓ meminta kunci saat merekam, melepas saat jeda, meminta lagi saat lanjut
+{"phase":"real-api","calls":1,"outcomes":["error:NotAllowedError"]}
+  ✓ tetap merekam walau platform menolak kunci (API asli)
+```
+
+| Bukti | Nilai | Arti |
+|---|---|---|
+| Kontrol negatif | `requests=[]` saat dialog terbuka tanpa merekam | efek tidak salah tempat; baterai tidak terkuras tanpa manfaat |
+| Wiring | `requests=["screen","screen"]`, `releases=2` | satu kunci per segmen rekaman, tidak menumpuk |
+| Tahan gagal | `calls=1`, `outcomes=["error:NotAllowedError"]`, nol `pageerror` | penolakan platform tidak merusak perekaman |
+
+### G3: foto lapangan dikecilkan sebelum disimpan
+
+Unit test `tests/photo-downscale.test.ts` (9 tes) sudah hijau, TAPI itu menguji
+`planPhotoResize` sebagai fungsi murni dan `shrinkPhotoToDataUrl` dengan
+`createImageBitmap` yang di-stub. Yang tidak diuji di sana: berkas nyata dari
+input kamera, `createImageBitmap` asli, kanvas asli, dan apa yang benar-benar
+tersimpan. Kalau pemanggilannya lupa dipasang, unit test tetap hijau. Itu bentuk
+regresi yang lolos, jadi butuh tes di runtime.
+
+Hasil (2026-11-11 20:38 WIB):
+
+```
+{"phase":"downscale",
+ "source":{"width":3200,"height":2400,"bytes":2508876},
+ "stored":{"width":1600,"height":1200,"bytes":237639},
+ "capBytes":2097152,"ratioPreserved":0}
+  ✓ foto kamera besar diperkecil ke 1600 px dan masuk batas simpan
+{"phase":"control","reEncoded":false,"bytes":69}
+  ✓ foto kecil tidak di-encode ulang (byte identik)
+```
+
+| Bukti | Nilai | Arti |
+|---|---|---|
+| Sumber | 3200x2400, 2.508.876 byte | ukuran foto kamera HP yang dulu ditolak |
+| Tersimpan | 1600x1200, 237.639 byte | sisi terpanjang tepat `MAX_STORED_PHOTO_EDGE_PX` |
+| Rasio | `ratioPreserved: 0` | 4:3 terjaga, bukan dipotong persegi |
+| Kontrol | PNG 1x1 byte identik (`reEncoded:false`) | tidak ada encode ulang saat tidak perlu |
+
+Sumber diperkecil 10,6 kali dan masuk batas 2 MiB dengan sisa ruang besar, jadi
+foto 4-8 MB dari kamera HP tidak lagi jatuh ke pesan "terlalu besar".
+
+### Bukti tes ini bisa MERAH (bukan cuma hijau)
+
+Tes yang selalu hijau tidak membedakan apa pun. Dua patch sementara dipasang di
+`vite dev` (`:4174`), dijalankan, lalu dikembalikan. Keduanya terbukti merah:
+
+| Patch sementara | Hasil | Pesan kegagalan |
+|---|---|---|
+| `shrinkPhotoToDataUrl` mengembalikan `null` selalu | G3 merah | `"That photo is too large (max 2 MB). Choose a smaller image."` — persis keluhan asli G3 |
+| Efek wake lock di-`return` lebih awal | G2 merah | `expect(received).toBeGreaterThanOrEqual(1)` — `Received: 0` permintaan kunci |
+
+Sesudah revert, `grep -c DISCRIMINATION` = 0 di kedua berkas dan `git diff` kosong,
+lalu 7/7 hijau lagi. Jadi hijau-nya punya daya beda, bukan kebetulan.
+
 ### Yang TIDAK dibuktikan oleh tes ini (jangan diklaim)
 
 - **Peta GeoPDF utuh pulih setelah app dibuka lagi.** Itu bergantung pemulihan
   proyek, yang di build browser tidak berjalan (`planStartup` hanya restore di
   desktop). `tilesBefore=-1` di atas artinya rasterisasi bahkan belum ditunggu
   pada run itu; tes sengaja berhenti di arsip, bukan di tile.
-- Wake lock layar (`wake-lock.ts`), izin kamera `content://`, GPS asli,
-  background track recording, downscale foto di perangkat.
+- **Layar HP benar-benar tetap menyala saat merekam** (G2). Yang terbukti adalah
+  kontrak kodenya: kunci diminta saat merekam, dilepas saat jeda, dan penolakan
+  platform tidak merusak rekaman. Di headless kuncinya bahkan ditolak
+  (`NotAllowedError`), jadi jalur "berhasil memegang kunci" belum pernah jalan.
+- **Foto dari kamera HP asli** (G3). Yang terbukti: JPEG 3200x2400 hasil kanvas
+  diperkecil ke 1600x1200. Orientasi EXIF, HEIC, dan `content://` dari kamera
+  Android belum diuji.
+- Izin kamera `content://`, GPS asli, background track recording.
 - G4 (drag vertex di layar sentuh).
 
 Semua itu tetap butuh HP Adi atau emulator ber-KVM.
@@ -112,13 +200,23 @@ Semua itu tetap butuh HP Adi atau emulator ber-KVM.
 
 ```
 bash factory/scripts/mobile-web.sh serve    # sajikan dist yang ada di :4173
-bash factory/scripts/mobile-web.sh field    # spec offline + arsip (~1 menit)
+bash factory/scripts/mobile-web.sh field    # G1+G2+G3, 7 tes (~6 menit)
 bash factory/scripts/mobile-web.sh smoke    # suite core repo (boot, peta, tabel)
 bash factory/scripts/mobile-web.sh watch    # sama seperti field, jendela terlihat
 ```
 
-Iterasi: 2 tes dalam 58 detik, tanpa rebuild dan tanpa emulator. Bandingkan
-dengan 36 menit emulator yang belum selesai boot.
+`field` menjalankan tiga spec serial (`mobile-offline-field`,
+`mobile-photo-downscale`, `mobile-wake-lock`) karena SwiftShader memakai CPU dan
+tiap spec membuka proses Chrome sendiri. Hasil 2026-11-11 20:42 WIB lewat
+wrapper ini: **7 passed (6.2m)**, tanpa rebuild dan tanpa emulator. Untuk
+iterasi satu celah saja, panggil Playwright langsung dengan `-g`:
+
+```
+E2E_PORT=4173 npx playwright test e2e/mobile-photo-downscale.spec.ts \
+    --project=features --reporter=list --workers=1 -g "foto kamera besar"
+```
+
+Bandingkan dengan 36 menit emulator yang belum selesai boot.
 
 ## 4. Yang masih menunggu Adi
 
