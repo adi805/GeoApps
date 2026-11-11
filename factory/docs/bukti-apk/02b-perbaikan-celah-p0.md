@@ -94,10 +94,21 @@ node --import tsx --test tests/photo-downscale.test.ts tests/field-collection.te
 
 ## 4. Gerbang tipe
 
+Dijalankan ulang sendiri di laptop ini (bukan hanya laporan sesi lain) pada
+2026-11-11 14:23 WIB, HEAD `de178dee`:
+
 ```
-npm run typecheck
-  # exit 0
+NODE_OPTIONS=--max-old-space-size=2560 npm run typecheck > /tmp/typecheck.log 2>&1
+  # EXIT:0
+  # grep -c "error TS" /tmp/typecheck.log -> 0
 ```
+
+`npm run typecheck` di repo ini adalah `npm run build`, yaitu prebuild
+`tsc -p tsconfig.build.json` (@geolibre/embed) lalu `tsc -b && vite build`.
+Jadi exit 0 berarti gerbang tipe DAN bundel produksi dua-duanya lolos pada
+commit di atas. Tanpa batas `--max-old-space-size`, `npx tsc -b` di mesin ini
+terbunuh OOM (`Killed`, exit 137) karena RAM 7.7 GB + `earlyoom` aktif; batas
+2.5 GB membuatnya selesai.
 
 ## 5. Yang belum dibuktikan
 
