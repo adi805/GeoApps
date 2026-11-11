@@ -115,6 +115,10 @@ Yang belum: pemakaian memori saat membuka lembar A1 di HP nyata, dan perilaku sa
 | G3 | Foto 2 MiB disimpan base64 di properti | proyek membengkak, lambat dibuka di HP | perkecil gambar di klien sebelum base64 |
 | G4 | Geser titik sudut ukur di layar sentuh belum diuji | mungkin tidak bisa merapikan hasil ukur | uji lapangan dulu, baru putuskan perlu handler sentuh khusus |
 
+Status penutupan G1 sampai G3: `02b-perbaikan-celah-p0.md` (2026-11-11). Ringkasnya
+G1 dan G3 tertutup di kode dan diuji di Node, G2 tertutup untuk layar mati (tahap 1
+saja, foreground service belum ada), G4 tetap uji lapangan.
+
 ## 5. Yang belum dibuktikan
 
 Daftar ini sengaja ditulis, supaya tidak ada yang membaca dokumen ini sebagai "semua beres":
