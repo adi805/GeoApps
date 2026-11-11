@@ -48,16 +48,26 @@ serve() {
     return 1
 }
 
+# Tiga spec lapangan: G1 (arsip GeoPDF lintas restart proses), G2 (wake lock
+# saat merekam), G3 (foto dikecilkan sebelum disimpan). Dijalankan serial
+# karena SwiftShader memakai CPU, dan tiap spec membuka proses Chrome sendiri.
+FIELD_SPECS=(
+    e2e/mobile-offline-field.spec.ts
+    e2e/mobile-wake-lock.spec.ts
+    e2e/mobile-photo-downscale.spec.ts
+)
+
 field() {
     up || serve
     local headed="${1:-}"
+    local extra=()
+    # `[ ... ] && extra=(--headed)` di bawah `set -e` akan menghentikan skrip
+    # saat kondisinya salah: exit status daftar `&&` yang gagal tetap 1. Pakai if.
     if [ "$headed" = "watch" ]; then
-        E2E_PORT="$PORT" npx playwright test e2e/mobile-offline-field.spec.ts \
-            --project=features --reporter=list --workers=1 --headed
-    else
-        E2E_PORT="$PORT" npx playwright test e2e/mobile-offline-field.spec.ts \
-            --project=features --reporter=list --workers=1
+        extra=(--headed)
     fi
+    E2E_PORT="$PORT" npx playwright test "${FIELD_SPECS[@]}" \
+        --project=features --reporter=list --workers=1 "${extra[@]}"
 }
 
 case "${1:-help}" in
