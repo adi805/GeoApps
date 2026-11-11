@@ -73,6 +73,7 @@ import {
   type NmeaConnection,
 } from "../../lib/nmea-source";
 import { saveTextFileWithFallback } from "../../lib/tauri-io";
+import { requestScreenWakeLock, type ScreenWakeLock } from "../../lib/wake-lock";
 import { createGpsOverlay, type GpsOverlay } from "../../lib/gps-overlay";
 import { engineMarkerMap } from "../../lib/engine-style-map";
 import { createAnnotationMarker, type AnnotationMarker } from "@geolibre/plugins";
@@ -359,6 +360,35 @@ export function GpsTrackingDialog({
   useEffect(() => {
     settingsRef.current = settings;
   }, [settings]);
+
+  // Layar yang mati mem-pause WebView, jadi timer berhenti dan rekaman berhenti
+  // tanpa satu pun peringatan (audit P0, celah G2). Selama merekam, minta
+  // kunci layar hidup; kunci otomatis hilang saat halaman disembunyikan, jadi
+  // ambil ulang saat halaman kembali terlihat.
+  useEffect(() => {
+    if (recording !== "recording") return;
+    let lock: ScreenWakeLock | null = null;
+    let cancelled = false;
+    const acquire = () => {
+      if (cancelled || lock || document.visibilityState !== "visible") return;
+      void requestScreenWakeLock().then((held) => {
+        // Rekaman berhenti atau dijeda sebelum izinnya turun: kembalikan.
+        if (cancelled || recordingRef.current !== "recording") {
+          void held?.release().catch(() => undefined);
+          return;
+        }
+        lock = held;
+      });
+    };
+    acquire();
+    document.addEventListener("visibilitychange", acquire);
+    return () => {
+      cancelled = true;
+      document.removeEventListener("visibilitychange", acquire);
+      void lock?.release().catch(() => undefined);
+      lock = null;
+    };
+  }, [recording]);
 
   const getMap = useCallback(() => mapControllerRef.current?.getMap() ?? null, [mapControllerRef]);
 

@@ -8,28 +8,10 @@ import { SIM_TICK_MS } from "./session";
  * timer that replays a route without a GPS.
  */
 
-/** A held screen wake lock. */
-export interface ScreenWakeLock {
-  release: () => Promise<void>;
-}
-
-type WakeLockNavigator = Navigator & {
-  wakeLock?: { request: (type: "screen") => Promise<ScreenWakeLock> };
-};
-
-/**
- * Keep the screen on, where the platform allows it.
- *
- * @returns The lock, or null when unsupported or refused (a hidden page).
- */
-export async function requestScreenWakeLock(): Promise<ScreenWakeLock | null> {
-  try {
-    const wakeLock = (navigator as WakeLockNavigator).wakeLock;
-    return wakeLock ? await wakeLock.request("screen") : null;
-  } catch {
-    return null;
-  }
-}
+// The wake lock lives in `lib/wake-lock.ts` because GPS track recording needs
+// it too, without pulling the navigation engine along; re-exported here so the
+// drive keeps one entry point for its browser pieces.
+export { requestScreenWakeLock, type ScreenWakeLock } from "../wake-lock";
 
 /**
  * The navigation arrow drawn at the drive's position.
