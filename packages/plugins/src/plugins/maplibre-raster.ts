@@ -976,6 +976,11 @@ export function restoreRasterLayers(app: GeoLibreAppAPI): void {
  * The `geopdf://` registry lives in memory, and the layer's saved URL carries
  * the PDF's content hash, so re-registering under the same hash makes the
  * existing layer resolve without rewriting the store.
+ *
+ * The archived PDF bytes are tried first (`geopdf-pdf-archive.ts`) and the
+ * recorded local path second: on Android the import records no path at all, and
+ * a `content://` URI stops being readable once the process that received the
+ * grant dies, so the archive is the only durable copy there.
  */
 async function restoreGeoPdfTileSets(): Promise<void> {
   const layers = useAppStore
@@ -983,22 +988,39 @@ async function restoreGeoPdfTileSets(): Promise<void> {
     .layers.filter((layer) => typeof layer.metadata.geopdfFileHash === "string");
   if (layers.length === 0) return;
   const reader = localRasterFileReader;
-  const { hasGeoPdfTileSet, registerGeoPdfTileSet } = await import("./geopdf/geopdf-render");
+  const { hasGeoPdfTileSet, registerGeoPdfTileSet, registerGeoPdfTileSetFromArchive } =
+    await import("./geopdf/geopdf-render");
   for (const layer of layers) {
     const hash = layer.metadata.geopdfFileHash;
     const path = layer.metadata.localFilePath;
     if (typeof hash !== "string" || hasGeoPdfTileSet(hash)) continue;
-    if (!reader || typeof path !== "string" || !path) continue;
+    let restored = false;
+    // Arsip lebih dulu: byte-nya lokal dan tidak bisa basi, sementara path di
+    // Android bisa berupa URI `content://` yang grant bacanya sudah mati, dan
+    // impor dari pemilih berkas HP tidak mencatat path sama sekali.
     try {
-      const opened = await reader(path);
-      await registerGeoPdfTileSet(
-        typeof opened === "string" ? await fileFromBlobUrl(opened) : opened,
-        hash,
-      );
+      restored = await registerGeoPdfTileSetFromArchive(hash);
     } catch (error) {
-      console.warn(
-        `[GeoLibre] Could not reload GeoPDF tiles for "${layer.name}" from "${path}".`,
-        error,
+      console.warn(`[GeoLibre] Could not restore the archived GeoPDF "${layer.name}".`, error);
+    }
+    if (!restored && reader && typeof path === "string" && path) {
+      try {
+        const opened = await reader(path);
+        await registerGeoPdfTileSet(
+          typeof opened === "string" ? await fileFromBlobUrl(opened) : opened,
+          hash,
+        );
+        restored = true;
+      } catch (error) {
+        console.warn(
+          `[GeoLibre] Could not reload GeoPDF tiles for "${layer.name}" from "${path}".`,
+          error,
+        );
+      }
+    }
+    if (!restored) {
+      console.info(
+        `[GeoLibre] GeoPDF "${layer.name}" has no readable PDF (no path and no archive); only cached tiles will draw.`,
       );
     }
   }

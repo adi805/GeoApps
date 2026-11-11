@@ -11,6 +11,7 @@ import { addProtocol, type RequestParameters } from "maplibre-gl";
 import * as pdfjs from "pdfjs-dist";
 import type { GeoLibreAppAPI } from "../../types";
 import { firstGeoreferencedPage, parseGeoPdfDocument, type GeoPdfPage } from "./geopdf-parser";
+import { sharedGeoPdfPdfArchive } from "./geopdf-pdf-archive";
 import {
   createDefaultGeoPdfTileCacheStore,
   type GeoPdfTileCacheStore,
@@ -161,6 +162,32 @@ export async function registerGeoPdfTileSet(
 }
 
 /**
+ * Register a saved tile set from the archived PDF bytes instead of a file path.
+ *
+ * This is the path that works on Android: the picker hands back a `content://`
+ * URI whose read grant dies with the process, and the mobile import records no
+ * path at all, so `registerGeoPdfTileSet` has nothing to reopen. The bytes kept
+ * by `geopdf-pdf-archive.ts` are the only durable copy.
+ *
+ * @param expectedHash - The hash the saved layer already carries.
+ * @returns True when a renderer now serves that hash.
+ */
+export async function registerGeoPdfTileSetFromArchive(expectedHash: string): Promise<boolean> {
+  if (renderers.has(expectedHash)) return true;
+  let bytes: ArrayBuffer | null = null;
+  try {
+    bytes = await sharedGeoPdfPdfArchive().load(expectedHash);
+  } catch (error) {
+    console.warn("[GeoLibre] Arsip byte GeoPDF tidak bisa dibaca.", error);
+    return false;
+  }
+  if (!bytes || bytes.byteLength === 0) return false;
+  const file = new File([bytes], "geopdf.pdf", { type: "application/pdf" });
+  const info = await registerGeoPdfTileSet(file, expectedHash);
+  return info !== null;
+}
+
+/**
  * Import a GeoPDF and add it to the map as a tiled raster layer.
  *
  * @param app - The GeoLibre app API; `addTileLayer` is required.
@@ -189,6 +216,24 @@ export async function addGeoPdfToMap(
     renderers.set(hash, createRenderer(data, page, hash));
   }
   registerGeoPdfProtocol();
+  // Arsipkan byte PDF-nya. Di Android, berkas yang dipilih dari storage
+  // perangkat adalah URI `content://` yang grant bacanya mati bersama proses,
+  // dan impor lewat pemilih berkas HP tidak mencatat path sama sekali. Tanpa
+  // salinan ini, membuka proyek lagi sesudah app ditutup hanya menyisakan
+  // alamat `geopdf://<hash>/...` tanpa renderer di belakangnya.
+  try {
+    const archived = await sharedGeoPdfPdfArchive().save(hash, data);
+    if (!archived) {
+      console.warn(
+        "[GeoLibre] GeoPDF ini terlalu besar untuk diarsipkan, jadi membukanya lagi sesudah app ditutup akan meminta berkasnya ulang.",
+      );
+    }
+  } catch (error) {
+    console.warn(
+      "[GeoLibre] Byte GeoPDF gagal diarsipkan; membuka proyek ini lagi sesudah restart akan meminta berkasnya ulang.",
+      error,
+    );
+  }
 
   const bounds: [number, number, number, number] = [
     page.bounds.west,
@@ -235,8 +280,15 @@ export function releaseGeoPdfTileSet(hash: string): void {
  *
  * @returns How many tiles were removed.
  */
-export function deleteGeoPdfTileCache(hash: string): Promise<number> {
+export async function deleteGeoPdfTileCache(hash: string): Promise<number> {
   releaseGeoPdfTileSet(hash);
+  // Byte PDF-nya ikut dibuang: tanpa ubin dan tanpa layer, arsipnya cuma
+  // menahan kuota IndexedDB untuk peta yang sudah dihapus.
+  try {
+    await sharedGeoPdfPdfArchive().remove(hash);
+  } catch (error) {
+    console.warn("[GeoLibre] Arsip byte GeoPDF tidak bisa dihapus.", error);
+  }
   return sharedTileCache().deleteProject(hash);
 }
 
