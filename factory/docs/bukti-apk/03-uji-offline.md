@@ -82,6 +82,22 @@ perintah yang mendukungnya.
 | S7 | belum dijalankan | - |
 | S8 | belum dijalankan | - |
 
+### Sudah dibuktikan otomatis, tanpa HP
+
+Tiga bagian dari skenario di atas punya bukti mesin di lapisan browser, jadi
+kalau S1-S8 gagal nanti, ada pembanding untuk memisahkan "kode-nya salah" dari
+"perangkatnya beda". Bukti lengkap + angkanya: `03b-jalur-uji-cepat.md`.
+
+| Celah | Yang sudah dibuktikan | Perintah |
+|---|---|---|
+| G1 | byte PDF bertahan di IndexedDB setelah proses app dibunuh, jaringan luar diblokir | `mobile-web.sh field` |
+| G2 | kunci layar diminta saat merekam, dilepas saat jeda, dan penolakan platform tidak merusak rekaman | `mobile-web.sh field` |
+| G3 | foto 3200x2400 tersimpan 1600x1200 (237.639 byte), rasio 4:3 terjaga | `mobile-web.sh field` |
+
+Yang tetap HARUS diuji di HP dan tidak boleh dianggap selesai karena tabel di
+atas: layar benar-benar menyala, kamera `content://`, GPS asli, pemulihan peta
+GeoPDF setelah app dibuka lagi, dan rekaman di latar belakang.
+
 ## 5. Yang tidak diuji di dokumen ini
 
 - **G4 (geser vertex di layar sentuh).** Butuh tangan di layar; tidak bisa
