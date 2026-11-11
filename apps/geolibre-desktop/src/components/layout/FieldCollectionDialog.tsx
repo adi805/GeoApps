@@ -60,6 +60,7 @@ import {
   type GeometryType,
   isCollectionLayer,
   MAX_PHOTO_BYTES,
+  MAX_PHOTO_INPUT_BYTES,
   minVertices,
   parseOptions,
   resolveTargetLayer,
@@ -77,6 +78,7 @@ import { attributeFormErrorMessage } from "../../lib/attribute-form-messages";
 import { getCurrentPosition } from "../../lib/geolocation";
 import { fixFromPosition, formatAccuracy, type GpsFix } from "../../lib/gps-tracking";
 import { releaseBodyPointerEvents } from "../../lib/radix-compat";
+import { shrinkPhotoToDataUrl } from "../../lib/photo-downscale";
 
 interface FieldCollectionDialogProps {
   open: boolean;
@@ -101,6 +103,33 @@ interface DraftField {
 
 function newDraftField(id: number): DraftField {
   return { id, label: "", type: "text", required: false, optionsText: "" };
+}
+
+/**
+ * Read one photo as a data URL, downscaled when it is a full-size camera shot.
+ *
+ * A phone camera writes 4 to 8 MB per photo, and the collection stores a data
+ * URL (about 4/3 the byte size), so reading the file verbatim is what used to
+ * reject the photo outright. `shrinkPhotoToDataUrl` caps the longest edge and
+ * re-encodes; it returns null for an already-small image or an environment
+ * without canvas, and then the original bytes are read instead.
+ *
+ * @param file - The photo the user picked or took.
+ * @returns A data URL, at or below the stored cap when shrinking worked.
+ */
+async function readPhotoDataUrl(file: File): Promise<string> {
+  const shrunk = await shrinkPhotoToDataUrl(file);
+  if (shrunk) return shrunk;
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error ?? new Error("photo read failed"));
+    reader.onload = () => {
+      const src = typeof reader.result === "string" ? reader.result : "";
+      if (!src) reject(new Error("empty photo"));
+      else resolve(src);
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 /**
@@ -748,16 +777,19 @@ export function FieldCollectionDialog({
       const files = Array.from(e.target.files ?? []);
       e.target.value = "";
       if (files.length === 0) return;
+      // The message quotes the STORED cap, which is the limit the user can act
+      // on; the 64 MB input ceiling below is a technical guard against decoding
+      // a pathological file, not a size the user has to reason about.
       const tooLarge = () =>
         setNotice(
           t("fieldCollection.photoTooLarge", {
             max: `${Math.round(MAX_PHOTO_BYTES / (1024 * 1024))} MB`,
           }),
         );
-      // Fast-reject before reading: the stored value is a base64 data URL (~4/3
-      // the file size), so a file already over the cap can't fit. The exact
-      // check is on the encoded length below.
-      if (files.some((file) => file.size > MAX_PHOTO_BYTES)) {
+      // Only a pathological source file is rejected before reading; a normal
+      // phone photo (4-8 MB) is downscaled first and then checked against the
+      // stored cap below.
+      if (files.some((file) => file.size > MAX_PHOTO_INPUT_BYTES)) {
         tooLarge();
         return;
       }
@@ -769,20 +801,13 @@ export function FieldCollectionDialog({
       const seq = contextSeqRef.current;
       setPhotoReads((count) => count + 1);
       Promise.all(
-        files.map(
-          (file) =>
-            new Promise<CollectionPhoto>((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onerror = reject;
-              reader.onload = () => {
-                const src = typeof reader.result === "string" ? reader.result : "";
-                if (!src) reject(new Error("empty photo"));
-                else if (src.length > MAX_PHOTO_BYTES) reject(new RangeError());
-                else resolve({ src, name: file.name });
-              };
-              reader.readAsDataURL(file);
-            }),
-        ),
+        files.map(async (file): Promise<CollectionPhoto> => {
+          const src = await readPhotoDataUrl(file);
+          // The cap is on the encoded data URL, which is what lands in the
+          // project file, so it is checked after the shrink, not before.
+          if (src.length > MAX_PHOTO_BYTES) throw new RangeError();
+          return { src, name: file.name };
+        }),
       )
         .then((next) => {
           if (contextSeqRef.current !== seq) return;

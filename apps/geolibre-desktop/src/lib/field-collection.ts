@@ -83,6 +83,15 @@ export function buildPhotoProperties(photos: CollectionPhoto[]): Record<string, 
  */
 export const MAX_PHOTO_BYTES = 2 * 1024 * 1024;
 
+/**
+ * Largest source file accepted before any decoding.
+ *
+ * {@link MAX_PHOTO_BYTES} caps what is STORED, so a phone photo is downscaled
+ * to a 1600 px longest edge before it is embedded (`photo-downscale.ts`). This
+ * ceiling only stops a pathological file from being decoded at all.
+ */
+export const MAX_PHOTO_INPUT_BYTES = 64 * 1024 * 1024;
+
 /** Minimal structural view of a layer — avoids coupling this module to the store. */
 export interface CollectionLayerLike {
   type: string;
