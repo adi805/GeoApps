@@ -51,10 +51,10 @@ Repo ini sudah punya seluruh bahannya: `playwright.config.ts` menyajikan build
 `openViewer`/`enterViewer`, dan helper hitung cache tile GeoPDF. Yang ditambahkan
 hanya empat berkas:
 
-- `e2e/mobile-offline-field.spec.ts` — bukti otomatis arsip GeoPDF lintas restart proses (G1).
-- `e2e/mobile-wake-lock.spec.ts` — bukti wake lock diminta/dilepas saat merekam (G2).
-- `e2e/mobile-photo-downscale.spec.ts` — bukti foto kamera dikecilkan sebelum disimpan (G3).
-- `factory/scripts/mobile-web.sh` — wrapper tipis (`serve|field|watch|smoke|all`).
+- `e2e/mobile-offline-field.spec.ts`: bukti otomatis arsip GeoPDF lintas restart proses (G1).
+- `e2e/mobile-wake-lock.spec.ts`: bukti wake lock diminta/dilepas saat merekam (G2).
+- `e2e/mobile-photo-downscale.spec.ts`: bukti foto kamera dikecilkan sebelum disimpan (G3).
+- `factory/scripts/mobile-web.sh`: wrapper tipis (`serve|field|watch|smoke|all`).
 
 ### Model "mode pesawat" yang dipakai, dan kenapa bukan `setOffline(true)`
 
@@ -102,11 +102,11 @@ Kontrol negatif itu penting: tanpa dia, `archiveAfter=1` tidak membedakan
 
 Dua klaim dipisah, dan pemisahan itu bukan formalitas.
 
-**Klaim 1 — wiring.** `navigator.wakeLock` diganti stub yang mencatat
+**Klaim 1, wiring.** `navigator.wakeLock` diganti stub yang mencatat
 `request`/`release`. Ini membuktikan app memanggil API di saat yang benar dan
 melepasnya, BUKAN bahwa layar menyala.
 
-**Klaim 2 — ketahanan saat platform menolak.** API ASLI dipakai, dibungkus untuk
+**Klaim 2, ketahanan saat platform menolak.** API ASLI dipakai, dibungkus untuk
 mencatat hasilnya. Diukur lebih dulu sebelum menulis assertion apa pun:
 
 ```
@@ -172,8 +172,8 @@ Tes yang selalu hijau tidak membedakan apa pun. Dua patch sementara dipasang di
 
 | Patch sementara | Hasil | Pesan kegagalan |
 |---|---|---|
-| `shrinkPhotoToDataUrl` mengembalikan `null` selalu | G3 merah | `"That photo is too large (max 2 MB). Choose a smaller image."` — persis keluhan asli G3 |
-| Efek wake lock di-`return` lebih awal | G2 merah | `expect(received).toBeGreaterThanOrEqual(1)` — `Received: 0` permintaan kunci |
+| `shrinkPhotoToDataUrl` mengembalikan `null` selalu | G3 merah | `"That photo is too large (max 2 MB). Choose a smaller image."`, persis keluhan asli G3 |
+| Efek wake lock di-`return` lebih awal | G2 merah | `expect(received).toBeGreaterThanOrEqual(1)` dengan `Received: 0` permintaan kunci |
 
 Sesudah revert, `grep -c DISCRIMINATION` = 0 di kedua berkas dan `git diff` kosong,
 lalu 7/7 hijau lagi. Jadi hijau-nya punya daya beda, bukan kebetulan.

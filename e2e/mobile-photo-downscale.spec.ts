@@ -8,7 +8,7 @@ import { MAX_STORED_PHOTO_EDGE_PX } from "../apps/geolibre-desktop/src/lib/photo
  * Kenapa perlu, padahal `tests/photo-downscale.test.ts` sudah hijau. Unit test
  * menguji `planPhotoResize` sebagai fungsi murni dan `shrinkPhotoToDataUrl`
  * dengan `createImageBitmap` yang di-stub. Yang tidak diuji di sana: jalur
- * nyata di dialog — berkas dari input kamera, `createImageBitmap` asli,
+ * nyata di dialog: berkas dari input kamera, `createImageBitmap` asli,
  * kanvas asli, lalu apa yang benar-benar tersimpan di properti foto. Kalau
  * pemanggilannya lupa dipasang, unit test tetap hijau dan foto HP tetap
  * membengkak. Itu persis bentuk regresi yang lolos.
