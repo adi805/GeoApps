@@ -101,7 +101,13 @@ export function LayerOpacitySlider({ label, ariaLabel, value, onChange }: LayerO
           type="button"
           className="w-9 shrink-0 cursor-text text-end font-mono text-[10px] tabular-nums text-muted-foreground hover:text-foreground"
           title={t("layers.opacityExactHint")}
-          aria-label={t("layers.opacityValueEditAria", { label: ariaLabel })}
+          // WCAG 2.5.3 (Label in Name): the accessible name has to contain the
+          // visible text, and the visible text here is the formatted value
+          // ("1.00"). axe-core 4.14 turned label-content-name-mismatch on and
+          // caught this button. The value is appended here instead of adding a
+          // {{value}} placeholder to all 22 locale files: the label stays
+          // translated, and the number is the same in every language.
+          aria-label={`${t("layers.opacityValueEditAria", { label: ariaLabel })} ${value.toFixed(2)}`}
           onClick={(e: ReactMouseEvent) => e.stopPropagation()}
           onDoubleClick={(e: ReactMouseEvent) => {
             e.stopPropagation();
