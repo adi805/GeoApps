@@ -40,9 +40,12 @@ function tempFile(name: string, contents: string): string {
 // rewriting that one line into a copy. Anything else would mean shipping a hook
 // whose only purpose is letting tests change the gate's policy.
 function scriptWithAllowlist(entries: string): string {
-  const marker = "const ALLOWLIST = new Map([]);";
+  // Matched as a pattern, not a literal: the real script carries its own entries,
+  // and a test helper that only recognises an empty allowlist would fail the
+  // moment the gate legitimately needs one.
+  const marker = /const ALLOWLIST = new Map\(\[[\s\S]*?\]\);/;
   const source = readFileSync(SCRIPT, "utf8");
-  assert.ok(source.includes(marker), "ALLOWLIST marker moved — update this test");
+  assert.ok(marker.test(source), "ALLOWLIST marker moved — update this test");
   return tempFile("audit-check.mjs", source.replace(marker, `const ALLOWLIST = new Map([${entries}]);`));
 }
 
@@ -55,14 +58,17 @@ function reportWithDirectDependency(): string {
 }
 
 describe("audit-check", () => {
+  // These two judge the verdict on a report, so they run against an empty
+  // allowlist. The shipped script's own entries describe today's advisories and
+  // would show up as stale against a fixture recorded on a different day.
   it("passes a clean report", () => {
-    const result = run(CLEAN);
+    const result = run(CLEAN, scriptWithAllowlist(""));
     assert.equal(result.status, 0);
     assert.match(result.stdout, /No unallowed high\/critical advisories/);
   });
 
   it("fails on a high advisory that is not allowlisted", () => {
-    const result = run(HIGH);
+    const result = run(HIGH, scriptWithAllowlist(""));
     assert.equal(result.status, 1);
     assert.match(result.stderr, /node-forge — 1 high/);
     assert.match(result.stderr, /GHSA-86w9-cpqp-85rv/);

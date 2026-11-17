@@ -466,6 +466,51 @@ def pr_penanda_tanpa_issue_bebas_commit(tmp):
     tulis(commits, "Bump lodash from 4.17.20 to 4.17.21\n")
     return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
 
+def pr_bot_dependabot(tmp):
+    # Dependabot membuka PR dari akun mesin dan badannya dihasilkan bot: tidak ada manusia yang
+    # menulis `Tanpa issue:` di sana, dan menyuntingnya satu per satu tiap minggu bukan pekerjaan
+    # yang masuk akal. Penulisnya sendiri adalah pernyataan eksplisit bahwa unit kerja ini tidak
+    # bertanggungan pada issue, jadi gate membacanya dari `--penulis` (#141, #140).
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Bumps actions/download-artifact from 6 to 8.\n")
+    tulis(commits, "chore(deps): bump actions/download-artifact from 6 to 8\n")
+    return jln(
+        ["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits,
+         "--penulis", "app/dependabot"]
+    )
+
+def pr_bot_bentuk_payload(tmp):
+    # `github.event.pull_request.user.login` mengirim `dependabot[bot]`, sedangkan REST mengirim
+    # `app/dependabot`. Kalau normalisasinya cuma menangani satu bentuk, jalur ini lolos di satu
+    # permukaan dan merah di permukaan lain, dan yang merah adalah yang dilihat orang.
+    body = os.path.join(tmp, "body.md")
+    tulis(body, "Bumps lodash from 4.17.20 to 4.17.21.\n")
+    return jln(
+        ["tools/factory/gate_pr_link.py", "--body", body, "--penulis", "dependabot[bot]"]
+    )
+
+def pr_manusia_tetap_wajib(tmp):
+    # Batas jalur bot: login manusia TIDAK membebaskan apa pun. Tanpa kasus ini, pengecualian bot
+    # bisa melebar jadi "semua penulis" tanpa satu tes pun yang merah.
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Bumps lodash from 4.17.20 to 4.17.21.\n")
+    tulis(commits, "chore(deps): bump lodash from 4.17.20 to 4.17.21\n")
+    return jln(
+        ["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits,
+         "--penulis", "adi805"]
+    )
+
+def pr_bot_tanpa_penulis(tmp):
+    # Penulis yang tidak disebut sama sekali tidak boleh dianggap bot. Nilai kosong adalah nilai
+    # bawaan argparse, jadi kalau defaultnya salah dibaca, SEMUA PR manusia ikut lolos.
+    body = os.path.join(tmp, "body.md")
+    commits = os.path.join(tmp, "commits.txt")
+    tulis(body, "Bumps lodash from 4.17.20 to 4.17.21.\n")
+    tulis(commits, "chore(deps): bump lodash from 4.17.20 to 4.17.21\n")
+    return jln(["tools/factory/gate_pr_link.py", "--body", body, "--commits", commits])
+
 def pr_penanda_refs_tetap_cek_commit(tmp):
     # Batas jalur di atas: `Refs #42` MENGAKU ada unit kerja yang dirujuk, jadi tiap commit tetap
     # wajib menyebut nomornya. Kalau penanda ini ikut membebaskan judul commit, rujukan jadi cara
@@ -943,6 +988,10 @@ KASUS = [
     ("gate_pr_link", "positif: kutipan di dalam backtick bukan klaim", True, pr_kutipan_bukan_klaim),
     ("gate_pr_link", "positif: PR jejak berpenanda `Tanpa issue:`", True, pr_penanda_tanpa_issue),
     ("gate_pr_link", "positif: `Tanpa issue:` membebaskan judul commit tanpa nomor", True, pr_penanda_tanpa_issue_bebas_commit),
+    ("gate_pr_link", "positif: penulis bot `app/dependabot` dinyatakan bebas", True, pr_bot_dependabot),
+    ("gate_pr_link", "positif: bentuk payload `dependabot[bot]` ikut dikenali", True, pr_bot_bentuk_payload),
+    ("gate_pr_link", "negatif: login manusia tidak dibebaskan", False, pr_manusia_tetap_wajib),
+    ("gate_pr_link", "negatif: penulis tidak disebut bukan bot", False, pr_bot_tanpa_penulis),
     ("gate_pr_link", "negatif: `Refs #N` tetap mewajibkan nomor di judul commit", False, pr_penanda_refs_tetap_cek_commit),
     ("gate_pr_link", "positif: rujukan non-penutup `Refs #42`", True, pr_penanda_refs),
     ("gate_pr_link", "negatif: penanda `Tanpa issue:` tanpa alasan", False, pr_penanda_tanpa_alasan),
