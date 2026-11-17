@@ -14,7 +14,13 @@ on:
     # `labeled` dipasang supaya memasang label `lane:<id>` SETELAH PR terbuka menjalankan ulang
     # pemeriksa cakupan. Label-nya dibaca LIVE dari PR di dalam run (`gh pr view --json labels`),
     # bukan dari payload event.
-    types: [opened, synchronize, reopened, labeled]
+    #
+    # `edited` dipasang karena judul dan badan PR dibaca dari PAYLOAD event, bukan live. Tanpa
+    # `edited`, penulis yang memperbaiki badan PR-nya (menambah `Closes #N` atau `Tanpa issue:`)
+    # tidak pernah bisa menghijaukan gate: payload yang dipakai selalu yang lama, dan satu-satunya
+    # cara memicu payload baru adalah push commit — kerja sia-sia yang tidak mengubah apa pun yang
+    # diperiksa. Rerun manual juga tidak menolong, karena rerun memakai payload asli yang sama.
+    types: [opened, synchronize, reopened, labeled, edited]
   push:
     branches: [main]
   workflow_dispatch:
@@ -78,12 +84,18 @@ jobs:
         env:
           JUDUL: ${{ github.event.pull_request.title }}
           BADAN: ${{ github.event.pull_request.body }}
+          # Bot tidak bisa menyunting badan PR-nya sendiri, jadi gate diberi tahu siapa
+          # penulisnya dan mendeklarasikan `Tanpa issue:` sendiri untuk bot yang dikenal.
+          # Login manusia tidak pernah cocok dengan daftar itu, jadi PR manusia tetap wajib
+          # menautkan issue.
+          PENULIS: ${{ github.event.pull_request.user.login }}
         run: |
           printf '%s\n' "$JUDUL" > /tmp/judul.txt
           printf '%s\n' "$BADAN" > /tmp/badan.md
           git log --format=%s --no-merges "origin/${{ github.base_ref }}..HEAD" > /tmp/commits.txt
           python3 tools/factory/gate_pr_link.py \
-            --judul /tmp/judul.txt --body /tmp/badan.md --commits /tmp/commits.txt
+            --judul /tmp/judul.txt --body /tmp/badan.md --commits /tmp/commits.txt \
+            --penulis "$PENULIS"
 
       - name: Cakupan lane dan eskalasi
         if: github.event_name == 'pull_request'
