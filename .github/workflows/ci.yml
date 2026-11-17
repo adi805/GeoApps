@@ -142,8 +142,17 @@ jobs:
       # `--max-warnings` in the lint script is a ratchet: a PR that adds a
       # warning fails here. Fix it (or disable it on that line with a reason);
       # lower the limit when warnings are fixed.
+      #
+      # NODE_OPTIONS raises V8's heap ceiling: eslint 10.15 on this monorepo
+      # needs more than the ~4 GB a 16 GB runner gives it by default, and died
+      # with "Ineffective mark-compacts near heap limit" (exit 134) on the first
+      # grouped npm bump that carried it (#161). The job has 16 GB and a
+      # 15-minute budget, so 6 GB of heap costs nothing and turns a hard crash
+      # into either a pass or a real lint finding.
       - name: Lint
         run: npm run lint
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       # A dependency declared by both the app and packages/plugins must carry
       # the same range, or npm nests a second copy. See "Shared dependency
