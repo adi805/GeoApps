@@ -85,6 +85,29 @@ POLA_TANPA_ISSUE = re.compile(
 )
 POLA_REFS = re.compile(r"\brefs\b[ \t]*:?[ \t]*#(\d{1,6})\b", re.IGNORECASE)
 
+# Bot dependabot tidak bisa menyunting badan PR-nya sendiri, jadi `Tanpa issue:` yang diminta gate
+# di bawah mustahil ditulis oleh pihak yang seharusnya menulisnya. Tanpa jalur eksplisit, satu-
+# satunya jalan keluar adalah menyunting badan PR milik bot setiap kali ia membuka PR baru, dan itu
+# kerja manual yang berulang untuk pernyataan yang selalu sama. Karena itu penulis bot punya
+# deklarasi sendiri di sini: gate yang menyatakannya, bukan badan PR.
+#
+# Daftarnya sengaja sempit dan eksplisit, bukan pola "apa pun yang berakhiran [bot]". Login bot
+# muncul dalam dua bentuk di GitHub: `dependabot[bot]` di payload Actions, `app/dependabot` di
+# REST API. Keduanya dinormalkan ke satu bentuk sebelum dicocokkan, jadi gate ini tidak bergantung
+# pada bentuk mana yang dikirim pemanggil.
+PENULIS_BOT = frozenset({"dependabot", "renovate", "github-actions", "copilot"})
+
+def normalisasi_penulis(login):
+    """Normalkan login bot ke satu bentuk: tanpa awalan `app/`, tanpa akhiran `[bot]`."""
+    if not login:
+        return ""
+    nama = login.strip().lower()
+    if nama.startswith("app/"):
+        nama = nama[len("app/"):]
+    if nama.endswith("[bot]"):
+        nama = nama[: -len("[bot]")]
+    return nama
+
 # Judul merge buatan mesin, bukan manusia: satu bentuk dari GitHub (commit merge sintetis yang
 # dibuat untuk tiap PR), tiga sisanya dari git. Sengaja sempit, supaya commit yang kebetulan
 # berjudul "Merge ..." tapi bukan salah satu bentuk ini tetap diperiksa.
@@ -150,6 +173,11 @@ def main():
     p.add_argument("--judul", default=None)
     p.add_argument("--commits", default=None, help="berkas, satu judul commit per baris")
     p.add_argument("--issue", type=int, default=None)
+    p.add_argument(
+        "--penulis",
+        default=None,
+        help="login penulis PR; bot yang dikenal mendeklarasikan sendiri `Tanpa issue:`",
+    )
     a = p.parse_args()
 
     if not os.path.exists(a.body):
@@ -186,6 +214,15 @@ def main():
     tanpa_issue = bool(POLA_TANPA_ISSUE.search(teks_penanda))
     if tanpa_issue:
         penanda.append("`Tanpa issue:`")
+
+    # Deklarasi bot. Berlaku sama seperti `Tanpa issue:` yang ditulis manusia: unit kerja ini
+    # memang tidak bertanggungan pada issue, dan gate menyebutkan alasannya sendiri. Bedanya cuma
+    # siapa yang menulis deklarasinya, karena badan PR bot tidak bisa disunting bot itu.
+    penulis_bot = normalisasi_penulis(a.penulis)
+    if penulis_bot in PENULIS_BOT:
+        tanpa_issue = True
+        penanda.append("`Tanpa issue:` (bot: %s)" % penulis_bot)
+
     nomor_rujukan = sorted(nomor_refs(teks_pr))
     if nomor_rujukan:
         penanda.append("rujukan non-penutup %s" % ", ".join("#%d" % n for n in nomor_rujukan))
@@ -257,7 +294,13 @@ def main():
     else:
         ringkas = "tidak menutup issue (penanda non-penutup: %s)" % ", ".join(penanda)
     if jumlah_commit:
-        ringkas += ", %d commit semuanya menyebut issue" % jumlah_commit
+        # Jujur soal apa yang barusan diperiksa: di bawah `Tanpa issue:` judul commit TIDAK
+        # diwajibkan menyebut nomor issue, jadi mengklaim "semuanya menyebut issue" akan
+        # menggambarkan pemeriksaan yang tidak terjadi.
+        if tanpa_issue:
+            ringkas += ", %d commit tidak diwajibkan menyebut issue" % jumlah_commit
+        else:
+            ringkas += ", %d commit semuanya menyebut issue" % jumlah_commit
     return u.lulus(ringkas)
 
 
