@@ -14,7 +14,13 @@ on:
     # `labeled` dipasang supaya memasang label `lane:<id>` SETELAH PR terbuka menjalankan ulang
     # pemeriksa cakupan. Label-nya dibaca LIVE dari PR di dalam run (`gh pr view --json labels`),
     # bukan dari payload event.
-    types: [opened, synchronize, reopened, labeled]
+    #
+    # `edited` dipasang karena judul dan badan PR dibaca dari PAYLOAD event, bukan live. Tanpa
+    # `edited`, penulis yang memperbaiki badan PR-nya (menambah `Closes #N` atau `Tanpa issue:`)
+    # tidak pernah bisa menghijaukan gate: payload yang dipakai selalu yang lama, dan satu-satunya
+    # cara memicu payload baru adalah push commit — kerja sia-sia yang tidak mengubah apa pun yang
+    # diperiksa. Rerun manual juga tidak menolong, karena rerun memakai payload asli yang sama.
+    types: [opened, synchronize, reopened, labeled, edited]
   push:
     branches: [main]
   workflow_dispatch:
