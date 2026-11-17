@@ -286,6 +286,16 @@ def quote_ident(value):
 
 con = duckdb.connect()
 con.execute("INSTALL spatial; LOAD spatial;")
+try:
+    # GDAL COPY TO with an SRS is sensitive to coordinate axis order: DuckDB 2.0
+    # refuses the write unless the convention is stated explicitly. These
+    # scripts already treat GEOMETRY as lon/lat (ST_Transform is called with
+    # always_xy := true), which is exactly what this pins, and what DuckDB 2.1
+    # will default to. Older builds (the extra floor is duckdb>=1.1.0) do not
+    # know the setting and keep the previous implicit behaviour.
+    con.execute("SET geometry_always_xy = true;")
+except duckdb.Error:
+    pass
 
 if source_kind == "csv":
     lon = params["lon_column"]
@@ -454,6 +464,16 @@ def quote_ident(value):
 
 con = duckdb.connect()
 con.execute("INSTALL spatial; LOAD spatial;")
+try:
+    # GDAL COPY TO with an SRS is sensitive to coordinate axis order: DuckDB 2.0
+    # refuses the write unless the convention is stated explicitly. These
+    # scripts already treat GEOMETRY as lon/lat (ST_Transform is called with
+    # always_xy := true), which is exactly what this pins, and what DuckDB 2.1
+    # will default to. Older builds (the extra floor is duckdb>=1.1.0) do not
+    # know the setting and keep the previous implicit behaviour.
+    con.execute("SET geometry_always_xy = true;")
+except duckdb.Error:
+    pass
 
 # Confirm the requested driver can actually be created by this spatial build so
 # an unsupported format fails with a clear, listed error instead of a raw GDAL
