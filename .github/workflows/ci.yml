@@ -20,10 +20,14 @@ jobs:
     # "Build and test" always run: the frontend tests read files all over the
     # repo (backend/, python/, docs/, src-tauri/), so no path is safe to skip
     # for them. Every other job runs on a PR only when a path that feeds it
-    # changed, and always on push and workflow_dispatch (this job is skipped
-    # there). Each filter includes this workflow file, so a CI edit exercises
-    # every job. When a job starts reading a new part of the repo, add that path
-    # to its filter here.
+    # changed. The six heavier jobs (e2e, containers, backend, rust,
+    # sidecar-mssql, identity-integration) also skip a push to main: the merge
+    # commit is the tree the PR just validated, and re-running them there cost
+    # 184 of the 336 job-min that 10 pushes to main burned on 2026-11-17.
+    # workflow_dispatch still runs everything, so the full suite can be forced
+    # on demand. Each filter includes this workflow file, so a CI edit
+    # exercises every job. When a job starts reading a new part of the repo,
+    # add that path to its filter here.
     name: Detect changed paths
     runs-on: ubuntu-22.04
     timeout-minutes: 5
@@ -196,7 +200,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.web == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.web == 'true') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -254,7 +258,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.containers == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.containers == 'true') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -359,7 +363,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.backend == 'true') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -426,7 +430,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.rust == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.rust == 'true') }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -471,7 +475,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.mssql == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.mssql == 'true') }}
     services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
@@ -524,7 +528,7 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     needs: changes
-    if: ${{ !cancelled() && (github.event_name != 'pull_request' || needs.changes.outputs.identity == 'true') }}
+    if: ${{ !cancelled() && github.event_name != 'push' && (github.event_name != 'pull_request' || needs.changes.outputs.identity == 'true') }}
     services:
       postgres:
         image: postgres:17-alpine
