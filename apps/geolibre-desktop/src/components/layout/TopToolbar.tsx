@@ -335,6 +335,11 @@ export function TopToolbar({
           onCollaborate={() => setCollaborateDialogOpen(true)}
           onPrintLayout={() => dialogs.setPrintLayoutOpen(true)}
           onOpenOfflineBasemap={onOpenBasemapExtract}
+          bundleProjects={projectFiles.bundleProjects}
+          onSaveBundle={() => void projectFiles.handleSaveBundle()}
+          onOpenBundle={(slug) => void projectFiles.handleOpenBundle(slug)}
+          onRefreshBundles={() => void projectFiles.refreshBundles()}
+          bundleBusy={projectFiles.bundleBusy}
         />
       )}
       {!viewer && isMenuVisible(uiProfile, "edit") && (

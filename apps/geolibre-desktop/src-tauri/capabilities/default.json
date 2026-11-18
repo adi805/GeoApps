@@ -39,6 +39,14 @@
       ]
     },
     {
+      "comment": "The portable project bundles of issue #11: `project-bundle-tauri.ts` writes each project's files under `projects/<slug>/` here, with the fs plugin given `baseDir: AppLocalData` and a relative path. As with the startup copies above, this must be an `fs:scope` entry rather than a path on the write permission, because the plugin checks its scope against the entry itself; without it every bundle write fails with \"forbidden path\". Two entries because the directory is the mkdir target and everything inside it is the read/write target, `/**` so the per-slug `files/` subdirectory is reachable too.",
+      "identifier": "fs:scope",
+      "allow": [
+        { "path": "$APPLOCALDATA/projects" },
+        { "path": "$APPLOCALDATA/projects/**" }
+      ]
+    },
+    {
       "identifier": "opener:allow-open-url",
       "allow": [{ "url": "http://*" }, { "url": "https://*" }]
     },

@@ -25,11 +25,9 @@
  * in a web build. {@link tauriBundleDirIo} is the real binding.
  *
  * Scope: the fs plugin refuses paths outside the `fs:scope` allowlist in
- * `src-tauri/capabilities/default.json`. That file needs one entry for bundles,
- * `projects/**` (resolved against the base directory above), and
- * `capabilities/**` is outside the `offline` lane, so the entry is recorded as
- * the lane `android` request for issue #11. Until it lands, every write here
- * fails with "forbidden path". No absolute-path entry is required.
+ * `src-tauri/capabilities/default.json`, which carries the entries this store
+ * needs — `$APPLOCALDATA/projects` and `$APPLOCALDATA/projects/**`. No
+ * absolute-path entry is required.
  */
 
 import type { BaseDirectory, DirEntry } from "@tauri-apps/plugin-fs";

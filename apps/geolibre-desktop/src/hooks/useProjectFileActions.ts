@@ -53,6 +53,10 @@ import { isLayersPanelCollapsed } from "../lib/layer-panel-collapse";
 import { ensureHtmlFileName, ensureJsonFileName, ensureProjectFileName } from "../lib/file-names";
 import { pickLayerStylesFile } from "../lib/layer-style-files";
 import { notify } from "../lib/notify";
+import { createDeviceBundleLibrary } from "../lib/offline-bundle-device";
+import type { BundleSummary } from "../lib/offline-bundle-library";
+import { bundleRegionsFromOfflineRegions } from "../lib/offline-region-manifest";
+import { loadOfflineRegions } from "../lib/offline-regions";
 import { notifyUnsavedLocalRasters } from "../lib/local-raster-notices";
 import { APP_LAYERS_FILE_HOST, buildLayersFileContent } from "../lib/startup-layers";
 import { mergeStringLists } from "../lib/string-lists";
@@ -1998,6 +2002,121 @@ export function useProjectFileActions(mapControllerRef: MapControllerRef) {
     useAppStore.setState({ isDirty: true });
   };
 
+  // Portable project bundle (issue #11): save the open project into its own
+  // directory under the app's data root and open it back. Desktop and Android
+  // only — a browser tab has no path a layer could be re-read from, and the
+  // bundle's whole purpose is that those paths survive a relaunch.
+  const [bundleProjects, setBundleProjects] = useState<BundleSummary[]>([]);
+  const [bundleBusy, setBundleBusy] = useState<"save" | "open" | "list" | null>(null);
+
+  /** Re-read the bundles on this device; called when the menu opens and after a save. */
+  const refreshBundles = async (): Promise<void> => {
+    if (!isTauri()) return;
+    setBundleBusy("list");
+    try {
+      setBundleProjects(await (await createDeviceBundleLibrary()).list());
+    } catch (error) {
+      console.error("Failed to list project bundles", error);
+      setActionError(
+        error instanceof Error ? error.message : t("toolbar.error.couldNotListBundles"),
+      );
+    } finally {
+      setBundleBusy(null);
+    }
+  };
+
+  /**
+   * Save the open project into its own bundle, files included.
+   *
+   * The rasters, map documents and field photos the project points at are
+   * copied into the bundle and the project is rewritten to relative paths, so
+   * it reopens with the network off and survives a `content://` read grant
+   * dying with the process (issue #11, points 1 and 5).
+   *
+   * Credentials are redacted without asking, the way Share does: a bundle is a
+   * portable file the user is expected to copy to another device, so a keychain
+   * secret left inside it is a secret written to disk.
+   */
+  const handleSaveBundle = async (): Promise<boolean> => {
+    if (!isTauri()) return false;
+    const saveGeneration = useAppStore.getState().projectGeneration;
+    setBundleBusy("save");
+    try {
+      const { project } = buildCurrentProject();
+      const portable = redactProjectCredentials(excludeHiddenFieldsFromProject(project));
+      const library = await createDeviceBundleLibrary();
+      const saved = await library.save(portable, {
+        // The offline basemap regions are catalogued in the manifest so the
+        // user can see the total size the bundle costs on this device.
+        offlineRegions: bundleRegionsFromOfflineRegions(loadOfflineRegions()),
+      });
+      // A save that finished after the project was replaced must not report
+      // success for a project the user is no longer looking at.
+      if (useAppStore.getState().projectGeneration !== saveGeneration) return false;
+      await refreshBundles();
+      notify.success(
+        t("toolbar.notice.bundleSaved", {
+          name: saved.result.manifest.name,
+          files: saved.result.manifest.files.length,
+          copied: saved.result.copied,
+        }),
+      );
+      return true;
+    } catch (error) {
+      console.error("Failed to save project bundle", error);
+      setActionError(
+        error instanceof Error ? error.message : t("toolbar.error.couldNotSaveBundle"),
+      );
+      return false;
+    } finally {
+      setBundleBusy(null);
+    }
+  };
+
+  /**
+   * Open a bundle as the current project, with its file paths resolved for this
+   * device.
+   *
+   * An incomplete bundle still opens: a project missing one photo is more use
+   * on a field device than no project at all. What must not happen is opening
+   * it silently — the missing files and the layers that point at them are named
+   * first, which is what #11 point 3 asks for.
+   */
+  const handleOpenBundle = async (slug: string): Promise<boolean> => {
+    if (!isTauri()) return false;
+    setBundleBusy("open");
+    try {
+      const library = await createDeviceBundleLibrary();
+      const opened = await library.open(slug);
+      loadProject(opened.project as GeoLibreProject, null);
+      if (opened.status === "incomplete") {
+        const layers = opened.affectedLayers
+          .map((entry) => entry.layerName ?? `#${entry.layerIndex + 1}`)
+          .join(", ");
+        notify.warning(
+          t("toolbar.notice.bundleIncomplete", {
+            missing: opened.missing.length,
+            layers: layers || t("toolbar.notice.bundleIncompleteNoLayers"),
+          }),
+          { durationMs: 12_000 },
+        );
+      } else {
+        notify.success(
+          t("toolbar.notice.bundleOpened", { name: opened.manifest.name, files: opened.restored.length }),
+        );
+      }
+      return true;
+    } catch (error) {
+      console.error("Failed to open project bundle", error);
+      setActionError(
+        error instanceof Error ? error.message : t("toolbar.error.couldNotOpenBundle"),
+      );
+      return false;
+    } finally {
+      setBundleBusy(null);
+    }
+  };
+
   return {
     actionError,
     setActionError,
@@ -2023,6 +2142,11 @@ export function useProjectFileActions(mapControllerRef: MapControllerRef) {
     setSaveTemplateDialogOpen,
     handleDuplicate,
     handleSaveAsTemplate: () => setSaveTemplateDialogOpen(true),
+    bundleProjects,
+    bundleBusy,
+    refreshBundles,
+    handleSaveBundle,
+    handleOpenBundle,
     credentialStripPrompt,
     resolveCredentialStripPrompt,
     embedVectorDataPrompt,

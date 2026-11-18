@@ -400,6 +400,18 @@ export const MENU_ITEM_CATALOG: readonly MenuItemCatalogEntry[] = [
     tier: "advanced",
   },
   {
+    id: "project.saveBundle",
+    menuId: "project",
+    labelKey: "toolbar.item.saveBundleEllipsis",
+    tier: "advanced",
+  },
+  {
+    id: "project.openBundle",
+    menuId: "project",
+    labelKey: "toolbar.item.bundleOffline",
+    tier: "advanced",
+  },
+  {
     id: "project.storymap",
     menuId: "project",
     labelKey: "toolbar.item.storymapEllipsis",

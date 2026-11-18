@@ -29,6 +29,8 @@ import {
   Layers,
   LayoutGrid,
   Link2,
+  PackageOpen,
+  PackagePlus,
   Palette,
   Printer,
   Save,
@@ -38,6 +40,8 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDesktopSettingsStore } from "../../../hooks/useDesktopSettings";
+import type { BundleSummary } from "../../../lib/offline-bundle-library";
+import { formatBytes } from "../../../lib/offline-regions";
 import { projectMenuItemCapability } from "../../../lib/deployment-gates";
 import { isMenuItemVisible } from "../../../lib/ui-profile";
 import type { ShareHostStatus } from "../../../lib/share-geolibre";
@@ -86,6 +90,14 @@ interface ProjectMenuProps {
   onCollaborate: () => void;
   onPrintLayout: () => void;
   onOpenOfflineBasemap: () => void;
+  /** Bundles already saved on this device, newest first. */
+  bundleProjects: BundleSummary[];
+  /** Save the open project into its own portable bundle (issue #11). */
+  onSaveBundle: () => void;
+  onOpenBundle: (slug: string) => void;
+  /** Re-read the bundle list; called when the submenu opens. */
+  onRefreshBundles: () => void;
+  bundleBusy: "save" | "open" | "list" | null;
 }
 
 /** The Project menu: new/open/save/share, recent projects, print, and storymap. */
@@ -113,6 +125,11 @@ export function ProjectMenu({
   onCollaborate,
   onPrintLayout,
   onOpenOfflineBasemap,
+  bundleProjects,
+  onSaveBundle,
+  onOpenBundle,
+  onRefreshBundles,
+  bundleBusy,
 }: ProjectMenuProps) {
   const { t } = useTranslation();
   const projectPath = useAppStore((s) => s.projectPath);
@@ -205,8 +222,15 @@ export function ProjectMenu({
     (collaborationEnabled && show("project.collaborate"));
   const showPrintGroup = show("project.printLayout") || show("project.offlineRegion");
 
+  // The bundles on this device change outside the app (a folder copied in, one
+  // deleted), so the list is re-read each time the menu opens rather than trusted
+  // from whatever was there when the app started.
   return (
-    <DropdownMenu>
+    <DropdownMenu
+      onOpenChange={(open) => {
+        if (open) onRefreshBundles();
+      }}
+    >
       <DropdownMenuTrigger asChild>
         <Button
           className={chrome.buttonClass}
@@ -468,6 +492,58 @@ export function ProjectMenu({
             <HardDriveDownload className="me-2 h-3.5 w-3.5" />
             {t("toolbar.item.offlineBasemapEllipsis")}
           </DropdownMenuItem>
+        )}
+        {/* Portable project bundle (issue #11). Saving copies the project's
+            files into a directory the app owns and rewrites its paths, which is
+            what makes the project reopen with the network off; opening one reads
+            the manifest first and names any file that did not survive. */}
+        {(show("project.saveBundle") || show("project.openBundle")) && (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={!saveCapability.granted}>
+              <PackageOpen className="h-3.5 w-3.5" />
+              {t("toolbar.item.bundleOffline")}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent className="w-80">
+              {show("project.saveBundle") && (
+                <DropdownMenuItem
+                  onSelect={onSaveBundle}
+                  disabled={!saveCapability.granted || bundleBusy === "save"}
+                  aria-describedby={saveDeniedBy}
+                >
+                  <PackagePlus className="me-2 h-3.5 w-3.5" />
+                  {t("toolbar.item.saveBundleEllipsis")}
+                </DropdownMenuItem>
+              )}
+              {show("project.openBundle") && <DropdownMenuSeparator />}
+              {show("project.openBundle") &&
+                (bundleProjects.length === 0 ? (
+                  <DropdownMenuItem disabled>
+                    {bundleBusy === "list"
+                      ? t("toolbar.item.bundlesLoading")
+                      : t("toolbar.item.noBundles")}
+                  </DropdownMenuItem>
+                ) : (
+                  bundleProjects.map((bundle) => (
+                    <DropdownMenuItem
+                      key={bundle.slug}
+                      className="flex flex-col items-start gap-0.5"
+                      onSelect={() => onOpenBundle(bundle.slug)}
+                      title={bundle.slug}
+                    >
+                      <span className="max-w-full truncate font-medium">{bundle.name}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {bundle.problem
+                          ? t("toolbar.item.bundleUnreadable", { reason: bundle.problem })
+                          : t("toolbar.item.bundleRow", {
+                              files: bundle.files,
+                              size: formatBytes(bundle.bytes),
+                            })}
+                      </span>
+                    </DropdownMenuItem>
+                  ))
+                ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
         )}
         {show("project.storymap") && (
           <>

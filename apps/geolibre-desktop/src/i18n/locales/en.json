@@ -3857,6 +3857,12 @@
       "printEllipsis": "Print...",
       "printLayoutEllipsis": "Print Layout...",
       "offlineBasemapEllipsis": "Offline Basemap...",
+      "bundleOffline": "Offline Bundle",
+      "saveBundleEllipsis": "Save Project with Files...",
+      "noBundles": "No saved bundles",
+      "bundlesLoading": "Looking for bundles...",
+      "bundleRow": "{{files}} files · {{size}}",
+      "bundleUnreadable": "Unreadable: {{reason}}",
       "undo": "Undo",
       "redo": "Redo",
       "selectByExpressionEllipsis": "Select by Expression...",
@@ -4222,6 +4228,12 @@
       "savePromptTitle": "Save changes before closing?",
       "savePromptDescription": "The current project has unsaved changes. Save them before closing GeoApps?"
     },
+    "notice": {
+      "bundleSaved": "Saved “{{name}}” as a bundle: {{copied}} of {{files}} file(s) copied alongside the project. It reopens with the network off.",
+      "bundleOpened": "Opened “{{name}}” from its bundle. {{files}} file(s) resolved on this device.",
+      "bundleIncomplete": "Opened, but {{missing}} file(s) are missing from the bundle. These layers have no data: {{layers}}.",
+      "bundleIncompleteNoLayers": "no layer points at them"
+    },
     "error": {
       "couldNotOpenProject": "Could not open project.",
       "multipleProjectDrop": "Drop one GeoApps project at a time, without other files.",
@@ -4233,6 +4245,9 @@
       "couldNotOpenRecentProject": "Could not open the recent project.",
       "couldNotLoadRecentProject": "Could not load the recent project.",
       "couldNotSaveProject": "Could not save the project.",
+      "couldNotSaveBundle": "Could not save the project bundle.",
+      "couldNotOpenBundle": "Could not open the project bundle.",
+      "couldNotListBundles": "Could not read the bundles saved on this device.",
       "credentialRollbackFailed": "The project was not saved, and the credentials it moved to the system keychain could not be put back. Check the stored values in Settings → Geocoding and Settings → Environment.",
       "projectTooLargeToSave": "This project is too large to save. Convert its embedded vector data to PMTiles or FlatGeobuf and add those as remote layers instead of embedding the features.",
       "couldNotExportHtml": "Could not export the project to HTML.",
