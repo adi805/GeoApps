@@ -40,6 +40,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useDesktopSettingsStore } from "../../../hooks/useDesktopSettings";
+import { isTauri } from "../../../lib/is-tauri";
 import type { BundleSummary } from "../../../lib/offline-bundle-library";
 import { formatBytes } from "../../../lib/offline-regions";
 import { projectMenuItemCapability } from "../../../lib/deployment-gates";
@@ -221,6 +222,11 @@ export function ProjectMenu({
     (!shareHidden && show("project.share")) ||
     (collaborationEnabled && show("project.collaborate"));
   const showPrintGroup = show("project.printLayout") || show("project.offlineRegion");
+  // Bundles write into the app's own data directory through the fs plugin, so
+  // they only exist in the desktop and Android builds. In a browser tab the
+  // submenu would be a dead entry: `handleSaveBundle` returns immediately, and
+  // the list is always empty.
+  const showBundleActions = isTauri() && (show("project.saveBundle") || show("project.openBundle"));
 
   // The bundles on this device change outside the app (a folder copied in, one
   // deleted), so the list is re-read each time the menu opens rather than trusted
@@ -497,7 +503,7 @@ export function ProjectMenu({
             files into a directory the app owns and rewrites its paths, which is
             what makes the project reopen with the network off; opening one reads
             the manifest first and names any file that did not survive. */}
-        {(show("project.saveBundle") || show("project.openBundle")) && (
+        {showBundleActions && (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger disabled={!saveCapability.granted}>
               <PackageOpen className="h-3.5 w-3.5" />
