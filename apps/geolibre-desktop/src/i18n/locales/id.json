@@ -3770,6 +3770,12 @@
       "printEllipsis": "Cetak...",
       "printLayoutEllipsis": "Tata Letak Cetak...",
       "offlineBasemapEllipsis": "Peta Dasar Offline...",
+      "bundleOffline": "Bundel Offline",
+      "saveBundleEllipsis": "Simpan Proyek beserta Berkasnya...",
+      "noBundles": "Belum ada bundel tersimpan",
+      "bundlesLoading": "Mencari bundel...",
+      "bundleRow": "{{files}} berkas · {{size}}",
+      "bundleUnreadable": "Tidak terbaca: {{reason}}",
       "undo": "Urungkan",
       "redo": "Ulangi",
       "selectByExpressionEllipsis": "Pilih berdasarkan Ekspresi...",
@@ -4124,6 +4130,12 @@
       "savePromptTitle": "Simpan perubahan sebelum menutup?",
       "savePromptDescription": "Proyek saat ini memiliki perubahan yang belum disimpan. Simpan sebelum menutup GeoApps?"
     },
+    "notice": {
+      "bundleSaved": "“{{name}}” disimpan sebagai bundel: {{copied}} dari {{files}} berkas ikut tersalin bersama proyek. Bundel ini bisa dibuka lagi tanpa jaringan.",
+      "bundleOpened": "“{{name}}” dibuka dari bundelnya. {{files}} berkas ditemukan di perangkat ini.",
+      "bundleIncomplete": "Terbuka, tetapi {{missing}} berkas tidak ada di dalam bundel. Lapisan berikut tidak punya data: {{layers}}.",
+      "bundleIncompleteNoLayers": "tidak ada lapisan yang menunjuk ke sana"
+    },
     "error": {
       "couldNotOpenProject": "Tidak dapat membuka proyek.",
       "multipleProjectDrop": "Jatuhkan satu proyek GeoApps saja dalam satu waktu, tanpa berkas lain.",
@@ -4135,6 +4147,9 @@
       "couldNotOpenRecentProject": "Tidak dapat membuka proyek terbaru.",
       "couldNotLoadRecentProject": "Tidak dapat memuat proyek terbaru.",
       "couldNotSaveProject": "Tidak dapat menyimpan proyek.",
+      "couldNotSaveBundle": "Tidak dapat menyimpan bundel proyek.",
+      "couldNotOpenBundle": "Tidak dapat membuka bundel proyek.",
+      "couldNotListBundles": "Tidak dapat membaca bundel yang tersimpan di perangkat ini.",
       "credentialRollbackFailed": "Proyek tidak disimpan, dan kredensial yang dipindahkannya ke keychain sistem tidak dapat dikembalikan. Periksa nilai yang tersimpan di Pengaturan → Geocoding dan Pengaturan → Lingkungan.",
       "projectTooLargeToSave": "Proyek ini terlalu besar untuk disimpan. Konversikan data vektor yang disematkan ke PMTiles atau FlatGeobuf dan tambahkan sebagai lapisan jarak jauh alih-alih menyematkan fiturnya.",
       "couldNotExportHtml": "Tidak dapat mengekspor proyek ke HTML.",

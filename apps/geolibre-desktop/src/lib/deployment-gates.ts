@@ -247,6 +247,10 @@ const PROJECT_MENU_ITEM_CAPABILITIES: Readonly<Record<string, DeploymentCapabili
   "project.print": "export:data",
   "project.printLayout": "export:data",
   "project.offlineRegion": "export:data",
+  // A bundle writes the project and every file it points at to a directory on
+  // this device, so it needs the same write grant saving the project does.
+  "project.saveBundle": "project:edit",
+  "project.openBundle": "project:edit",
 };
 
 /**
