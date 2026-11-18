@@ -1,5 +1,5 @@
 import type { Feature, FeatureCollection, Geometry, Position } from "geojson";
-import type { GeoLibreAppAPI, GeoLibrePlugin } from "../types";
+import type { GeoLibrePlugin } from "../types";
 import { GEOFENCE_PLUGIN_ID } from "../plugin-ids";
 
 /**
@@ -23,6 +23,26 @@ export const GEOFENCE_SOURCE_KIND = "geofence";
 const GEOFENCE_STATUS_ID = "geolibre-geofence-status";
 const STORAGE_ZONES = "geokebun:geofences";
 const STORAGE_EVENTS = "geokebun:geofence-events";
+
+/**
+ * Kunci localStorage zona, dibaca pengujian dan dialog supaya keduanya tidak
+ * menyalin string yang sama.
+ */
+export const GEOFENCE_ZONES_STORAGE_KEY = STORAGE_ZONES;
+
+/**
+ * Kunci localStorage jurnal peristiwa. Diekspor dengan alasan yang sama seperti
+ * kunci zona: pengujian menulis jurnal tiruan, dan string yang disalin akan
+ * basi tanpa suara saat kuncinya diubah.
+ */
+export const GEOFENCE_EVENTS_STORAGE_KEY = STORAGE_EVENTS;
+
+/**
+ * Radius terkecil yang boleh dibuat pengguna, meter. Di bawah ini lingkarannya
+ * lebih kecil dari ketelitian GPS di jalan, jadi pengguna hanya akan melihat
+ * peringatan palsu.
+ */
+export const GEOFENCE_MIN_RADIUS_M = 20;
 
 const DEFAULT_RADIUS_M = 50;
 
@@ -61,10 +81,21 @@ export interface GeofenceEvent {
   distanceToBoundaryM: number;
 }
 
+/** Setelan yang sama di semua bentuk zona. */
+export interface GeofenceZoneBase {
+  id: string;
+  name: string;
+  /**
+   * Ikut diawasi atau tidak. Bawaan `true` kalau tidak disebut, supaya zona
+   * yang ditulis versi lama tetap terpantau setelah bidang ini ditambahkan.
+   */
+  enabled?: boolean;
+}
+
 /** Zona yang bisa diperiksa: poligon GeoJSON atau lingkaran (pusat + radius). */
 export type GeofenceZone =
-  | { id: string; name: string; kind: "polygon"; rings: Position[][] }
-  | { id: string; name: string; kind: "circle"; center: Position; radiusM: number };
+  | (GeofenceZoneBase & { kind: "polygon"; rings: Position[][] })
+  | (GeofenceZoneBase & { kind: "circle"; center: Position; radiusM: number });
 
 const EARTH_RADIUS_M = 6371008.8;
 const DEG = Math.PI / 180;
@@ -200,6 +231,9 @@ function positiveMeters(value: unknown): number | null {
 export function zoneFromFeature(feature: Feature<Geometry>): GeofenceZone | null {
   const name = String(feature.properties?.name ?? feature.id ?? "zona");
   const id = String(feature.id ?? name);
+  // Hanya `false` yang mematikan zona: feature lama tanpa bidang ini tetap
+  // diawasi, jadi menambahkan bidang `enabled` tidak memadamkan zona yang ada.
+  const enabled = feature.properties?.geofence_enabled !== false;
   // `Circle` bukan tipe GeoJSON standar, jadi geometrinya dibaca sebagai nilai
   // mentah lalu diperiksa bentuknya: tanpa cast apa pun ke tipe yang salah.
   const geometry: unknown = feature.geometry;
@@ -208,7 +242,7 @@ export function zoneFromFeature(feature: Feature<Geometry>): GeofenceZone | null
   if (!Array.isArray(coordinates)) return null;
 
   if (geometry.type === "Polygon") {
-    return { id, name, kind: "polygon", rings: coordinates as Position[][] };
+    return { id, name, enabled, kind: "polygon", rings: coordinates as Position[][] };
   }
   if (geometry.type !== "Circle") return null;
 
@@ -222,7 +256,7 @@ export function zoneFromFeature(feature: Feature<Geometry>): GeofenceZone | null
     positiveMeters(Array.isArray(first) ? coordinates[1] : undefined) ??
     positiveMeters(feature.properties?.geofence_radius_m) ??
     DEFAULT_RADIUS_M;
-  return { id, name, kind: "circle", center, radiusM };
+  return { id, name, enabled, kind: "circle", center, radiusM };
 }
 
 /**
@@ -519,9 +553,91 @@ function monitoredZones(fc: FeatureCollection): GeofenceZone[] {
   for (const feature of fc.features) {
     if (!feature.properties?.geofence_monitor) continue;
     const zone = zoneFromFeature(feature as Feature<Geometry>);
+    // Zona yang dimatikan tetap tersimpan dan tetap tampil di daftar; yang
+    // dilewati hanya pengawasannya.
+    if (zone && zone.enabled !== false) zones.push(zone);
+  }
+  return zones;
+}
+
+/** Id sebuah feature zona: `feature.id` kalau ada, kalau tidak namanya. */
+function zoneFeatureId(feature: Feature<Geometry>): string {
+  return String(feature.id ?? feature.properties?.name ?? "");
+}
+
+/** Semua zona tersimpan, termasuk yang sedang dimatikan, untuk daftar di panel. */
+export function getAllGeofenceZones(): GeofenceZone[] {
+  const zones: GeofenceZone[] = [];
+  for (const feature of loadZones().features) {
+    const zone = zoneFromFeature(feature as Feature<Geometry>);
     if (zone) zones.push(zone);
   }
   return zones;
+}
+
+/**
+ * Bentuk feature GeoJSON untuk sebuah zona, siap disimpan.
+ *
+ * `Circle` bukan tipe GeoJSON standar, jadi geometrinya ditulis apa adanya,
+ * sama seperti jalur bacanya di {@link zoneFromFeature}: satu bentuk, dua sisi.
+ */
+export function zoneToFeature(zone: GeofenceZone): Feature<Geometry> {
+  const properties: Record<string, unknown> = {
+    name: zone.name,
+    geofence_monitor: true,
+    geofence_enabled: zone.enabled !== false,
+  };
+  if (zone.kind === "circle") {
+    properties.geofence_radius_m = zone.radiusM;
+    return {
+      type: "Feature",
+      id: zone.id,
+      properties,
+      geometry: { type: "Circle", coordinates: [zone.center, zone.radiusM] } as unknown as Geometry,
+    };
+  }
+  return {
+    type: "Feature",
+    id: zone.id,
+    properties,
+    geometry: { type: "Polygon", coordinates: zone.rings },
+  };
+}
+
+/** Tambahkan zona, atau ganti zona dengan id yang sama. */
+export function addGeofenceZone(zone: GeofenceZone): void {
+  const features = loadZones().features.filter((feature) => zoneFeatureId(feature) !== zone.id);
+  features.push(zoneToFeature(zone));
+  saveZones({ type: "FeatureCollection", features });
+  syncGeofenceMonitorZones();
+}
+
+export function removeGeofenceZone(id: string): void {
+  const stored = loadZones();
+  const features = stored.features.filter((feature) => zoneFeatureId(feature) !== id);
+  if (features.length === stored.features.length) return;
+  saveZones({ type: "FeatureCollection", features });
+  syncGeofenceMonitorZones();
+}
+
+/**
+ * Nyalakan atau matikan pengawasan satu zona.
+ *
+ * Ditulis langsung ke feature-nya (bukan lewat {@link zoneToFeature}) supaya
+ * geometri yang ada tidak ditulis ulang: hanya bidang `geofence_enabled` yang
+ * berubah, jadi bentuk asli zona tetap utuh.
+ */
+export function setGeofenceZoneEnabled(id: string, enabled: boolean): void {
+  const stored = loadZones();
+  let changed = false;
+  const features = stored.features.map((feature) => {
+    if (zoneFeatureId(feature) !== id) return feature;
+    changed = true;
+    return { ...feature, properties: { ...(feature.properties ?? {}), geofence_enabled: enabled } };
+  });
+  if (!changed) return;
+  saveZones({ type: "FeatureCollection", features });
+  syncGeofenceMonitorZones();
 }
 
 function notify(event: GeofenceEvent): void {
@@ -543,18 +659,29 @@ function notify(event: GeofenceEvent): void {
 let watchId: number | null = null;
 
 /**
+ * Monitor yang sedang berjalan, supaya perubahan zona (tambah, hapus, matikan)
+ * langsung masuk ke mesin yang sudah hidup tanpa mematikan watch posisinya.
+ */
+let activeMonitor: GeofenceMonitor | null = null;
+
+/**
  * Mulai memantau. `monitor` boleh diberikan supaya pemanggil (panel) memakai
  * mesin yang sama dan bisa menampilkan jurnal yang sedang berjalan.
+ *
+ * Idempoten: kalau watch sudah jalan, yang dikembalikan adalah monitor yang
+ * sedang aktif, bukan yang baru diargumen, supaya dua pemanggil (plugin yang
+ * diaktifkan dari menu Plugins dan panel geofence) tidak memegang dua jurnal.
  */
 export function startGeofenceMonitor(
   monitor: GeofenceMonitor = new GeofenceMonitor(),
   options: { enableHighAccuracy?: boolean } = {},
 ): GeofenceMonitor | null {
-  if (watchId !== null) return monitor;
+  if (watchId !== null) return activeMonitor ?? monitor;
   if (typeof navigator === "undefined" || !navigator.geolocation) {
     console.warn("[geofence] Geolokasi tidak tersedia di perangkat ini");
     return null;
   }
+  activeMonitor = monitor;
   monitor.setZones(monitoredZones(loadZones()));
   monitor.loadEvents(loadEvents());
   watchId = navigator.geolocation.watchPosition(
@@ -580,6 +707,24 @@ export function stopGeofenceMonitor(): void {
     navigator.geolocation.clearWatch(watchId);
   }
   watchId = null;
+  activeMonitor = null;
+}
+
+/** Apakah watch posisi sedang berjalan (bukan apakah izin lokasi sudah diberi). */
+export function isGeofenceMonitorRunning(): boolean {
+  return watchId !== null;
+}
+
+/**
+ * Masukkan lagi zona tersimpan ke monitor yang sedang jalan.
+ *
+ * Tanpa ini, zona yang baru dibuat baru ikut diawasi setelah watch-nya
+ * dimatikan dan dinyalakan ulang: pengguna yang baru menggambar batas di
+ * lapangan akan menganggap batasnya sudah aktif padahal belum.
+ */
+export function syncGeofenceMonitorZones(): void {
+  if (!activeMonitor) return;
+  activeMonitor.setZones(monitoredZones(loadZones()));
 }
 
 /** Jurnal peristiwa yang tersimpan, untuk panel dan ekspor CSV. */
@@ -587,26 +732,43 @@ export function getGeofenceEvents(): GeofenceEvent[] {
   return loadEvents();
 }
 
+/** Kosongkan jurnal tersimpan, sekaligus jurnal monitor yang sedang jalan. */
+export function clearGeofenceEvents(): void {
+  saveEvents([]);
+  activeMonitor?.clearEvents();
+}
+
 /** Ekspor jurnal tersimpan sebagai CSV siap tempel ke spreadsheet. */
 export function exportGeofenceEventsCsv(): string {
   return eventsToCsv(loadEvents());
 }
 
-export function registerGeofencePlugin(api: GeoLibreAppAPI): GeoLibrePlugin {
-  void api;
-  return {
-    id: GEOFENCE_PLUGIN_ID,
-    name: "Geofence",
-    version: "0.1.0",
-    activeByDefault: false,
-    activate: () => {
-      if (typeof Notification !== "undefined" && Notification.permission === "default") {
-        Notification.requestPermission().catch(() => {});
-      }
-      startGeofenceMonitor();
-    },
-    deactivate: () => {
-      stopGeofenceMonitor();
-    },
-  };
-}
+/**
+ * Plugin geofence sebagai plugin bawaan.
+ *
+ * Objek, bukan fungsi pabrik: `PluginManager.registerAll` menerima daftar
+ * plugin, bukan daftar pabrik (`packages/plugins/src/plugin-manager.ts`), jadi
+ * fungsi di daftar itu salah tipe. Versi sebelumnya juga menerima `GeoLibreAppAPI`
+ * lalu membuangnya (`void api`); api tetap datang lewat `activate(app)` seperti
+ * plugin lain, dan belum dipakai karena panelnya hidup di app, bukan di peta.
+ *
+ * `sessionScoped`: pengawasan melekat pada perangkat, bukan pada proyek. Kalau
+ * plugin ini ikut state proyek, membuka proyek yang tidak menyebutnya akan
+ * mematikan pengawasan di tengah pengamatan.
+ */
+export const geofencePlugin: GeoLibrePlugin = {
+  id: GEOFENCE_PLUGIN_ID,
+  name: "Geofence",
+  version: "0.1.0",
+  activeByDefault: false,
+  sessionScoped: true,
+  activate: () => {
+    if (typeof Notification !== "undefined" && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
+    }
+    startGeofenceMonitor();
+  },
+  deactivate: () => {
+    stopGeofenceMonitor();
+  },
+};

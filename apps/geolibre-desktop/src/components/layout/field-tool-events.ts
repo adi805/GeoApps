@@ -15,7 +15,7 @@
 export const OPEN_FIELD_TOOL_EVENT = "geolibre:open-field-tool";
 
 /** The field tools the mobile shell can request. */
-export type FieldToolId = "fieldCollection" | "gpsTracking" | "georeferencer";
+export type FieldToolId = "fieldCollection" | "gpsTracking" | "georeferencer" | "geofence";
 
 /** The detail carried by {@link OPEN_FIELD_TOOL_EVENT}. */
 export interface OpenFieldToolDetail {

@@ -57,6 +57,7 @@ import {
   AddNetcdfDialog,
   AddSpaceborneLidarDialog,
   CommandPalette,
+  GeofenceDialog,
   GeoreferencerDialog,
   GpsTrackingDialog,
   KeyboardShortcutsDialog,
@@ -547,6 +548,9 @@ export function TopToolbar({
           />
         </MountWhenOpened>
       )}
+      <MountWhenOpened open={dialogs.geofenceOpen}>
+        <GeofenceDialog open={dialogs.geofenceOpen} onOpenChange={dialogs.setGeofenceOpen} />
+      </MountWhenOpened>
       <MountWhenOpened open={dialogs.recordTourOpen}>
         <RecordTourDialog
           open={dialogs.recordTourOpen}

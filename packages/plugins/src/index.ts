@@ -552,7 +552,36 @@ export {
   type DimensionTie,
   type ParsedAssociativeDimension,
 } from "./plugins/maplibre-dimensions";
-export { registerGeofencePlugin, GEOFENCE_SOURCE_KIND } from "./plugins/maplibre-geofence";
+export {
+  addGeofenceZone,
+  clearGeofenceEvents,
+  eventsFromCsv,
+  eventsToCsv,
+  exportGeofenceEventsCsv,
+  GEOFENCE_CSV_COLUMNS,
+  GEOFENCE_DEFAULTS,
+  GEOFENCE_EVENTS_STORAGE_KEY,
+  GEOFENCE_MIN_RADIUS_M,
+  GEOFENCE_SOURCE_KIND,
+  GEOFENCE_ZONES_STORAGE_KEY,
+  GeofenceMonitor,
+  getAllGeofenceZones,
+  getGeofenceEvents,
+  isGeofenceMonitorRunning,
+  geofencePlugin,
+  removeGeofenceZone,
+  setGeofenceZoneEnabled,
+  startGeofenceMonitor,
+  stopGeofenceMonitor,
+  syncGeofenceMonitorZones,
+  zoneFromFeature,
+  zoneToFeature,
+  type GeofenceEvent,
+  type GeofenceMonitorOptions,
+  type GeofencePoint,
+  type GeofenceZone,
+  type GeofenceZoneBase,
+} from "./plugins/maplibre-geofence";
 export { maplibreEnviroAtlasPlugin } from "./plugins/maplibre-enviroatlas";
 export { maplibreEsriWaybackPlugin } from "./plugins/maplibre-esri-wayback";
 export { maplibreFemaWmsPlugin } from "./plugins/maplibre-fema-wms";

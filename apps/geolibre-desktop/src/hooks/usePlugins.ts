@@ -16,6 +16,7 @@ import {
   type TemporalLayerAdapter,
   setZarrLayerSelector,
   setZarrLocalStoreProvider,
+  geofencePlugin,
   maplibreAnnotationsPlugin,
   maplibreDimensionsPlugin,
   maplibreBasemapControlPlugin,
@@ -273,6 +274,7 @@ const BUILT_IN_PLUGINS: GeoLibrePlugin[] = [
   godsEyeViewPlugin,
   maplibreSamGeoPlugin,
   pointCloudAnnotationPlugin,
+  geofencePlugin,
   // Last visible entry of the Plugins menu is above; the ids below are
   // skipped by PluginsMenu and surface elsewhere.
   maplibreDirectionsPlugin,
