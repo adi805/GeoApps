@@ -1,0 +1,96 @@
+{
+  "issue": 122,
+  "lane": "ui",
+  "branch": "ui/kebun-122",
+  "worktree": "~/GeoApps-ui-kebun-122",
+  "commit": "f8f5c8f6",
+  "status_short": [
+    "?? factory/receipts/122.json",
+    "?? factory/receipts/122/"
+  ],
+  "kriteria": [
+    {
+      "kriteria": "1. isKebunPlugin dipakai di menu dan palette, bukan cuma diekspor",
+      "status": "selesai",
+      "perintah": "grep -rn \"isKebunPlugin\\|KEBUN_PLUGINS\" apps/geolibre-desktop/src",
+      "exit": 0,
+      "keluaran": "apps/geolibre-desktop/src/components/layout/toolbar/toolbar-commands.ts:118:  isKebunPlugin?: (pluginId: string) => boolean;\napps/geolibre-desktop/src/components/layout/toolbar/toolbar-commands.ts:195:    isKebunPlugin,\napps/geolibre-desktop/src/components/layout/toolbar/toolbar-commands.ts:732:    // below. `isKebunPlugin` from the preset is the only list of which plugins\napps/geolibre-desktop/src/components/layout/toolbar/toolbar-commands.ts:738:          (isKebunPlugin?.(plugin.id) ?? false) && !paletteExcludedPluginIds.has(plugin.id),\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:35:  isKebunPlugin: (pluginId: string) => boolean;\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:36:  KEBUN_PLUGINS: readonly string[];\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:88:    const { primary, rest } = partitionPlugins(ids, preset.isKebunPlugin);\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:96:    assert.deepEqual(primary, ids.filter((id) => preset.isKebunPlugin(id)));\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:97:    assert.deepEqual(rest, ids.filter((id) => !preset.isKebunPlugin(id)));\napps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts:114:    const unregistered = preset.KEBUN_PLUGINS.filter((id) => !registe\n[...dipotong]",
+      "catatan": "Pemakaian nyata: PluginsMenu.tsx:305 mengoper predikat ke partitionPlugins, toolbar-commands.ts:738 memakainya untuk memisahkan entri plugin.*, dan useToolbarCommands.ts:125 mengoper isKebunPlugin dari barrel ke context. plugin-sections.test.ts memuat preset yang sama untuk mengunci partisinya."
+    },
+    {
+      "kriteria": "2. Partisi tidak menghilangkan satu id pun dan angkanya terukur",
+      "status": "selesai",
+      "perintah": "node --import tsx factory/receipts/122/menu-probe.mjs",
+      "exit": 0,
+      "keluaran": "{\n \"terdaftar\": 70,\n \"dikecualikanMenu\": 11,\n \"tampilSebelumnya\": 59,\n \"seksiKebun\": 3,\n \"kebunIds\": [\n  \"maplibre-gl-geo-editor\",\n  \"maplibre-gl-annotations\",\n  \"maplibre-gl-basemap-control\"\n ],\n \"submenuAllPlugins\": 14,\n \"submenuWebServices\": 34,\n \"submenuDggs\": 8,\n \"terjangkau\": 59,\n \"verdict\": \"SEMUA ID TETAP TERJANGKAU\",\n \"problems\": []\n}",
+      "catatan": "70 terdaftar, 11 dikecualikan menu sejak sebelum unit ini, 59 tampil. Keempat seksi menjangkau 59 itu tanpa id hilang dan tanpa id dobel."
+    },
+    {
+      "kriteria": "3. Angka preset terhadap registry: 4 kebun terdaftar + 66 sisanya",
+      "status": "selesai",
+      "perintah": "node --import tsx factory/receipts/122/angka.mjs",
+      "exit": 0,
+      "keluaran": "{\n \"terdaftar\": 70,\n \"KEBUN_PLUGINS\": 5,\n \"KEBUN_PLUGINS_isi\": [\n  \"maplibre-layer-control\",\n  \"maplibre-gl-annotations\",\n  \"maplibre-gl-geo-editor\",\n  \"maplibre-gl-geofence\",\n  \"maplibre-gl-basemap-control\"\n ],\n \"kebunTerdaftar\": 4,\n \"kebunTerdaftarIds\": [\n  \"maplibre-layer-control\",\n  \"maplibre-gl-geo-editor\",\n  \"maplibre-gl-annotations\",\n  \"maplibre-gl-basemap-control\"\n ],\n \"kebunTidakTerdaftar\": [\n  \"maplibre-gl-geofence\"\n ],\n \"HIDDEN_PLUGINS\": 22,\n \"sisanya\": 66\n}",
+      "catatan": "Issue menyebut 6 + 64. Yang terukur 4 + 66: KEBUN_PLUGINS berisi 5 id dan maplibre-gl-geofence tidak pernah masuk daftar plugin terdaftar karena didaftarkan lewat registerGeofencePlugin, bukan sebagai objek BUILT_IN_PLUGINS. Di menu hasilnya 3 kebun + 14 sisanya, sebab maplibre-layer-control sudah dikecualikan dari menu dan di-toggle dari Controls. Penyimpangan ini dilaporkan apa adanya, bukan dibulatkan supaya cocok dengan issue."
+    },
+    {
+      "kriteria": "4. Uji unit partisi 70 plugin: 6 lulus, 0 gagal",
+      "status": "selesai",
+      "perintah": "node --import tsx --test apps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts",
+      "exit": 0,
+      "keluaran": "TAP version 13\n# Subtest: partitionPlugins\n    # Subtest: keeps both sides in the order they were given\n    ok 1 - keeps both sides in the order they were given\n      ---\n      duration_ms: 14.13171\n      type: 'test'\n      ...\n    # Subtest: loses nothing: the union is the input, with no duplicates\n    ok 2 - loses nothing: the union is the input, with no duplicates\n      ---\n      duration_ms: 5.09792\n      type: 'test'\n      ...\n    # Subtest: puts everything on one side when the predicate never matches\n    ok 3 - puts everything on one side when the predicate never matches\n      ---\n      duration_ms: 9.946664\n      type: 'test'\n      ...\n    # Subtest: handles an empty list\n    ok 4 - handles an empty list\n      ---\n      duration_ms: 11.135827\n      type: 'test'\n      ...\n    1..4\nok 1 - partitionPlugins\n  ---\n  duration_ms: 62.618943\n  type: 'suite'\n  ...\n# Subtest: KEBUN section over the registered plugins\n    # Subtest: splits the registry into curated and remaining with no id lost\n    ok 1 - splits the registry into curated and remaining with no id lost\n      ---\n      duration_ms: 62.334485\n      type: 'test'\n      ...\n    # Subtest: curates only ids the registry actually registers\n    ok 2 - curates only ids the registry actually registers\n      ---\n      duration_ms: 9.164441\n      type: 'test'\n      ...\n    1..2\nok 2 - KEBUN section over the registered plugins\n  -\n[...dipotong]",
+      "catatan": "Memuat preset asli lewat URL runtime dan membaca 70 id dari scripts/plugin-reference.json, jadi tidak ada daftar kedua yang bisa menyimpang."
+    },
+    {
+      "kriteria": "5. Uji Node yang menyentuh toolbar-commands tetap hijau: 78 lulus, 0 gagal",
+      "status": "selesai",
+      "perintah": "node --import tsx --test tests/toolbar-commands.test.ts tests/palette-tools.test.ts tests/latest-proxy.test.ts tests/i18n-catalogs.test.ts tests/plugin-reference-docs.test.ts",
+      "exit": 0,
+      "keluaran": "TAP version 13\n#   ar: missing 40 key(s): share.sharesUnsupported, settings.geocoding.locatorHint, settings.geocoding.locators.title, settings.geocoding.locators.description, settings.geocoding.locators.empty, settings.geocoding.locators.defaultName, settings.geocoding.locators.active, settings.geocoding.locators.name, settings.geocoding.locators.url, settings.geocoding.locators.portal, …\n#   az: missing 40 key(s): share.sharesUnsupported, settings.geocoding.locatorHint, settings.geocoding.locators.title, settings.geocoding.locators.description, settings.geocoding.locators.empty, settings.geocoding.locators.defaultName, settings.geocoding.locators.active, settings.geocoding.locators.name, settings.geocoding.locators.url, settings.geocoding.locators.portal, …\n#   de: missing 40 key(s): share.sharesUnsupported, settings.geocoding.locatorHint, settings.geocoding.locators.title, settings.geocoding.locators.description, settings.geocoding.locators.empty, settings.geocoding.locators.defaultName, settings.geocoding.locators.active, settings.geocoding.locators.name, settings.geocoding.locators.url, settings.geocoding.locators.portal, …\n#   es: missing 40 key(s): share.sharesUnsupported, settings.geocoding.locatorHint, settings.geocoding.locators.title, settings.geocoding.locators.description, settings.geocoding.locators.empty, settings.geocoding.locators.defaultName, settings.geocoding\n[...dipotong]",
+      "catatan": "isKebunPlugin masuk sebagai field opsional di ToolbarCommandContext karena fixture di tests/ milik lane uji dan tidak boleh disentuh; tanpa field itu perintah plugin tetap terbentuk persis seperti sebelumnya."
+    },
+    {
+      "kriteria": "6. eslint pada lima berkas: 0 masalah",
+      "status": "selesai",
+      "perintah": "npx eslint apps/geolibre-desktop/src/components/layout/toolbar/PluginsMenu.tsx apps/geolibre-desktop/src/components/layout/toolbar/toolbar-commands.ts apps/geolibre-desktop/src/hooks/toolbar/useToolbarCommands.ts apps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.ts apps/geolibre-desktop/src/components/layout/toolbar/plugin-sections.test.ts",
+      "exit": 0,
+      "keluaran": "",
+      "catatan": "Tanpa keluaran, exit 0. npm run lint penuh mati OOM di host ini (exit 134), sama seperti receipt #89, #103, dan #118; ratchet angka penuh diserahkan ke job 'Lint and type check' di CI."
+    },
+    {
+      "kriteria": "7. Referensi plugin tetap sinkron dengan sumber",
+      "status": "selesai",
+      "perintah": "npm run plugins:docs:check",
+      "exit": 0,
+      "keluaran": "> geolibre@3.4.0 plugins:docs:check\n> node scripts/gen-plugin-reference.mjs --check\nPlugin reference is up to date.",
+      "catatan": "Generator membaca daftar plugin dan lokasi menunya langsung dari sumber, jadi ini sekaligus membuktikan komentar di PluginsMenu.tsx tidak merusak parsing."
+    },
+    {
+      "kriteria": "8. Gate cakupan lane ui lulus",
+      "status": "selesai",
+      "perintah": "python3 tools/factory/gate_commit_paths.py --lane ui --base origin/main --head HEAD",
+      "exit": 0,
+      "keluaran": "LULUS  lane ui: 5 path, semuanya di cakupan",
+      "catatan": "Lima berkas unit ini plus receipt, semuanya di dalam glob lane ui."
+    }
+  ],
+  "checker": [
+    {
+      "perintah": "git diff --stat origin/main...HEAD -- e2e/ tests/ apps/geolibre-desktop/src/visual/ packages/plugins/",
+      "exit": 0,
+      "keluaran": " Lane uji, lane visual, dan paket plugin tidak disentuh: kosong."
+    },
+    {
+      "perintah": "git status --short",
+      "exit": 0,
+      "keluaran": "?? factory/receipts/122.json\n?? factory/receipts/122/ Bersih selain receipt dan skrip probe yang belum di-commit saat skrip ini jalan."
+    },
+    {
+      "perintah": "git log --oneline origin/main..HEAD",
+      "exit": 0,
+      "keluaran": "f8f5c8f6 feat(ui): palette naikkan entri plugin kebun ke grup sendiri (#122)\n9852b054 feat(ui): menu Plugins pakai preset kebun sebagai seksi utama (#122)\n64c2cc30 feat(ui): helper partisi plugin dan uji satuan preset kebun (#122) Tiga commit atomik, satu per unit logis."
+    }
+  ],
+  "komentar_issue": "https://github.com/adi805/GeoApps/issues/122#issuecomment-6317421518",
+  "pr": 123
+}

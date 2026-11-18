@@ -15,6 +15,7 @@ import {
   WEB_SERVICE_PLUGIN_IDS,
   type GeoLibreToolbarMenu,
   isPluginEngineSupported,
+  isKebunPlugin,
   resolveToolbarLabel,
 } from "@geolibre/plugins";
 import { useAppStore } from "@geolibre/core";
@@ -39,6 +40,7 @@ import { useDesktopSettingsStore } from "../../../hooks/useDesktopSettings";
 import { useToolbarMenus } from "../../../hooks/usePluginUiSurfaces";
 import type { usePluginRegistry } from "../../../hooks/usePlugins";
 import { isExternalPluginId } from "../../../lib/external-plugins";
+import { partitionPlugins } from "./plugin-sections";
 import { pluginDisplayName, sortPluginsByDisplayName } from "../../../lib/plugin-display-name";
 import { toolbarMenusByOwner, withPluginMenuFolded } from "../../../lib/plugin-toolbar-menus";
 import { type AppApi, PLUGIN_POSITION_ITEMS, type ToolbarChrome } from "./constants";
@@ -52,6 +54,37 @@ const WEB_SERVICE_PLUGIN_ID_SET = new Set<string>(WEB_SERVICE_PLUGIN_IDS);
 
 // The discrete global grids (H3, S2, A5) grouped under the "DGGS" submenu.
 const DGGS_PLUGIN_ID_SET = new Set<string>(DGGS_PLUGIN_IDS);
+
+/**
+ * Whether the Plugins menu leaves this plugin out entirely.
+ *
+ * Atmospheric Effects, Directions, Reverse Geocode, Gridlines, the Weather
+ * overlays (Clouds, Precipitation) and Layer Control are toggled from the
+ * Controls menu instead, so listing them here would offer a second switch for
+ * the same plugin. The deck.gl viz overlay is an internal renderer driven by the
+ * Add Data → "Deck.gl Layer" dialog, and the Components plugin stays registered
+ * for in-app use with its catch-all grid hidden now that its panels are
+ * reachable through dedicated plugins.
+ *
+ * The comparisons stay literal, one exported id constant per line, because
+ * `scripts/gen-plugin-reference.mjs` reads this list from the source to decide
+ * which plugins need a hand-written menu location in its reference table.
+ */
+function isLeftOutOfPluginsMenu(p: RegisteredPlugin): boolean {
+  return (
+    p.id === EFFECTS_PLUGIN_ID ||
+    p.id === SUN_PLUGIN_ID ||
+    p.id === ROUTE_ANIMATION_PLUGIN_ID ||
+    p.id === DIRECTIONS_PLUGIN_ID ||
+    p.id === REVERSE_GEOCODE_PLUGIN_ID ||
+    p.id === GRATICULE_PLUGIN_ID ||
+    p.id === CLOUDS_PLUGIN_ID ||
+    p.id === PRECIPITATION_PLUGIN_ID ||
+    p.id === DECK_VIZ_PLUGIN_ID ||
+    p.id === LAYER_CONTROL_PLUGIN_ID ||
+    p.id === COMPONENTS_PLUGIN_ID
+  );
+}
 
 interface PluginsMenuProps {
   chrome: ToolbarChrome;
@@ -228,16 +261,12 @@ export function PluginsMenu({
     plugins.filter((p) => WEB_SERVICE_PLUGIN_ID_SET.has(p.id) && !hiddenPluginIds.has(p.id)),
     i18n.language,
   );
-  // The web service plugins render as one grouped submenu, placed where the
-  // first of them appears in registration order (just above Historical Imagery).
-  let webServicesRendered = false;
-
+  // The web service plugins render as one grouped submenu below the curated
+  // section, so the flat list never repeats their entries.
   const dggsPlugins = plugins.filter(
     (p) => DGGS_PLUGIN_ID_SET.has(p.id) && !hiddenPluginIds.has(p.id),
   );
-  // The DGGS grid plugins (H3, S2, A5) render as one grouped submenu, placed
-  // where the first of them appears in registration order.
-  let dggsRendered = false;
+  // The DGGS grid plugins (H3, S2, A5) render as one grouped submenu beside it.
 
   // Grouped submenus open when at least one member is usable on the active
   // renderer, or is still active from a previous one and needs turning off.
@@ -258,6 +287,24 @@ export function PluginsMenu({
     i18n.language,
   );
 
+  // Every plugin this menu lists at all: registered, not left out above, not
+  // hidden by the active UI profile, and not an external one (those live in the
+  // Installed submenu). The KEBUN preset decides which of them are the curated
+  // daily-work set, so the preset stays the only list of what belongs there.
+  const listedPlugins = plugins.filter(
+    (p) =>
+      !isLeftOutOfPluginsMenu(p) && !hiddenPluginIds.has(p.id) && !isExternalPluginId(p.id),
+  );
+  // Web service and DGGS members keep their own grouped submenus below, so they
+  // are sectioned out before the split rather than listed twice.
+  const ungroupedPlugins = listedPlugins.filter(
+    (p) => !WEB_SERVICE_PLUGIN_ID_SET.has(p.id) && !DGGS_PLUGIN_ID_SET.has(p.id),
+  );
+  const { primary: kebunPlugins, rest: otherPlugins } = partitionPlugins(
+    ungroupedPlugins,
+    (p) => isKebunPlugin(p.id),
+  );
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -272,80 +319,45 @@ export function PluginsMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        <DropdownMenuLabel>{t("toolbar.item.activatePlugin")}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {plugins.map((p) => {
-          // Atmospheric Effects, Directions, Reverse Geocode, Gridlines, and the
-          // Weather overlays (Clouds, Precipitation) and Layer Control are toggled from the
-          // Controls menu instead, so they are omitted here to avoid a duplicate
-          // toggle. The deck.gl viz overlay is an internal renderer driven by the
-          // Add Data → "Deck.gl Layer" dialog, not a
-          // user-facing toggle, so it is hidden here too. The Components plugin
-          // stays registered for in-app use, but its catch-all grid is hidden
-          // from the menu now that its panels are reachable through dedicated
-          // plugins.
-          if (
-            p.id === EFFECTS_PLUGIN_ID ||
-            p.id === SUN_PLUGIN_ID ||
-            p.id === ROUTE_ANIMATION_PLUGIN_ID ||
-            p.id === DIRECTIONS_PLUGIN_ID ||
-            p.id === REVERSE_GEOCODE_PLUGIN_ID ||
-            p.id === GRATICULE_PLUGIN_ID ||
-            p.id === CLOUDS_PLUGIN_ID ||
-            p.id === PRECIPITATION_PLUGIN_ID ||
-            p.id === DECK_VIZ_PLUGIN_ID ||
-            p.id === LAYER_CONTROL_PLUGIN_ID ||
-            p.id === COMPONENTS_PLUGIN_ID
-          ) {
-            return null;
-          }
-          // Hidden by the active UI profile (issue #500).
-          if (hiddenPluginIds.has(p.id)) {
-            return null;
-          }
-          // Rendered in the Installed submenu below.
-          if (isExternalPluginId(p.id)) {
-            return null;
-          }
-          if (DGGS_PLUGIN_ID_SET.has(p.id)) {
-            // Same one-shot pattern as the Web Services submenu below: the
-            // submenu renders at the first visible DGGS plugin's position and
-            // later ones are skipped.
-            if (dggsRendered) return null;
-            dggsRendered = true;
-            return (
-              <DropdownMenuSub key="dggs">
-                <DropdownMenuSubTrigger disabled={!dggsSupported}>
-                  {t("toolbar.item.dggs")}
-                  {dggsPlugins.some((plugin) => isActive(plugin.id)) ? " ✓" : ""}
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent>
-                  {dggsPlugins.map((plugin) => renderPluginMenuItem(plugin))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            );
-          }
-          if (!WEB_SERVICE_PLUGIN_ID_SET.has(p.id)) {
-            return renderPluginMenuItem(p);
-          }
-          // Reaching here means `p` is a visible web service plugin, so the
-          // submenu has at least one entry. When all web service plugins are
-          // hidden no plugin reaches this branch and the submenu simply never
-          // renders.
-          if (webServicesRendered) return null;
-          webServicesRendered = true;
-          return (
-            <DropdownMenuSub key="web-services">
-              <DropdownMenuSubTrigger disabled={!webServicesSupported}>
-                {t("toolbar.item.webServices")}
-                {webServicePlugins.some((plugin) => isActive(plugin.id)) ? " ✓" : ""}
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent>
-                {webServicePlugins.map((plugin) => renderPluginMenuItem(plugin))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          );
-        })}
+        {kebunPlugins.length > 0 ? (
+          <>
+            <DropdownMenuLabel>{t("toolbar.item.kebunPlugins", "Everyday plugins")}</DropdownMenuLabel>
+            {kebunPlugins.map((p) => renderPluginMenuItem(p))}
+            <DropdownMenuSeparator />
+          </>
+        ) : null}
+        {otherPlugins.length > 0 ? (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              {t("toolbar.item.otherPlugins", "All plugins ({{count}})", { count: otherPlugins.length })}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {otherPlugins.map((p) => renderPluginMenuItem(p))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        ) : null}
+        {dggsPlugins.length > 0 ? (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={!dggsSupported}>
+              {t("toolbar.item.dggs")}
+              {dggsPlugins.some((plugin) => isActive(plugin.id)) ? " ✓" : ""}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {dggsPlugins.map((plugin) => renderPluginMenuItem(plugin))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        ) : null}
+        {webServicePlugins.length > 0 ? (
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger disabled={!webServicesSupported}>
+              {t("toolbar.item.webServices")}
+              {webServicePlugins.some((plugin) => isActive(plugin.id)) ? " ✓" : ""}
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {webServicePlugins.map((plugin) => renderPluginMenuItem(plugin))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        ) : null}
         {installedPlugins.length > 0 ? (
           <>
             <DropdownMenuSeparator />
