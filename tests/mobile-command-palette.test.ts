@@ -82,6 +82,7 @@ function renderMobileShell(): string[] {
     onDropPoint: () => calls.push("dropPoint"),
     onTakePhoto: () => calls.push("takePhoto"),
     onStartTrack: () => calls.push("startTrack"),
+    onOpenGeofence: () => calls.push("geofence"),
     onSaveProject: () => calls.push("saveProject"),
     onOpenProject: () => calls.push("openProject"),
     onNewProject: () => calls.push("newProject"),

@@ -46,6 +46,7 @@ function renderShell(activeTab: "map" | "layers") {
       onSaveProject: () => {},
       onOpenProject: () => {},
       onNewProject: () => {},
+      onOpenCommandPalette: () => {},
       onImportFile: () => {},
       layersPanel: fakePanel,
       children: createElement("div", { "data-testid": "map-area" }, "peta"),
