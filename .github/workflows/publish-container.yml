@@ -6,6 +6,21 @@ on:
     tags: ["v*"]
   pull_request:
     branches: [main]
+    # Dockerfile memakai `COPY . .` lalu `npm run build`, jadi image bergantung
+    # pada hampir seluruh repo: filter sempit (hanya Dockerfile/docker/**) akan
+    # melewatkan PR frontend yang merusak image. Yang benar adalah mencerminkan
+    # pengecualian filter `web` di ci.yml: buang hanya jalur yang tidak dibaca
+    # build. Pada 2026-11-17 ini melewatkan 4 dari 20 PR run (~12 job-min).
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "python/**"
+      - "skills/**"
+      - "backend/geolibre_server_api/**"
+      - "backend/geolibre_server/tests/**"
+      - "CITATION.cff"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
   workflow_dispatch:
 
 permissions:
