@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   buildIssueReportUrl,
+  ISSUE_REPOSITORY_URL,
   ISSUE_TEMPLATE,
   MAX_ISSUE_URL_LENGTH,
   scrubForIssueReport,
@@ -105,7 +106,9 @@ describe("buildIssueReportUrl", () => {
       entry({ detail: "stack", url: "https://a.test/x.pmtiles?token=zzz", status: 403 }),
       context,
     );
-    assert.ok(url.startsWith("https://github.com/opengeos/GeoLibre/issues/new?"));
+    // Anchored on the constant, not a literal: the repo this link files into is
+    // exactly what this test is about, so hardcoding it would let a rename pass.
+    assert.ok(url.startsWith(`${ISSUE_REPOSITORY_URL}/issues/new?`));
     const params = fields(url);
     assert.equal(params.get("template"), ISSUE_TEMPLATE);
     assert.equal(params.get("title"), "[Bug]: Layer failed");

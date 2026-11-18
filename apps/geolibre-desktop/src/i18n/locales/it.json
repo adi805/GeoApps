@@ -1,12 +1,12 @@
 {
   "mcpPreview": {
     "networkConsent": {
-      "previewLabel": "Anteprima mappa GeoLibre",
+      "previewLabel": "Anteprima mappa GeoApps",
       "title": "Consentire le connessioni della mappa?",
       "description": "Esamina i server esterni di cui questa mappa ha bisogno prima di connetterti.",
       "servers_one": "{{count}} server",
       "servers_other": "{{count}} server",
-      "privacy": "Le richieste partono dal tuo server Python di GeoLibre. Questi server vedono l'indirizzo IP di quella macchina, che può essere diverso da quello del tuo browser.",
+      "privacy": "Le richieste partono dal tuo server Python di GeoApps. Questi server vedono l'indirizzo IP di quella macchina, che può essere diverso da quello del tuo browser.",
       "scope": "Solo server pubblici. L'approvazione vale solo per questa anteprima.",
       "allowed": "Consentito",
       "blocked": "Bloccato",
@@ -21,9 +21,9 @@
     "summary": "Layer: {{count}} · zoom {{zoom}}",
     "restore": "Ripristina",
     "discard": "Scarta",
-    "restoreError": "Impossibile ripristinare questo snapshot. Potrebbe essere danneggiato o incompatibile con questa versione di GeoLibre.",
+    "restoreError": "Impossibile ripristinare questo snapshot. Potrebbe essere danneggiato o incompatibile con questa versione di GeoApps.",
     "recoveryTitle": "Recuperare il lavoro non salvato?",
-    "recoveryDescription": "GeoLibre non si è chiuso correttamente. È disponibile un salvataggio automatico più recente di \"{{name}}\".",
+    "recoveryDescription": "GeoApps non si è chiuso correttamente. È disponibile un salvataggio automatico più recente di \"{{name}}\".",
     "autosavePaused": "Il salvataggio automatico è in pausa: questo progetto supera i {{limit}} MB, quindi non vengono conservati nuovi snapshot. Salvalo su disco per non perdere il tuo lavoro.",
     "diff": {
       "compare": "Confronta",
@@ -105,7 +105,7 @@
     "forgetMssqlConnection": "Dimentica la connessione SQL Server «{{name}}»",
     "forgetPostgresConnection": "Dimentica la connessione PostgreSQL «{{name}}»",
     "forgetPostgresConnectionFailed": "Impossibile dimenticare la connessione PostgreSQL perché l'archivio delle connessioni salvate non è disponibile. Non è stato rimosso nulla.",
-    "forgetPostgresCredentialFailed": "La connessione PostgreSQL è stata rimossa, ma il portachiavi di sistema non ha eliminato la credenziale salvata. GeoLibre riproverà al prossimo avvio.",
+    "forgetPostgresCredentialFailed": "La connessione PostgreSQL è stata rimossa, ma il portachiavi di sistema non ha eliminato la credenziale salvata. GeoApps riproverà al prossimo avvio.",
     "loadingFolder": "Caricamento…",
     "loadingSublayers": "Caricamento dei sotto-layer…",
     "allSublayers": "Tutti i layer",
@@ -124,15 +124,15 @@
     "libraryImportFailed": "Impossibile leggere questo file di libreria dei layer.",
     "libraryExportFailed": "Impossibile esportare la libreria dei layer.",
     "libraryLayerMissing": "Quel layer salvato non esiste più.",
-    "libraryLayerNeedsDesktop": "Questo layer salvato legge un file dal disco, quindi richiede GeoLibre Desktop. Aggiungi di nuovo il file per salvare una nuova voce.",
+    "libraryLayerNeedsDesktop": "Questo layer salvato legge un file dal disco, quindi richiede GeoApps Desktop. Aggiungi di nuovo il file per salvare una nuova voce.",
     "libraryLayerConfigNotApplied": "Il file di \"{{name}}\" è stato aggiunto, ma lo stile salvato non è stato associato a un singolo layer e quindi non è stato riapplicato.",
     "libraryLayerJoinsUnresolved_one": "Il layer è stato aggiunto, ma 1 join salvato non è stato riapplicato: il layer a cui si unisce non è presente in questo progetto.",
     "libraryLayerJoinsUnresolved_other": "Il layer è stato aggiunto, ma {{count}} join salvati non sono stati riapplicati: i layer a cui si uniscono non sono presenti in questo progetto."
   },
   "about": {
     "trigger": "Informazioni",
-    "title": "Informazioni su GeoLibre",
-    "description": "GeoLibre è una piattaforma GIS leggera e cloud-native.",
+    "title": "Informazioni su GeoApps",
+    "description": "GeoApps è una piattaforma GIS leggera e cloud-native.",
     "version": "Versione",
     "checkForUpdates": "Verifica aggiornamenti",
     "tryAgain": "Riprova",
@@ -151,7 +151,7 @@
     "steps": {
       "download": "Scarica il programma di installazione per la tua piattaforma dalla pagina dei download.",
       "install": "Esegui il programma di installazione. I tuoi progetti locali, le impostazioni e le chiavi API vengono mantenuti.",
-      "reopen": "Riapri GeoLibre per completare l'aggiornamento."
+      "reopen": "Riapri GeoApps per completare l'aggiornamento."
     },
     "severity": {
       "major": "Versione principale",
@@ -170,7 +170,7 @@
       "noTag": "L'ultima versione non include un tag di versione.",
       "network": "Impossibile raggiungere GitHub. Controlla la connessione e riprova.",
       "viewDownloads": "Visualizza download",
-      "viewDownloadsHint": "Apre la pagina dei download di GeoLibre nel browser per verificare manualmente l'ultima versione."
+      "viewDownloadsHint": "Apre la pagina dei download di GeoApps nel browser per verificare manualmente l'ultima versione."
     },
     "startup": {
       "title": "Aggiornamento disponibile",
@@ -183,7 +183,7 @@
     }
   },
   "masBuild": {
-    "unavailable": "Questa funzione non è disponibile nella versione Mac App Store di GeoLibre Desktop."
+    "unavailable": "Questa funzione non è disponibile nella versione Mac App Store di GeoApps Desktop."
   },
   "bookmark": {
     "captureStateLabel": "Includi lo stato completo dei layer (attivi, inattivi e ordine dei layer)",
@@ -201,15 +201,15 @@
       "title": "Caricare i plugin di questo progetto?",
       "description_one": "Questo progetto vuole caricare 1 plugin esterno da un URL non installato. I plugin eseguono codice con accesso completo all'app.",
       "description_other": "Questo progetto vuole caricare {{count}} plugin esterni da URL non installati. I plugin eseguono codice con accesso completo all'app.",
-      "warning": "Carica solo plugin da fonti attendibili. I plugin caricati vengono eseguiti con gli stessi privilegi di GeoLibre stesso.",
+      "warning": "Carica solo plugin da fonti attendibili. I plugin caricati vengono eseguiti con gli stessi privilegi di GeoApps stesso.",
       "trustButton": "Considera attendibile e carica",
       "dismissButton": "Non caricare"
     },
     "registryTrust": {
       "title_one": "Installare questo plugin?",
       "title_other": "Installare questi plugin?",
-      "description_one": "Questo link apre un plugin del registro ufficiale dei plugin di GeoLibre che non è ancora installato. Installandolo, viene aggiunto ai tuoi plugin e attivato.",
-      "description_other": "Questo link apre {{count}} plugin del registro ufficiale dei plugin di GeoLibre che non sono ancora installati. Installandoli, vengono aggiunti ai tuoi plugin e attivati."
+      "description_one": "Questo link apre un plugin del registro ufficiale dei plugin di GeoApps che non è ancora installato. Installandolo, viene aggiunto ai tuoi plugin e attivato.",
+      "description_other": "Questo link apre {{count}} plugin del registro ufficiale dei plugin di GeoApps che non sono ancora installati. Installandoli, vengono aggiunti ai tuoi plugin e attivati."
     },
     "title": "Gestisci plugin",
     "searchAria": "Cerca plugin",
@@ -226,7 +226,7 @@
     "openHomepageAria": "Apri la pagina di {{name}}",
     "byAuthor": "di {{author}}",
     "updateAvailable": "aggiornamento disponibile",
-    "requiresVersion": "richiede GeoLibre {{version}}+",
+    "requiresVersion": "richiede GeoApps {{version}}+",
     "install": "Installa",
     "installAria": "Installa {{name}}",
     "removeConfirm": "Rimuovere?",
@@ -237,10 +237,10 @@
     "updateAria": "Aggiorna {{name}}",
     "loading": "Caricamento…",
     "installed": "Installato",
-    "settingsIntro": "GeoLibre analizza sempre la sua cartella dei plugin nei dati dell'app. Installa un plugin pacchettizzato (.zip) da un file, oppure aggiungi altre cartelle locali (solo desktop). Gli URL dei manifest (comprese le installazioni dal marketplace) sono caricati dalla rete; le modifiche qui hanno effetto immediato.",
+    "settingsIntro": "GeoApps analizza sempre la sua cartella dei plugin nei dati dell'app. Installa un plugin pacchettizzato (.zip) da un file, oppure aggiungi altre cartelle locali (solo desktop). Gli URL dei manifest (comprese le installazioni dal marketplace) sono caricati dalla rete; le modifiche qui hanno effetto immediato.",
     "installFromFile": "Installa da file",
     "chooseZip": "Scegli .zip…",
-    "installFromFileHintDesktop": "Copia un archivio di plugin pacchettizzato nella cartella dei plugin di GeoLibre.",
+    "installFromFileHintDesktop": "Copia un archivio di plugin pacchettizzato nella cartella dei plugin di GeoApps.",
     "installFromFileHintWeb": "Carica un archivio di plugin pacchettizzato; viene memorizzato nel browser e ricaricato alla visita successiva.",
     "localDirectories": "Cartelle locali",
     "directoryAria": "Cartella dei plugin",
@@ -255,7 +255,7 @@
     "errorDirectoryPicker": "Impossibile aprire il selettore di cartelle.",
     "errorInstall": "Impossibile installare il plugin.",
     "errorUninstall": "Impossibile disinstallare il plugin.",
-    "description": "Sfoglia, installa, aggiorna e rimuovi plugin esterni di GeoLibre. I plugin sono elencati nel <registryLink>registro dei plugin di GeoLibre</registryLink>.",
+    "description": "Sfoglia, installa, aggiorna e rimuovi plugin esterni di GeoApps. I plugin sono elencati nel <registryLink>registro dei plugin di GeoApps</registryLink>.",
     "policySideloadDisabled": "Il caricamento manuale dei plugin è disabilitato dai criteri di distribuzione.",
     "policyBlocked": "Il plugin «{{pluginId}}» è bloccato dai criteri di distribuzione.",
     "policyBlocklisted": "Il plugin «{{pluginId}}» è stato bloccato dal registro dei plugin: {{reason}}",
@@ -364,7 +364,7 @@
     "add": "Aggiungi",
     "ok": "OK",
     "done": "Fine",
-    "openWebApp": "Apri l'app web di GeoLibre"
+    "openWebApp": "Apri l'app web di GeoApps"
   },
   "addData": {
     "title": "Aggiungi dati",
@@ -423,7 +423,7 @@
       },
       "gdb": {
         "label": "Aggiungi layer File Geodatabase",
-        "description": "Aggiungi un layer da un File Geodatabase Esri (cartella .gdb). Il layer viene letto con il server locale di GeoLibre e riproiettato in WGS84."
+        "description": "Aggiungi un layer da un File Geodatabase Esri (cartella .gdb). Il layer viene letto con il server locale di GeoApps e riproiettato in WGS84."
       },
       "photos": {
         "label": "Aggiungi foto geolocalizzate",
@@ -754,7 +754,7 @@
       "signInErrorTimeout": "Tempo di accesso scaduto. Riprova.",
       "signInErrorExpired": "La sessione ArcGIS è scaduta. Accedi di nuovo.",
       "signInErrorNetwork": "Impossibile raggiungere il portale ArcGIS. Controlla la connessione e riprova.",
-      "signInErrorRestart": "GeoLibre è ancora in fase di avvio. Riprova ad accedere tra un momento.",
+      "signInErrorRestart": "GeoApps è ancora in fase di avvio. Riprova ad accedere tra un momento.",
       "cancelSignIn": "Annulla"
     },
     "gpx": {
@@ -784,7 +784,7 @@
       "errorUrl": "Inserisci un URL LandXML.",
       "errorTooLarge": "Il file LandXML remoto supera il limite di download di 100 MB.",
       "errorSelectType": "Seleziona almeno un tipo di oggetto LandXML.",
-      "errorMissingCrs": "Questo file LandXML usa coordinate proiettate. Inserisci il suo CRS di origine così che GeoLibre possa riproiettarlo in WGS84.",
+      "errorMissingCrs": "Questo file LandXML usa coordinate proiettate. Inserisci il suo CRS di origine così che GeoApps possa riproiettarlo in WGS84.",
       "errorGeographicCrsBounds": "Le coordinate cadono fuori dai limiti geografici di longitudine e latitudine. Scegli il CRS di origine proiettato usato da questo file LandXML.",
       "summary": "{{surfaces}} superficie/i, {{alignments}} tracciato/i, {{profiles}} profilo/i, {{points}} punto/i di rilievo",
       "objectTypes": "Tipi di oggetto",
@@ -861,8 +861,8 @@
       "layerPlaceholder": "Scegli prima un geodatabase",
       "readingLayers": "Lettura dei layer...",
       "layerOption": "{{name}} ({{type}}, {{count}} elementi)",
-      "help": "Le tabelle di soli attributi non sono elencate. La feature class selezionata viene caricata tramite il server locale di GeoLibre e riproiettata in WGS84.",
-      "desktopOnly": "I layer File Geodatabase sono disponibili solo in GeoLibre Desktop. Questa funzionalità legge una cartella .gdb locale tramite il server locale di GeoLibre, a cui l'app web non può accedere.",
+      "help": "Le tabelle di soli attributi non sono elencate. La feature class selezionata viene caricata tramite il server locale di GeoApps e riproiettata in WGS84.",
+      "desktopOnly": "I layer File Geodatabase sono disponibili solo in GeoApps Desktop. Questa funzionalità legge una cartella .gdb locale tramite il server locale di GeoApps, a cui l'app web non può accedere.",
       "readError": "Impossibile leggere questo File Geodatabase.",
       "convertError": "Impossibile caricare questa feature class.",
       "errorNotGdb": "Scegli una cartella che termini con .gdb (un File Geodatabase Esri).",
@@ -954,12 +954,12 @@
     },
     "mssql": {
       "defaultName": "Layer SQL Server",
-      "errorDesktopOnly": "I layer SQL Server richiedono GeoLibre Desktop.",
+      "errorDesktopOnly": "I layer SQL Server richiedono GeoApps Desktop.",
       "errorConnect": "Impossibile connettersi a SQL Server.",
       "errorPort": "Inserisci una porta SQL Server valida (1–65535).",
       "errorConnectFirst": "Connettiti prima a SQL Server.",
       "errorSelectTable": "Seleziona una tabella spaziale da caricare.",
-      "desktopOnlyNotice": "I layer SQL Server sono disponibili solo in GeoLibre Desktop.",
+      "desktopOnlyNotice": "I layer SQL Server sono disponibili solo in GeoApps Desktop.",
       "savedConnection": "Connessione salvata",
       "selectSavedConnection": "Nuova connessione",
       "forgetConnection": "Dimentica la connessione salvata",
@@ -1017,7 +1017,7 @@
     "postgres": {
       "defaultName": "Layer PostgreSQL",
       "forgetConnectionConfirm": "Dimenticare la connessione PostgreSQL salvata {{name}}? Anche la credenziale salvata verrà rimossa da questo dispositivo.",
-      "errorDesktopOnly": "I layer PostgreSQL richiedono GeoLibre Desktop.",
+      "errorDesktopOnly": "I layer PostgreSQL richiedono GeoApps Desktop.",
       "errorConnectionString": "Inserisci una stringa di connessione PostgreSQL.",
       "statusCheckingBinary": "Verifica del binario Martin in corso...",
       "statusDownloaded": "Martin scaricato. Avvio del server locale in corso...",
@@ -1032,7 +1032,7 @@
       "errorConnectFirst": "Connettiti prima a PostgreSQL.",
       "errorNoVectorLayers": "La sorgente Martin selezionata non ha layer vettoriali.",
       "errorSelectSource": "Seleziona una sorgente Martin da aggiungere.",
-      "desktopOnlyNotice": "I layer PostgreSQL sono disponibili solo in GeoLibre Desktop. Questa funzione avvia un server di tile Martin locale, che le app web e mobile non possono eseguire.",
+      "desktopOnlyNotice": "I layer PostgreSQL sono disponibili solo in GeoApps Desktop. Questa funzione avvia un server di tile Martin locale, che le app web e mobile non possono eseguire.",
       "savedConnection": "Connessione salvata",
       "selectSavedConnection": "Seleziona connessione salvata",
       "connectionString": "Stringa di connessione PostgreSQL",
@@ -1423,7 +1423,7 @@
         "empty": "Nessuna copertura corrispondente disponibile.",
         "format": "La copertura non dichiara un output GeoTIFF.",
         "size": "Scegli dimensioni da 1 a 4096 pixel. I download sono limitati a 128 MB.",
-        "metadata": "Il servizio ha restituito più metadati di quanti GeoLibre possa caricarne. Le risposte di metadati sono limitate a 32 MB.",
+        "metadata": "Il servizio ha restituito più metadati di quanti GeoApps possa caricarne. Le risposte di metadati sono limitate a 32 MB.",
         "response": "Il servizio non ha restituito un GeoTIFF valido.",
         "bounds": "Inserisci un riquadro valido: ovest/est tra -180 e 180, sud/nord tra -90 e 90, con ovest < est e sud < nord.",
         "url": "Inserisci un URL del servizio WCS."
@@ -1713,7 +1713,7 @@
     "nmeaConnectFailed": "Impossibile connettersi al ricevitore.",
     "nmeaDisconnected": "Il ricevitore si è disconnesso.",
     "nmeaUnsupportedDevice": "Nessun servizio NMEA trovato su quel dispositivo. Potrebbe essere un ricevitore Bluetooth classico, che va associato nelle impostazioni di sistema e poi connesso qui come porta seriale.",
-    "nmeaUnsupported": "La lettura di un ricevitore NMEA richiede le API Web Serial o Web Bluetooth, che questo browser non fornisce. Apri GeoLibre in un browser Chromium come Chrome o Edge.",
+    "nmeaUnsupported": "La lettura di un ricevitore NMEA richiede le API Web Serial o Web Bluetooth, che questo browser non fornisce. Apri GeoApps in un browser Chromium come Chrome o Edge.",
     "nmeaSerialUnsupported": "Web Serial non è disponibile qui, quindi non è possibile aprire ricevitori seriali.",
     "nmeaBluetoothUnsupported": "Web Bluetooth non è disponibile qui, quindi non è possibile aprire ricevitori Bluetooth Low Energy.",
     "nmeaBluetoothHint": "La maggior parte dei ricevitori GPS Bluetooth usa il Bluetooth classico: associane uno nelle impostazioni di sistema e apparirà qui come porta seriale. Usa \"Connetti Bluetooth\" solo per i ricevitori Bluetooth Low Energy.",
@@ -1848,7 +1848,7 @@
     "step1Title": "1. Ottieni un token API",
     "step1Description": "Accedi a {{shareHost}}, quindi crea un token in Settings → API tokens.",
     "getToken": "Ottieni token API",
-    "step2Title": "2. Aggiungi il token a GeoLibre",
+    "step2Title": "2. Aggiungi il token a GeoApps",
     "step2Description": "Incolla il token in Settings → Environment Variables su questo dispositivo.",
     "configureToken": "Configura token locale",
     "oauthTitle": "Accedi con il tuo account",
@@ -1862,13 +1862,13 @@
     "oauthFailed": "Accesso non riuscito. Riprova.",
     "oauthRefreshFailed": "Impossibile aggiornare la sessione. Controlla la connessione e riprova.",
     "oauthSetupFailed": "Impossibile avviare l'accesso dall'app desktop. Riavvia l'app e verifica che l'app installata possa aprire i link e raggiungere il server di condivisione. I token API incollati restano disponibili.",
-    "oauthRestartSignIn": "Questo link di accesso è stato aperto dopo il riavvio di GeoLibre. Avvia di nuovo l'accesso da qui; il codice di autorizzazione precedente non può essere usato.",
+    "oauthRestartSignIn": "Questo link di accesso è stato aperto dopo il riavvio di GeoApps. Avvia di nuovo l'accesso da qui; il codice di autorizzazione precedente non può essere usato.",
     "reauthBody": "La tua sessione di {{shareHost}} è scaduta. Accedi di nuovo per continuare a condividere.",
     "errorUnauthorized": "Il tuo token API di {{shareHost}} non è valido o è scaduto. Aggiornalo nelle Impostazioni.",
     "reauthSignIn": "Accedi di nuovo",
     "liveAt": "Il tuo progetto è online su:",
     "credentialsRemoved": "{{count}} campo/i di credenziali non sono stati inclusi. I destinatari devono fornire le proprie credenziali o usare un riferimento mediato.",
-    "oauthSignOutIncomplete": "Sei uscito, ma non è stato possibile rimuovere l'accesso salvato dal portachiavi di sistema, quindi potrebbe essere ripristinato al prossimo avvio di GeoLibre. Verifica che il portachiavi sia disponibile, quindi accedi ed esci di nuovo.",
+    "oauthSignOutIncomplete": "Sei uscito, ma non è stato possibile rimuovere l'accesso salvato dal portachiavi di sistema, quindi potrebbe essere ripristinato al prossimo avvio di GeoApps. Verifica che il portachiavi sia disponibile, quindi accedi ed esci di nuovo.",
     "copyLink": "Copia link",
     "open": "Apri",
     "done": "Fine",
@@ -1958,7 +1958,7 @@
   },
   "gallery": {
     "title": "Galleria progetti",
-    "description": "Sfoglia i progetti pubblici condivisi su {{shareHost}} e aprine uno in GeoLibre.",
+    "description": "Sfoglia i progetti pubblici condivisi su {{shareHost}} e aprine uno in GeoApps.",
     "searchPlaceholder": "Filtra i progetti caricati per titolo, autore o tag",
     "loading": "Caricamento progetti…",
     "loadingMore": "Caricamento altri…",
@@ -2089,7 +2089,7 @@
       "groupNavigation": "Raggruppa freccia del nord e barra di scala",
       "footer": "Testo del piè di pagina",
       "date": "Data",
-      "attribution": "Includi attribuzione GeoLibre",
+      "attribution": "Includi attribuzione GeoApps",
       "pageBorder": "Bordo pagina",
       "infoBlock": "Blocco informazioni (cartiglio)",
       "colorbar": "Barra dei colori",
@@ -2393,9 +2393,9 @@
   },
   "auth": {
     "unavailableTitle": "Accesso non disponibile",
-    "unavailableDescription": "GeoLibre non è riuscito a raggiungere il servizio di accesso, quindi non può sapere se hai effettuato l'accesso. Di solito è un problema temporaneo; se persiste, le impostazioni di autenticazione di questo deployment potrebbero richiedere attenzione.",
+    "unavailableDescription": "GeoApps non è riuscito a raggiungere il servizio di accesso, quindi non può sapere se hai effettuato l'accesso. Di solito è un problema temporaneo; se persiste, le impostazioni di autenticazione di questo deployment potrebbero richiedere attenzione.",
     "retry": "Riprova",
-    "signInTitle": "Accedi a GeoLibre",
+    "signInTitle": "Accedi a GeoApps",
     "signInDescription": "Questo deployment richiede un account. Verrai portato a una pagina di accesso sicura e poi riportato qui.",
     "signIn": "Accedi",
     "signOut": "Esci",
@@ -2705,7 +2705,7 @@
     "noticeDesc": "Aprendo una scheda informativa vengono inviate le coordinate del luogo su cui hai fatto clic (e il titolo di eventuali articoli vicini che apri) all'API pubblica di Wikipedia per recuperare un riepilogo e una foto — le tue coordinate lasciano il dispositivo per queste richieste."
   },
   "onboarding": {
-    "title": "Benvenuto in GeoLibre",
+    "title": "Benvenuto in GeoApps",
     "description": "Scegli il tuo livello di esperienza per personalizzare l'interfaccia. Puoi modificarlo in qualsiasi momento in Impostazioni → Interfaccia.",
     "level": {
       "beginner": {
@@ -2718,24 +2718,24 @@
       },
       "advanced": {
         "title": "Avanzato",
-        "description": "Mostra tutto ciò che GeoLibre offre."
+        "description": "Mostra tutto ciò che GeoApps offre."
       }
     },
     "showEverything": "Salta — mostra tutto"
   },
   "startup": {
     "keychainWaitTitle": "In attesa del portachiavi di sistema…",
-    "keychainWaitDetail": "GeoLibre sta caricando le credenziali salvate. Se il sistema ha chiesto una password per sbloccare il portachiavi, rispondi a quella richiesta per continuare. Potrebbe trovarsi dietro questa finestra."
+    "keychainWaitDetail": "GeoApps sta caricando le credenziali salvate. Se il sistema ha chiesto una password per sbloccare il portachiavi, rispondi a quella richiesta per continuare. Potrebbe trovarsi dietro questa finestra."
   },
   "settings": {
     "title": "Impostazioni",
     "description": "Configura le preferenze del progetto e le impostazioni di runtime.",
     "saveButton": "Salva impostazioni",
     "credentials": {
-      "keychain": "I token e le chiavi API che salvi in GeoLibre vengono memorizzati nel portachiavi di sistema.",
+      "keychain": "I token e le chiavi API che salvi in GeoApps vengono memorizzati nel portachiavi di sistema.",
       "projectKeychainUnavailable": "L'archiviazione delle credenziali di progetto nel portachiavi di sistema non è disponibile. Le nuove chiavi di progetto restano in questa sessione; al salvataggio di un progetto locale verrà chiesto se mantenerle nel file o rimuoverle.",
       "browser": "I token e le chiavi API che salvi qui vengono memorizzati nello storage locale di questo browser, dove gli script eseguiti su questo sito possono leggerli.",
-      "unavailable": "Impossibile usare il portachiavi di sistema ({{error}}). Le nuove credenziali durano solo fino alla chiusura di GeoLibre; le credenziali salvate in precedenza potrebbero restare nello storage del browser finché la migrazione non riesce."
+      "unavailable": "Impossibile usare il portachiavi di sistema ({{error}}). Le nuove credenziali durano solo fino alla chiusura di GeoApps; le credenziali salvate in precedenza potrebbero restare nello storage del browser finché la migrazione non riesce."
     },
     "section": {
       "language": "Lingua",
@@ -2779,11 +2779,11 @@
         "role": "assunzione di ruolo",
         "other": "altro"
       },
-      "environmentHelp": "Usa AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY e AWS_SESSION_TOKEN dall'ambiente con cui è stato avviato GeoLibre.",
-      "instanceHelp": "Usa il ruolo IAM della macchina su cui è in esecuzione GeoLibre: un token di identità web (EKS IRSA), credenziali del container ECS o EKS, oppure il profilo dell'istanza EC2.",
+      "environmentHelp": "Usa AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY e AWS_SESSION_TOKEN dall'ambiente con cui è stato avviato GeoApps.",
+      "instanceHelp": "Usa il ruolo IAM della macchina su cui è in esecuzione GeoApps: un token di identità web (EKS IRSA), credenziali del container ECS o EKS, oppure il profilo dell'istanza EC2.",
       "roleArn": "Ruolo da assumere",
       "externalId": "ID esterno",
-      "roleHelp": "Facoltativo. GeoLibre chiama AWS STS AssumeRole con le credenziali sopra e legge i bucket con questo ruolo, ad esempio un ruolo multi-account di sola lettura.",
+      "roleHelp": "Facoltativo. GeoApps chiama AWS STS AssumeRole con le credenziali sopra e legge i bucket con questo ruolo, ad esempio un ruolo multi-account di sola lettura.",
       "accessKeyId": "ID chiave di accesso",
       "secretAccessKey": "Chiave di accesso segreta",
       "sessionToken": "Token di sessione",
@@ -2826,7 +2826,7 @@
     },
     "languagePack": {
       "title": "Pacchetti lingua",
-      "description": "Aggiungi traduzioni facoltative per nomi degli strumenti, parametri e testi di aiuto di Whitebox senza appesantire ogni installazione di GeoLibre.",
+      "description": "Aggiungi traduzioni facoltative per nomi degli strumenti, parametri e testi di aiuto di Whitebox senza appesantire ogni installazione di GeoApps.",
       "manage": "Gestisci i pacchetti lingua",
       "interfaceLanguage": "Lingua dell'interfaccia",
       "installed": "Pacchetto lingua Whitebox installato",
@@ -2848,10 +2848,10 @@
       "privacyLocalOnly": "I pacchetti vengono archiviati solo su questo dispositivo. Questa build non scarica nulla: importa invece un file di pacchetto lingua.",
       "browse": "Sfoglia i pacchetti lingua",
       "errorInvalidJson": "Quel file non è un JSON valido.",
-      "errorInvalidFormat": "Quel file non è un pacchetto lingua Whitebox di GeoLibre valido.",
-      "errorUnsupportedVersion": "Questa versione del pacchetto lingua non è supportata da questa versione di GeoLibre.",
+      "errorInvalidFormat": "Quel file non è un pacchetto lingua Whitebox di GeoApps valido.",
+      "errorUnsupportedVersion": "Questa versione del pacchetto lingua non è supportata da questa versione di GeoApps.",
       "errorInvalidLocale": "Il pacchetto lingua ha una locale non valida o imprevista.",
-      "errorUnsupportedLocale": "GeoLibre non include la lingua di base dell'interfaccia richiesta da questo pacchetto.",
+      "errorUnsupportedLocale": "GeoApps non include la lingua di base dell'interfaccia richiesta da questo pacchetto.",
       "errorTooLarge": "Il pacchetto lingua supera il limite di sicurezza di 5 MB.",
       "errorNotFound": "Non è ancora disponibile un pacchetto lingua Whitebox ufficiale per questa lingua.",
       "errorDownload": "Non è stato possibile scaricare il pacchetto lingua. Controlla la connessione oppure importa un file locale.",
@@ -2859,9 +2859,9 @@
     },
     "updates": {
       "title": "Aggiornamenti software",
-      "description": "Controlla come GeoLibre verifica la presenza di nuove versioni all'avvio dell'app desktop.",
+      "description": "Controlla come GeoApps verifica la presenza di nuove versioni all'avvio dell'app desktop.",
       "checkOnStartup": "Verifica aggiornamenti all'avvio",
-      "checkOnStartupHint": "Se attivo, GeoLibre verifica la presenza di una versione più recente a ogni avvio dell'app. Disattivalo per un flusso di lavoro completamente offline.",
+      "checkOnStartupHint": "Se attivo, GeoApps verifica la presenza di una versione più recente a ogni avvio dell'app. Disattivalo per un flusso di lavoro completamente offline.",
       "notificationLevel": "Notificami per",
       "notificationLevelHint": "Scegli quali tipi di release generano una notifica all'avvio.",
       "level": {
@@ -2872,7 +2872,7 @@
     },
     "startup": {
       "title": "Progetto di avvio",
-      "description": "Scegli l'area di lavoro che GeoLibre apre all'avvio dell'app nativa.",
+      "description": "Scegli l'area di lavoro che GeoApps apre all'avvio dell'app nativa.",
       "mode": {
         "default": "Apri l'area di lavoro predefinita",
         "last": "Riapri l'ultimo progetto",
@@ -2887,7 +2887,7 @@
       "globeByDefault": "Abilita il globo 3D per impostazione predefinita",
       "globeByDefaultHint": "Usato per l'area di lavoro senza titolo quando non è indicato alcun progetto di avvio né un link a un progetto.",
       "openS3Browser": "Apri il browser S3 all'avvio",
-      "openS3BrowserHint": "Mostra il pannello del browser S3 a ogni avvio di GeoLibre. Resta aperto quando apri un progetto.",
+      "openS3BrowserHint": "Mostra il pannello del browser S3 a ogni avvio di GeoApps. Resta aperto quando apri un progetto.",
       "defaultView": "Vista della mappa predefinita",
       "defaultViewHint": "Imposta il centro e lo zoom per lo spazio di lavoro senza titolo.",
       "longitude": "Longitudine del centro",
@@ -2895,7 +2895,7 @@
       "zoom": "Livello di zoom",
       "useCurrentView": "Usa la vista corrente",
       "layerStyles": "Stili dei layer predefiniti",
-      "layerStylesHint": "Scegli un file di stili dei layer (Progetto → Esporta → Esporta stili dei layer). Ogni layer aggiunto il cui nome corrisponde a uno stile del file viene stilizzato automaticamente. I layer dei progetti aperti mantengono gli stili salvati. GeoLibre conserva una copia del file, quindi sceglilo di nuovo dopo averlo modificato.",
+      "layerStylesHint": "Scegli un file di stili dei layer (Progetto → Esporta → Esporta stili dei layer). Ogni layer aggiunto il cui nome corrisponde a uno stile del file viene stilizzato automaticamente. I layer dei progetti aperti mantengono gli stili salvati. GeoApps conserva una copia del file, quindi sceglilo di nuovo dopo averlo modificato.",
       "chooseLayerStyles": "Scegli file",
       "clearLayerStyles": "Cancella",
       "noLayerStylesSelected": "Nessun file di stili dei layer selezionato",
@@ -2903,7 +2903,7 @@
       "layerStylesSelected_other": "{{file}} ({{count}} stili)",
       "layerStylesSelectError": "Impossibile leggere il file di stili dei layer selezionato: {{message}}",
       "layers": "Layer predefiniti",
-      "layersHint": "Scegli un file di layer (Progetto → Esporta → Esporta layer). I suoi layer vengono aggiunti a ogni nuovo progetto: quello con cui si apre GeoLibre e ogni File → Nuovo. Fanno riferimento ai propri dati tramite URL o percorso di file, quindi mostrano sempre il contenuto aggiornato. I progetti aperti non vengono modificati.",
+      "layersHint": "Scegli un file di layer (Progetto → Esporta → Esporta layer). I suoi layer vengono aggiunti a ogni nuovo progetto: quello con cui si apre GeoApps e ogni File → Nuovo. Fanno riferimento ai propri dati tramite URL o percorso di file, quindi mostrano sempre il contenuto aggiornato. I progetti aperti non vengono modificati.",
       "chooseLayers": "Scegli file",
       "clearLayers": "Cancella",
       "noLayersSelected": "Nessun file di layer selezionato",
@@ -2913,7 +2913,7 @@
       "viewUnavailable": "La vista corrente della mappa non è disponibile.",
       "selectError": "Impossibile leggere il progetto selezionato.",
       "restoring": "Apertura del progetto di avvio…",
-      "loadWarning": "Il progetto di avvio non è disponibile. GeoLibre ha aperto l'area di lavoro predefinita."
+      "loadWarning": "Il progetto di avvio non è disponibile. GeoApps ha aperto l'area di lavoro predefinita."
     },
     "map": {
       "constraintsTitle": "Vincoli della mappa",
@@ -3020,21 +3020,21 @@
       "importUrl": "Importa da URL",
       "loadUrl": "Carica",
       "loadingUrl": "Caricamento…",
-      "fileFilter": "Interfaccia GeoLibre",
+      "fileFilter": "Interfaccia GeoApps",
       "exportError": "Impossibile esportare le impostazioni dell'interfaccia: {{message}}",
       "importError": "Impossibile importare il file dell'interfaccia: {{message}}",
       "imported": "Impostazioni dell'interfaccia importate."
     },
     "env": {
-      "oauthTitle": "Account Share.GeoLibre",
+      "oauthTitle": "Account Share.GeoApps",
       "oauthDescription": "Accedi con il tuo account {{shareHost}} per condividere progetti e vedere i tuoi progetti nella galleria.",
       "oauthConnected": "Accesso effettuato a {{shareHost}}.",
       "oauthSignIn": "Accedi",
       "oauthSigningIn": "Accesso in corso…",
       "oauthSignOut": "Esci",
       "oauthWebLifetime": "Il token di accesso resta in memoria; la sessione di aggiornamento è limitata a questa scheda del browser. Chiudendo la scheda dovrai accedere di nuovo.",
-      "oauthDesktopKeychain": "Il tuo accesso viene conservato nel portachiavi di sistema, così GeoLibre resta connesso dopo un riavvio finché non esci.",
-      "oauthDesktopSessionOnly": "Non è stato possibile salvare questo accesso nel portachiavi di sistema, quindi dura solo fino alla chiusura di GeoLibre.",
+      "oauthDesktopKeychain": "Il tuo accesso viene conservato nel portachiavi di sistema, così GeoApps resta connesso dopo un riavvio finché non esci.",
+      "oauthDesktopSessionOnly": "Non è stato possibile salvare questo accesso nel portachiavi di sistema, quindi dura solo fino alla chiusura di GeoApps.",
       "accountLoading": "Caricamento dell'account…",
       "accountRetry": "Riprova",
       "accountIdentity": "Account: {{account}}",
@@ -3064,7 +3064,7 @@
       "sessionRevoke": "Revoca",
       "sessionRevoking": "Revoca in corso…",
       "revokeSessionConfirm": "Revocare la sessione «{{label}}»? Quel dispositivo verrà disconnesso. L'operazione non può essere annullata.",
-      "revokeCurrentConfirm": "Revocare questa sessione «{{label}}»? Verrai disconnesso subito da GeoLibre.",
+      "revokeCurrentConfirm": "Revocare questa sessione «{{label}}»? Verrai disconnesso subito da GeoApps.",
       "revokeTokenConfirm": "Revocare il token API personale «{{label}}»? Gli script e la CI che lo usano smetteranno di funzionare. L'operazione non può essere annullata.",
       "revokeSessionConfirmButton": "Sì, revoca",
       "sessionCreated": "Creato: {{date}}",
@@ -3075,7 +3075,7 @@
       "revokeOthers": "Revoca tutto il resto",
       "revokeOthersConfirm": "Revocare tutte le altre sessioni e ogni token API personale, compresi quelli usati da script e CI? Resterà solo questa sessione del progetto. L'operazione non può essere annullata.",
       "revokeOthersConfirmButton": "Sì, revoca tutto il resto",
-      "tokenTitle": "Token API di Share.GeoLibre",
+      "tokenTitle": "Token API di Share.GeoApps",
       "tokenDescription": "Progetto > Condividi usa questo token per caricare le tue mappe su {{shareHost}}. Apri <tokenLink>{{shareHost}}/settings</tokenLink>, crea un token in Settings > API tokens, quindi incollalo nel campo sottostante.",
       "tokenStorageNote": "Memorizzato localmente su questo dispositivo e inviato solo a {{shareHost}} per autenticare i caricamenti. Nella build web condivide lo stesso archivio del browser degli altri dati del sito, quindi revocalo su {{shareHost}} se il tuo computer viene compromesso.",
       "tokenStorageNoteKeychain": "Memorizzato nel portachiavi di sistema e inviato solo a {{shareHost}} per autenticare i caricamenti. Revocalo su {{shareHost}} se il tuo computer è compromesso.",
@@ -3153,7 +3153,7 @@
       "statusReady": "{{provider}} è configurato e pronto all'uso.",
       "statusIncomplete": "Compila i campi richiesti di seguito per abilitare {{provider}}.",
       "secretsNote": "Le credenziali vengono salvate localmente su questo dispositivo, non nel file di progetto che condividi, così persistono al riavvio. Chiunque abbia accesso a questo dispositivo potrebbe leggerle.",
-      "secretsNoteKeychain": "Le chiavi API e gli altri campi segreti vengono memorizzati nel portachiavi di sistema, non nel file di progetto che condividi, così persistono al riavvio. Gli altri campi, come i nomi dei modelli e gli URL, vengono salvati nelle impostazioni di GeoLibre su questo dispositivo.",
+      "secretsNoteKeychain": "Le chiavi API e gli altri campi segreti vengono memorizzati nel portachiavi di sistema, non nel file di progetto che condividi, così persistono al riavvio. Gli altri campi, come i nomi dei modelli e gli URL, vengono salvati nelle impostazioni di GeoApps su questo dispositivo.",
       "getCredentials": "Dove ottenere le credenziali {{provider}}",
       "showValue": "Mostra {{name}}",
       "hideValue": "Nascondi {{name}}",
@@ -3299,7 +3299,7 @@
         "notSet": "Non impostata",
         "getKey": "Ottieni una chiave gratuita",
         "saveFailed": "Impossibile salvare la chiave in questo browser.",
-        "saveFailedKeychain": "Impossibile salvare la chiave nel portachiavi di sistema. Funzionerà fino alla chiusura di GeoLibre."
+        "saveFailedKeychain": "Impossibile salvare la chiave nel portachiavi di sistema. Funzionerà fino alla chiusura di GeoApps."
       }
     }
   },
@@ -3457,7 +3457,7 @@
       "smartPaste": "Incolla coordinate",
       "smartPasteInputLabel": "Stringa di coordinate",
       "smartPastePlaceholder": "ad es. 51.5074, -0.1278 oppure 51°30'26\"N, 0°07'39\"W",
-      "smartPasteInfo": "Digita o incolla una stringa di coordinate completa in formato DD, DMS o DDM, quindi esegui Elabora input. GeoLibre rileva il formato e compila i campi di longitudine e latitudine qui sotto. Regola zoom, inclinazione e orientamento separatamente prima di procedere.",
+      "smartPasteInfo": "Digita o incolla una stringa di coordinate completa in formato DD, DMS o DDM, quindi esegui Elabora input. GeoApps rileva il formato e compila i campi di longitudine e latitudine qui sotto. Regola zoom, inclinazione e orientamento separatamente prima di procedere.",
       "smartPasteInfoLabel": "Informazioni sull'incolla delle coordinate",
       "smartPasteInvalid": "Impossibile leggere queste coordinate. Inserisci una longitudine e una latitudine complete in formato DD, DMS o DDM, ad esempio 51.5074, -0.1278. Una stringa parziale o incompleta non può essere analizzata.",
       "processInput": "Elabora input",
@@ -3605,8 +3605,8 @@
     },
     "conversion": {
       "vectorToVector": "Da vettoriale a vettoriale",
-      "zipInputBrowserError": "Gli Shapefile compressi possono essere convertiti solo nell'app desktop di GeoLibre. Nel browser, seleziona lo .shp non compresso insieme ai file .dbf, .shx e .prj.",
-      "browserOutputUnsupported": "Nel browser, l'output può essere GeoJSON, CSV, GeoParquet, GeoPackage o Shapefile (.zip). L'output \".{{extension}}\" richiede l'app desktop di GeoLibre.",
+      "zipInputBrowserError": "Gli Shapefile compressi possono essere convertiti solo nell'app desktop di GeoApps. Nel browser, seleziona lo .shp non compresso insieme ai file .dbf, .shx e .prj.",
+      "browserOutputUnsupported": "Nel browser, l'output può essere GeoJSON, CSV, GeoParquet, GeoPackage o Shapefile (.zip). L'output \".{{extension}}\" richiede l'app desktop di GeoApps.",
       "outputExtensionRequired": "Aggiungi un'estensione file al nome dell'output per scegliere il formato.",
       "readingWithDuckDb": "Lettura di {{name}} con DuckDB-WASM",
       "readFeatures": "Letti {{features}} elementi da {{name}}",
@@ -3620,7 +3620,7 @@
       "vectorToPmtiles": "Da vettoriale a PMTiles",
       "rasterToCog": "Da raster a COG",
       "rasterToPmtiles": "Raster in PMTiles",
-      "needsDesktop": "Questa conversione richiede l'app desktop GeoLibre o un sidecar in esecuzione.",
+      "needsDesktop": "Questa conversione richiede l'app desktop GeoApps o un sidecar in esecuzione.",
       "runsInBrowserDuckDb": "La conversione viene eseguita nel browser con DuckDB-WASM.",
       "runsInBrowserWriters": "La conversione viene eseguita nel browser con DuckDB-WASM e i writer inclusi.",
       "runsInBrowserWasm": "La conversione viene eseguita nel browser con geolibre-wasm. Non è necessario alcun sidecar.",
@@ -3628,7 +3628,7 @@
       "rasterShape": "Letto raster {{width}}×{{height}} con {{bands}} banda/e",
       "wroteCog": "Scritto un COG a tasselli con panoramiche ({{compression}})",
       "notAGeoTiff": "Questo file non è un GeoTIFF leggibile. Nel browser, Raster in COG legge solo GeoTIFF; altri formati richiedono l'app desktop.",
-      "rasterTooLargeForBrowser": "Nel browser questa operazione decodifica l'intero raster in WebAssembly, che è limitato a circa 4 GB, quindi questo non ci sta. Convertilo con l'app desktop di GeoLibre, oppure crea il COG in anticipo con gdal_translate o rio-cogeo.",
+      "rasterTooLargeForBrowser": "Nel browser questa operazione decodifica l'intero raster in WebAssembly, che è limitato a circa 4 GB, quindi questo non ci sta. Convertilo con l'app desktop di GeoApps, oppure crea il COG in anticipo con gdal_translate o rio-cogeo.",
       "zoomRangeError": "I livelli di zoom devono soddisfare 0 ≤ min ≤ max ≤ {{max}}.",
       "colormap": "Mappa di colori",
       "resampling": "Ricampionamento",
@@ -3783,9 +3783,9 @@
       "outputFile": "File di output",
       "noOutput": "Nessun output ancora.",
       "errorConnect": "Impossibile connettersi al sidecar.",
-      "needsDesktopSidecar": "Gli strumenti raster richiedono l'app GeoLibre Desktop con un sidecar in esecuzione.",
+      "needsDesktopSidecar": "Gli strumenti raster richiedono l'app GeoApps Desktop con un sidecar in esecuzione.",
       "errorPoll": "Impossibile interrogare il processo.",
-      "errorStartSidecar": "Impossibile avviare il sidecar di GeoLibre.",
+      "errorStartSidecar": "Impossibile avviare il sidecar di GeoApps.",
       "errorStartTool": "Impossibile avviare lo strumento raster."
     },
     "mapControl": {
@@ -3907,7 +3907,7 @@
       "terrain": "Terreno",
       "remoteSensing": "Telerilevamento",
       "projection": "Proiezione",
-      "geolibre": "Cassetta degli attrezzi GeoLibre",
+      "geolibre": "Cassetta degli attrezzi GeoApps",
       "subGroupGeometry": "Geometria",
       "subGroupOverlay": "Sovrapposizione",
       "subGroupJoin": "Join",
@@ -3996,12 +3996,12 @@
         "layer-type": "Il tipo di layer {{layerType}} non è supportato.",
         "missing-source": "Il layer non ha una sorgente dati locale leggibile.",
         "format": "Il formato dati del layer non è supportato.",
-        "file-geodatabase": "Le origini File Geodatabase (.gdb) non vengono caricate dai progetti. In GeoLibre Desktop aggiungile con Aggiungi dati → File Geodatabase (GDB).",
+        "file-geodatabase": "Le origini File Geodatabase (.gdb) non vengono caricate dai progetti. In GeoApps Desktop aggiungile con Aggiungi dati → File Geodatabase (GDB).",
         "file-geodatabase-raster": "I dataset raster archiviati in un File Geodatabase (.gdb) non sono supportati. Esporta il raster in GeoTIFF e aggiungilo come layer raster.",
         "network-path": "I percorsi di condivisione di rete non vengono caricati per motivi di sicurezza.",
         "service": "I layer di servizio ArcGIS contenuti nei progetti non sono ancora supportati.",
-        "browser-local-file": "Il file locale è referenziato, ma i browser non possono riaprire i percorsi dati di ArcGIS Pro. Usa GeoLibre Desktop per caricarlo.",
-        "map-extent": "L'estensione della mappa salvata usa un sistema di coordinate che GeoLibre non può convertire, quindi la mappa si è aperta su una vista predefinita.",
+        "browser-local-file": "Il file locale è referenziato, ma i browser non possono riaprire i percorsi dati di ArcGIS Pro. Usa GeoApps Desktop per caricarlo.",
+        "map-extent": "L'estensione della mappa salvata usa un sistema di coordinate che GeoApps non può convertire, quindi la mappa si è aperta su una vista predefinita.",
         "nesting": "Il gruppo è annidato troppo in profondità, oppure il progetto rimanda a un gruppo che lo contiene già."
       },
       "qgisImportComplete": "Progetto QGIS importato",
@@ -4015,8 +4015,8 @@
         "format": "Il formato file del layer non è supportato.",
         "remote-file": "Le sorgenti file QGIS remote non sono ancora supportate.",
         "network-path": "I percorsi di condivisione di rete non vengono caricati per motivi di sicurezza.",
-        "browser-local-file": "Il file locale è referenziato, ma i browser non possono riaprire i percorsi dati di QGIS. Usa GeoLibre Desktop per caricarlo.",
-        "browser-local-raster": "Il raster è referenziato tramite un percorso locale. Usa GeoLibre Desktop per caricarlo."
+        "browser-local-file": "Il file locale è referenziato, ma i browser non possono riaprire i percorsi dati di QGIS. Usa GeoApps Desktop per caricarlo.",
+        "browser-local-raster": "Il raster è referenziato tramite un percorso locale. Usa GeoApps Desktop per caricarlo."
       },
       "openProjectFromUrlDesc": "Carica un progetto `.geolibre.json` e aggiungilo ai progetti recenti.",
       "projectUrl": "URL del progetto",
@@ -4040,7 +4040,7 @@
       "embedEditedGeometryDesc": "Questo progetto contiene geometrie modificate. Incorpora i dati vettoriali (circa {{size}}) per conservarle. Senza incorporarli, i layer referenziati si riapriranno con le geometrie originali e i dati locali potrebbero non essere disponibili.",
       "embedVectorDesc": "Questo progetto ha {{count}} layer/i vettoriale/i locale/i caricato/i dal tuo computer. Il browser non può rileggerli quando il progetto viene riaperto, quindi i loro dati devono essere incorporati nel file di progetto per essere ripristinati. L'incorporamento aggiunge circa {{size}} al file.",
       "embedVectorDescDesktop": "Questo progetto ha {{count}} layer/i vettoriale/i locale/i caricato/i dal tuo computer. Incorpora i loro dati per rendere il progetto autonomo (aggiunge circa {{size}}), oppure salva i riferimenti ai file che vengono ricaricati dal disco quando il progetto viene riaperto. I riferimenti mantengono il file di dimensioni ridotte, ma smettono di funzionare se un file di origine viene successivamente spostato o eliminato.",
-      "embedVectorDescMas": "Questo progetto contiene {{count}} layer/i vettoriale/i locale/i caricato/i dal computer. La sandbox del Mac App Store non può mantenere l’accesso a questi file dopo la chiusura di GeoLibre, quindi i dati devono essere incorporati nel file di progetto per poter essere ripristinati. L’incorporamento aggiunge circa {{size}} al file.",
+      "embedVectorDescMas": "Questo progetto contiene {{count}} layer/i vettoriale/i locale/i caricato/i dal computer. La sandbox del Mac App Store non può mantenere l’accesso a questi file dopo la chiusura di GeoApps, quindi i dati devono essere incorporati nel file di progetto per poter essere ripristinati. L’incorporamento aggiunge circa {{size}} al file.",
       "embedVectorLargeWarning": "Incorporare circa {{size}} produce un file di progetto molto grande. Riaprirlo può essere lento o fallire del tutto, perché ogni elemento deve essere analizzato e tenuto in memoria tutto insieme. Per dati di queste dimensioni, converti i layer in PMTiles o FlatGeobuf e aggiungili come layer remoti anziché incorporarli.",
       "embedVectorEmbedButton": "Incorpora dati",
       "embedVectorReferenceButton": "Salva riferimenti ai file",
@@ -4056,13 +4056,13 @@
       "exportLayerStylesAsDesc": "Inserisci un nome file. Il file di stili verrà scaricato nella cartella dei download del tuo browser quando fai clic su Salva.",
       "exportLayerStylesFileName": "Nome file",
       "exportLayerStylesFileNamePlaceholder": "my-map-styles.json",
-      "layerStylesFile": "Stili dei layer GeoLibre",
+      "layerStylesFile": "Stili dei layer GeoApps",
       "exportLayersEllipsis": "Esporta layer…",
       "exportLayersAsTitle": "Esporta layer",
       "exportLayersAsDesc": "Inserisci un nome file. Il file dei layer verrà scaricato nella cartella dei download del browser quando fai clic su Salva.",
       "exportLayersFileName": "Nome file",
       "exportLayersFileNamePlaceholder": "my-map-layers.json",
-      "layersFile": "Layer GeoLibre",
+      "layersFile": "Layer GeoApps",
       "layersExportSkipped_one": "{{count}} layer è stato escluso perché i suoi dati esistono solo in questo progetto: {{names}}",
       "layersExportSkipped_other": "{{count}} layer sono stati esclusi perché i loro dati esistono solo in questo progetto: {{names}}",
       "layersExportRedacted_one": "{{count}} credenziale è stata rimossa dai layer esportati.",
@@ -4194,11 +4194,11 @@
     },
     "windowClose": {
       "savePromptTitle": "Salvare le modifiche prima di chiudere?",
-      "savePromptDescription": "Il progetto corrente contiene modifiche non salvate. Salvarle prima di chiudere GeoLibre?"
+      "savePromptDescription": "Il progetto corrente contiene modifiche non salvate. Salvarle prima di chiudere GeoApps?"
     },
     "error": {
       "couldNotOpenProject": "Impossibile aprire il progetto.",
-      "multipleProjectDrop": "Rilascia un solo progetto GeoLibre alla volta, senza altri file.",
+      "multipleProjectDrop": "Rilascia un solo progetto GeoApps alla volta, senza altri file.",
       "projectDropNotAllowed": "Questa distribuzione non consente di cambiare progetto.",
       "couldNotImportQgisProject": "Impossibile importare il progetto QGIS.",
       "couldNotImportArcgisProject": "Impossibile importare il progetto ArcGIS Pro.",
@@ -4340,7 +4340,7 @@
     "filterSummary": "Filtro del layer applicato: {{matched}} di {{total}} elemento/i corrispondono.",
     "evaluationErrors": "{{count}} elemento/i non è stato possibile valutare e non è stato incluso.",
     "unevaluableDisjoint": "{{count}} elemento/i sono stati esclusi perché non è stato possibile valutarne la geometria.",
-    "tooManyPairs": "Questo confronto richiede {{pairs}} test di coppie di elementi (limite {{limit}}). Usa invece Elaborazione → GeoLibre → Vettoriale → Seleziona per posizione con il motore Sidecar.",
+    "tooManyPairs": "Questo confronto richiede {{pairs}} test di coppie di elementi (limite {{limit}}). Usa invece Elaborazione → GeoApps → Vettoriale → Seleziona per posizione con il motore Sidecar.",
     "exportedLayerName": "{{name}} (selezione)"
   },
   "loadEditorFeatures": {
@@ -4913,11 +4913,11 @@
     "addIcechunkFailed": "Impossibile aprire questo repository Icechunk",
     "zarrProblemGroup": "Questo asset indica un gruppo di array, non un singolo array disegnabile",
     "zarrProblemMissing": "Questo archivio non contiene quella variabile",
-    "zarrProblemUnauthorized": "Questo archivio Zarr richiede credenziali che GeoLibre non può ancora fornire",
+    "zarrProblemUnauthorized": "Questo archivio Zarr richiede credenziali che GeoApps non può ancora fornire",
     "zarrProblemUnsupportedUrl": "L'indirizzo di questo archivio Zarr non può essere letto una chiave alla volta",
     "zarrProblemUnavailable": "Impossibile aprire questo archivio Zarr",
     "chooseTarget": "Scegli cosa aggiungere",
-    "cogUnsupported": "Questo host GeoLibre non può visualizzare risorse GeoTIFF remote",
+    "cogUnsupported": "Questo host GeoApps non può visualizzare risorse GeoTIFF remote",
     "formatCog": "COG",
     "formatGeoJson": "GeoJSON",
     "formatPmtiles": "PMTiles",
@@ -4950,7 +4950,7 @@
     "webMapAdded_one": "Aggiunto {{count}} layer da questa mappa web.",
     "webMapAdded_other": "Aggiunti {{count}} layer da questa mappa web.",
     "webMapAddedPartial": "Layer aggiunti: {{added}} su {{total}} da questa mappa web; gli altri non sono raggiungibili.",
-    "webMapEmpty": "questa mappa web non contiene layer che GeoLibre possa renderizzare.",
+    "webMapEmpty": "questa mappa web non contiene layer che GeoApps possa renderizzare.",
     "add": "Aggiungi",
     "adding": "Aggiunta in corso…",
     "remove": "Rimuovi",
@@ -5068,7 +5068,7 @@
     "downloadTitle": "Scarica questo file",
     "copyUrlTitle": "Copia l'URL di questo file",
     "openProductTitle": "Apri la pagina di questo prodotto su source.coop",
-    "unsupportedTitle": "GeoLibre non può renderizzare questo formato — scaricalo invece",
+    "unsupportedTitle": "GeoApps non può renderizzare questo formato — scaricalo invece",
     "addError": "Impossibile aggiungere questo file: {{message}}",
     "largeFileWarning": "Questo file è {{size}}. Viene trasmesso in streaming dalla sorgente, quindi vengono lette solo le parti in vista.",
     "streamHint": "Questo file è {{size}}. «Aggiungi» lo copia in memoria; «Streaming» legge solo le parti visibili.",
@@ -5113,7 +5113,7 @@
     "downloadTitle": "Scarica questo file",
     "copyUrlTitle": "Copia l'URL di questo file",
     "openDatasetTitle": "Apri la pagina di questo dataset su huggingface.co",
-    "unsupportedTitle": "GeoLibre non può renderizzare questo formato — scaricalo invece",
+    "unsupportedTitle": "GeoApps non può renderizzare questo formato — scaricalo invece",
     "addError": "Impossibile aggiungere questo file: {{message}}",
     "notRasterIndex": "Questo file JSON non indicizza alcun raster, quindi non c'è nulla da mettere sulla mappa. Sono supportati MosaicJSON e le collection STAC.",
     "largeFileWarning": "Questo file è {{size}}. Viene trasmesso in streaming dalla sorgente, quindi vengono lette solo le parti in vista.",
@@ -5158,7 +5158,7 @@
     "selectedFiles_one": "{{count}} file selezionato ({{size}}).",
     "selectedFiles_other": "{{count}} file selezionati ({{size}}).",
     "commitMessageLabel": "Messaggio di commit (facoltativo)",
-    "commitMessagePlaceholder": "Caricato con GeoLibre",
+    "commitMessagePlaceholder": "Caricato con GeoApps",
     "upload": "Carica",
     "uploadPreparing": "Preparazione del caricamento…",
     "uploadHashing": "Calcolo dell'hash di {{name}} ({{index}}/{{total}})…",
@@ -5706,7 +5706,7 @@
       "importedLog": "Importato un modello con {{nodes}} nodo/i.",
       "importFailed": "Importazione non riuscita",
       "importInvalid": "Quel file non contiene un grafo di modello.",
-      "importUnsupported": "Quel file non è un modello GeoLibre.",
+      "importUnsupported": "Quel file non è un modello GeoApps.",
       "rasterOutputUnsupported": "«{{name}}» è un risultato raster che questa build non può aggiungere alla mappa.",
       "portNeedsVector": "«{{port}}» richiede dati vettoriali, ma è arrivato un raster.",
       "toolNoOutput": "«{{tool}}» non ha prodotto alcun risultato.",
@@ -5764,7 +5764,7 @@
       "filterByCategory": "Filtra per categoria",
       "layerFor": "Layer per {{name}}",
       "allSources": "Tutte le origini",
-      "geolibreTools": "Strumenti GeoLibre",
+      "geolibreTools": "Strumenti GeoApps",
       "whiteboxTools": "Strumenti Whitebox",
       "toolbox": "Cassetta degli attrezzi Whitebox",
       "checkingRuntime": "Verifica del runtime.",
@@ -5819,8 +5819,8 @@
       "errorConnect": "Impossibile connettersi al sidecar.",
       "errorPoll": "Impossibile interrogare il processo.",
       "errorStartTool": "Impossibile avviare lo strumento Whitebox.",
-      "errorStartSidecar": "Impossibile avviare il sidecar di GeoLibre.",
-      "errorStopSidecar": "Impossibile arrestare il sidecar di GeoLibre.",
+      "errorStartSidecar": "Impossibile avviare il sidecar di GeoApps.",
+      "errorStopSidecar": "Impossibile arrestare il sidecar di GeoApps.",
       "noToolsFound": "Nessuno strumento trovato.",
       "searchToolsByMeaning": "Cerca strumenti o descrivi un'attività",
       "searchingByMeaning": "Ricerca nel catalogo per significato",
@@ -5853,9 +5853,9 @@
       "runLocallyButton": "Esegui localmente (WASM)",
       "troubleshootingTitle": "Vuoi comunque usare il server?",
       "stepStartServerDesktop": "Fai clic su \"Avvia server\" nel pannello dell'elenco strumenti per avviarlo, quindi attendi qualche secondo che diventi attivo.",
-      "stepStartServerBrowser": "Il server può essere avviato solo dall'app desktop di GeoLibre. Nel browser, tieni invece attiva l'opzione \"Esegui localmente (WASM)\".",
+      "stepStartServerBrowser": "Il server può essere avviato solo dall'app desktop di GeoApps. Nel browser, tieni invece attiva l'opzione \"Esegui localmente (WASM)\".",
       "stepCheckPort": "Assicurati che un firewall, un antivirus o una policy di rete non blocchino la porta locale {{port}}.",
-      "stepRestart": "Se il server si è arrestato inaspettatamente, riavvia l'app desktop di GeoLibre e riapri questa finestra di dialogo."
+      "stepRestart": "Se il server si è arrestato inaspettatamente, riavvia l'app desktop di GeoApps e riapri questa finestra di dialogo."
     },
     "vectorTools": {
       "title": "Strumenti vettoriali",
@@ -7470,13 +7470,13 @@
     "segment": "Segmenta",
     "status": {
       "checking": "Verifica del servizio di segmentazione IA in corso…",
-      "unavailableDesktop": "Il servizio di segmentazione IA non è ancora in esecuzione. Avvia il server GeoLibre con segment-geospatial abilitato per utilizzarlo.",
-      "unavailableWeb": "La segmentazione IA non è disponibile nel browser. Usa l'app desktop di GeoLibre per eseguirla."
+      "unavailableDesktop": "Il servizio di segmentazione IA non è ancora in esecuzione. Avvia il server GeoApps con segment-geospatial abilitato per utilizzarlo.",
+      "unavailableWeb": "La segmentazione IA non è disponibile nel browser. Usa l'app desktop di GeoApps per eseguirla."
     },
     "error": {
       "chooseImage": "Scegli un'immagine (GeoTIFF) da segmentare.",
       "enterPrompt": "Inserisci un prompt testuale, ad es. “alberi” o “edifici”.",
-      "startServer": "Impossibile avviare il sidecar di GeoLibre.",
+      "startServer": "Impossibile avviare il sidecar di GeoApps.",
       "failed": "Segmentazione non riuscita."
     },
     "noObjects": "Nessun oggetto trovato.",
@@ -7487,7 +7487,7 @@
       "title": "Impossibile avviare il server di segmentazione IA.",
       "intro": "La segmentazione IA viene eseguita in un server helper locale ({{sidecarUrl}}) che ospita il modello SAM3 di segment-geospatial. Esegue Python in background, separatamente dall'app, e non fa parte della build per browser.",
       "troubleshootingTitle": "Come avviare il server",
-      "stepInstall": "Assicurati che il server GeoLibre sia installato con il backend segment-geospatial abilitato, in modo che il modello di segmentazione sia disponibile.",
+      "stepInstall": "Assicurati che il server GeoApps sia installato con il backend segment-geospatial abilitato, in modo che il modello di segmentazione sia disponibile.",
       "stepStartServerDesktop": "Fai clic su “Avvia server” qui sopra per avviarlo, quindi attendi qualche secondo che il modello sia online."
     }
   },
@@ -7589,7 +7589,7 @@
       "felzenszwalb": "Grafo di Felzenszwalb (desktop, nativo)",
       "note": "Viene eseguito in modo nativo nel server di elaborazione dell'app desktop con scikit-image, su un massimo di {{max}} pixel, e misura lì anche gli oggetti.",
       "offer": "Per immagini troppo grandi per il browser, l'app desktop può anche segmentare in modo nativo con scikit-image (SLIC o Felzenszwalb).",
-      "needsDesktop": "I metodi nativi richiedono il server di elaborazione di GeoLibre: usa l'app desktop.",
+      "needsDesktop": "I metodi nativi richiedono il server di elaborazione di GeoApps: usa l'app desktop.",
       "unavailable": "Il runtime OBIA nativo dell'app desktop (scikit-image) non è disponibile. Controlla il server di elaborazione.",
       "needsLocalFile": "I metodi nativi leggono l'immagine dal suo file: aggiungila da un GeoTIFF locale.",
       "slicSize": "Dimensione degli oggetti (pixel)",
@@ -7918,7 +7918,7 @@
       "imageSize": "{{width}} × {{height}} pixel, bande {{bands}}",
       "area": "Pixel da {{x0}} a {{x1}} in orizzontale e da {{y0}} a {{y1}} in verticale, a risoluzione piena ({{size}} per pixel)",
       "areaOverview": "Pixel da {{x0}} a {{x1}} in orizzontale e da {{y0}} a {{y1}} in verticale (griglia a risoluzione piena), letti dalla panoramica {{level}} ({{size}} per pixel)",
-      "env": "geolibre-wasm {{engine}}, GeoLibre {{app}}",
+      "env": "geolibre-wasm {{engine}}, GeoApps {{app}}",
       "labelsPending": "Raster delle etichette non caricato; viene ricostruito da queste impostazioni quando un passaggio ne ha bisogno.",
       "splits": "Divisioni di riserva",
       "level": "Livello {{level}}: livello {{from}} fuso alla scala {{scale}}",
@@ -8150,7 +8150,7 @@
     "import": "Importa…",
     "export": "Esporta…",
     "importFilterName": "Libreria di stili / QML / SLD",
-    "exportFilterName": "Libreria di stili GeoLibre",
+    "exportFilterName": "Libreria di stili GeoApps",
     "applied": "Applicato \"{{name}}\" a {{layer}}.",
     "appliedRampHint": "Applicato \"{{name}}\". Imposta il layer su stile graduato o categorizzato per vedere la rampa.",
     "saved": "Salvato \"{{name}}\" nella libreria.",
@@ -8882,7 +8882,7 @@
     "exportCopc": "COPC (ottimizzato per il cloud)",
     "extractSubset": "Estrai sottoinsieme…",
     "stylesMenu": "Stili",
-    "exportGeoLibreStyle": "Esporta stile URL GeoLibre",
+    "exportGeoLibreStyle": "Esporta stile URL GeoApps",
     "exportGeoLibreStyleHint": "Esporta la simbologia, inclusi i motivi di riempimento, per gli URL ?data= e ?style=. I dati degli elementi non sono inclusi; i marcatori di punto personalizzati non vengono conservati.",
     "exportMapboxStyle": "Esporta come stile Mapbox GL",
     "exportSldStyle": "Esporta come OGC SLD",
@@ -8891,9 +8891,9 @@
     "exportStyleDataNotReady": "I dati del layer non sono ancora pronti. Riprova tra un momento.",
     "exportStyleNeedsFeatures": "L'esportazione dello stile richiede un layer vettoriale con elementi.",
     "exportStyleError": "Impossibile esportare lo stile di questo layer.",
-    "importStyle": "Importa stile (GeoLibre URL / Mapbox GL / SLD / QML)…",
+    "importStyle": "Importa stile (GeoApps URL / Mapbox GL / SLD / QML)…",
     "importStyleFromText": "Importa stile da testo…",
-    "importStyleFromTextDescription": "Incolla uno stile GeoLibre, Mapbox GL, SLD o QML. Il formato viene riconosciuto dal testo.",
+    "importStyleFromTextDescription": "Incolla uno stile GeoApps, Mapbox GL, SLD o QML. Il formato viene riconosciuto dal testo.",
     "importStyleFromTextPlaceholder": "{ \"version\": 8, \"layers\": [ … ] }",
     "importStyleFromTextApply": "Importa",
     "openStyleManager": "Stili salvati (Gestione stili)…",
@@ -9386,10 +9386,10 @@
   },
   "errorBoundary": {
     "title": "Qualcosa è andato storto",
-    "description": "GeoLibre ha riscontrato un errore imprevisto e non è riuscito a continuare. Il tuo lavoro potrebbe non essere salvato — prova a recuperarlo prima di ricaricare.",
+    "description": "GeoApps ha riscontrato un errore imprevisto e non è riuscito a continuare. Il tuo lavoro potrebbe non essere salvato — prova a recuperarlo prima di ricaricare.",
     "tryAgain": "Riprova",
     "reload": "Ricarica l'app",
-    "sectionFailed": "Impossibile visualizzare {{label}}. Il resto di GeoLibre è ancora disponibile."
+    "sectionFailed": "Impossibile visualizzare {{label}}. Il resto di GeoApps è ancora disponibile."
   },
   "commandPalette": {
     "title": "Tavolozza dei comandi",
@@ -9465,7 +9465,7 @@
     "windowCloseGuardFailed": "La chiusura della finestra non chiederà di salvare le modifiche non salvate. Salva il tuo lavoro prima di chiudere.",
     "windowCloseSaveFailed": "Impossibile salvare il progetto prima della chiusura.",
     "windowCloseFailed": "Impossibile chiudere la finestra.",
-    "nativeProjectPathFailed": "Impossibile aprire il file di progetto passato a GeoLibre.",
+    "nativeProjectPathFailed": "Impossibile aprire il file di progetto passato a GeoApps.",
     "kmlSuperOverlayReadFailed": "Impossibile rileggere il KML Super-Overlay «{{name}}», quindi i suoi tile sono vuoti.",
     "projectControlFailed": "Impossibile applicare l'impostazione «{{control}}» del progetto.",
     "pluginSnapshotFailed": "Alcune impostazioni dei plugin potrebbero non essere trasferite al nuovo renderer.",
@@ -9474,10 +9474,10 @@
     "panelRenderFailed": "Impossibile aprire il pannello «{{name}}».",
     "sharedSettingsFailed": "Impossibile caricare le impostazioni condivise dal link, quindi vengono usate le tue impostazioni.",
     "sharedLanguageFailed": "Impossibile passare alla lingua richiesta dalle impostazioni condivise.",
-    "languageCatalogFailed": "Impossibile caricare la traduzione {{language}}, quindi GeoLibre è mostrato in inglese."
+    "languageCatalogFailed": "Impossibile caricare la traduzione {{language}}, quindi GeoApps è mostrato in inglese."
   },
   "shell": {
-    "workspaceTitle": "Area di lavoro cartografica di GeoLibre",
+    "workspaceTitle": "Area di lavoro cartografica di GeoApps",
     "webglContextLost": {
       "message": "La mappa ha perso il contesto grafico",
       "description": "Il driver grafico si è reimpostato o la GPU ha esaurito la memoria, quindi la mappa potrebbe essere bloccata o vuota. Ricarica per ripristinarla. Se puoi, salva prima il progetto; un salvataggio automatico recente potrebbe essere disponibile anche nella cronologia del progetto.",
@@ -9756,7 +9756,7 @@
     "navigationButton": "1. Carica sorgenti e traccia la navigazione",
     "navigationButtonAgain": "Traccia un altro layer di navigazione",
     "exportButton": "Esporta i risultati tracciati in GeoJSON",
-    "addLayersButton": "Aggiungi i risultati tracciati ai layer di GeoLibre",
+    "addLayersButton": "Aggiungi i risultati tracciati ai layer di GeoApps",
     "clearButton": "Cancella il risultato NLDI",
     "noComid": "Nessun COMID è stato restituito per questo punto.",
     "requestingBasin": "Richiesta del bacino a monte…",
@@ -10009,7 +10009,7 @@
       "downloadParquet": "Parquet",
       "downloadParquetTitle": "Scarica l'intero file GeoParquet di questa tile",
       "dataset": "Dataset",
-      "browseOnly": "La ricerca in questo dataset non è ancora supportata in GeoLibre. Usa i link sopra per ottenerlo dalla sua fonte.",
+      "browseOnly": "La ricerca in questo dataset non è ancora supportata in GeoApps. Usa i link sopra per ottenerlo dalla sua fonte.",
       "searchArea": "Area di ricerca",
       "modeView": "Vista mappa",
       "modeDraw": "Disegna riquadro",
@@ -10045,7 +10045,7 @@
       "searchDone": "{{count}} scene di {{tile}} lette in {{seconds}} s ({{gets}} letture di intervalli, {{kib}} KiB). Nessuna API, solo GeoParquet statico.",
       "searchFailed": "Ricerca non riuscita: {{error}}",
       "displayTci": "Colori reali (TCI)",
-      "noCog": "Questa build di GeoLibre non può aggiungere layer COG.",
+      "noCog": "Questa build di GeoApps non può aggiungere layer COG.",
       "adding": "Aggiunta di {{name}}…",
       "added": "{{name}} aggiunto.",
       "addFailed": "Impossibile aggiungere {{name}}: {{error}}",
@@ -10245,7 +10245,7 @@
       "catalogLink": "Catalogo dati",
       "aboutSummary": "Informazioni su dynamical.org",
       "aboutText": "dynamical.org pubblica previsioni meteorologiche e analisi di NOAA, ECMWF, DWD, ECCC e NASA come archivi Icechunk (Zarr) gratuiti e ottimizzati per il cloud, aggiornati man mano che arriva ogni esecuzione del modello.",
-      "aboutAccess": "GeoLibre legge gli archivi direttamente dal loro storage cloud, una sezione della mappa alla volta, e decodifica i dataset virtuali a bassa latenza dai file GRIB2 originali dei produttori. Le analisi e gli ensemble memorizzano una lunga serie temporale in ogni chunk, quindi disegnano una regione alla volta, una volta aumentato lo zoom sulla mappa.",
+      "aboutAccess": "GeoApps legge gli archivi direttamente dal loro storage cloud, una sezione della mappa alla volta, e decodifica i dataset virtuali a bassa latenza dai file GRIB2 originali dei produttori. Le analisi e gli ensemble memorizzano una lunga serie temporale in ogni chunk, quindi disegnano una regione alla volta, una volta aumentato lo zoom sulla mappa.",
       "variable": "Variabile",
       "auto": "Auto",
       "min": "Min",
@@ -10411,7 +10411,7 @@
       "liftSelected": "Selezionati {{count}} punti all'interno di {{polygons}} poligoni di {{layer}}.",
       "liftInstances": "Create {{objects}} istanze di {{name}} da {{layer}} ({{count}} punti).",
       "fullFile": "File completo con etichette",
-      "fullFileNote": "Scrive una copia locale di questa point cloud con tutte le etichette salvate applicate, non solo ai punti caricati qui. Viene eseguito nel server GeoLibre.",
+      "fullFileNote": "Scrive una copia locale di questa point cloud con tutte le etichette salvate applicate, non solo ai punti caricati qui. Viene eseguito nel server GeoApps.",
       "fullFileInput": "Copia locale (.las, .laz o .copc.laz)",
       "fullFileOutput": "File di output (.las o .laz)",
       "fullFileWrite": "Scrivi file",
@@ -10503,7 +10503,7 @@
       "unitsTitle": "Unità: {{units}}"
     },
     "earth-engine-auth": {
-      "unavailable": "L'accesso a Earth Engine non è disponibile nella build di GeoLibre per l'App Store.",
+      "unavailable": "L'accesso a Earth Engine non è disponibile nella build di GeoApps per l'App Store.",
       "noAccessToken": "L'accesso a Earth Engine non ha restituito un token di accesso.",
       "popupUnavailable": "L'autenticazione tramite popup di Earth Engine non è disponibile.",
       "oauthUnavailable": "L'autenticazione OAuth di Earth Engine non è disponibile.",
