@@ -538,8 +538,9 @@ describe("the maplibre-gl render-seam mirror", () => {
       "blendFunc",
       "blendEquation",
       // The program the render-to-texture composite is drawn with, which is how
-      // the wrapper tells the composite from the draws feeding it.
-      "layerOpacity",
+      // the wrapper tells the composite from the draws feeding it. Named
+      // `layerOpacity` through maplibre-gl 6.17.
+      "layerComposite",
     ]) {
       assert.match(
         bundle,

@@ -99,12 +99,14 @@ test("canReprojectWmsCrs accepts only CRSs the tile protocol can draw", async ()
     "EPSG:6706",
     "epsg:25832",
     "EPSG:3003",
+    // +proj=col_urban, implemented by proj4js 2.23.0. Before that Vienna's WMS,
+    // which inherits the code from a parent layer, fell back to Web Mercator
+    // (#3007).
+    "EPSG:6244",
   ]) {
     assert.equal(await canReprojectWmsCrs(crs), true, crs);
   }
-  // EPSG:6244 is in the EPSG tables but its +proj=col_urban has no proj4js
-  // implementation; Vienna's WMS inherits it from a parent layer (#3007).
-  for (const crs of ["EPSG:999999", "EPSG:1", "EPSG:6244"]) {
+  for (const crs of ["EPSG:999999", "EPSG:1"]) {
     assert.equal(await canReprojectWmsCrs(crs), false, crs);
   }
 });
@@ -118,8 +120,10 @@ test("reprojectableWmsCodes keeps the supported codes when one check rejects", a
     await reprojectableWmsCodes(["EPSG:3857", "EPSG:6244", "EPSG:999999", "CRS:84"], check),
     ["EPSG:3857", "CRS:84"],
   );
-  // The real check, over the Vienna mix from #3007.
+  // The real check, over the Vienna mix from #3007: all three are drawable now
+  // that proj4js implements +proj=col_urban.
   assert.deepEqual(await reprojectableWmsCodes(["EPSG:6244", "EPSG:3857", "CRS:84"]), [
+    "EPSG:6244",
     "EPSG:3857",
     "CRS:84",
   ]);
