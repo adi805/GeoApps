@@ -419,7 +419,8 @@ function stateValue<T>(initial: T) {
  * A painter shaped like maplibre-gl 6.14's: `useProgram` lives on a per-frame
  * render context passed as `renderLayer`'s last argument, not on the painter.
  * Each fill draw feeds the scratch framebuffer once, then composites it with
- * the `layerOpacity` program, the same as `drawLayerOpacity`.
+ * the `layerComposite` program, the same as `drawLayerComposite` (spelled
+ * `layerOpacity` through maplibre-gl 6.17).
  */
 function frameContextPainter() {
   const gl = { ...GL, MIN: 108 } as unknown as WebGL2RenderingContext;
@@ -457,7 +458,7 @@ function frameContextPainter() {
       frame: FrameRenderContext,
     ) {
       frame.useProgram("fill").draw();
-      frame.useProgram("layerOpacity").draw();
+      frame.useProgram("layerComposite").draw();
     }
   }
   const painter = new Painter();
@@ -480,7 +481,7 @@ describe("installing the render wrappers", () => {
     // composite carries the mode.
     assert.deepEqual(context.draws, [
       { program: "fill", func: [GL.ONE, GL.ONE_MINUS_SRC_ALPHA], equation: GL.FUNC_ADD },
-      { program: "layerOpacity", func: multiply.func, equation: multiply.equation },
+      { program: "layerComposite", func: multiply.func, equation: multiply.equation },
     ]);
   });
 });
@@ -538,8 +539,9 @@ describe("the maplibre-gl render-seam mirror", () => {
       "blendFunc",
       "blendEquation",
       // The program the render-to-texture composite is drawn with, which is how
-      // the wrapper tells the composite from the draws feeding it.
-      "layerOpacity",
+      // the wrapper tells the composite from the draws feeding it. Named
+      // `layerOpacity` through maplibre-gl 6.17.
+      "layerComposite",
     ]) {
       assert.match(
         bundle,
