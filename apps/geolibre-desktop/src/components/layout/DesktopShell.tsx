@@ -34,7 +34,7 @@ import { useHighContrast } from "../../hooks/useHighContrast";
 import { useDesktopSettingsStore } from "../../hooks/useDesktopSettings";
 import { MobileShell } from "./mobile/MobileShell";
 import type { MobileTab } from "./mobile/MobileTabBar";
-import { openFieldTool, openNewProjectDialog } from "./field-tool-events";
+import { openCommandPalette, openFieldTool, openNewProjectDialog } from "./field-tool-events";
 import { useProjectFileActions } from "../../hooks/useProjectFileActions";
 import { useProjectHistory } from "../../hooks/useProjectHistory";
 import { useScreenshotReadiness } from "../../hooks/useScreenshotReadiness";
@@ -662,6 +662,7 @@ export function DesktopShell({
         onSaveProject={projectFiles.handleSave}
         onOpenProject={() => void projectFiles.handleOpenFromFile()}
         onNewProject={openNewProjectDialog}
+        onOpenCommandPalette={() => openCommandPalette()}
         onImportFile={(file) => void handleMobileImportFile(file)}
       >
       {/* Kept mounted on a phone (so the dialogs it owns keep working) but out

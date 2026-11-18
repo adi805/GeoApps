@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent, type ReactNode } from "react";
-import { Crosshair, Contrast, FileUp, FolderOpen, MapPin, Plus, Route, Save } from "lucide-react";
+import { Contrast, Crosshair, FileUp, FolderOpen, MapPin, Plus, Route, Save, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { FieldStatusReveal, FieldStatusStrip } from "./FieldStatusStrip";
 import { MobileSheet } from "./MobileSheet";
@@ -54,6 +54,8 @@ export interface MobileShellProps {
   onSaveProject: () => void;
   onOpenProject: () => void;
   onNewProject: () => void;
+  /** Opens the command palette: the same surface Cmd/Ctrl-K opens on desktop. */
+  onOpenCommandPalette: () => void;
   /** Handed the chosen file; the shell adds it through the normal raster path. */
   onImportFile: (file: File) => void;
   children: ReactNode;
@@ -84,6 +86,7 @@ export function MobileShell({
   onSaveProject,
   onOpenProject,
   onNewProject,
+  onOpenCommandPalette,
   onImportFile,
   children,
 }: MobileShellProps) {
@@ -124,6 +127,16 @@ export function MobileShell({
           testId="mobile-project-sheet"
         >
           <div className="flex flex-col gap-2 p-2">
+            {/* Search first: this row is the only one that reaches everything
+                else, and a phone has neither Cmd/Ctrl-K nor the desktop menu
+                that opens the palette. Typing a command name keeps the sheet
+                usable as it grows past a screenful. */}
+            <SheetAction
+              icon={Search}
+              label={t("mobile.action.commandPalette", "Cari perintah")}
+              onClick={runAndClose(onOpenCommandPalette)}
+              testId="mobile-action-command-palette"
+            />
             <SheetAction
               icon={MapPin}
               label={t("mobile.action.dropPoint", "Taruh titik di sini")}
