@@ -9623,6 +9623,13 @@
   },
   "mobile": {
     "navLabel": "Main navigation",
+    "tab": {
+      "map": "Map",
+      "layers": "Layers",
+      "measure": "Measure",
+      "track": "Track",
+      "project": "Project"
+    },
     "sheet": {
       "project": "Project and field"
     },

@@ -144,25 +144,25 @@ export function MobileShell({
           testId="mobile-project-sheet"
         >
           <div className="flex flex-col gap-2 p-2">
-            {/* Avenza's first action is "import a map", so it leads the sheet
-                and carries the primary weight. Everything else here is work
-                done *on* a map, which presupposes this one. */}
+            {/* Search first: this row is the only one that reaches everything
+                else, and a phone has neither Cmd/Ctrl-K nor the desktop menu
+                that opens the palette. Typing a command name keeps the sheet
+                usable as it grows past a screenful. */}
+            <SheetAction
+              icon={Search}
+              label={t("mobile.action.commandPalette", "Cari perintah")}
+              onClick={runAndClose(onOpenCommandPalette)}
+              testId="mobile-action-command-palette"
+            />
+            {/* Avenza's headline task is "import a map", so it is the row that
+                carries the primary weight. Everything else here is work done
+                *on* a map, which presupposes this one. */}
             <SheetAction
               icon={FileUp}
               label={t("mobile.action.importPdf", "Impor peta PDF")}
               onClick={() => fileInputRef.current?.click()}
               testId="mobile-action-import-file"
               primary
-            />
-            {/* Second because it reaches everything else: a phone has neither
-                Cmd/Ctrl-K nor the desktop menu that opens the palette, and
-                typing a command name keeps the sheet usable as it grows past a
-                screenful. */}
-            <SheetAction
-              icon={Search}
-              label={t("mobile.action.commandPalette", "Cari perintah")}
-              onClick={runAndClose(onOpenCommandPalette)}
-              testId="mobile-action-command-palette"
             />
             <SheetAction
               icon={MapPin}
