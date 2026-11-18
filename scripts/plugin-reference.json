@@ -256,5 +256,9 @@
     "menu": "Controls (Search, Legend, Measure, …)",
     "description": "The component panels; each is toggled from the Controls menu rather than as one plugin.",
     "docs": "map-controls.md#component-tools"
+  },
+  "maplibre-gl-geofence": {
+    "menu": "Plugins",
+    "description": "Boundary zones that watch the device position and log every enter and exit, with a CSV export of the journal."
   }
 }

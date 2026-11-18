@@ -9375,6 +9375,13 @@
   },
   "mobile": {
     "navLabel": "Navigasi utama",
+    "tab": {
+      "map": "Peta",
+      "layers": "Daftar",
+      "measure": "Ukur",
+      "track": "Jejak",
+      "project": "Proyek"
+    },
     "sheet": {
       "project": "Proyek dan lapangan"
     },
@@ -10627,5 +10634,16 @@
     "updated": "Rekaman terkait {{id}} disimpan.",
     "unchanged": "Tidak ada yang berubah, jadi tidak ada yang dikirim.",
     "deleted": "Rekaman terkait {{id}} dihapus."
+  },
+  "geofence": {
+    "title": "Geofence",
+    "none": "Belum ada batas",
+    "create": "Buat geofence",
+    "createHint": "Batas baru, belum disimpan",
+    "alerts": "Peringatan",
+    "alertCount": "{{count}} peringatan tercatat",
+    "exported": "Jurnal diekspor ke {{path}}",
+    "exportCancelled": "Ekspor dibatalkan",
+    "exportFailed": "Ekspor gagal; tidak ada berkas yang ditulis"
   }
 }
