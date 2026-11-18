@@ -14,8 +14,13 @@
 // (GHSA-vfj7-8cjw-p6xm) is not reported at all any more. Deleting them both left
 // the allowlist empty, which is the state that needs no maintenance.
 //
-// The one entry below is the opposite case: picomatch really has no fix. Keep it
-// that way — a dependency that can be upgraded is upgraded, never allowlisted.
+// The picomatch entry that replaced them has rotted the same way: `npm audit
+// --omit=dev` no longer reports GHSA-fc5q-39xc-vjpf and no longer lists
+// picomatch at all, so the gate failed on the stale entry rather than on a
+// finding. Deleted, which empties the allowlist again — the intended state.
+//
+// Keep it that way: a dependency that can be upgraded is upgraded, never
+// allowlisted.
 //
 // Rules for adding an entry: there must be no patched version available, the
 // vulnerable code must not reach a GeoLibre runtime path, the reason has to say
@@ -27,16 +32,7 @@ import { readFileSync } from "node:fs";
 const BLOCKING = new Set(["high", "critical"]);
 
 // Shape: [ghsaId, { reason, expires }]. Empty is the goal, not an oversight.
-const ALLOWLIST = new Map([
-  [
-    "GHSA-fc5q-39xc-vjpf",
-    {
-      reason:
-        "No patched version exists: 4.0.7 is the newest picomatch on the registry and the advisory range covers it, with first_patched_version null. The reported instance is 2.3.2, reached only through patch-package's build-time CLI chain (patch-package > find-yarn-workspace-root > micromatch > picomatch). That chain globs file paths from patches committed to this repo, so no untrusted input reaches the vulnerable matcher at runtime.",
-      expires: "2026-12-17",
-    },
-  ],
-]);
+const ALLOWLIST = new Map([]);
 
 // Tests and offline reproductions replay a recorded report through this variable.
 // CI never sets it, so the gate always asks npm for a live answer there.
