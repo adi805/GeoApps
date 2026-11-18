@@ -5,6 +5,24 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    # Situs dibangun di setiap PR, padahal job `deploy` di-skip untuk PR
+    # (lihat `if: github.event_name != 'pull_request'`). Pada 2026-11-17 itu
+    # membakar 71 job-min dari 20 PR run: 14 di antaranya tidak menyentuh
+    # satu pun file yang masuk ke situs.
+    #
+    # Aman karena perakitan situs (dist -> site/demo + assert
+    # site/demo/jupyterlite/lab/index.html) tetap divalidasi di setiap PR web
+    # oleh publish-container.yml, yang membangun image dari Dockerfile dan
+    # meng-assert dist/jupyterlite/lab/index.html di dalamnya. Dua filter ini
+    # saling menutup: PR docs memicu pages, PR web memicu container.
+    paths:
+      - "docs/**"
+      - "apps/geolibre-desktop/jupyterlite/**"
+      - "mkdocs.yml"
+      - "requirements-docs.txt"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
