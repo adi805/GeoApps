@@ -41,7 +41,11 @@ def blok_lane(lanes):
     """Tabel lane: id, topic, cakupan. Persis tiga medan yang juga dipegang lanes.json."""
     baris = ["| Lane | Topic | Cakupan |", "|---|---|---|"]
     for l in lanes.get("lane") or []:
-        baris.append("| `%s` | %s | %s |" % (l.get("id"), l.get("topic"), l.get("cakupan", "")))
+        # Topic kosong ditulis `-`, sama dengan cek_lane.py: lane yang topic-nya belum
+        # dibuat tetap sah di lanes.json; yang salah adalah mencetak `None` di tabel hukum.
+        topic = l.get("topic")
+        baris.append("| `%s` | %s | %s |" % (
+            l.get("id"), "-" if topic is None else topic, l.get("cakupan", "")))
     return "\n".join(baris)
 
 def blok_eskalasi(lanes, kunci, judul):
@@ -181,8 +185,18 @@ def uji_mandiri():
     for nama, siapkan, harus_gagal in kasus:
         jalankan(nama, siapkan, harus_gagal)
 
+    # Lane yang topic-nya belum dibuat tetap sah di lanes.json; yang tidak boleh adalah
+    # tabel hukum mencetak `None` (bentuk Python) alih-alih `-` seperti cek_lane.py.
+    baris = blok_lane({"lane": [{"id": "inti", "topic": None, "cakupan": "infra"},
+                                {"id": "HQ", "topic": 12, "cakupan": "hukum"}]})
+    benar = "| `inti` | - | infra |" in baris and "| `HQ` | 12 | hukum |" in baris
+    print("  %s %-46s %s" % ("LULUS " if benar else "GAGAL ", "topic kosong ditulis '-'",
+                             "ya" if benar else "tidak"))
+    gagal += 0 if benar else 1
+
+    jumlah = len(kasus) + 1
     print("")
-    print("UJI MANDIRI sync_law: %d kasus, %d gagal" % (len(kasus), gagal))
+    print("UJI MANDIRI sync_law: %d kasus, %d gagal" % (jumlah, gagal))
     return 1 if gagal else 0
 
 def main():
