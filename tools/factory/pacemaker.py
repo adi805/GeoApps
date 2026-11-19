@@ -306,7 +306,13 @@ def uji_mandiri():
     lanes = u.baca_json(os.path.join(akar, "factory", "lanes.json"))
     lane_hq = next(l for l in lanes["lane"] if l["id"] == "HQ")
     topic_hq = lane_hq["topic"]
-    lane_lain = next(l for l in lanes["lane"] if l["id"] != "HQ")
+    # Fixture ini butuh lane yang SIAP dibrief, yaitu yang punya topic. Memilih lane non-HQ
+    # pertama akan memilih lane bertopic null (lane `inti`, versi 11) dan uji merah karena
+    # fixture-nya tidak sah, bukan karena penyaringnya salah.
+    lane_lain = next((l for l in lanes["lane"] if l["id"] != "HQ" and l.get("topic") is not None), None)
+    if lane_lain is None:
+        print("  GAGAL  tidak ada lane non-HQ bertopic; uji penyaring lane tidak bisa dijalankan")
+        return 1
     lane_id = lane_lain["id"]
     topic_lane = lane_lain["topic"]
 
