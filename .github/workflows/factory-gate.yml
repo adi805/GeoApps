@@ -10,7 +10,13 @@ name: factory-gate
 
 on:
   pull_request:
-    branches: [main]
+    # TANPA penyaring `branches`. Sebelumnya ada `branches: [main]` di sini, dan akibatnya PR
+    # yang base-nya bukan `main` (PR bertumpuk) tidak mendapat SATU PUN check-run: gate-nya tidak
+    # merah, tidak hijau, tidak dijalankan. Terukur 2026-11-19 (#183): #146-#150, lima PR
+    # bertumpuk 6-7 Nov 2026, nol check-run, 47 path unik, 14 di antaranya mendarat di `main`
+    # lewat #134 tanpa pernah dinilai gate. Skrip gate sudah base-agnostik (langkah cakupan lane
+    # memakai `--base origin/<base_ref>` dan checkout `fetch-depth: 0`), jadi penyaring base
+    # branch inilah satu-satunya yang menghalangi. Jangan pasang lagi.
     # `labeled` dipasang supaya memasang label `lane:<id>` SETELAH PR terbuka menjalankan ulang
     # pemeriksa cakupan. Label-nya dibaca LIVE dari PR di dalam run (`gh pr view --json labels`),
     # bukan dari payload event.
