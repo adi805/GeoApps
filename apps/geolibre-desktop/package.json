@@ -16,7 +16,7 @@
     "tauri:build:mas": "node ../../scripts/tauri-build.mjs --mas"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.133.0",
+    "@anthropic-ai/sdk": "^1.11.0",
     "@auth0/auth0-react": "^2.30.0",
     "@aws-sdk/client-bedrock": "^3.1169.0",
     "@carbonplan/zarr-layer": "0.12.1",
